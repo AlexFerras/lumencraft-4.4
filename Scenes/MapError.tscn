@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Fonts/Font30.tres" type="FontFile" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends ColorRect
+
+func _ready() -> void:
+	$Label.text = tr($Label.text) % tr(Utils.get_meta(\"map_error_hack\"))
+	get_tree().create_timer(5).connect(\"timeout\", Callable(get_tree(), \"change_scene_to_file\").bind(Const.TITLE_SCENE))
+"
+
+[node name="Control" type="ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Label" type="Label" parent="."]
+modulate = Color( 1, 0, 0, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Error loading map: %s."
+align = 1
+valign = 1
+__meta__ = {
+"_edit_lock_": true
+}

@@ -1,0 +1,393 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Scenes/Title/Workshop/Upvote.png" type="Texture2D" id=1]
+[ext_resource path="res://Scenes/Title/Workshop/Downvote.png" type="Texture2D" id=2]
+[ext_resource path="res://Scenes/Title/Workshop/Favorite.png" type="Texture2D" id=3]
+[ext_resource path="res://Scenes/Title/Workshop/NotFavorite.png" type="Texture2D" id=4]
+[ext_resource path="res://Scenes/Title/Workshop/NotUpvote.png" type="Texture2D" id=5]
+[ext_resource path="res://Scenes/Title/Workshop/NotDownvote.png" type="Texture2D" id=6]
+[ext_resource path="res://Resources/Fonts/Font20.tres" type="FontFile" id=7]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+@export var style_normal: StyleBox
+@export var style_selected: StyleBox
+
+enum {NONE = 0, SUBSCRIBED = 1, LEGACY = 2, INSTALLED = 4, UPDATE = 8, DOWNLOADING = 16, PENDING = 32}
+
+@onready var item_root := $WorkshopItem
+@onready var title := item_root.get_node(\"Title\")
+@onready var description := item_root.get_node(\"Description\")
+
+@onready var upvote := item_root.get_node(\"HBoxContainer/Upvote\")
+@onready var upvotes_text := item_root.get_node(\"HBoxContainer/UpvotesText\")
+@onready var downvote := item_root.get_node(\"HBoxContainer/Downvote\")
+@onready var downvotes_text := item_root.get_node(\"HBoxContainer/DownvotesText\")
+@onready var favorite_button := item_root.get_node(\"HBoxContainer/Favorite\")
+
+@onready var subscribe_button := item_root.get_node(\"Bottom/Subscribe\")
+@onready var downloader := item_root.get_node(\"Download\")
+@onready var preview := item_root.get_node(\"ColorRect/MarginContainer/Preview\")
+
+@onready var empty := $Empty
+
+var id: int
+var subscribed: bool
+var need_load: int
+
+var select: Vector2
+
+func _ready() -> void:
+	SteamAPI.singleton.connect(\"get_item_vote_result\", Callable(self, \"on_vote_result\"))
+	SteamAPI.connect(\"map_downloaded\", Callable(self, \"on_map_downloaded\"))
+	set_selected(false)
+	set_process(false)
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed(\"ui_down\") and select.y < 2:
+		select.y += 1
+		refresh_select()
+	elif Input.is_action_just_pressed(\"ui_up\") and select.y > 0:
+		select.y -= 1
+		refresh_select()
+	elif Input.is_action_just_pressed(\"ui_right\") and select.x < 2:
+		select.x += 1
+		refresh_select()
+	elif Input.is_action_just_pressed(\"ui_left\") and select.x > 0:
+		select.x -= 1
+		refresh_select()
+
+func grab_controls():
+	set_process(true)
+	select = Vector2(0, 1)
+	refresh_select()
+
+func refresh_select():
+	propagate_call(\"release_focus\")
+	if select.y == 0:
+		if select.x == 0:
+			upvote.grab_focus()
+		elif select.x == 1:
+			downvote.grab_focus()
+		elif select.x == 2:
+			favorite_button.grab_focus()
+	elif select.y == 1:
+		subscribe_button.grab_focus()
+	elif select.y == 2:
+		$WorkshopItem/Bottom/OpenWorkshop.grab_focus()
+
+func clear():
+	id = -1
+	need_load = 0
+	item_root.hide()
+	empty.show()
+	empty.text = \"Empty\"
+	upvote.set_pressed_no_signal(false)
+	downvote.set_pressed_no_signal(false)
+	subscribe_button.disabled = false
+
+func set_item(data: Dictionary, preview_path: String, cached: bool):
+	empty.text = \"Loading...\"
+	
+	id = data.file_id
+	subscribed = bool(SteamAPI.singleton.getItemState(id) & SUBSCRIBED)
+	refresh_subscribe()
+	
+	need_load += 1
+	SteamAPI.get_vote_status(id)
+	
+	if id in SteamAPI.favorited:
+		favorite_button.set_pressed_no_signal(true)
+	else:
+		favorite_button.set_pressed_no_signal(false)
+	
+	var nick := SteamAPI.get_nick(data.steam_id_owner)
+	if nick == \"\":
+		need_load += 1
+		get_tree().create_timer(0.5).connect(\"timeout\", Callable(self, \"reload_nick\").bind(data.title, data.steam_id_owner))
+	else:
+		title.text = \"%s by %s\" % [data.title, nick]
+	
+	description.text = data.description
+	upvotes_text.text = str(data.votes_up)
+	downvotes_text.text = str(data.votes_down)
+	subscribe_button.disabled = false
+	
+	if cached:
+		var f := File.new()
+		if Utils.safe_open(f, get_preview_path(), f.READ):
+			download_complete(-9999, 0, PackedStringArray(), PackedByteArray())
+			return
+	
+	need_load += 1
+	downloader.download_file = get_preview_path()
+	downloader.request(preview_path)
+
+func reload_nick(tit: String, author: int):
+	title.text = \"%s by %s\" % [tit, SteamAPI.get_nick(author)]
+	sub_load()
+
+func on_subscribe() -> void:
+	if subscribed:
+		SteamAPI.unsubscribe_map(id)
+	else:
+		SteamAPI.subscribe_map(id)
+		subscribe_button.disabled = true
+	subscribed = not subscribed
+	refresh_subscribe()
+
+func refresh_subscribe():
+	subscribe_button.text = \"Unsubscribe\" if subscribed else \"Subscribe\"
+
+func download_complete(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+	preview.texture = SteamAPI.load_preview_image(get_preview_path())
+	
+	if result != -9999:
+		sub_load()
+
+func sub_load():
+	need_load -= 1
+	if need_load == 0:
+		empty.hide()
+		item_root.show()
+
+func get_preview_path() -> String:
+	return str(\"user://workshop/preview_cache/\", id)
+
+func on_vote_result(result: int, file_id: int, up: bool, down: bool, none: bool):
+	if result == 1 and file_id == id:
+		upvote.set_pressed_no_signal(up)
+		downvote.set_pressed_no_signal(down)
+		sub_load()
+
+func vote_up(vot):
+	if not vot:
+		upvote.set_pressed_no_signal(true)
+		return
+	
+	SteamAPI.singleton.setUserItemVote(id, true)
+	upvotes_text.text = change_text_value(upvotes_text.text, 1)
+	if downvote.pressed:
+		downvotes_text.text = change_text_value(downvotes_text.text, -1)
+	downvote.set_pressed_no_signal(false)
+
+func vote_down(vot):
+	if not vot:
+		downvote.set_pressed_no_signal(true)
+		return
+	
+	SteamAPI.singleton.setUserItemVote(id, false)
+	downvotes_text.text = change_text_value(downvotes_text.text, 1)
+	if upvote.pressed:
+		upvotes_text.text = change_text_value(upvotes_text.text, -1)
+	upvote.set_pressed_no_signal(false)
+
+func change_text_value(text: String, change: int) -> String:
+	return str(int(text) + change)
+
+func change_favorite(fav) -> void:
+	if fav:
+		SteamAPI.singleton.addItemToFavorites(SteamAPI.APP_ID, id)
+		SteamAPI.favorited.append(id)
+	else:
+		SteamAPI.singleton.removeItemFromFavorites(SteamAPI.APP_ID, id)
+		SteamAPI.favorited.erase(id)
+
+func open_workshop():
+	OS.shell_open(\"https://steamcommunity.com/sharedfiles/filedetails/?id=\" + str(id))
+
+func set_selected(selected: bool):
+	add_theme_stylebox_override(\"panel\", style_selected if selected else style_normal)
+
+func on_map_downloaded(map: Dictionary):
+	if map.id == id:
+		subscribe_button.disabled = false
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0.160784, 0.160784, 0.160784, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0.48, 0.48, 0.48, 1 )
+
+[node name="WorkshopItem" type="PanelContainer"]
+offset_right = 594.0
+offset_bottom = 600.0
+custom_minimum_size = Vector2( 600, 600 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+style_normal = SubResource( 2 )
+style_selected = SubResource( 3 )
+
+[node name="WorkshopItem" type="VBoxContainer" parent="."]
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 593.0
+offset_bottom = 593.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="WorkshopItem"]
+offset_right = 586.0
+offset_bottom = 23.0
+theme_override_fonts/font = ExtResource( 7 )
+text = "Name"
+align = 1
+valign = 1
+
+[node name="ColorRect" type="ColorRect" parent="WorkshopItem"]
+offset_top = 27.0
+offset_right = 586.0
+offset_bottom = 327.0
+custom_minimum_size = Vector2( 580, 300 )
+color = Color( 0.14, 0.14, 0.14, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="WorkshopItem/ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_bottom = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Preview" type="TextureRect" parent="WorkshopItem/ColorRect/MarginContainer"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 576.0
+offset_bottom = 290.0
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="WorkshopItem"]
+offset_top = 331.0
+offset_right = 586.0
+offset_bottom = 395.0
+theme_override_constants/separation = 20
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Upvote" type="TextureButton" parent="WorkshopItem/HBoxContainer"]
+offset_left = 138.0
+offset_right = 164.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 26, 0 )
+toggle_mode = true
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 1 )
+expand = true
+stretch_mode = 3
+
+[node name="UpvotesText" type="Label" parent="WorkshopItem/HBoxContainer"]
+offset_left = 184.0
+offset_right = 260.0
+offset_bottom = 64.0
+size_flags_vertical = 1
+theme_override_colors/font_color = Color( 0, 0.956863, 0.678431, 1 )
+text = "100"
+valign = 1
+
+[node name="Downvote" type="TextureButton" parent="WorkshopItem/HBoxContainer"]
+offset_left = 280.0
+offset_right = 306.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 26, 0 )
+toggle_mode = true
+texture_normal = ExtResource( 6 )
+texture_pressed = ExtResource( 2 )
+expand = true
+stretch_mode = 3
+
+[node name="DownvotesText" type="Label" parent="WorkshopItem/HBoxContainer"]
+offset_left = 326.0
+offset_right = 402.0
+offset_bottom = 64.0
+size_flags_vertical = 1
+theme_override_colors/font_color = Color( 1, 0.207843, 0, 1 )
+text = "100"
+valign = 1
+
+[node name="Favorite" type="TextureButton" parent="WorkshopItem/HBoxContainer"]
+offset_left = 422.0
+offset_right = 448.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 26, 0 )
+toggle_mode = true
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 3 )
+expand = true
+stretch_mode = 3
+
+[node name="Description" type="Label" parent="WorkshopItem"]
+offset_top = 399.0
+offset_right = 586.0
+offset_bottom = 522.0
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource( 7 )
+text = "Description"
+autowrap = true
+
+[node name="Bottom" type="VBoxContainer" parent="WorkshopItem"]
+offset_top = 526.0
+offset_right = 586.0
+offset_bottom = 586.0
+theme_override_constants/separation = 2
+
+[node name="Subscribe" type="Button" parent="WorkshopItem/Bottom"]
+offset_left = 209.0
+offset_right = 376.0
+offset_bottom = 29.0
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource( 7 )
+text = "Subscribe"
+
+[node name="OpenWorkshop" type="Button" parent="WorkshopItem/Bottom"]
+offset_left = 149.0
+offset_top = 31.0
+offset_right = 437.0
+offset_bottom = 60.0
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource( 7 )
+text = "Open in Workshop"
+
+[node name="Download" type="HTTPRequest" parent="WorkshopItem"]
+
+[node name="Empty" type="Label" parent="."]
+visible = false
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 607.0
+offset_bottom = 593.0
+size_flags_vertical = 1
+text = "Empty"
+align = 1
+valign = 1
+
+[connection signal="toggled" from="WorkshopItem/HBoxContainer/Upvote" to="." method="vote_up"]
+[connection signal="toggled" from="WorkshopItem/HBoxContainer/Downvote" to="." method="vote_down"]
+[connection signal="toggled" from="WorkshopItem/HBoxContainer/Favorite" to="." method="change_favorite"]
+[connection signal="pressed" from="WorkshopItem/Bottom/Subscribe" to="." method="on_subscribe"]
+[connection signal="pressed" from="WorkshopItem/Bottom/OpenWorkshop" to="." method="open_workshop"]
+[connection signal="request_completed" from="WorkshopItem/Download" to="." method="download_complete"]

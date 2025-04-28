@@ -1,0 +1,105 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.gdshader" type="Shader" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Map/PixelMapPickables.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Resources/Materials/FloorMaterial2.tres" type="Material" id=6]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=7]
+[ext_resource path="res://Nodes/Effects/SmokeBigFog.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Objects/Helper/BloodSpawner.gd" type="Script" id=9]
+[ext_resource path="res://Resources/Materials/TerrainMaterials.tres" type="PixelMapMaterialData" id=10]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Nodes/Effects/DarknessByDistance.tscn" type="PackedScene" id=20]
+[ext_resource path="res://Resources/Terrain/Images/FloorGround.png" type="Texture2D" id=21]
+[ext_resource path="res://Resources/Terrain/Images/FloorDirt.jpg" type="Texture2D" id=22]
+[ext_resource path="res://Resources/Terrain/Images/FloorSteel.png" type="Texture2D" id=23]
+[ext_resource path="res://Resources/Terrain/Images/FloorSandy.png" type="Texture2D" id=24]
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = ExtResource( 1 )
+shader_param/resolution1 = 40.0
+shader_param/resolution2 = 60.0
+shader_param/resolution3 = 100.0
+shader_param/resolution4 = 32.0
+shader_param/hsvoffset1 = 0.513
+shader_param/hsvsaturation1 = -0.289
+shader_param/hsvlight1 = -0.093
+shader_param/hsvoffset2 = 0.459
+shader_param/hsvsaturation2 = -0.211
+shader_param/hsvlight2 = -0.134
+shader_param/hsvoffset3 = 0.01
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = -0.891
+shader_param/hsvsaturation4 = -0.741
+shader_param/hsvlight4 = 0.0
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 21 )
+shader_param/texture2 = ExtResource( 22 )
+shader_param/texture3 = ExtResource( 23 )
+shader_param/texture4 = ExtResource( 24 )
+
+[sub_resource type="PixelMapMaterialData" id=1]
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 7 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+z_index = 500
+z_as_relative = false
+material_data = ExtResource( 10 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, null, null, null, null ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="PixelMapPickables" parent="PixelMap" instance=ExtResource( 5 )]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 4 )]
+ambient_color = Color( 0.128, 0.126, 0.15, 1 )
+
+[node name="Smoke" parent="PixelMap" instance=ExtResource( 8 )]
+position = Vector2( -547.86, -1757.26 )
+scale = Vector2( 4386, 3027 )
+
+[node name="DarknessByDistance" parent="PixelMap" instance=ExtResource( 20 )]
+visible = false
+
+[node name="BloodSpawner" type="Node2D" parent="PixelMap"]
+unique_name_in_owner = true
+script = ExtResource( 9 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 5 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 1 )
+debug_flags = 4
+script = ExtResource( 3 )
+textures = [ null, null, null, null ]
+
+[node name="Floor2" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 6 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 1 )
+debug_flags = 4
+script = ExtResource( 3 )
+default_color = Color( 0, 0, 0, 0 )
+textures = [ null, null, null, null ]
+layer = 2

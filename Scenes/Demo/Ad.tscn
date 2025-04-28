@@ -1,0 +1,184 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Resources/Misc/DarkLabel.tres" type="StyleBox" id=1]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_summary_title.tres" type="FontFile" id=2]
+[ext_resource path="res://Scenes/Title/Background.png" type="Texture2D" id=3]
+[ext_resource path="res://Scenes/Demo/ss_5b715e9c9cc356e14efe70dc78d25e4500aaca62.1920x1080.jpg" type="Texture2D" id=4]
+[ext_resource path="res://Scenes/Demo/ss_1b71bd57fdace5ef1c8707cd7e1bb32b428f7f49.1920x1080.jpg" type="Texture2D" id=5]
+[ext_resource path="res://Scenes/Demo/ss_e8512e5b71999013f2f7fd0b1bd84cd912b1bae2.1920x1080.jpg" type="Texture2D" id=6]
+[ext_resource path="res://Scenes/Demo/ss_8f14ba33cfd2ed77f5ed3a273c06835ec512883b.1920x1080.jpg" type="Texture2D" id=7]
+[ext_resource path="res://Scenes/Demo/ss_affabd438a659f5de4d9c1fb4b4e6b9d94384ed7.1920x1080.jpg" type="Texture2D" id=8]
+[ext_resource path="res://Scenes/Demo/ss_29a7b346da85d8a3465b5cb8f904e9e4e4881db6.1920x1080.jpg" type="Texture2D" id=9]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_hellotext_title.tres" type="FontFile" id=10]
+[ext_resource path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" type="Script" id=11]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends TextureRect
+
+func _ready() -> void:
+	$\"%Button\".grab_focus()
+
+func buy() -> void:
+	if OS.has_feature(\"gog\"):
+		OS.shell_open(\"https://www.gog.com/game/lumencraft?utm_source=Lumencraft&utm_medium=ingame&utm_campaign=demo\")
+	elif OS.has_feature(\"epic\"):
+		OS.shell_open(\"https://store.epicgames.com/pl/p/lumencraft-abc105?utm_source=Lumencraft&utm_medium=ingame&utm_campaign=demo\")
+	else:
+		OS.shell_open(\"https://store.steampowered.com/app/1713810?utm_source=Lumencraft&utm_medium=ingame&utm_campaign=demo#game_area_purchase\")
+
+func exit() -> void:
+	if Save.campaign:
+		var loading = preload(\"res://Scenes/Campaign/gnidaoLrotavelE.tscn\").instantiate()
+		Utils.add_child(loading)
+		loading.start()
+		Utils.set_meta(\"loading_background\", loading)
+		
+		queue_free()
+		Save.campaign_cleanup()
+		Game.start_map(\"res://Maps/Campaign/Hub.tscn\")
+	else:
+		get_tree().change_scene_to_file(Const.TITLE_SCENE)
+"
+
+[node name="Summary" type="TextureRect"]
+self_modulate = Color( 0.25098, 0.25098, 0.25098, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 3 )
+expand = true
+script = SubResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Screens" type="GridContainer" parent="CenterContainer"]
+offset_top = 480.0
+offset_right = 3840.0
+offset_bottom = 1680.0
+custom_minimum_size = Vector2( 3840, 1200 )
+theme_override_constants/v_separation = 16
+columns = 3
+
+[node name="Ss2Fdee09Ce15F6415F8Fe62F5E976E9C9D13Ce7D21920X1080" type="TextureRect" parent="CenterContainer/Screens"]
+offset_right = 1278.0
+offset_bottom = 592.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 5 )
+expand = true
+stretch_mode = 6
+
+[node name="SsE33Ee89736D8434Daa132Dd2Ed709396163A1Ddb1920X1080" type="TextureRect" parent="CenterContainer/Screens"]
+offset_left = 1282.0
+offset_right = 2559.0
+offset_bottom = 592.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6
+
+[node name="Ss54286D609Dd02144D41028Dc95635219B4Ca0B9b1920X1080" type="TextureRect" parent="CenterContainer/Screens"]
+offset_left = 2563.0
+offset_right = 3840.0
+offset_bottom = 592.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Ss292C42F6D19A31E7Fc46Cd2Ac4F05E4B8999Cde21920X1080" type="TextureRect" parent="CenterContainer/Screens"]
+offset_top = 608.0
+offset_right = 1278.0
+offset_bottom = 1200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 6
+
+[node name="SsBe2Ae202Aa1Beaabf4F825686B927E8633Df6Fb41920X1080" type="TextureRect" parent="CenterContainer/Screens"]
+offset_left = 1282.0
+offset_top = 608.0
+offset_right = 2559.0
+offset_bottom = 1200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Ss8B5Ebca3Bc88871C3276Fadca55573439Bce1A2f1920X1080" type="TextureRect" parent="CenterContainer/Screens"]
+offset_left = 2563.0
+offset_top = 608.0
+offset_right = 3840.0
+offset_bottom = 1200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+expand = true
+stretch_mode = 6
+
+[node name="Summary" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -960.0
+offset_top = 159.0
+offset_right = 960.0
+offset_bottom = 334.0
+theme_override_fonts/font = ExtResource( 2 )
+text = "Thank you for playing the demo!"
+align = 1
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1341.0
+offset_top = -498.0
+offset_right = 1341.0
+offset_bottom = 499.0
+theme_override_fonts/font = ExtResource( 10 )
+theme_override_styles/normal = ExtResource( 1 )
+text = "Buy the full version to get access to more content, including full 10 hours of campaign, procedurally generated maps and player-created missions."
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -262.0
+offset_bottom = -104.0
+
+[node name="Button" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 762.0
+offset_right = 1155.0
+offset_bottom = 158.0
+size_flags_horizontal = 6
+theme_type_variation = "main_menu_button"
+text = "Buy Now!"
+script = ExtResource( 11 )
+
+[node name="Button2" type="Button" parent="HBoxContainer"]
+offset_left = 2722.0
+offset_right = 3040.0
+offset_bottom = 158.0
+size_flags_horizontal = 6
+theme_type_variation = "main_menu_button"
+text = "Later"
+script = ExtResource( 11 )
+
+[connection signal="pressed" from="HBoxContainer/Button" to="." method="buy"]
+[connection signal="pressed" from="HBoxContainer/Button2" to="." method="exit"]

@@ -1,0 +1,487 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Scripts/loading_lumen_mesh.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/loading_circle_yellow_477x477.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/loading_circle_black_477x477.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Anarchy/3d/lumen_pack_A_Low_Poly_Rock_Mesh016.mesh" type="ArrayMesh" id=4]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=5]
+[ext_resource path="res://Resources/Misc/DarkLabel.tres" type="StyleBox" id=6]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+@onready var progress := $\"%Progress\" as TextureProgressBar
+
+enum {SCENE, MAP, SAVE}
+
+var mode: int
+var started: int = 2
+var finished: bool
+
+var load_path
+var loader
+var instance: Map
+var pickables_to_spawn: Array
+
+signal finished(instance)
+
+func _ready() -> void:
+	var loading_background = Utils.get_meta(\"loading_background\", false)
+	if loading_background:
+		take_over_background(loading_background)
+		Utils.remove_meta(\"loading_background\")
+	
+	$\"%HintText\".text = str(tr(\"Hint\"), \": \", tr(Const.HINTS[randi() % Const.HINTS.size()]))
+	
+	if load_path:
+		if load_path is MapFile:
+			mode = MAP
+		elif load_path.get_extension() == \"tscn\":
+			mode = SCENE
+		elif load_path.get_extension() == \"lcmap\":
+			mode = MAP
+		elif load_path.get_extension() == \"lcsave\":
+			mode = SAVE
+			Save.current_map = Save.data.current_map
+	
+	set_process_input(false)
+	set_process(false)
+	get_tree().paused = true
+
+func _process(delta: float) -> void:
+	if started > 1:
+		started -= 1
+		return
+	elif started == 1:
+		match mode:
+			SCENE:
+				loader = ResourceLoader.load_threaded_request(load_path)
+				assert(loader, \"Mapy nie znaleziono\")
+				progress.max_value = loader.get_stage_count()
+			MAP:
+				if load_path is MapFile:
+					loader = load_path
+				else:
+					loader = MapFile.new()
+					loader.load_from_file(load_path)
+				
+				if loader.error:
+					Utils.set_meta(\"map_error_hack\", loader.error)
+					get_tree().change_scene_to_file(\"res://Scenes/MapError.tscn\")
+					return
+				
+				instance = load(\"res://Scenes/EmptyMap.tscn\").instantiate()
+				progress.max_value = loader.objects.size() + 3
+				progress.value = 1
+			SAVE:
+				loader = load(\"res://Scripts/Data/SaveFile.gd\").new()
+				loader.load_from_file(load_path)
+				instance = load(\"res://Scenes/EmptyMap.tscn\").instantiate()
+				progress.max_value = loader.map_data.size() + 3
+				progress.value = 1
+		started -= 1
+	
+	if finished:
+		return
+	
+	match mode:
+		SCENE:
+			if loader.poll() != ERR_FILE_EOF:
+				progress.value = loader.get_stage()
+			else:
+				finished = true
+				progress.value = progress.max_value
+				instance = loader.get_resource().instantiate()
+				call_deferred(\"finish\")
+		MAP:
+			if Utils.async_resource_loader and not Utils.async_resource_loader.is_finished:
+				Utils.async_resource_loader.progress()
+				if delta > 0:
+					_process(delta - get_process_delta_time() * 0.1)
+				return
+			
+			progress.value += 1
+			if progress.value == 2:
+				instance.pixel_data_override = loader.pixel_data
+				instance.floor_data_override = loader.floor_data
+				instance.floor_data2_override = loader.floor_data2
+				
+				if \"bedrock_compat\" in loader.terrain_config: # compat
+					instance.get_node(\"PixelMap\").bedrock_compat_override = load(str(\"res://Resources/Terrain/TerrainTextures/\", loader.terrain_config.bedrock_compat, \".tres\"))
+				instance.get_node(\"PixelMap\").set_custom_material_list(loader.terrain_config.terrain)
+				instance.get_node(\"Floor\").set_texture_list(loader.terrain_config.lower_floor)
+				instance.get_node(\"Floor2\").set_texture_list(loader.terrain_config.upper_floor)
+			elif progress.value < progress.max_value:
+				var object: Dictionary = loader.objects[progress.value - 3]
+				EditorObject.instantiate(object, instance, {pickables_to_spawn = pickables_to_spawn}, true)
+				
+				if delta > 0:
+					_process(delta - get_process_delta_time() * 0.1)
+			else:
+				instance.get_node(\"PixelMap/MapDarkness\").ambient_color = loader.darkness_color
+				if not loader.enable_fog:
+					instance.connect(\"ready\", Callable(get_tree(), \"call_group\").bind(\"fog_of_war\", \"hide\"))
+				instance.wave_manager.set_custom_data(loader.wave_data)
+				instance.start_config = loader.start_config
+				Utils.game.extra_turrets += loader.extra_turret_limit
+				if loader.resource_rate != 1.0:
+					for id in instance.ResourceSpawnRateModifier:
+						instance.ResourceSpawnRateModifier[id] = loader.resource_rate
+				
+				if not loader.buildings_drop_resources:
+					Utils.game.sandbox_options.salvage_buildings = false
+				
+				var custom_objective = load(\"res://Nodes/Map/CustomObjective.gd\").new()
+				custom_objective.objectives = loader.objective_data
+				instance.add_child(custom_objective)
+				
+				if not loader.events.is_empty():
+					var custom_events = load(\"res://Nodes/Map/CustomEvents.gd\").new()
+					custom_events.events = loader.events
+					instance.add_child(custom_events)
+				
+				finished = true
+				call_deferred(\"finish\")
+				
+				await instance.ready
+				
+				if loader.terrain_config.get(\"alt_floor\", false):
+					instance.get_node(\"Floor\").material.set_shader_parameter(\"use_black_as_alpha\", true)
+					instance.get_node(\"Floor\").custom_material = true
+#					instance.get_node(@\"Floor2\").material.set_shader_param(\"black_as_empty\", true)
+#					instance.get_node(@\"Floor2\").custom_material = true
+		SAVE:
+			progress.value += 1
+			if progress.value == 2:
+				instance.event_object_list.resize(loader.map_data.get(\"_event_object_count\", 0))
+				instance.pixel_data_override = loader.pixel_data
+				instance.floor_data_override = loader.floor_data
+				instance.floor_data2_override = loader.floor_data2
+				instance.fog_data_override = loader.fog_data
+			elif progress.value < progress.max_value:
+				var keys: Array = loader.get_meta(\"key_cache\", [])
+				if keys.is_empty():
+					keys = loader.map_data.keys()
+					loader.set_meta(\"key_cache\", keys)
+				
+				var header: String = keys[progress.value - 3]
+				var data = loader.map_data[header]
+				
+				match header:
+					\"_exit_time\", \"_connections\", \"_event_object_count\":
+						pass
+					\"_darkness_color\":
+						instance.get_node(\"PixelMap/MapDarkness\").ambient_color = data
+					\"_pickables\":
+						for pickable in data:
+							pickables_to_spawn.append(pickable)
+					\"_wave_data\":
+						instance.wave_manager._set_save_data(data)
+					\"_building_queue\":
+						Utils.game.load_building_queue(instance, data)
+					\"_objective\":
+						Utils.game.connect(\"map_initialized\", Callable(Utils.game.ui, \"set_objective\").bind(data.id, data.text, true))
+					\"_pixel_map_terrains\":
+						instance.get_node(\"PixelMap\")._set_save_data(data)
+					\"_pixel_map_floors\":
+						instance.get_node(\"Floor\")._set_save_data(data)
+					\"_pixel_map_floors2\":
+						instance.get_node(\"Floor2\")._set_save_data(data)
+					\"_darkness_by_distance_data\":
+						instance.get_node(\"PixelMap/DarknessByDistance\")._set_save_data(data)
+					\"_enable_fow\":
+						instance.connect(\"ready\", Callable(self, \"enable_fog_of_war\").bind(instance, data))
+					\"_global_swarm_data\":
+						instance.loaded_swarm_data = data
+					_:
+						loader.load_map_node(instance, header)
+				
+				if delta > 0:
+					_process(delta - get_process_delta_time() * 0.1)
+			else:
+				instance.from_save = true
+				if \"_darkness_color\" in loader.map_data:
+					instance.get_node(\"PixelMap/MapDarkness\").ambient_color = loader.map_data._darkness_color
+				
+				Save._set_save_data(loader.savegame_data.save)
+				Utils.game._set_save_data(loader.savegame_data.game)
+				SteamAPI.achievements._set_save_data(loader.savegame_data.get(\"achievements\",{}))
+				
+				for player in Utils.game.players:
+					var idx: int = Utils.game.players.find(player)
+					if idx < Save.data.player_data.size():
+						player._set_save_data(Save.data.player_data[idx])
+				
+				if Save.map_completed:
+					Utils.game.ui.menu.get_node(\"%Finish\").show()
+				
+				progress_time(Save.game_time - loader.map_data._exit_time)
+				
+				for connection_data in loader.map_data._connections:
+					var from = instance.get_node_or_null(connection_data.source)
+					var to = instance.get_node_or_null(connection_data.target)
+					
+					if not from or not to:
+						push_error(\"Failed to restore connection %s from %s to %s\" % [connection_data.signal, connection_data.source, connection_data.target])
+						continue
+					
+					if not from.is_connected(connection_data.signal, Callable(to, connection_data.method)):
+						from.connect(connection_data.signal, Callable(to, connection_data.method).bind(), connection_data.flags)
+				
+				finished = true
+				call_deferred(\"finish\")
+
+func enable_fog_of_war(map: Map, enable: bool):
+	map.get_node(\"PixelMap/FogOfWar\").visible = enable
+
+func finish():
+	emit_signal(\"finished\", instance)
+	
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	
+	if not get_tree().get_nodes_in_group(\"__wave_enemies__\").is_empty():
+		Music.swap_track(\"wave\")
+	
+	var label2 := $\"%WhatIsGoingText\" as Label
+	label2.text = \"Press any key to continue\"
+	
+	var seq := create_tween().set_loops().set_process_mode(Tween.TWEEN_PAUSE_PROCESS)
+	seq.tween_interval(1)
+	seq.tween_property(label2, \"modulate:a\", 0.0, 0.0)
+	seq.tween_interval(0.3)
+	seq.tween_property(label2, \"modulate:a\", 1.0, 0.0)
+	
+	finished = true
+	set_process_input(true)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey or event is InputEventJoypadButton or event is InputEventMouseButton:
+		if event.pressed:
+			queue_free()
+			get_tree().create_timer(0.2).connect(\"timeout\", Callable(get_tree(), \"set_pause\").bind(false))
+
+func progress_time(time: int):
+	if time == 0:
+		return
+	
+	if not instance.is_inside_tree():
+		await instance.tree_entered
+	await get_tree().idle_frame
+	
+	get_tree().call_group(\"timed_nodes\", \"progress_time\", time)
+
+func _exit_tree() -> void:
+	if not instance:
+		return
+	
+	Utils.clear_async()
+	
+	var pickables: PixelMapPickables = instance.get_node(\"PixelMap/PixelMapPickables\")
+	for pickable in pickables_to_spawn:
+		if pickable.get(\"pointed\", false):
+			pickables.spawn_premium_pickable_nice(pickable.position, pickable.type, pickable.velocity)
+		else:
+			pickables.spawn_pickable_nice(pickable.position, pickable.type, pickable.velocity)
+
+func take_over_background(background: Node):
+	$Background.queue_free()
+	if background.get_parent():
+		background.get_parent().remove_child(background)
+	$Background2.show()
+	$\"%SubViewport\".add_child(background)
+	$\"%SubViewport\".render_target_update_mode = SubViewport.UPDATE_ALWAYS
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_ENTER_TREE or what == Control.NOTIFICATION_THEME_CHANGED:
+		$\"%LoadingLumenMesh\".get_active_material(0).albedo_color = Const.UI_MAIN_COLOR
+		$\"%Progress\".modulate = Const.UI_MAIN_COLOR
+"
+
+[sub_resource type="StandardMaterial3D" id=2]
+flags_unshaded = true
+albedo_color = Color( 1, 0.721569, 0, 1 )
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("SubViewport/LoadingLumenMesh:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "react1"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("SubViewport/LoadingLumenMesh:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.2, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 180, 0, 0 ), Vector3( 0, 0, 0 ) ]
+}
+
+[node name="CanvasLayer" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+script = SubResource( 1 )
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Background2" type="SubViewportContainer" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="SubViewport" type="SubViewport" parent="Background2"]
+unique_name_in_owner = true
+size = Vector2( 3840, 2160 )
+handle_input_locally = false
+render_target_update_mode = 0
+gui_disable_input = true
+
+[node name="Loading" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Center" type="CenterContainer" parent="Loading"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Loading/Center"]
+offset_left = 1633.0
+offset_top = 897.0
+offset_right = 2207.0
+offset_bottom = 1263.0
+
+[node name="Control" type="Control" parent="Loading/Center/VBoxContainer"]
+offset_right = 574.0
+
+[node name="Control" type="Control" parent="Loading/Center/VBoxContainer/Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+scale = Vector2( 0.6, 0.6 )
+
+[node name="LoadingMesh" type="SubViewportContainer" parent="Loading/Center/VBoxContainer/Control/Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+
+[node name="SubViewport" type="SubViewport" parent="Loading/Center/VBoxContainer/Control/Control/LoadingMesh"]
+size = Vector2( 300, 300 )
+own_world = true
+transparent_bg = true
+handle_input_locally = false
+msaa = 2
+render_target_update_mode = 3
+gui_disable_input = true
+
+[node name="Camera3D" type="Camera3D" parent="Loading/Center/VBoxContainer/Control/Control/LoadingMesh/SubViewport"]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 135.438, 0, 6.33082 )
+current = true
+
+[node name="LoadingLumenMesh" type="MeshInstance3D" parent="Loading/Center/VBoxContainer/Control/Control/LoadingMesh/SubViewport"]
+unique_name_in_owner = true
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 134.623, 0, -1.89585 )
+mesh = ExtResource( 4 )
+material/0 = SubResource( 2 )
+script = ExtResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Loading/Center/VBoxContainer/Control/Control/LoadingMesh"]
+anims/RESET = SubResource( 3 )
+anims/react1 = SubResource( 4 )
+
+[node name="Control2" type="Control" parent="Loading/Center/VBoxContainer/Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+scale = Vector2( 0.5, 0.5 )
+
+[node name="Progress" type="TextureProgressBar" parent="Loading/Center/VBoxContainer/Control/Control2"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -238.5
+offset_top = -238.5
+offset_right = 238.5
+offset_bottom = 238.5
+texture_under = ExtResource( 3 )
+texture_progress = ExtResource( 2 )
+fill_mode = 4
+
+[node name="Spacing" type="Control" parent="Loading/Center/VBoxContainer"]
+offset_top = 4.0
+offset_bottom = 100.0
+custom_minimum_size = Vector2( 0, 96 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="WhatIsGoingText" type="Label" parent="Loading/Center/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 104.0
+offset_right = 574.0
+offset_bottom = 366.0
+theme_type_variation = "YellowLabel"
+theme_override_fonts/font = ExtResource( 5 )
+theme_override_styles/normal = ExtResource( 6 )
+text = "Entering Map..."
+
+[node name="HintText" type="Label" parent="Loading"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -438.0
+offset_top = -192.0
+offset_right = 438.0
+offset_bottom = -128.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource( 5 )
+theme_override_styles/normal = ExtResource( 6 )
+text = "HINT: Try something at somewhere..."
+align = 1

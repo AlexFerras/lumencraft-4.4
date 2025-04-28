@@ -1,0 +1,106 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/UI/SeismicMap/raydar_noise512.png" type="Texture2D" id=1]
+
+[sub_resource type="Shader" id=7]
+code = "shader_type canvas_item;
+uniform sampler2D background_texture;
+
+/*
+Godot 3 2D CRT Shader.
+A 2D shader for Godot 3 simulating a CRT..
+
+Author: hiulit
+Repository: https://github.com/hiulit/Godot-3-2D-CRT-Shader
+Issues: https://github.com/hiulit/Godot-3-2D-CRT-Shader/issues
+License: MIT https://github.com/hiulit/Godot-3-2D-CRT-Shader/blob/master/LICENSE
+*/
+
+const float PI = 3.14159265359;
+
+
+uniform bool show_curvature = true;
+uniform float curvature_x_amount : hint_range(1.0, 150.0, 0.01) = float(6.0); 
+uniform float curvature_y_amount : hint_range(1.0, 150.0, 0.01) = float(4.0);
+uniform bool show_horizontal_scan_lines = true;
+uniform float horizontal_scan_lines_amount : hint_range(0.0, 1000.0, 0.1) = 1000.0;
+uniform float horizontal_scan_lines_opacity : hint_range(0.0, 1.0, 0.01) = 1.0;
+uniform bool show_vertical_scan_lines = false;
+uniform float vertical_scan_lines_amount : hint_range(0.0, 3200.0, 0.1) = 320.0;
+uniform float vertical_scan_lines_opacity : hint_range(0.0, 1.0, 0.01) = 1.0;
+uniform float boost : hint_range(1.0, 20.0, 0.01) = 1.2;
+
+
+vec2 uv_curve(vec2 uv) {
+	if (show_curvature) {
+		uv = uv * 2.0 - 1.0;
+		vec2 offset = abs(uv.yx) / vec2(curvature_x_amount, curvature_y_amount);
+		uv = uv + uv * offset * offset;
+		uv = uv * 0.5 + 0.5;
+	}
+
+	return uv;
+}
+
+void fragment() {
+
+	vec4 colory = texture(TEXTURE, UV); 
+//	vec4 noise = texture(background_texture, UV);
+	//colory.rgb += vec3(0.1) * (1.0-noise.a);
+//	colory.rgb *= (1.0-noise.a*0.7);
+	//colory.rgb += vec3(0.99, 0.49, 0.09) * noise.a * 0.50 ;
+	//colory.a = min(1.0, colory.a + noise.a * 0.2);
+	colory.a *= clamp(1.0 - pow(distance(UV, vec2(0.5, 0.5)) / (0.5),10.0), 0.0, 1.0);
+	COLOR = colory;
+	
+	
+	
+	
+	vec2 uv = uv_curve(UV);
+//	vec2 screen_uv = uv_curve(SCREEN_UV);
+	vec3 color = COLOR.rgb;
+
+	if (show_horizontal_scan_lines) {
+		float s = sin(uv.y * horizontal_scan_lines_amount * PI * 2.0);
+		s = (s * 0.5 + 0.5) * 0.9 + 0.1;
+		vec4 scan_line = vec4(vec3(pow(s, horizontal_scan_lines_opacity)), 1.0);
+		color *= scan_line.rgb;
+	}
+
+	if (show_vertical_scan_lines) {
+		float s = sin(uv.x * vertical_scan_lines_amount * PI * 2.0);
+		s = (s * 0.5 + 0.5) * 0.9 + 0.1;
+		vec4 scan_line = vec4(vec3(pow(s, vertical_scan_lines_opacity)), 1.0);
+		color *= scan_line.rgb;
+	}
+
+	if (show_horizontal_scan_lines || show_vertical_scan_lines) {
+		color *= boost;
+	}
+
+	COLOR.rgb = color;
+
+	
+	
+	
+	
+}
+
+
+
+
+"
+
+[resource]
+shader = SubResource( 7 )
+shader_param/show_curvature = true
+shader_param/curvature_x_amount = 3.0
+shader_param/curvature_y_amount = 4.0
+shader_param/show_horizontal_scan_lines = true
+shader_param/horizontal_scan_lines_amount = 100.0
+shader_param/horizontal_scan_lines_opacity = 0.3
+shader_param/show_vertical_scan_lines = false
+shader_param/vertical_scan_lines_amount = 128.0
+shader_param/vertical_scan_lines_opacity = 0.0
+shader_param/boost = 1.42
+shader_param/background_texture = ExtResource( 1 )

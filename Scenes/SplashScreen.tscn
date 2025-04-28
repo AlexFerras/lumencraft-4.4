@@ -1,0 +1,187 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_hellotext_title.tres" type="FontFile" id=2]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_hellotext.tres" type="FontFile" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+const wait_time = 0.1
+
+@export var timer = 5
+
+func _ready() -> void:
+	var cmds := OS.get_cmdline_args()
+	if not cmds.is_empty() and cmds[-1].get_extension() == \"lcmap\":
+		var data = {scene = cmds[-1]}
+		OS.set_environment(\"__run_data__\", var_to_str(data))
+		get_tree().change_scene_to_file(\"res://Tools/GameRunner.tscn\")
+		return
+	
+	Utils.log_message(\"Splash screen ready\")
+	
+	$\"ThankYou/PanelContainer/VBoxContainer/HelloText\".text = tr($\"ThankYou/PanelContainer/VBoxContainer/HelloText\".text)
+
+	if not Music.is_game_build():
+		await get_tree().idle_frame
+		await get_tree().idle_frame
+		get_tree().change_scene_to_file(Const.TITLE_SCENE)
+		return
+
+	if Save.config.demo_timer:
+		timer = 0
+	else:
+		Save.config.demo_timer = true
+		Save.save_config()
+
+func _input(event: InputEvent) -> void:
+	if timer<=0:
+		if event is InputEventKey or event is InputEventJoypadButton or event is InputEventMouseButton:
+			if event.pressed:
+				get_tree().create_timer(wait_time).connect(\"timeout\", Callable(self, \"end\"))
+				set_process_input(false)
+var just_once=true
+func end():
+	if just_once:
+		just_once=false
+		get_tree().change_scene_to_file(Const.TITLE_SCENE)
+
+func _physics_process(delta):
+	if timer <= 0:
+		set_physics_process(false)
+		$PressAny.text = \"Press any key to continue\"
+		$PressAny.add_theme_color_override(\"font_color\", Color.GREEN_YELLOW)
+	else:
+
+		timer -= delta
+		$PressAny.text = str(ceil(timer))
+		$PressAny.add_theme_color_override(\"font_color\", Color.WHITE)
+
+
+func _on_PressAny_gui_input(event):
+	if timer <= 0:
+		if event is InputEventKey or event is InputEventJoypadButton or event is InputEventMouseButton:
+			if event.pressed:
+				get_tree().create_timer(wait_time).connect(\"timeout\", Callable(self, \"end\"))
+				set_process_input(false)
+
+func _on_PressAny_mouse_entered():
+	if timer <= 0:
+		$PressAny.add_theme_color_override(\"font_color\", Color.GREEN_YELLOW)
+
+func _on_PressAny_mouse_exited():
+	if timer <= 0:
+		$PressAny.add_theme_color_override(\"font_color\", Color.WHITE)
+"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Label
+
+func _ready() -> void:
+	self_modulate = Const.UI_MAIN_COLOR
+"
+
+[node name="SplashScreen" type="ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+color = Color( 0, 0, 0, 1 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="ThankYou" type="CenterContainer" parent="."]
+offset_left = 72.0
+offset_top = 72.0
+offset_right = 3768.0
+offset_bottom = 2088.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="ThankYou"]
+offset_left = 584.0
+offset_top = 309.0
+offset_right = 3112.0
+offset_bottom = 1706.0
+theme_type_variation = "0001_brown_transp"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ThankYou/PanelContainer"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 2464.0
+offset_bottom = 1333.0
+custom_minimum_size = Vector2( 2400, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ThankYou" type="Label" parent="ThankYou/PanelContainer/VBoxContainer"]
+offset_right = 2400.0
+offset_bottom = 114.0
+theme_override_fonts/font = ExtResource( 2 )
+text = "THANK YOU!"
+script = SubResource( 2 )
+
+[node name="Spacing" type="Control" parent="ThankYou/PanelContainer/VBoxContainer"]
+offset_top = 118.0
+offset_bottom = 182.0
+custom_minimum_size = Vector2( 0, 64 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="HelloText" type="RichTextLabel" parent="ThankYou/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 186.0
+offset_right = 2400.0
+offset_bottom = 1066.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource( 3 )
+bbcode_enabled = true
+text = "Thanks for supporting us and playing [color=#a000ff]Lumencraft[/color] during Early Access!
+
+We believe our game will give you [color=#a000ff]a lot of fun[/color] for a long, long time. We are still working on it, so please forgive us some [color=#ff8080]random bugs[/color] and [color=#ff8080]report them[/color]. We plan to listen to our community and release updates frequently, at least once per month.
+
+Join our [color=#a000ff]Discord[/color] to be updated."
+text = "Thanks for supporting us and playing Lumencraft during Early Access!
+
+We believe our game will give you a lot of fun for a long, long time. We are still working on it, so please forgive us some random bugs and report them. We plan to listen to our community and release updates frequently, at least once per month.
+
+Join our Discord to be updated."
+fit_content_height = true
+scroll_active = false
+
+[node name="Spacing2" type="Control" parent="ThankYou/PanelContainer/VBoxContainer"]
+offset_top = 1070.0
+offset_bottom = 1134.0
+custom_minimum_size = Vector2( 0, 64 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="ProblemsText" type="Label" parent="ThankYou/PanelContainer/VBoxContainer"]
+offset_top = 1138.0
+offset_right = 2400.0
+offset_bottom = 1269.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource( 1 )
+text = "If you experience graphical problems, try pressing Alt+Enter to switch window mode or Ctrl+Shift+R to reset your config."
+valign = 1
+autowrap = true
+
+[node name="PressAny" type="Label" parent="."]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 753.0
+offset_bottom = 822.0
+mouse_filter = 0
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Press any key to continue"
+align = 1
+
+[connection signal="gui_input" from="PressAny" to="." method="_on_PressAny_gui_input"]
+[connection signal="mouse_entered" from="PressAny" to="." method="_on_PressAny_mouse_entered"]
+[connection signal="mouse_exited" from="PressAny" to="." method="_on_PressAny_mouse_exited"]

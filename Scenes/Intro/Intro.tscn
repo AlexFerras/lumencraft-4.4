@@ -1,0 +1,264 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Scenes/Intro/Screen2.png" type="Texture2D" id=1]
+[ext_resource path="res://Scenes/Intro/Screen1.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Fonts/Font30Outline2.tres" type="FontFile" id=3]
+[ext_resource path="res://Scenes/Intro/Screen3.png" type="Texture2D" id=4]
+[ext_resource path="res://Scenes/Intro/Screen4.png" type="Texture2D" id=5]
+[ext_resource path="res://Scenes/Intro/Screen5.png" type="Texture2D" id=6]
+[ext_resource path="res://Scenes/Intro/Screen6.png" type="Texture2D" id=7]
+[ext_resource path="res://Scenes/Intro/Screen7.png" type="Texture2D" id=8]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Node
+
+const STEP_TIME = 8.0
+const TRANSITION_TIME = 1
+
+var tween: Tween
+
+var current_text: Label
+var current_screen: Sprite2D
+
+func _ready() -> void:
+	Music.play_intro()
+	
+	for sprite in $Screens.get_children():
+		sprite.hide()
+	
+	for label in $Text.get_children():
+		label.hide()
+	
+	current_text = $Text/Text1
+	current_screen = $Screens/Screen1
+	
+	tween = create_tween()
+	
+	animate_text()
+	animate_screen(Vector2(0, -837))
+	transition_to(2)
+	animate_text()
+	animate_screen(Vector2(0, -855))
+	transition_to(3)
+	animate_text()
+	animate_screen(Vector2(-1260, 0))
+	transition_to(4)
+	animate_text()
+	animate_screen(Vector2(-1920, 0))
+	transition_to(5)
+	animate_text()
+	animate_screen(Vector2())
+	transition_to(6)
+	animate_text()
+	animate_screen(Vector2())
+	transition_to(7)
+	animate_text()
+	animate_screen(Vector2())
+
+func animate_text():
+	current_text.percent_visible = 0
+	current_text.show()
+	tween.tween_property(current_text, \"percent_visible\", 1.0, STEP_TIME)
+
+func animate_screen(to: Vector2):
+	current_screen.show()
+	tween.parallel().tween_property(current_screen, \"position\", to, STEP_TIME)
+
+func transition_to(idx: int):
+	tween.tween_interval(2)
+	tween.tween_property(current_text, \"modulate:a\", 0.0, TRANSITION_TIME)
+	tween.parallel().tween_property(current_screen, \"modulate:a\", 0.0, TRANSITION_TIME)
+	
+	current_text = $Text.get_node(str(\"Text\", idx))
+	current_text.modulate.a = 0
+	current_text.percent_visible = 0
+	tween.parallel().tween_property(current_text, \"modulate:a\", 1.0, TRANSITION_TIME)
+	
+	current_screen = $Screens.get_node(str(\"Screen\", idx))
+	current_screen.modulate.a = 0
+	tween.parallel().tween_property(current_screen, \"modulate:a\", 1.0, TRANSITION_TIME)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey or event is InputEventJoypadButton or event is InputEventMouseButton:
+		if not is_instance_valid(tween):
+			if event.is_pressed():
+				Game.start_map(\"res://Maps/Story/CaveAlone.tscn\")
+				queue_free()
+			return
+		
+		if event.is_pressed():
+			tween.set_speed_scale(8)
+		else:
+			tween.set_speed_scale(1)
+"
+
+[node name="Intro" type="Node2D"]
+script = SubResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Screens" type="Node2D" parent="."]
+
+[node name="Screen1" type="Sprite2D" parent="Screens"]
+scale = Vector2( 0.601878, 0.601878 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="Screen2" type="Sprite2D" parent="Screens"]
+scale = Vector2( 1.86667, 2.69306 )
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Screen3" type="Sprite2D" parent="Screens"]
+scale = Vector2( 2.50391, 1.73077 )
+texture = ExtResource( 4 )
+centered = false
+
+[node name="Screen4" type="Sprite2D" parent="Screens"]
+scale = Vector2( 1, 0.5 )
+texture = ExtResource( 5 )
+centered = false
+
+[node name="Screen5" type="Sprite2D" parent="Screens"]
+position = Vector2( -966, 0 )
+scale = Vector2( 1.49583, 0.94184 )
+texture = ExtResource( 6 )
+centered = false
+
+[node name="Screen6" type="Sprite2D" parent="Screens"]
+position = Vector2( 0, -913 )
+scale = Vector2( 1.45489, 1.60789 )
+texture = ExtResource( 7 )
+centered = false
+
+[node name="Screen7" type="Sprite2D" parent="Screens"]
+scale = Vector2( 1.65692, 0.928266 )
+texture = ExtResource( 8 )
+centered = false
+
+[node name="Text" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text1" type="Label" parent="Text"]
+visible = false
+offset_left = 362.0
+offset_top = 368.0
+offset_right = 1508.0
+offset_bottom = 631.0
+custom_minimum_size = Vector2( 1000, 0 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Jest rok 2211. Powierzchnia planety od ponad 100 lat nie sprzyja życiu. Spowodowała to nadmierna eksploatacja zasobów, a dopełnił wybuch superwulkanu, który spowodował obniżenie temperatury na świecie i zmniejszenie ilości promieni słonecznych docierających na powierzchnię."
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text2" type="Label" parent="Text"]
+visible = false
+offset_left = 393.0
+offset_top = 313.0
+offset_right = 1539.0
+offset_bottom = 614.0
+custom_minimum_size = Vector2( 1000, 0 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Większość ludzkości zmaga się z głębokim kryzysem energetycznym i żyje bez dostępu do światła. Garstka szczęśliwców z elektrycznością uzależniona jest od korporacji energetycznych, wśród których prym wiedzie PowerCorp. Ale nawet ich zasoby są już mocno na wyczerpaniu.
+"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text3" type="Label" parent="Text"]
+visible = false
+offset_left = 345.0
+offset_top = 413.0
+offset_right = 1491.0
+offset_bottom = 676.0
+custom_minimum_size = Vector2( 1000, 0 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Jednak kilka lat temu ludzkość znalazła nadzieję na odbudowę swojej planety. Lumen, kryształ o ogromnym potencjale energetycznym, występujący głęboko pod ziemią, jest dokładnie tym, czego potrzebuje wymierająca cywilizacja."
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text4" type="Label" parent="Text"]
+visible = false
+offset_left = 404.0
+offset_top = 392.0
+offset_right = 1550.0
+offset_bottom = 655.0
+custom_minimum_size = Vector2( 1000, 0 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = " Jednakże, mimo wielu prób wydobycia Lumenu, udało się uzyskać jedynie bardzo małą jego ilość. Podziemia kryją wiele niebezpieczeństw, wśród których najgorszym są tajemnicze stwory żyjące w ciemnościach. Niemal wszyscy, którzy zapuścili się w głębiny, zaginęli bez słuchu."
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text5" type="Label" parent="Text"]
+visible = false
+offset_left = 406.0
+offset_top = 423.0
+offset_right = 1552.0
+offset_bottom = 686.0
+custom_minimum_size = Vector2( 1000, 0 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Najbardziej znaną grupą, która podjęła się tego zadania, był oddział Zwiadowców - wyszkolonych górników, naukowców i żołnierzy spod ramienia PowerCorp. Mimo szumu medialnego, który powstał wokół tej ekspedycji, ona również zaginęła bez wieści."
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text6" type="Label" parent="Text"]
+visible = false
+offset_left = 440.0
+offset_top = 444.0
+offset_right = 1586.0
+offset_bottom = 707.0
+custom_minimum_size = Vector2( 1000, 0 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Tutaj wkracza do akcji główny bohater gry, Mason Tombstone. Jest on byłym weteranem wojennym i przywódcą grupy najemników, która została wysłana, aby odnaleźć zaginiony oddział Zwiadowców."
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text7" type="Label" parent="Text"]
+offset_left = 411.0
+offset_top = 391.0
+offset_right = 1557.0
+offset_bottom = 654.0
+custom_minimum_size = Vector2( 1000, 0 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Ta misja może być ostatnią nadzieją dla ludzkości."
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}

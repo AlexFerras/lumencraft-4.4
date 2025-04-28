@@ -1,0 +1,2860 @@
+[gd_scene load_steps=101 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/metal_64x64L.png" type="Texture2D" id=1]
+[ext_resource path="res://Scenes/Game/UI/SeismicMapNew.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=3]
+[ext_resource path="res://Scenes/Game/UI/UI.gd" type="Script" id=4]
+[ext_resource path="res://Nodes/Map/MapMarker/DefaultMarker.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=7]
+[ext_resource path="res://Scenes/Game/UI/FullMap.gd" type="Script" id=8]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png" type="Texture2D" id=9]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_icon_playstation_0_75x75.png" type="Texture2D" id=10]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_analog_axis_75x75.png" type="Texture2D" id=11]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/lumen_64x64L.png" type="Texture2D" id=12]
+[ext_resource path="res://Nodes/UI/SeismicMap/plus_pressed.png" type="Texture2D" id=13]
+[ext_resource path="res://Nodes/UI/SeismicMap/plus.png" type="Texture2D" id=14]
+[ext_resource path="res://Nodes/UI/SeismicMap/minus.png" type="Texture2D" id=15]
+[ext_resource path="res://Nodes/UI/Icons/IconEnemies.png" type="Texture2D" id=16]
+[ext_resource path="res://Scenes/Game/UI/Minimap_viewport_shader.tres" type="Material" id=17]
+[ext_resource path="res://Nodes/UI/Icons/IconObjective.png" type="Texture2D" id=18]
+[ext_resource path="res://Scenes/Game/UI/Minimap_terrain_shader.tres" type="Material" id=19]
+[ext_resource path="res://Nodes/UI/SeismicMap/minus_pressed.png" type="Texture2D" id=20]
+[ext_resource path="res://Nodes/UI/Icons/IconAutosave.png" type="Texture2D" id=21]
+[ext_resource path="res://Nodes/Player/LastDeathMarker.png" type="Texture2D" id=22]
+[ext_resource path="res://Nodes/Buildings/Turret/IconTurret.png" type="Texture2D" id=23]
+[ext_resource path="res://Resources/Materials/FogOfWar_minimap_clean.material" type="Material" id=24]
+[ext_resource path="res://Scenes/Game/UI/Minimap.gd" type="Script" id=25]
+[ext_resource path="res://Nodes/Map/MapMarker/WaveEnemyMarker.png" type="Texture2D" id=26]
+[ext_resource path="res://Resources/Fonts/Fent120.tres" type="FontFile" id=27]
+[ext_resource path="res://Nodes/Map/MapMarker/skull_marker.png" type="Texture2D" id=28]
+[ext_resource path="res://Nodes/Map/MapMarker/QuestionMark.png" type="Texture2D" id=29]
+[ext_resource path="res://Scenes/Game/UI/VisibilityRect.gd" type="Script" id=30]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" type="Texture2D" id=31]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" type="Texture2D" id=32]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" type="Texture2D" id=33]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" type="Texture2D" id=34]
+[ext_resource path="res://Nodes/UI/Mobile/Shoot.png" type="Texture2D" id=35]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=36]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=37]
+[ext_resource path="res://Resources/Anarchy/Scripts/tooltip.gd" type="Script" id=38]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/map_tech_window.tscn" type="PackedScene" id=39]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Controls/Gamepad/tooltip_gamepad_icon.tscn" type="PackedScene" id=40]
+[ext_resource path="res://Nodes/UI/PlayerUI/PlayerUI.tscn" type="PackedScene" id=41]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/warning_window.tscn" type="PackedScene" id=42]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_center.tscn" type="PackedScene" id=43]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_mini_map.tscn" type="PackedScene" id=44]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_left.tscn" type="PackedScene" id=45]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_center_message.tscn" type="PackedScene" id=46]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_score_coOp_resources.tscn" type="PackedScene" id=47]
+[ext_resource path="res://Nodes/UI/PlayerUI/PlayerUIMirrored.tscn" type="PackedScene" id=48]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Options.tscn" type="PackedScene" id=49]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/player_controls_window.tscn" type="PackedScene" id=50]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bolditalic_minimal.tres" type="FontFile" id=51]
+[ext_resource path="res://Resources/Fonts/Font14Outline.tres" type="FontFile" id=52]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_mainmenu.tres" type="FontFile" id=53]
+[ext_resource path="res://Resources/Fonts/Font80.tres" type="FontFile" id=54]
+[ext_resource path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" type="Script" id=55]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_italic_minimal.tres" type="FontFile" id=56]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/icon_value.tscn" type="PackedScene" id=57]
+[ext_resource path="res://Nodes/UI/Mobile/Analog.png" type="Texture2D" id=58]
+[ext_resource path="res://Nodes/UI/Mobile/Dash.png" type="Texture2D" id=59]
+[ext_resource path="res://Nodes/UI/Mobile/AnalogDirection.png" type="Texture2D" id=60]
+[ext_resource path="res://Nodes/UI/Achievemen't.png" type="Texture2D" id=61]
+[ext_resource path="res://Nodes/UI/Mobile/Interact.png" type="Texture2D" id=62]
+[ext_resource path="res://Nodes/UI/Mobile/Build.png" type="Texture2D" id=63]
+[ext_resource path="res://Nodes/UI/Mobile/Menu.png" type="Texture2D" id=64]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateButton.tscn" type="PackedScene" id=65]
+
+[sub_resource type="GDScript" id=85]
+script/source = "extends Control
+
+@onready var interact: TouchScreenButton = $\"%Interact\"
+@onready var build: TouchScreenButton = $\"%Build\"
+
+@onready var player: Player
+
+func _process(delta: float) -> void:
+	if not visible:
+		set_process(false)
+		return
+	
+	if not player:
+		player = Utils.game.main_player
+	
+	build.visible = player.interactables.is_empty()
+	interact.visible = not build.visible
+"
+
+[sub_resource type="GDScript" id=90]
+script/source = "extends Control
+
+var index: int = -1
+
+func _gui_input(event: InputEvent) -> void:
+	if Utils.game.main_player.build_menu:
+		return
+	
+	if event is InputEventScreenTouch:
+		if event.pressed and index == -1:
+			index = event.index
+			Input.action_press(\"p1_shoot\")
+			Utils.game.main_player.torso.rotation = Utils.game.main_player.get_local_mouse_position().angle()
+		elif not event.pressed and event.index == index:
+			index = -1
+			Input.action_release(\"p1_shoot\")
+	elif event is InputEventScreenDrag and event.index == index:
+		Utils.game.main_player.torso.rotation = Utils.game.main_player.get_local_mouse_position().angle()
+"
+
+[sub_resource type="GDScript" id=88]
+script/source = "extends Control
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			Input.action_press(\"p1_cancel\")
+		else:
+			Input.action_release(\"p1_cancel\")
+"
+
+[sub_resource type="GDScript" id=83]
+resource_name = "Analog"
+script/source = "extends TouchScreenButton
+
+@onready var sprite: Sprite2D = $Sprite2D
+
+var touch_pos: Vector2
+var haction: String
+var vaction: String
+
+func _ready() -> void:
+	set_process(false)
+	set_process_input(false)
+
+func _pressed() -> void:
+	set_process(true)
+	sprite.show()
+
+func _released() -> void:
+	set_process(false)
+	sprite.hide()
+	
+	if not haction.is_empty():
+		release_action(\"h\")
+	
+	if not vaction.is_empty():
+		release_action(\"v\")
+
+func _input(event: InputEvent) -> void:
+	if not is_processing():
+		return
+	
+	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+		var epos := to_local(event.position)
+		if epos.length() <= normal.get_width() * 2:
+			touch_pos = epos
+
+func _process(delta: float) -> void:
+	var center := normal.get_size() * 0.5
+	var radius := normal.get_width() * 0.5
+	var move_vec := (touch_pos - center) / radius
+	move_vec = move_vec.limit_length()
+	
+	sprite.position = center + move_vec * radius
+	
+	if move_vec.x < 0:
+		press_action(\"p1_left\", \"h\", abs(move_vec.x))
+	elif move_vec.x > 0:
+		press_action(\"p1_right\", \"h\", abs(move_vec.x))
+	else:
+		release_action(\"h\")
+	
+	if move_vec.y < 0:
+		press_action(\"p1_up\", \"v\", abs(move_vec.y))
+	elif move_vec.y > 0:
+		press_action(\"p1_down\", \"v\", abs(move_vec.y))
+	else:
+		release_action(\"v\")
+
+func press_action(action: String, hv: String, strength: float):
+	var action_name := hv + \"action\"
+	if get(action_name) != action:
+		release_action(hv)
+		set(action_name, action)
+	
+	Input.action_press(action, strength)
+
+func release_action(hv: String):
+	var action_name := hv + \"action\"
+	Input.action_release(get(action_name))
+	set(action_name, \"\")
+"
+
+[sub_resource type="RectangleShape2D" id=86]
+extents = Vector2( 200, 100 )
+
+[sub_resource type="RectangleShape2D" id=87]
+extents = Vector2( 180, 180 )
+
+[sub_resource type="RectangleShape2D" id=89]
+extents = Vector2( 650, 60 )
+
+[sub_resource type="GDScript" id=15]
+script/source = "extends SubViewport
+
+@onready var minimap := $Minimap as TextureRect
+@onready var fog_of_war := $FogOfWar as Sprite2D
+@onready var overlay := $Overlay as Control
+#onready var seismic := $SeismicMap as ViewportContainer
+
+func _ready() -> void:
+	Utils.game.connect(\"map_changed\", Callable(self, \"on_map_changed\"))
+	minimap.connect(\"view_changed\", Callable(self, \"update_view\"))
+	
+	if Utils.game.map:
+		on_map_changed()
+
+func on_map_changed():
+	if Utils.game.map.pixel_map.fog_of_war:
+		fog_of_war.texture = Utils.game.map.pixel_map.fog_of_war.get_texture_for_minimap()
+		fog_of_war.position = minimap.position
+#		overlay.rect_position = minimap.rect_position
+#		seismic.rect_position = minimap.rect_position
+		
+func update_view():
+	if is_nan(minimap.position.y):
+		return
+	fog_of_war.position = minimap.position
+	overlay.position = minimap.position
+#	seismic.rect_position = minimap.rect_position
+	
+	fog_of_war.scale = 8.0*minimap.size / Utils.game.map.pixel_map.get_texture().get_size()
+	overlay.size = minimap.size
+#	seismic.rect_scale = fog_of_war.scale
+"
+
+[sub_resource type="AtlasTexture" id=9]
+resource_local_to_scene = true
+
+[sub_resource type="GDScript" id=21]
+resource_name = "Overlay"
+script/source = "extends Control
+
+@export var custom_map_path: NodePath
+var map: TextureRect
+
+@export var full_view: bool
+
+const DOT_HALF = Vector2.ONE
+const DOT_SIZE = DOT_HALF * 2
+const ZOOM = 10
+const ZOOM_1 = 1.0 / ZOOM
+
+var draw_screen_rect := true
+var player_sprites: Array
+var screen_node: Node2D
+
+var timer: float
+
+func _ready() -> void:
+	if not custom_map_path.is_empty():
+		map = get_node(custom_map_path)
+	else:
+		map = $\"../Minimap\"
+	
+	add_player_sprite()
+	screen_node = Node2D.new()
+	screen_node.z_index = 1
+#	screen_node.connect(\"draw\", self, \"draw_screen\")
+	add_child(screen_node)
+	Utils.connect(\"coop_toggled\", Callable(self, \"clear_player_sprites\"))
+
+func clear_player_sprites(enable: bool):
+	if enable:
+		return
+	
+	for i in player_sprites.size() - 1:
+		player_sprites.pop_back().queue_free()
+
+func add_player_sprite():
+	var player_sprite := Sprite2D.new()
+	player_sprite.texture = preload(\"res://Nodes/UI/PlayerLocator.png\")
+	add_child(player_sprite)
+	player_sprites.append(player_sprite)
+
+func _draw() -> void:
+	if not Utils.game.map or (get_viewport().get_parent() and not get_viewport().get_parent().is_visible_in_tree()) or (get_parent() is CanvasItem and not get_parent().is_visible_in_tree()):
+		return
+	
+	var scale: float = map.get_view_scale()
+	
+	for i in Utils.game.players.size():
+		var player: Player = Utils.game.players[i]
+		
+		if Utils.game.players.size() == 1:
+			draw_rect(Rect2(player.global_position * scale - DOT_HALF, DOT_SIZE), Color.WHITE)
+		else:
+			var draw_size := Vector2(6, 8)
+			draw_texture_rect_region(preload(\"res://Nodes/UI/PlayerUI/Indicators.png\"), Rect2(player.global_position * scale - draw_size * 0.5, draw_size), Rect2(Vector2.RIGHT * 12 * i, Vector2(12, 16)))
+	
+	var center: Vector2 = map.get_center() / scale
+	var radius: float = map.minimap_size.length() / scale * 0.5
+	
+	for marker in get_tree().get_nodes_in_group(\"MapMarker\"):
+		if not marker.is_visible_in_tree():
+			continue
+		
+		var glo_pos = Utils.clamp_to_pixel_map(marker.global_position, Utils.game.map.pixel_map)
+		if marker.has_meta(\"custom_canvas\"):
+			glo_pos = Utils.game.camera.get_viewport().canvas_transform.affine_inverse() * (marker.global_position)
+		
+		var distance := center.distance_to(glo_pos)
+		if distance > marker.max_radius + radius:
+			continue
+		
+		var pos: Vector2 = glo_pos * scale
+		if not full_view and distance > radius - 244 and marker.arrow:
+			pos = center + center.direction_to(glo_pos) * (radius - 244) * 0.8
+			pos = pos * scale - DOT_HALF
+			
+			if marker.rotate_arrow:
+				var angle := center.direction_to(glo_pos).angle()
+				draw_set_transform(pos, angle, Vector2.ONE)
+				draw_texture(marker.arrow, -marker.arrow.get_size() * 0.5, marker.modulate)
+				draw_set_transform_matrix(Transform2D())
+			else:
+				draw_texture_rect(marker.arrow, Rect2(pos - marker.arrow.get_size() * 0.5 * marker.scale * scale, marker.arrow.get_size() * marker.scale * scale), false, marker.modulate)
+			continue
+		
+		if marker.texture:
+			draw_texture_rect(marker.texture, Rect2(pos - marker.texture.get_size() * 0.5 * marker.scale * scale, marker.texture.get_size() * marker.scale * scale), false, marker.modulate)
+		else:
+			draw_rect(Rect2(pos - DOT_HALF, DOT_SIZE), Color.ORANGE)
+		
+		if marker.circle_radius > 0.1:
+			draw_arc(pos,marker.circle_radius * scale, 0, TAU, 32, marker.modulate, 2.0)
+		
+	for building in get_tree().get_nodes_in_group(\"player_buildings\"):
+		var pos: Vector2 = building.global_position * scale - DOT_HALF
+		if not building is BaseBuilding or building.is_running or not building.needs_power:
+			draw_rect(Rect2(pos, DOT_SIZE), Color.GREEN_YELLOW)
+		else:
+			draw_rect(Rect2(pos, DOT_SIZE), Color.ORANGE_RED)
+	
+#	if Utils.game.map.buffs.has(Const.Buffs.RADAR):
+#		for enemy in get_tree().get_nodes_in_group(\"enemies\"):
+#			if enemy.dead:
+#				continue
+#
+#			var pos: Vector2 = enemy.global_position * scale - DOT_HALF
+#			draw_rect(Rect2(pos, DOT_SIZE), Color.red)
+	
+	screen_node.update()
+
+func draw_screen():
+	if draw_screen_rect:
+		var scale: float = map.get_view_scale()
+		screen_node.draw_rect(Rect2(Utils.game.camera.get_camera_screen_center() * scale - Utils.get_viewport().size / Const.CAMERA_ZOOM * scale * 0.5, Utils.get_viewport().size / Const.CAMERA_ZOOM * scale) ,Color(1.0, 1.0, 0, 0.3), false, 1)
+
+#	if Utils.game.map.buffs.has(Const.Buffs.RADAR):
+#		for artifact in get_tree().get_nodes_in_group(\"artifacts\"):
+#			if not artifact.buried:
+#				continue
+#
+#			var pos: Vector2 = artifact.global_position * scale - DOT_HALF
+#			draw_rect(Rect2(pos, DOT_SIZE), Color.yellow)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_physics_process(is_visible_in_tree())
+
+func _physics_process(delta: float) -> void:
+	var scale: float = map.get_view_scale()
+	timer = fmod(timer + delta, 1)
+	
+	for i in Utils.game.players.size():
+		var player: Player = Utils.game.players[i]
+		if not player.is_inside_tree():
+			return
+		
+		if i == player_sprites.size():
+			add_player_sprite()
+		
+		if Utils.game.players.size() == 1:
+			player_sprites[i].modulate = Color.WHITE
+		else:
+			player_sprites[i].modulate = lerp(Const.PLAYER_COLORS[i], Color.WHITE, 0.5)
+		
+		player_sprites[i].scale = lerp(Vector2.ONE, Vector2(), timer)
+		player_sprites[i].modulate.a = lerp(1, 0, timer)
+		player_sprites[i].position = player.global_position * scale
+"
+
+[sub_resource type="GDScript" id=84]
+script/source = "extends TextureRect
+
+func _ready() -> void:
+	update_status()
+
+func update_status():
+	visible = SteamAPI.active and not SteamAPI.can_achieve()
+"
+
+[sub_resource type="Animation" id=17]
+resource_name = "Bars"
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect2:offset_top")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, -100.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorRect:offset_bottom")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0, 100.0 ]
+}
+
+[sub_resource type="Animation" id=18]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect2:offset_bottom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorRect2:offset_top")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("ColorRect:offset_top")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("ColorRect:offset_bottom")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="ShaderMaterial" id=57]
+
+[sub_resource type="Animation" id=59]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("WaveNameUpper:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("WaveNameUpper:percent_visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("WaveNameUpper:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("WaveNameLower:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("WaveNameLower:percent_visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("WaveNameLower:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ) ]
+}
+
+[sub_resource type="Animation" id=58]
+resource_name = "ShowWave"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("WaveNameUpper:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("WaveNameUpper:percent_visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("WaveNameUpper:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 3.5, 4 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0509804, 1.20784, 2.61176, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("WaveNameLower:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 1, 4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("WaveNameLower:percent_visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0, 1.0 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("WaveNameLower:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 3.5, 4 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0509804, 1.20784, 2.61176, 0 ) ]
+}
+
+[sub_resource type="GDScript" id=67]
+resource_name = "InfoMenu"
+script/source = "extends CanvasItem
+
+@onready var info_window = $MapTechWindow
+@onready var full_map = $\"%FullMap\"
+
+@onready var tech_list = info_window.get_node(\"%TechContainer\")
+@onready var tech_name = info_window.get_node(\"%TechnologyName\")
+@onready var tech_desc = info_window.get_node(\"%TechnologyDescription\")
+@onready var info_animator = info_window.get_node(\"AnimationPlayer\")
+
+var animating: bool
+var active: bool
+var is_minimap_visible = true
+
+func _ready() -> void:
+	hide()
+	info_animator.connect(\"animation_finished\", Callable(self, \"window_animation_finished\"))
+	info_window.get_node(\"%ExitButton\").connect(\"pressed\", Callable(self, \"set_active\").bind(false))
+	Save.connect(\"tech_unlocked\", Callable(self, \"unlock_tech\"))
+	
+	tech_name.hide()
+	tech_desc.hide()
+	set_process(false)
+	
+	for tech in Const.Technology:
+		add_tech(tech)
+	
+	for tech in Save.get_unlocked_tech_list():
+		unlock_tech(tech)
+	
+	await Utils.game.map_initialized
+	await Utils.game.map.initialized # tak trzeba żyć
+	
+	for button in tech_list.get_children():
+		if button.name in Utils.game.map.blocked_technology:
+			button.set_meta(\"blocked\", true)
+			button.modulate.a = 0.2
+			continue
+		
+		for tech in Const.Technology[button.name].get(\"depend\", []):
+			if tech_list.get_node(tech).has_meta(\"blocked\"):
+				button.set_meta(\"blocked\", true)
+				button.modulate.a = 0.2
+				
+	is_minimap_visible = not Music.is_switch_build()
+
+func set_active(a: bool):
+	if animating:
+		return
+	animating = true
+	active = a
+	
+	if active:
+		show()
+		info_animator.play(\"show\")
+		if is_minimap_visible:
+			$\"%MinimapPanel\".hide()
+	else:
+		info_animator.play_backwards(\"show\")
+
+func window_animation_finished(anim: String) -> void:
+	animating = false
+	
+	if active:
+		select_tech()
+	else:
+		hide()
+		if is_minimap_visible:
+			$\"%MinimapPanel\".show()
+
+func add_tech(tech: String):
+	var button := preload(\"res://Resources/Anarchy/Scenes/UIElements/map_tech_window_tech_item_button.tscn\").instantiate()
+	button.get_node(\"Label\").text = Const.Technology[tech].name
+	button.icon = load(Const.Technology[tech].icon)
+	button.modulate = Color(0.3, 0.3, 0.3)
+	button.name = tech
+	button.connect(\"focus_entered\", Callable(self, \"tech_selected\").bind(tech))
+	tech_list.add_child(button)
+	
+	if Const.Technology[tech].get(\"hide_in_lab\", false):
+		button.hide()
+
+func unlock_tech(tech: String):
+	if not tech in Const.Technology:
+		return
+	
+	if tech_list.get_node(tech).has_meta(\"blocked\"):
+		return
+	
+	tech_list.get_node(tech).modulate = Color.WHITE
+	tech_list.get_node(tech).show()
+
+func tech_selected(tech: String):
+	tech_name.show()
+	tech_name.text = Const.Technology[tech].name
+	tech_desc.show()
+	tech_desc.text = Const.Technology[tech].description
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_process(is_visible_in_tree())
+
+func _process(delta: float) -> void:
+	for player in Utils.game.players:
+		if player.is_action_just_pressed(\"run\", false, true):
+			var tabs: TabContainer = info_window.get_node(\"%TabContainer\")
+			tabs.current_tab = (tabs.current_tab + 1) % tabs.get_tab_count()
+			select_tech()
+			break
+		
+		if player.is_action_pressed(\"look_up\", true): ## wywalić po zmianie na 4k
+			tech_list.get_parent().scroll_vertical -= 10
+		elif player.is_action_pressed(\"look_down\", true):
+			tech_list.get_parent().scroll_vertical += 10
+
+func select_tech():
+	if info_window.get_node(\"%TabContainer\").current_tab == 1 and tech_list.get_child_count() > 0:
+		tech_list.get_child(0).grab_focus()
+"
+
+[sub_resource type="StyleBoxFlat" id=73]
+bg_color = Color( 0.188235, 0.188235, 0.188235, 0 )
+border_width_left = 4
+border_width_right = 4
+border_color = Color( 1, 0.721569, 0, 0 )
+
+[sub_resource type="Shader" id=80]
+code = "shader_type canvas_item;
+
+uniform sampler2D fog_texture;
+uniform bool hide_fog = false;
+//uniform float cutoff = 1.5;
+
+void fragment() {
+	vec4 color = texture(TEXTURE, UV);
+	float fog = texture(fog_texture, vec2(UV.x, UV.y)).r;
+	color.a = min(fog + float(hide_fog), 1.0);
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=71]
+shader = SubResource( 80 )
+shader_param/hide_fog = false
+
+[sub_resource type="StyleBoxEmpty" id=69]
+
+[sub_resource type="AtlasTexture" id=12]
+resource_local_to_scene = true
+
+[sub_resource type="GDScript" id=68]
+script/source = "extends \"res://Scenes/Game/UI/Minimap.gd\"
+
+func get_view_scale() -> float:
+	return custom_minimum_size.y / texture.get_height()
+"
+
+[sub_resource type="GDScript" id=74]
+resource_name = "Menu"
+script/source = "extends Control
+
+@onready var content := $\"%MenuContent\"
+@onready var confirm_quit_dialog = owner.get_node(\"%ConfirmQuit\")
+@onready var coop_settings = owner.get_node(\"%CoopSettings\")
+@onready var options_control: Control = $\"%Options\"
+
+var is_confirm_quit_dialog_open: bool
+var is_coop: bool
+
+func _ready() -> void:
+	options_control.connect_close(self, \"close_options\")
+	$\"%SaveMenu\".connect(\"back\", Callable(self, \"goto_main\"))
+	$\"%LoadMenu\".connect(\"back\", Callable(self, \"goto_main\"))
+	Utils.connect(\"coop_toggled\", Callable(self, \"on_coop_toggled\"))
+	hide()
+	
+	if not Utils.game.map:
+		await Utils.game.map_changed
+	
+	if not Save.campaign or Save.is_hub():
+		$\"%ObjectiveButton\".hide()
+	else:
+		$\"%Quit\".small_text = \"Exit Mission\"
+		$\"%Quit2\".show()
+
+func toggle(close_only: bool):
+	if visible:
+		if $\"%SaveMenu\".visible or $\"%LoadMenu\".visible:
+			goto_main()
+			return
+		
+		if options_control.visible:
+			return
+		
+		if coop_settings.visible:
+			goto_main()
+			return
+		
+		hide()
+	elif not close_only:
+		goto_main()
+		show()
+		$\"%Save\".disabled = not Save.block_save.is_empty()
+		$\"%Load\".disabled = not $\"%LoadMenu\".is_any_save
+	
+	get_tree().paused = visible
+
+func close() -> void:
+	toggle(true)
+
+func set_menu(menu: Node):
+	for node in content.get_children():
+		node.visible = node == menu
+
+func start_coop() -> void:
+	if is_coop:
+		Utils.game.clear_coop_players()
+	else:
+		$\"%Primary\".hide()
+		coop_settings.show()
+
+func exit_coop_settings() -> void:
+	$\"%Primary\".show()
+	coop_settings.call_deferred(\"hide\")
+
+func save_game() -> void:
+	set_menu($\"%SaveMenu\")
+	$\"%NewSlot\".call_deferred(\"grab_focus\")
+
+func load_game() -> void:
+	set_menu($\"%LoadMenu\")
+	$\"%LoadMenu\".list.get_child(0).call_deferred(\"grab_focus\")
+
+func goto_main():
+	close_options()
+	set_menu($\"%Main\")
+	$\"%Continue\".call_deferred(\"grab_focus\")
+
+func report_bug() -> void:
+	var report: Control = preload(\"res://Resources/Anarchy/Scenes/UIElements/bug_reporting_tool.tscn\").instantiate()
+	owner.add_child(report)
+	owner.block_menu = true
+	hide()
+	report.connect(\"tree_exited\", Callable(self, \"exit_report\"))
+
+func exit_report():
+	owner.block_menu = false
+	show()
+	goto_main()
+
+func options() -> void:
+	$\"%Primary\".hide()
+	options_control.show()
+	options_control.get_node(\"%TabContainer\").current_tab = 0
+	options_control.get_first_control().call_deferred(\"grab_focus\")
+
+func close_options():
+	if options_control.visible:
+		if options_control.get_node(\"%ControlOptionsParent\").visible:
+			options_control.close_controls()
+		else:
+			$\"%Primary\".show()
+			options_control.call_deferred(\"hide\")
+			$\"%Continue\".call_deferred(\"grab_focus\")
+
+func quit() -> void:
+	if Utils.editor:
+		confirm_quit()
+		return
+	
+	is_confirm_quit_dialog_open = true
+	hide()
+	confirm_quit_dialog.showme()
+	confirm_quit_dialog.get_node(\"%ButtonCancel\").grab_focus()
+
+func quit2() -> void:
+	Utils.game.set_meta(\"menu_quit\", true)
+	quit()
+
+func confirm_quit() -> void:
+	Utils.game.exit(false)
+
+func cancel_quit() -> void:
+	if not confirm_quit_dialog.visible and is_confirm_quit_dialog_open:
+		is_confirm_quit_dialog_open = false
+		show()
+		goto_main()
+
+func finish() -> void:
+	Utils.game.ui.show_result(true)
+
+func on_coop_toggled(active: bool):
+	is_coop = active
+	if active:
+		exit_coop_settings()
+		coop_settings.hide()
+		toggle(true)
+		$\"%Coop\".small_text = \"Stop Co-op\"
+	else:
+		$\"%Coop\".small_text = \"Start Co-op\"
+
+func display_objective() -> void:
+	toggle(true)
+	await get_tree().idle_frame
+	owner.on_screen_message.add_message(Const.CampaignLevels[Save.campaign.current_map].description)
+"
+
+[sub_resource type="StyleBoxFlat" id=81]
+content_margin_left = 96.0
+content_margin_right = 96.0
+bg_color = Color( 0, 0, 0, 0 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.501961, 0.501961, 0.501961, 1 )
+corner_radius_bottom_right = 32
+corner_detail = 1
+
+[sub_resource type="GDScript" id=38]
+resource_name = "SaveList"
+script/source = "extends \"res://Resources/Anarchy/Scripts/SaveLoadMenu.gd\"
+
+@onready var slot_name = $\"%SlotName\"
+@onready var error_label = $\"%Error\"
+
+signal back
+
+var clicked: String
+
+func click_slot(slot: String):
+	if clicked != slot:
+		show_error(\"Select again to overwite.\")
+		clicked = slot
+	else:
+		clicked = \"\"
+		back()
+		owner.menu.toggle(true)
+		Save.save_game(slot)
+		await Save.saved
+		refresh()
+		$\"%LoadMenu\".refresh()
+
+func create_save_slot(slot: String):
+	var button = super.create_save_slot(slot)
+	if button:
+		list.move_child(button, button.get_index() - 1)
+
+func create_new_slot() -> void:
+	if slot_name.visible:
+		if not slot_name.text.is_valid_filename() or slot_name.text.find(\".\") != -1:
+			show_error(\"Invalid slot name. Avoid these characters: : / \\\\ ? * \\\" | % < > .\")
+			Utils.call_super_deferred(self, \"scroll_to_bottom\")
+			return
+		
+		if DirAccess.new().dir_exists(SAVE_DIRECTORY.plus_file(slot_name.text)):
+			show_error(\"Slot name already exists.\")
+			Utils.call_super_deferred(self, \"scroll_to_bottom\")
+			return
+		
+		slot_name.hide()
+		$\"%NewSlot\".small_text = \"New Slot\"
+		back()
+		owner.menu.toggle(true)
+		Save.save_game(slot_name.text)
+		await Save.saved
+		refresh()
+	else:
+		slot_name.show()
+		slot_name.text = tr(\"Slot %s\") % list.get_child_count()
+		$\"%NewSlot\".small_text = \"OK\"
+
+func show_error(error: String):
+	error_label.show()
+	error_label.text = error
+
+func back():
+	emit_signal(\"back\")
+	error_label.hide()
+
+func scroll_to_bottom():
+	$\"%SaveScroll\".scroll_vertical = 999999999
+
+func _on_SlotName_text_entered(new_text):
+	create_new_slot()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		if not is_visible_in_tree():
+			error_label.hide()
+			clicked = \"\"
+"
+
+[sub_resource type="GDScript" id=82]
+resource_name = "LoadList"
+script/source = "extends \"res://Resources/Anarchy/Scripts/SaveLoadMenu.gd\"
+
+signal back
+
+func _ready() -> void:
+	Save.connect(\"saved\", Callable(self, \"refresh\"))
+
+func click_slot(slot: String):
+	var loading = preload(\"res://Scenes/ScreenLoading.tscn\").instantiate()
+	Utils.add_child(loading)
+	await RenderingServer.frame_post_draw
+	loading.queue_free()
+	
+	Save.load_game(slot)
+	Utils.game.queue_free()
+
+func back():
+	emit_signal(\"back\")
+
+func scroll_to_bottom():
+	$\"%LoadScroll\".scroll_vertical = 999999999
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 3 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 7 )
+
+[sub_resource type="GDScript" id=44]
+resource_name = "Co-op settings"
+script/source = "extends Control
+
+@onready var controls := $\"%Players\"
+@onready var error := $\"%Error\"
+
+var select: int
+var valid := true
+
+var controller_prefab: PackedScene
+var max_controllers: int
+var controllers_dirty: bool = true
+
+signal exit
+
+func _ready() -> void:
+	controller_prefab = Prefab.create($\"%ControlsGamepad\")
+	Input.connect(\"joy_connection_changed\", Callable(self, \"refresh_controllers\"))
+	
+	if Const.PLAYER_LIMIT > 2:
+		controls.get_child(0).get_child(2).show()
+	
+	ultra_reload()
+	for control in controls.get_children():
+		control.connect(\"scheme_changed\", Callable(self, \"validate_scheme\"))
+		control.scheme = Save.config.control_schemes[control.get_index()]
+	
+	refresh()
+	set_process(false)
+	get_tree().create_timer(0.5).connect(\"timeout\", Callable(self, \"validate_scheme\"))
+
+func ultra_reload():
+	while controls.get_child_count() < Const.PLAYER_LIMIT:
+		controls.add_child(controls.get_child(0).duplicate())
+
+func refresh():
+	for control in controls.get_children():
+		control.set_selected(control.get_index() == select)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_process(is_visible_in_tree())
+		if controllers_dirty and is_visible_in_tree():
+			refresh_controllers()
+			controllers_dirty = false
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed(\"ui_right\"):
+		select = wrapi(select + 1, 0, controls.get_child_count())
+		refresh()
+	
+	if Input.is_action_just_pressed(\"ui_left\"):
+		select = wrapi(select - 1, 0, controls.get_child_count())
+		refresh()
+	
+	if Input.is_action_just_pressed(\"ui_up\"):
+		var s = controls.get_child(select).scheme - 1
+		if s < 0:
+			s = max_controllers
+		
+		controls.get_child(select).scheme = s
+	if Input.is_action_just_pressed(\"ui_down\"):
+		var s = controls.get_child(select).scheme + 1
+		if s >= max_controllers + 1:
+			s = -1 if Const.PLAYER_LIMIT > 2 else 0
+		
+		controls.get_child(select).scheme = s
+	
+	if Input.is_action_just_pressed(\"ui_accept\"):
+		start()
+	
+	if Input.is_action_just_pressed(\"ui_cancel\"):
+		Utils.call_super_deferred(self, \"emit_signal\", [\"exit\"])
+
+func validate_scheme():
+	valid = true
+	error.text = \"\"
+	
+	for control in controls.get_children():
+		if control.get_index() == Const.PLAYER_LIMIT:
+			break
+		
+		if control.scheme >= 2 and (Input.get_connected_joypads().size() < control.scheme and not owner.fake_joypads):
+			valid = false
+			error.text = tr(\"No controller %d detected.\") % control.scheme
+			return
+	
+	for control in controls.get_children():
+		for control2 in controls.get_children():
+			if not control.visible or not control2.visible:
+				continue
+			
+			if control != control2 and control.scheme != -1 and control.scheme == control2.scheme and not Const.get_override(\"TEST_COOP\") and not owner.fake_joypads:
+				valid = false
+				error.text = \"Conflicting control schemes.\"
+				return
+
+func start() -> void:
+	if not valid:
+		Utils.play_sample(preload(\"res://SFX/UI/OptionsFail.wav\"))
+		return
+	
+	if controllers_dirty:
+		visible = true
+		refresh_controllers()
+		visible = false
+	
+	var player_id := 1
+	for control in controls.get_children():
+		Save.config.control_schemes[control.get_index()] = control.scheme
+		if control.scheme == -1 or not control.visible:
+			continue
+		
+		if control.get_index() > 0:
+			Utils.game.add_new_player(2 + control.get_control_id(), player_id)
+			player_id += 1
+		else:
+			Utils.game.main_player.control_id = 2 + control.get_control_id()
+	
+	Utils.game.ui.get_player_ui(1).get_node(\"Indicator\").show()
+	Save.save_config()
+	Utils.emit_signal(\"coop_toggled\", true)
+
+func exit_pressed() -> void:
+	emit_signal(\"exit\")
+
+func refresh_controllers(du = null, pa = null):
+	if not visible:
+		controllers_dirty = true
+		return
+	
+	for player in controls.get_children():
+		for control in player.get_children():
+			if control.is_in_group(\"gamepads\"):
+				control.free()
+	
+	var idx_table: Array
+	var joypads := Input.get_connected_joypads()
+	max_controllers = 0
+	for idx in joypads:
+		if idx < 3:
+			idx_table.append(idx)
+	max_controllers = idx_table.size()
+	
+	for player in controls.get_children():
+		for i in max_controllers:
+			var idx = idx_table[i]
+			
+			var controller := controller_prefab.instantiate()
+			controller.set_meta(\"id\", idx + 1)
+			controller.get_node(\"H/L/V\").text = str(idx + 1)
+			controller.get_node(\"L\").text = Input.get_joy_name(idx)
+			player.add_child(controller)
+			player.move_child(controller, player.get_child_count() - 2)
+		
+		player.scheme = min(player.scheme, max_controllers)
+"
+
+[sub_resource type="StyleBoxFlat" id=75]
+content_margin_left = 64.0
+content_margin_right = 64.0
+content_margin_top = 64.0
+content_margin_bottom = 64.0
+bg_color = Color( 0, 0, 0, 0.501961 )
+border_color = Color( 1, 0.721569, 0, 1 )
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+corner_detail = 1
+
+[sub_resource type="GDScript" id=76]
+resource_name = "OnScreenMessage"
+script/source = "extends PanelContainer
+
+@onready var rich_text_label: RichTextLabel = $RichTextLabel
+@onready var control: Control = $Control
+
+var message_queue: Array
+var current_message: String
+var string_speed = 1
+
+signal finished
+
+func _ready() -> void:
+	set_physics_process(false)
+	hide()
+
+func add_message(message: String):
+	message_queue.append(message)
+	call_deferred(\"pop_queue\")
+
+func pop_queue():
+	if not visible:
+		owner.block_menu = true
+		show()
+		$AnimationPlayer.play(\"Appear\")
+		get_tree().paused = true
+		return
+	
+	if $AnimationPlayer.is_playing():
+		return
+	
+	if not current_message.is_empty():
+		return
+	
+	if message_queue.is_empty():
+		$AnimationPlayer.play(\"Disappear\")
+		rich_text_label.clear()
+		set_physics_process(false)
+		Player.set_block_scroll_all(false)
+		emit_signal(\"finished\")
+		return
+	
+	current_message = message_queue.pop_front()
+	rich_text_label.text = tr(current_message)
+	rich_text_label.visible_characters = 0
+	set_physics_process(true)
+	Player.set_block_scroll_all(true)
+
+func _physics_process(delta: float) -> void:
+	if rich_text_label.visible_characters < tr(current_message).length():
+		rich_text_label.visible_characters += string_speed
+		if is_interacting():
+			string_speed = 10
+		else:
+			string_speed = 1
+		if Input.is_action_just_pressed(\"ui_cancel\"):
+			rich_text_label.visible_characters = tr(current_message).length()
+			control.show()
+			
+	elif not control.visible:
+		control.show()
+
+	elif has_interacted():
+		control.hide()
+		current_message = \"\"
+		pop_queue()
+	
+	if visible and abs(Input.get_joy_axis(0, JOY_AXIS_3)) > 0.2:
+		rich_text_label.get_v_scroll().value += Input.get_joy_axis(0, JOY_AXIS_3) * 10
+
+func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
+	if anim_name == \"Appear\":
+		pop_queue()
+	elif anim_name == \"Disappear\":
+		hide()
+		get_tree().paused = false
+		owner.block_menu = false
+
+func is_interacting() -> bool:
+	for player in Utils.game.players:
+		if player.is_action_pressed(\"interact\"):
+			return true
+	return false
+
+func has_interacted() -> bool:
+	for player in Utils.game.players:
+		if player.is_action_just_pressed(\"interact\"):
+			return true
+	return false
+"
+
+[sub_resource type="Animation" id=77]
+resource_name = "Appear"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Vector2( 186, 128 ), Vector2( 1258, 866 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Vector2( 1827, 1016 ), Vector2( 1291, 647 ) ]
+}
+
+[sub_resource type="Animation" id=79]
+resource_name = "Disappear"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 0.5, 1 ),
+"update": 0,
+"values": [ Vector2( 1258, 866 ), Vector2( 186, 128 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 0.5, 1 ),
+"update": 0,
+"values": [ Vector2( 1291, 647 ), Vector2( 1827, 1016 ) ]
+}
+
+[sub_resource type="Animation" id=78]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 186, 128 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1827, 1016 ) ]
+}
+
+[sub_resource type="GDScript" id=62]
+resource_name = "ControllerDisconnected"
+script/source = "extends ColorRect
+
+var is_pausing: bool
+
+var joypad1_ok := true
+var joypad2_ok := true
+
+func _ready() -> void:
+	Input.connect(\"joy_connection_changed\", Callable(self, \"on_joy_changed\"))
+	set_process_input(false)
+
+func on_joy_changed(device: int, connected: bool):
+	var should_block: bool
+	
+	if Utils.game.players.size() == 1:
+		if Utils.is_using_joypad() and Input.get_connected_joypads().is_empty():
+			should_block = true
+	else:
+		if not 0 in Input.get_connected_joypads() and (Utils.game.players[0].control_id == 3 or Utils.game.players[1].control_id == 3):
+			should_block = true
+		
+		if not 1 in Input.get_connected_joypads() and (Utils.game.players[0].control_id == 4 or Utils.game.players[1].control_id == 4):
+			should_block = true
+	
+	if should_block and not is_processing_input():
+		block()
+	elif not should_block and is_processing_input():
+		unblock()
+
+func block():
+	show()
+	is_pausing = not get_tree().paused
+	get_tree().paused = true
+	set_process_input(true)
+
+func unblock():
+	hide()
+	if is_pausing:
+		get_tree().paused = false
+	set_process_input(false)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey or event is InputEventMouseButton:
+		unblock()
+"
+
+[node name="UI" type="CanvasLayer"]
+process_mode = 3
+layer = 11
+script = ExtResource( 4 )
+
+[node name="VisibilityRects" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="TopPanel" type="ReferenceRect" parent="VisibilityRects"]
+offset_left = 1360.0
+offset_top = 23.0
+offset_right = 2510.0
+offset_bottom = 448.0
+script = ExtResource( 30 )
+target_control = NodePath("../../TopPanel")
+
+[node name="Player1" type="ReferenceRect" parent="VisibilityRects"]
+offset_left = 13.0
+offset_top = 23.0
+offset_right = 816.0
+offset_bottom = 452.0
+script = ExtResource( 30 )
+target_control = NodePath("../../Player1")
+
+[node name="Player2" type="ReferenceRect" parent="VisibilityRects"]
+offset_left = 2991.0
+offset_top = 23.0
+offset_right = 3799.0
+offset_bottom = 452.0
+script = ExtResource( 30 )
+target_control = NodePath("../../Player2")
+
+[node name="InfoLabels" type="ReferenceRect" parent="VisibilityRects"]
+offset_left = 1186.0
+offset_top = 1729.0
+offset_right = 2644.0
+offset_bottom = 2154.0
+script = ExtResource( 30 )
+target_control = NodePath("../../InfoLabels")
+
+[node name="Notifications" type="ReferenceRect" parent="VisibilityRects"]
+offset_left = 18.0
+offset_top = 1643.0
+offset_right = 607.0
+offset_bottom = 2154.0
+script = ExtResource( 30 )
+target_control = NodePath("../../NotificationPanel")
+
+[node name="MinimapVisibler" type="ReferenceRect" parent="VisibilityRects"]
+unique_name_in_owner = true
+offset_left = 3139.0
+offset_top = 8.0
+offset_right = 3830.0
+offset_bottom = 764.0
+script = ExtResource( 30 )
+target_control = NodePath("../../MinimapPanel")
+
+[node name="MinimapVisibler2" type="ReferenceRect" parent="VisibilityRects"]
+unique_name_in_owner = true
+offset_left = 3039.0
+offset_top = 1475.0
+offset_right = 3830.0
+offset_bottom = 2144.0
+script = ExtResource( 30 )
+target_control = NodePath("../../MinimapPanel")
+
+[node name="MobileControls" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = SubResource( 85 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Shoot" type="Control" parent="MobileControls"]
+modulate = Color( 0, 0.776471, 1, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 90 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Cancel" type="Control" parent="MobileControls/Shoot"]
+modulate = Color( 0, 0.776471, 1, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+script = SubResource( 88 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Control2" type="Control" parent="MobileControls"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 653.0
+offset_top = -619.0
+offset_right = 1099.0
+offset_bottom = -173.0
+
+[node name="Analog" type="TouchScreenButton" parent="MobileControls/Control2"]
+scale = Vector2( 2, 2 )
+normal = ExtResource( 58 )
+script = SubResource( 83 )
+
+[node name="Sprite2D" type="Sprite2D" parent="MobileControls/Control2/Analog"]
+visible = false
+position = Vector2( 112, 111 )
+texture = ExtResource( 60 )
+
+[node name="Control3" type="Control" parent="MobileControls"]
+offset_left = 21.0
+offset_top = 105.0
+offset_right = 147.0
+offset_bottom = 231.0
+
+[node name="Inventory" type="TouchScreenButton" parent="MobileControls/Control3"]
+shape = SubResource( 86 )
+action = "p1_inventory"
+
+[node name="Control4" type="Control" parent="MobileControls"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -584.0
+offset_top = 13.0
+offset_right = -458.0
+offset_bottom = 139.0
+
+[node name="Map" type="TouchScreenButton" parent="MobileControls/Control4"]
+scale = Vector2( 1.575, 1.575 )
+shape = SubResource( 87 )
+action = "p1_map"
+
+[node name="Menu" type="TouchScreenButton" parent="MobileControls/Control4"]
+position = Vector2( -2809, 2.86102e-06 )
+shape = SubResource( 89 )
+action = "p1_menu"
+
+[node name="Sprite2D" type="Sprite2D" parent="MobileControls/Control4/Menu"]
+position = Vector2( 1183, 19 )
+scale = Vector2( 0.787501, 0.787501 )
+texture = ExtResource( 64 )
+centered = false
+
+[node name="Control" type="Control" parent="MobileControls"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1013.0
+offset_top = -592.0
+offset_right = -386.0
+offset_bottom = -45.0
+
+[node name="Shoot" type="TouchScreenButton" parent="MobileControls/Control"]
+position = Vector2( -1, 140 )
+scale = Vector2( 3, 3 )
+normal = ExtResource( 35 )
+action = "p1_shoot"
+
+[node name="Interact" type="TouchScreenButton" parent="MobileControls/Control"]
+unique_name_in_owner = true
+position = Vector2( 296, 307 )
+scale = Vector2( 3, 3 )
+normal = ExtResource( 62 )
+action = "p1_interact"
+
+[node name="Build" type="TouchScreenButton" parent="MobileControls/Control"]
+unique_name_in_owner = true
+position = Vector2( 296, 307 )
+scale = Vector2( 3, 3 )
+normal = ExtResource( 63 )
+action = "p1_build"
+
+[node name="Dash" type="TouchScreenButton" parent="MobileControls/Control"]
+position = Vector2( 388, -1 )
+scale = Vector2( 3, 3 )
+normal = ExtResource( 59 )
+action = "p1_run"
+
+[node name="Player1" parent="." instance=ExtResource( 41 )]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Player2" parent="." instance=ExtResource( 48 )]
+visible = false
+anchor_left = 1.0
+anchor_bottom = 0.0
+offset_left = -230.0
+offset_right = -230.0
+__meta__ = {
+"_edit_lock_": true,
+"_edit_vertical_guides_": [ 214.0 ]
+}
+
+[node name="Player3" parent="." instance=ExtResource( 41 )]
+visible = false
+offset_left = 569.0
+offset_top = 128.0
+offset_right = 569.0
+offset_bottom = 128.0
+scale = Vector2( 0.75, 0.75 )
+
+[node name="Player4" parent="." instance=ExtResource( 48 )]
+visible = false
+anchor_left = 1.0
+anchor_bottom = 0.0
+offset_left = -926.0
+offset_top = 127.0
+offset_right = -926.0
+offset_bottom = 127.0
+scale = Vector2( 0.75, 0.75 )
+
+[node name="Player5" parent="." instance=ExtResource( 41 )]
+visible = false
+offset_left = 1019.0
+offset_top = 409.0
+offset_right = 1019.0
+offset_bottom = 409.0
+scale = Vector2( 0.75, 0.75 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinimapToggle" parent="." instance=ExtResource( 65 )]
+visible = false
+anchor_left = 1.0
+anchor_bottom = 0.0
+offset_left = -98.0
+offset_top = 23.0
+offset_right = -32.0
+offset_bottom = 98.0
+
+[node name="MinimapPanel" parent="." instance=ExtResource( 44 )]
+unique_name_in_owner = true
+offset_bottom = 576.0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MinimapPanel/Control/MiniMapFrames" index="0"]
+material = ExtResource( 17 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+stretch = true
+stretch_shrink = 2
+
+[node name="SubViewport" type="SubViewport" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer"]
+size = Vector2( 256, 256 )
+transparent_bg = true
+handle_input_locally = false
+disable_3d = true
+usage = 3
+render_target_update_mode = 3
+gui_disable_input = true
+script = SubResource( 15 )
+
+[node name="Minimap" type="TextureRect" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
+material = ExtResource( 19 )
+offset_right = 256.0
+offset_bottom = 256.0
+clip_contents = true
+texture = SubResource( 9 )
+expand = true
+stretch_mode = 6
+script = ExtResource( 25 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SeismicMap" type="Node2D" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport/Minimap"]
+script = ExtResource( 2 )
+
+[node name="FogOfWar" type="Sprite2D" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport" groups=["fog_of_war"]]
+material = ExtResource( 24 )
+position = Vector2( 1660, 5 )
+centered = false
+
+[node name="Overlay" type="Control" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport"]
+offset_right = 256.0
+offset_bottom = 256.0
+custom_minimum_size = Vector2( 256, 256 )
+script = SubResource( 21 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Buttons" type="HBoxContainer" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer"]
+visible = false
+anchor_top = 0.0273438
+anchor_right = 0.5
+anchor_bottom = 0.0273438
+offset_left = 19.0
+offset_top = 226.0
+offset_right = 109.0
+offset_bottom = 246.0
+size_flags_horizontal = 5
+alignment = 1
+
+[node name="Plus" type="TextureButton" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons"]
+offset_right = 20.0
+offset_bottom = 20.0
+custom_minimum_size = Vector2( 20, 20 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture_normal = ExtResource( 14 )
+texture_pressed = ExtResource( 13 )
+expand = true
+
+[node name="Label" type="Label" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons"]
+offset_left = 24.0
+offset_right = 194.0
+offset_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 52 )
+text = "x1"
+align = 1
+valign = 1
+
+[node name="Minus" type="TextureButton" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons"]
+offset_left = 198.0
+offset_right = 218.0
+offset_bottom = 20.0
+custom_minimum_size = Vector2( 20, 20 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture_normal = ExtResource( 15 )
+texture_pressed = ExtResource( 20 )
+expand = true
+
+[node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow/MarginContainer" index="0"]
+text = "N"
+
+[node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow2/MarginContainer" index="0"]
+text = "S"
+
+[node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow4/MarginContainer" index="0"]
+text = "E"
+
+[node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow3/MarginContainer" index="0"]
+text = "W"
+
+[node name="CanAchieve" type="TextureRect" parent="MinimapPanel/Control" index="5"]
+unique_name_in_owner = true
+offset_left = 440.0
+offset_top = 440.0
+offset_right = 529.0
+offset_bottom = 529.0
+texture = ExtResource( 61 )
+expand = true
+stretch_mode = 6
+script = SubResource( 84 )
+
+[node name="NotificationPanel" parent="." instance=ExtResource( 45 )]
+
+[node name="Bars" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="Bars"]
+anchor_right = 1.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="Bars"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+color = Color( 0, 0, 0, 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Bars"]
+anims/Bars = SubResource( 17 )
+anims/RESET = SubResource( 18 )
+
+[node name="WaveStuff" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="WaveNameUpper" type="Label" parent="WaveStuff"]
+visible = false
+modulate = Color( 0.0499999, 1.2075, 2.61, 1 )
+material = SubResource( 57 )
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 338.0
+offset_bottom = 458.0
+theme_override_colors/font_color = Color( 0.501961, 0.501961, 0.501961, 1 )
+theme_override_colors/font_outline_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 27 )
+text = "Wave 100"
+align = 1
+valign = 1
+clip_text = true
+percent_visible = 0.0
+
+[node name="WaveNameLower" type="Label" parent="WaveStuff"]
+visible = false
+modulate = Color( 0.0499999, 1.2075, 2.61, 1 )
+material = SubResource( 57 )
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 467.0
+offset_bottom = 587.0
+theme_override_colors/font_color = Color( 0.501961, 0.501961, 0.501961, 1 )
+theme_override_colors/font_outline_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 27 )
+text = "Blelbeble"
+align = 1
+valign = 1
+clip_text = true
+percent_visible = 0.0
+
+[node name="WaveAnimator" type="AnimationPlayer" parent="WaveStuff"]
+anims/RESET = SubResource( 59 )
+anims/ShowWave = SubResource( 58 )
+
+[node name="InfoLabels" parent="." instance=ExtResource( 43 )]
+modulate = Color( 1, 1, 1, 0.878431 )
+anchor_left = 0.0
+anchor_right = 1.0
+offset_left = 0.0
+offset_top = -456.0
+offset_right = 0.0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_left = 32
+
+[node name="PanelContainer" parent="InfoLabels" index="0"]
+offset_left = 1259.0
+offset_top = 16.0
+offset_right = 2581.0
+offset_bottom = 424.0
+
+[node name="VB" parent="InfoLabels/PanelContainer" index="0"]
+offset_right = 1322.0
+offset_bottom = 408.0
+
+[node name="MarginContainer2" parent="InfoLabels/PanelContainer/VB" index="0"]
+offset_right = 1322.0
+offset_bottom = 400.0
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" parent="InfoLabels/PanelContainer/VB/MarginContainer2" index="0"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1314.0
+offset_bottom = 392.0
+theme_override_constants/separation = 0
+
+[node name="Autosave" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="0" instance=ExtResource( 46 )]
+unique_name_in_owner = true
+icon = ExtResource( 21 )
+icon_modulate = Color( 0.807843, 1, 0.729412, 1 )
+
+[node name="SurviveTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="1" instance=ExtResource( 46 )]
+unique_name_in_owner = true
+offset_top = 64.0
+offset_bottom = 128.0
+icon_modulate = Color( 0, 1, 0, 1 )
+text = "Time Left: %02d:%02d"
+
+[node name="FailTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="2" instance=ExtResource( 46 )]
+unique_name_in_owner = true
+offset_top = 128.0
+offset_bottom = 192.0
+icon_modulate = Color( 1, 0, 0, 1 )
+text = "Time Limit: %02d:%02d"
+
+[node name="WaveCounter" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="3" instance=ExtResource( 46 )]
+unique_name_in_owner = true
+offset_top = 192.0
+offset_bottom = 256.0
+icon = ExtResource( 16 )
+icon_modulate = Color( 1, 0, 0, 1 )
+text = "Wave %s / %s - Enemies remaining %s"
+
+[node name="WaveTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="4" instance=ExtResource( 46 )]
+unique_name_in_owner = true
+offset_top = 256.0
+offset_bottom = 320.0
+icon_modulate = Color( 1, 0.721569, 0, 1 )
+text = "Wave %s in %02d:%02d"
+
+[node name="Objective" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="5" instance=ExtResource( 46 )]
+unique_name_in_owner = true
+offset_top = 320.0
+offset_bottom = 384.0
+icon = ExtResource( 18 )
+
+[node name="Footer" parent="InfoLabels/PanelContainer/VB" index="1"]
+offset_top = 404.0
+offset_right = 1322.0
+offset_bottom = 408.0
+
+[node name="TopPanel" parent="." instance=ExtResource( 47 )]
+offset_bottom = 424.0
+
+[node name="VBoxContainer" parent="TopPanel" index="0"]
+offset_bottom = 424.0
+alignment = 0
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen" index="0"]
+self_modulate = Color( 0.819608, 0.109804, 0.427451, 1 )
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen/Icon" index="0"]
+texture = ExtResource( 12 )
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal" index="0"]
+self_modulate = Color( 0.337255, 0.262745, 0.188235, 1 )
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal/Icon" index="0"]
+texture = ExtResource( 1 )
+
+[node name="Towers" parent="." instance=ExtResource( 57 )]
+unique_name_in_owner = true
+offset_left = 1371.0
+offset_top = 32.0
+offset_right = 1606.0
+offset_bottom = 96.0
+
+[node name="Icon" parent="Towers" index="0"]
+self_modulate = Color( 0.337255, 0.262745, 0.188235, 1 )
+
+[node name="Icon" parent="Towers/Icon" index="0"]
+texture = ExtResource( 23 )
+
+[node name="InfoMenu" type="CenterContainer" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 67 )
+
+[node name="MapTechWindow" parent="InfoMenu" instance=ExtResource( 39 )]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 299.0
+offset_top = 265.0
+offset_right = 3541.0
+offset_bottom = 1894.0
+
+[node name="VBoxContainer" parent="InfoMenu/MapTechWindow" index="0"]
+offset_right = 3382.0
+offset_bottom = 1639.0
+
+[node name="TabContainer" parent="InfoMenu/MapTechWindow/VBoxContainer" index="0"]
+offset_right = 3382.0
+offset_bottom = 1534.0
+
+[node name="Map" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer" index="0"]
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="MapContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map" index="0"]
+offset_top = 0.0
+offset_right = 3310.0
+offset_bottom = 1430.0
+
+[node name="MarginContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer" index="0"]
+offset_bottom = 1430.0
+
+[node name="VBoxContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer" index="0"]
+offset_bottom = 1430.0
+
+[node name="MapTechWindowMapItem" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="2"]
+icon = ExtResource( 26 )
+description = "Wave Enemy"
+
+[node name="MapTechWindowMapItem2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="3"]
+icon = ExtResource( 28 )
+description = "Upcoming Wave Spawner"
+
+[node name="MapTechWindowMapItem3" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="4"]
+icon = ExtResource( 29 )
+description = "Upcoming Wave Spawner (random)"
+
+[node name="MapTechWindowMapItem4" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="5"]
+icon = ExtResource( 22 )
+description = "Last Death Marker"
+
+[node name="MapTechWindowMapItem5" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="6"]
+icon = ExtResource( 5 )
+description = "Objective"
+
+[node name="MapTechWindowMapItem6" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="7"]
+visible = false
+
+[node name="MapTechWindowMapItem7" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="8"]
+visible = false
+
+[node name="PanelContainer" type="PanelContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer" index="1"]
+offset_left = 904.0
+offset_right = 2342.0
+offset_bottom = 1430.0
+custom_minimum_size = Vector2( 1430, 1430 )
+theme_override_styles/panel = SubResource( 73 )
+
+[node name="FullFogViewport" type="SubViewport" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer"]
+unique_name_in_owner = true
+size = Vector2( 1430, 1430 )
+handle_input_locally = false
+usage = 0
+render_target_update_mode = 3
+gui_disable_input = true
+
+[node name="ColorRect" type="ColorRect" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullFogViewport"]
+offset_right = 1430.0
+offset_bottom = 1430.0
+
+[node name="FogOfWarFull" type="Sprite2D" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullFogViewport" groups=["fog_of_war"]]
+unique_name_in_owner = true
+material = ExtResource( 24 )
+centered = false
+region_enabled = true
+
+[node name="FullMapViewportContainer" type="SubViewportContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer"]
+unique_name_in_owner = true
+material = SubResource( 71 )
+offset_left = 4.0
+offset_right = 1434.0
+offset_bottom = 1430.0
+
+[node name="FullMapViewport" type="SubViewport" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer"]
+unique_name_in_owner = true
+size = Vector2( 1430, 1430 )
+transparent_bg = true
+handle_input_locally = false
+usage = 0
+render_target_update_mode = 0
+gui_disable_input = true
+
+[node name="FullMap" type="PanelContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer/FullMapViewport"]
+unique_name_in_owner = true
+offset_right = 1430.0
+offset_bottom = 1430.0
+theme_override_styles/panel = SubResource( 69 )
+script = ExtResource( 8 )
+
+[node name="Minimap" type="TextureRect" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer/FullMapViewport/FullMap"]
+material = ExtResource( 19 )
+offset_right = 1430.0
+offset_bottom = 1430.0
+custom_minimum_size = Vector2( 1430, 1430 )
+clip_contents = true
+texture = SubResource( 12 )
+expand = true
+stretch_mode = 6
+script = SubResource( 68 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+overlay_path = NodePath("../../../../Overlay")
+no_zoom = true
+
+[node name="SeismicMap" type="Node2D" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer/FullMapViewport/FullMap/Minimap"]
+script = ExtResource( 2 )
+
+[node name="Overlay" type="Control" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer"]
+offset_left = 4.0
+offset_right = 1434.0
+offset_bottom = 1430.0
+clip_contents = true
+script = SubResource( 21 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+custom_map_path = NodePath("../FullMapViewportContainer/FullMapViewport/FullMap/Minimap")
+full_view = true
+
+[node name="MarginContainer2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer" index="2"]
+offset_left = 2346.0
+offset_right = 3246.0
+offset_bottom = 1430.0
+
+[node name="VBoxContainer2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2" index="0"]
+offset_bottom = 1430.0
+
+[node name="MapTechWindowMapItemRight" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="2"]
+color = Color( 0.219608, 0.219608, 0.219608, 1 )
+description = "Terrain"
+
+[node name="MapTechWindowMapItemRight2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="3"]
+color = Color( 0.423529, 0.423529, 0.423529, 1 )
+description = "Metal"
+
+[node name="MapTechWindowMapItemRight3" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="4"]
+color = Color( 0.843137, 0.207843, 0.34902, 1 )
+description = "Lumen"
+
+[node name="MapTechWindowMapItemRight4" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="5"]
+color = Color( 0.164706, 0.341176, 0.517647, 1 )
+description = "Eroded Lumen"
+
+[node name="MapTechWindowMapItemRight5" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="6"]
+color = Color( 0.0352941, 0.631373, 0.517647, 1 )
+description = "Buildings"
+
+[node name="MapTechWindowMapItemRight6" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="7"]
+color = Color( 1, 0.282353, 0, 1 )
+description = "Lava"
+
+[node name="MapTechWindowMapItemRight7" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="8"]
+color = Color( 0.113725, 0.14902, 0.192157, 1 )
+description = "Bedrock"
+
+[node name="VBoxContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Tech" index="0"]
+offset_right = 3310.0
+offset_bottom = 1366.0
+
+[node name="Tooltips" parent="InfoMenu/MapTechWindow/VBoxContainer" index="1"]
+offset_left = 2958.0
+offset_top = 1540.0
+offset_right = 3382.0
+offset_bottom = 1639.0
+
+[node name="MarginContainer" parent="InfoMenu/MapTechWindow" index="1"]
+offset_left = 3428.0
+offset_right = 3478.0
+offset_bottom = 1639.0
+
+[node name="PauseMenu" type="MarginContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -576.5
+offset_top = -496.5
+offset_right = 576.5
+offset_bottom = 496.5
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource( 74 )
+
+[node name="Primary" type="VBoxContainer" parent="PauseMenu"]
+unique_name_in_owner = true
+offset_right = 1000.0
+offset_bottom = 993.0
+custom_minimum_size = Vector2( 1000, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Header" type="HBoxContainer" parent="PauseMenu/Primary"]
+offset_right = 1000.0
+offset_bottom = 107.0
+size_flags_horizontal = 3
+
+[node name="HeaderName" type="PanelContainer" parent="PauseMenu/Primary/Header"]
+offset_right = 602.0
+offset_bottom = 107.0
+size_flags_horizontal = 0
+theme_type_variation = "1000_yellow"
+
+[node name="HaderText" type="Label" parent="PauseMenu/Primary/Header/HeaderName"]
+offset_left = 64.0
+offset_right = 538.0
+offset_bottom = 107.0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 53 )
+text = "Game Paused"
+uppercase = true
+
+[node name="Spacing" type="Control" parent="PauseMenu/Primary/Header"]
+offset_left = 606.0
+offset_right = 889.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 32, 0 )
+size_flags_horizontal = 3
+
+[node name="Exit" type="PanelContainer" parent="PauseMenu/Primary/Header"]
+offset_left = 893.0
+offset_right = 1000.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+theme_type_variation = "ExitButton"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PauseMenu/Primary/Header/Exit"]
+offset_right = 107.0
+offset_bottom = 107.0
+
+[node name="Tooltip" type="Control" parent="PauseMenu/Primary/Header/Exit/HBoxContainer"]
+visible = false
+offset_right = 107.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TooltipGamepadIcon" parent="PauseMenu/Primary/Header/Exit/HBoxContainer/Tooltip" instance=ExtResource( 40 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+
+[node name="Exit" type="Control" parent="PauseMenu/Primary/Header/Exit/HBoxContainer"]
+offset_right = 107.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="ExitButton" type="TextureButton" parent="PauseMenu/Primary/Header/Exit/HBoxContainer/Exit"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+custom_minimum_size = Vector2( 32, 32 )
+focus_mode = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource( 32 )
+texture_pressed = ExtResource( 33 )
+texture_hover = ExtResource( 31 )
+texture_disabled = ExtResource( 32 )
+texture_focused = ExtResource( 34 )
+expand = true
+stretch_mode = 5
+
+[node name="MenuContent" type="PanelContainer" parent="PauseMenu/Primary"]
+unique_name_in_owner = true
+offset_top = 107.0
+offset_right = 1000.0
+offset_bottom = 985.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = "0001_yellow_only_border"
+
+[node name="Main" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent"]
+unique_name_in_owner = true
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 936.0
+offset_bottom = 814.0
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Continue" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+offset_right = 872.0
+offset_bottom = 72.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Continue"
+script = ExtResource( 55 )
+
+[node name="ObjectiveButton" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+offset_top = 84.0
+offset_right = 872.0
+offset_bottom = 156.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Objective"
+script = ExtResource( 55 )
+
+[node name="Coop" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+offset_top = 168.0
+offset_right = 872.0
+offset_bottom = 240.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Start Co-op"
+script = ExtResource( 55 )
+
+[node name="Save" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+offset_top = 252.0
+offset_right = 872.0
+offset_bottom = 324.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+theme_override_styles/disabled = SubResource( 81 )
+text = "Save Game"
+script = ExtResource( 55 )
+
+[node name="Load" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+offset_top = 336.0
+offset_right = 872.0
+offset_bottom = 408.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+theme_override_styles/disabled = SubResource( 81 )
+text = "Load Game"
+script = ExtResource( 55 )
+
+[node name="Report" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+offset_top = 420.0
+offset_right = 872.0
+offset_bottom = 492.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Report Bug"
+script = ExtResource( 55 )
+
+[node name="Options" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+offset_top = 504.0
+offset_right = 872.0
+offset_bottom = 576.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Options"
+script = ExtResource( 55 )
+
+[node name="Quit" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+offset_top = 588.0
+offset_right = 872.0
+offset_bottom = 660.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Quit"
+script = ExtResource( 55 )
+
+[node name="Quit2" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+visible = false
+offset_top = 672.0
+offset_right = 872.0
+offset_bottom = 744.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Quit to Menu"
+script = ExtResource( 55 )
+
+[node name="Finish" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
+unique_name_in_owner = true
+visible = false
+offset_top = 756.0
+offset_right = 872.0
+offset_bottom = 828.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "Finish"
+script = ExtResource( 55 )
+
+[node name="SaveMenu" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent"]
+unique_name_in_owner = true
+visible = false
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 936.0
+offset_bottom = 814.0
+script = SubResource( 38 )
+hide_autosave = true
+reverse_sort = true
+
+[node name="SaveScroll" type="ScrollContainer" parent="PauseMenu/Primary/MenuContent/SaveMenu"]
+unique_name_in_owner = true
+offset_right = 872.0
+offset_bottom = 750.0
+size_flags_vertical = 3
+follow_focus = true
+scroll_horizontal_enabled = false
+
+[node name="SaveList" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll"]
+unique_name_in_owner = true
+offset_right = 808.0
+offset_bottom = 148.0
+size_flags_horizontal = 3
+
+[node name="SaveSlot" type="Button" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList"]
+unique_name_in_owner = true
+offset_right = 808.0
+offset_bottom = 72.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+align = 0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/SaveSlot"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource( 36 )
+bbcode_enabled = true
+scroll_active = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList"]
+offset_top = 76.0
+offset_right = 808.0
+offset_bottom = 148.0
+
+[node name="SlotName" type="LineEdit" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+offset_right = 564.0
+offset_bottom = 72.0
+size_flags_horizontal = 3
+theme_type_variation = "SaveNameEdit"
+theme_override_fonts/font = ExtResource( 36 )
+
+[node name="NewSlot" type="Button" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/HBoxContainer"]
+unique_name_in_owner = true
+offset_right = 240.0
+offset_bottom = 72.0
+custom_minimum_size = Vector2( 240, 0 )
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+text = "New Slot"
+align = 0
+script = ExtResource( 55 )
+
+[node name="Error" type="Label" parent="PauseMenu/Primary/MenuContent/SaveMenu"]
+unique_name_in_owner = true
+visible = false
+modulate = Color( 1, 0, 0, 1 )
+offset_top = 686.0
+offset_right = 872.0
+offset_bottom = 750.0
+theme_override_fonts/font = ExtResource( 36 )
+
+[node name="LoadMenu" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent"]
+unique_name_in_owner = true
+visible = false
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 936.0
+offset_bottom = 814.0
+script = SubResource( 82 )
+list_path = NodePath("LoadScroll/LoadList")
+slot_path = NodePath("LoadScroll/LoadList/LoadSlot")
+
+[node name="LoadScroll" type="ScrollContainer" parent="PauseMenu/Primary/MenuContent/LoadMenu"]
+unique_name_in_owner = true
+offset_right = 872.0
+offset_bottom = 750.0
+size_flags_vertical = 3
+follow_focus = true
+scroll_horizontal_enabled = false
+
+[node name="LoadList" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent/LoadMenu/LoadScroll"]
+offset_right = 808.0
+offset_bottom = 72.0
+size_flags_horizontal = 3
+
+[node name="LoadSlot" type="Button" parent="PauseMenu/Primary/MenuContent/LoadMenu/LoadScroll/LoadList"]
+unique_name_in_owner = true
+offset_right = 808.0
+offset_bottom = 72.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = "PauseMenuButton"
+align = 0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PauseMenu/Primary/MenuContent/LoadMenu/LoadScroll/LoadList/LoadSlot"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource( 36 )
+bbcode_enabled = true
+scroll_active = false
+
+[node name="Separator" type="Control" parent="PauseMenu/Primary"]
+offset_top = 985.0
+offset_right = 1000.0
+offset_bottom = 993.0
+custom_minimum_size = Vector2( 0, 8 )
+
+[node name="TooltipStaticLeft5" type="PanelContainer" parent="PauseMenu/Primary"]
+visible = false
+material = SubResource( 2 )
+offset_top = 894.0
+offset_right = 214.0
+offset_bottom = 993.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "0001_yellow_border"
+script = ExtResource( 38 )
+
+[node name="MarginContainer" type="MarginContainer" parent="PauseMenu/Primary/TooltipStaticLeft5"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 190.0
+offset_bottom = 87.0
+size_flags_vertical = 4
+
+[node name="MainHB" type="HBoxContainer" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer"]
+offset_right = 166.0
+offset_bottom = 75.0
+size_flags_vertical = 5
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TooltipGamepadIcon" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB"]
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 75.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 75, 75 )
+size_flags_vertical = 4
+texture = ExtResource( 11 )
+
+[node name="AdditionalIcon" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon"]
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+custom_minimum_size = Vector2( 75, 75 )
+texture = ExtResource( 10 )
+
+[node name="AdditionalText" type="MarginContainer" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+custom_minimum_size = Vector2( 75, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_top = -9
+
+[node name="ValueText" type="Label" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon/AdditionalText"]
+offset_left = 24.0
+offset_top = 1.0
+offset_right = 50.0
+offset_bottom = 65.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 36 )
+text = "l"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="TooltipGamepadIcon2" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB"]
+self_modulate = Color( 0, 0, 0, 1 )
+offset_left = 91.0
+offset_right = 166.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 75, 75 )
+size_flags_vertical = 4
+texture = ExtResource( 9 )
+
+[node name="AdditionalIcon" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon2"]
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+custom_minimum_size = Vector2( 75, 75 )
+texture = ExtResource( 10 )
+
+[node name="AdditionalText" type="MarginContainer" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon2"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+custom_minimum_size = Vector2( 75, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ValueText" type="Label" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon2/AdditionalText"]
+offset_left = 24.0
+offset_top = 5.0
+offset_right = 50.0
+offset_bottom = 69.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 36 )
+text = "a"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="Options" parent="PauseMenu" instance=ExtResource( 49 )]
+visible = false
+offset_left = 0.0
+offset_top = -354.0
+offset_right = 2900.0
+offset_bottom = 1346.0
+custom_minimum_size = Vector2( 2900, 1700 )
+
+[node name="CoopSettings" parent="PauseMenu" instance=ExtResource( 50 )]
+unique_name_in_owner = true
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1153.0
+offset_bottom = 993.0
+script = SubResource( 44 )
+
+[node name="VBoxContainer" parent="PauseMenu/CoopSettings" index="0"]
+offset_right = 1153.0
+
+[node name="Header" parent="PauseMenu/CoopSettings/VBoxContainer" index="0"]
+offset_right = 1153.0
+
+[node name="ValueHeaderTitle" parent="PauseMenu/CoopSettings/VBoxContainer/Header/MarginContainer" index="0"]
+offset_right = 1121.0
+
+[node name="PanelContainer" parent="PauseMenu/CoopSettings/VBoxContainer" index="1"]
+offset_right = 1153.0
+
+[node name="MarginContainer2" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer" index="0"]
+offset_right = 1153.0
+
+[node name="VBoxContainer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2" index="0"]
+offset_right = 1121.0
+
+[node name="Players" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="0"]
+offset_right = 1089.0
+
+[node name="Player" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players" index="0"]
+offset_left = 277.0
+offset_right = 812.0
+
+[node name="Error" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="1"]
+offset_right = 1089.0
+
+[node name="HBoxContainer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="2"]
+offset_right = 1089.0
+
+[node name="UltimateTooltip" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer" index="0"]
+offset_left = 885.0
+offset_right = 1089.0
+
+[node name="Footer" parent="PauseMenu/CoopSettings/VBoxContainer" index="2"]
+offset_right = 1153.0
+
+[node name="OnScreenMessage" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 1827.0
+offset_top = 1016.0
+offset_right = 2013.0
+offset_bottom = 1144.0
+theme_override_styles/panel = SubResource( 75 )
+script = SubResource( 76 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="OnScreenMessage"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 122.0
+offset_bottom = 64.0
+theme_override_fonts/mono_font = ExtResource( 37 )
+theme_override_fonts/bold_italics_font = ExtResource( 51 )
+theme_override_fonts/italics_font = ExtResource( 56 )
+theme_override_fonts/bold_font = ExtResource( 36 )
+theme_override_fonts/normal_font = ExtResource( 37 )
+bbcode_enabled = true
+
+[node name="Control" type="Control" parent="OnScreenMessage"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 122.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="UltimateTooltip" parent="OnScreenMessage/Control" instance=ExtResource( 6 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -587.0
+offset_top = 413.0
+offset_right = -383.0
+offset_bottom = 542.0
+action = "accept"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="OnScreenMessage"]
+anims/Appear = SubResource( 77 )
+anims/Disappear = SubResource( 79 )
+anims/RESET = SubResource( 78 )
+
+[node name="ControllerDisconnected" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.25098 )
+script = SubResource( 62 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Paused" type="Label" parent="ControllerDisconnected"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_fonts/font = ExtResource( 54 )
+text = "Controller Disconnected"
+align = 1
+valign = 1
+
+[node name="ConfirmQuit" parent="." instance=ExtResource( 42 )]
+unique_name_in_owner = true
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -367.0
+offset_top = -229.0
+offset_right = 367.0
+offset_bottom = 229.0
+
+[connection signal="pressed" from="MobileControls/Control2/Analog" to="MobileControls/Control2/Analog" method="_pressed"]
+[connection signal="released" from="MobileControls/Control2/Analog" to="MobileControls/Control2/Analog" method="_released"]
+[connection signal="pressed" from="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons/Plus" to="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport/Minimap" method="zoom_in"]
+[connection signal="pressed" from="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons/Minus" to="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport/Minimap" method="zoom_out"]
+[connection signal="pressed" from="PauseMenu/Primary/Header/Exit/HBoxContainer/Exit/ExitButton" to="PauseMenu" method="close"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Continue" to="PauseMenu" method="close"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/ObjectiveButton" to="PauseMenu" method="display_objective"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Coop" to="PauseMenu" method="start_coop"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Save" to="PauseMenu" method="save_game"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Load" to="PauseMenu" method="load_game"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Report" to="PauseMenu" method="report_bug"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Options" to="PauseMenu" method="options"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Quit" to="PauseMenu" method="quit"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Quit2" to="PauseMenu" method="quit2"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/Main/Finish" to="PauseMenu" method="finish"]
+[connection signal="text_submitted" from="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/HBoxContainer/SlotName" to="PauseMenu/Primary/MenuContent/SaveMenu" method="_on_SlotName_text_entered"]
+[connection signal="pressed" from="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/HBoxContainer/NewSlot" to="PauseMenu/Primary/MenuContent/SaveMenu" method="create_new_slot"]
+[connection signal="exit" from="PauseMenu/CoopSettings" to="PauseMenu" method="exit_coop_settings"]
+[connection signal="pressed" from="PauseMenu/CoopSettings/VBoxContainer/Header/ButtonExit" to="PauseMenu/CoopSettings" method="exit_pressed"]
+[connection signal="animation_finished" from="OnScreenMessage/AnimationPlayer" to="OnScreenMessage" method="_on_AnimationPlayer_animation_finished"]
+[connection signal="confirmed" from="ConfirmQuit" to="PauseMenu" method="confirm_quit"]
+[connection signal="visibility_changed" from="ConfirmQuit" to="PauseMenu" method="cancel_quit"]
+
+[editable path="MinimapPanel"]
+[editable path="MinimapPanel/Control/TooltipTextYellow"]
+[editable path="MinimapPanel/Control/TooltipTextYellow2"]
+[editable path="MinimapPanel/Control/TooltipTextYellow4"]
+[editable path="MinimapPanel/Control/TooltipTextYellow3"]
+[editable path="NotificationPanel"]
+[editable path="InfoLabels"]
+[editable path="TopPanel"]
+[editable path="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen"]
+[editable path="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal"]
+[editable path="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue"]
+[editable path="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2"]
+[editable path="Towers"]
+[editable path="InfoMenu/MapTechWindow"]
+[editable path="PauseMenu/CoopSettings"]

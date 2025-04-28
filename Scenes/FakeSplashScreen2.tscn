@@ -1,0 +1,1195 @@
+[gd_scene load_steps=40 format=2]
+
+[ext_resource path="res://Nodes/Objects/Flare/Flare.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scenes/Loading.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Nodes/Effects/Impact/BulletBlood.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Nodes/Player/Player.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Objects/Chest/RustyChest.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Enemies/Arthoma/Arthoma.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Enemies/Arthoma/arthoma_all_shadow_smooth.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Enemies/ArthomaAcid/AcidBullet.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Enemies/ArthomaAcid/Bouble.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Nodes/Effects/Impact/BulletSpark.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/FlameEffect.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Nodes/Objects/Mushrooms/Mushroom.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Nodes/Effects/Explosion/Explosion.tscn" type="PackedScene" id=13]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+func _ready() -> void:
+	for hack in $ShaderHacks.get_children():
+		Const._CACHE.append(load(hack.filename))
+
+func _on_Timer_timeout() -> void:
+	get_tree().change_scene_to_file(\"res://Resources/Anarchy/Scenes/anarchy_main_menu.tscn\")
+"
+
+[sub_resource type="GDScript" id=10]
+resource_name = "Particles"
+script/source = "extends GPUParticles2D
+
+func _enter_tree() -> void:
+	emitting = true
+"
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends PixelMapRigidBody
+
+func _on_Legs_frame_changed():
+	pass
+
+func _on_Area2D_body_entered(b):
+	pass
+
+func check_stuck():
+	pass
+"
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimationPlayer:playback_speed")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 30.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D/Smoke:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite2D/Hitbox/Shape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Sprite2D/AttackBox/AttackShape:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Sprite2D:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite2D:offset")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Sprite2D:texture")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ ExtResource( 7 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "attack"
+length = 60.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/AttackBox/AttackShape:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 23, 26 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite2D:offset")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 2, -2 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "death"
+length = 20.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, -2 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("AnimationPlayer:playback_speed")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 32.0 ]
+}
+
+[sub_resource type="Animation" id=6]
+length = 50.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimationPlayer:playback_speed")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "idle"
+length = 60.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 2, -2 ) ]
+}
+
+[sub_resource type="Animation" id=8]
+resource_name = "stun"
+length = 14.0
+step = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D/AttackBox/AttackShape:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90 ]
+}
+
+[sub_resource type="Animation" id=9]
+resource_name = "walk"
+length = 30.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 171, 172, 173, 174, 175, 176, 177 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, -2 ) ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 10, 24 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "step"
+}, {
+"args": [  ],
+"method": "step"
+} ]
+}
+
+[sub_resource type="Animation" id=11]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.1, 0.1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("GPUParticles2D:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite2D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 0.0823529, 0.596078, 0.113725, 1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("CollisionShape2D:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("CollisionShape2D:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=12]
+resource_name = "splat"
+length = 10.0
+step = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.4, 5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.01, 0.01 ), Vector2( 0.1, 0.1 ), Vector2( 0.12, 0.12 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.4, 8.8, 10 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.0823529, 0.596078, 0.113725, 1 ), Color( 0.0823529, 1, 0.113725, 0.980392 ), Color( 0.0823529, 0.929753, 0.113725, 0.618755 ), Color( 0.0823529, 0.596078, 0.113725, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 4.2, 4.4, 4.6, 4.8, 5, 5.2, 5.4, 5.6, 5.8, 6, 6.2, 6.4, 6.6, 6.8, 7, 7.2, 7.4, 7.6, 7.8, 8, 8.2, 8.4, 8.6 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("CollisionShape2D:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.1, 0.1 ), Vector2( 1, 1 ) ]
+}
+
+[sub_resource type="GDScript" id=14]
+script/source = "extends Node2D
+
+func _on_AnimationPlayer_animation_finished(a):
+	pass
+"
+
+[sub_resource type="Shader" id=46]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.5.rc's ParticleProcessMaterial.
+
+shader_type particles;
+uniform vec3 direction;
+uniform float spread;
+uniform float flatness;
+uniform float initial_linear_velocity;
+uniform float initial_angle;
+uniform float angular_velocity;
+uniform float orbit_velocity;
+uniform float linear_accel;
+uniform float radial_accel;
+uniform float tangent_accel;
+uniform float damping;
+uniform float scale;
+uniform float hue_variation;
+uniform float anim_speed;
+uniform float anim_offset;
+uniform float initial_linear_velocity_random;
+uniform float initial_angle_random;
+uniform float angular_velocity_random;
+uniform float orbit_velocity_random;
+uniform float linear_accel_random;
+uniform float radial_accel_random;
+uniform float tangent_accel_random;
+uniform float damping_random;
+uniform float scale_random;
+uniform float hue_variation_random;
+uniform float anim_speed_random;
+uniform float anim_offset_random;
+uniform float lifetime_randomness;
+uniform vec3 emission_box_extents;
+uniform vec4 color_value : source_color;
+uniform int trail_divisor;
+uniform vec3 gravity;
+uniform sampler2D color_ramp;
+uniform sampler2D scale_texture;
+
+
+uniform bool on_stand=false;
+
+// Collisions
+uniform sampler2D map_texture;
+const float material_collision[33] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
+									1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+									1.0, 1.0, 1.0, 1.0, 0.0, 0.0/* 25 empty*/, 1.0, 1.0, 1.0, 0.0, 
+									0.0,0.0,1.0};
+const float material_collision_above[33] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 
+									1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+									0.0, 0.0, 0.0, 0.0, 0.0, 0.0/* 25 empty*/, 1.0, 1.0, 1.0, 0.0, 
+									0.0,0.0,1.0};
+
+
+float check_position(vec2 pos) {
+	vec4 smp=texelFetch(map_texture, ivec2(pos), 0);
+//	vec4 smp=textureLod(map_texture, pos, 0.0);
+	if (!on_stand)
+		return material_collision[min(32,int(round(smp.g*255.0)))];
+	else
+		return material_collision_above[min(32,int(round(smp.g*255.0)))];
+}
+
+float rand_from_seed(inout uint seed) {
+	int k;
+	int s = int(seed);
+	if (s == 0)
+	s = 305420679;
+	k = s / 127773;
+	s = 16807 * (s - k * 127773) - 2836 * k;
+	if (s < 0)
+		s += 2147483647;
+	seed = uint(s);
+	return float(seed % uint(65536)) / 65535.0;
+}
+
+float rand_from_seed_m1_p1(inout uint seed) {
+	return rand_from_seed(seed) * 2.0 - 1.0;
+}
+
+uint hash(uint x) {
+	x = ((x >> uint(16)) ^ x) * uint(73244475);
+	x = ((x >> uint(16)) ^ x) * uint(73244475);
+	x = (x >> uint(16)) ^ x;
+	return x;
+}
+
+void vertex() {
+	uint base_number = NUMBER / uint(trail_divisor);
+	uint alt_seed = hash(base_number + uint(1) + RANDOM_SEED);
+	float angle_rand = rand_from_seed(alt_seed);
+	float scale_rand = rand_from_seed(alt_seed);
+	float hue_rot_rand = rand_from_seed(alt_seed);
+	float anim_offset_rand = rand_from_seed(alt_seed);
+	float pi = 3.14159;
+	float degree_to_rad = pi / 180.0;
+
+	bool restart = false;
+	float tv = 0.0;
+	if (CUSTOM.y > CUSTOM.w) {
+		restart = true;
+		tv = 1.0;
+	}
+
+	if (RESTART || restart) {
+		uint alt_restart_seed = hash(base_number + uint(301184) + RANDOM_SEED);
+		float tex_linear_velocity = 0.0;
+		float tex_angle = 0.0;
+		float tex_anim_offset = 0.0;
+		float spread_rad = spread * degree_to_rad;
+		{
+			float angle1_rad = rand_from_seed_m1_p1(alt_restart_seed) * spread_rad;
+			angle1_rad += direction.x != 0.0 ? atan(direction.y, direction.x) : sign(direction.y) * (pi / 2.0);
+			vec3 rot = vec3(cos(angle1_rad), sin(angle1_rad), 0.0);
+			VELOCITY = rot * initial_linear_velocity * mix(1.0, rand_from_seed(alt_restart_seed), initial_linear_velocity_random);
+		}
+		float base_angle = (initial_angle + tex_angle) * mix(1.0, angle_rand, initial_angle_random);
+		CUSTOM.x = base_angle * degree_to_rad;
+		CUSTOM.y = 0.0;
+		CUSTOM.w = (1.0 - lifetime_randomness * rand_from_seed(alt_restart_seed));
+		CUSTOM.z = (anim_offset + tex_anim_offset) * mix(1.0, anim_offset_rand, anim_offset_random);
+		TRANSFORM[3].xyz = vec3(rand_from_seed(alt_restart_seed) * 2.0 - 1.0, rand_from_seed(alt_restart_seed) * 2.0 - 1.0, rand_from_seed(alt_restart_seed) * 2.0 - 1.0) * emission_box_extents;
+		VELOCITY = (EMISSION_TRANSFORM * vec4(VELOCITY, 0.0)).xyz;
+		TRANSFORM = EMISSION_TRANSFORM * TRANSFORM;
+		VELOCITY.z = 0.0;
+		TRANSFORM[3].z = 0.0;
+	} else {
+		CUSTOM.y += DELTA / LIFETIME;
+		tv = CUSTOM.y / CUSTOM.w;
+		float tex_linear_velocity = 0.0;
+		float tex_orbit_velocity = 0.0;
+		float tex_angular_velocity = 0.0;
+		float tex_linear_accel = 0.0;
+		float tex_radial_accel = 0.0;
+		float tex_tangent_accel = 0.0;
+		float tex_damping = 0.0;
+		float tex_angle = 0.0;
+		float tex_anim_speed = 0.0;
+		float tex_anim_offset = 0.0;
+		vec3 force = gravity;
+		vec3 pos = TRANSFORM[3].xyz;
+		pos.z = 0.0;
+		// apply linear acceleration
+		force += length(VELOCITY) > 0.0 ? normalize(VELOCITY) * (linear_accel + tex_linear_accel) * mix(1.0, rand_from_seed(alt_seed), linear_accel_random) : vec3(0.0);
+		// apply radial acceleration
+		vec3 org = EMISSION_TRANSFORM[3].xyz;
+		vec3 diff = pos - org;
+		force += length(diff) > 0.0 ? normalize(diff) * (radial_accel + tex_radial_accel) * mix(1.0, rand_from_seed(alt_seed), radial_accel_random) : vec3(0.0);
+		// apply tangential acceleration;
+		force += length(diff.yx) > 0.0 ? vec3(normalize(diff.yx * vec2(-1.0, 1.0)), 0.0) * ((tangent_accel + tex_tangent_accel) * mix(1.0, rand_from_seed(alt_seed), tangent_accel_random)) : vec3(0.0);
+		// apply attractor forces
+		VELOCITY += force * DELTA;
+		
+		
+		
+		
+		// collisions
+		vec2 map_inverse_size = 1.0 / vec2(textureSize(map_texture, 0));
+		float sample = check_position(TRANSFORM[3].xy);
+		if (sample > 0.0) {
+				VELOCITY = vec3(0.0, 0.0, 0.0);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		// orbit velocity
+		float orbit_amount = (orbit_velocity + tex_orbit_velocity) * mix(1.0, rand_from_seed(alt_seed), orbit_velocity_random);
+		if (orbit_amount != 0.0) {
+		     float ang = orbit_amount * DELTA * pi * 2.0;
+		     mat2 rot = mat2(vec2(cos(ang), -sin(ang)), vec2(sin(ang), cos(ang)));
+		     TRANSFORM[3].xy -= diff.xy;
+		     TRANSFORM[3].xy += rot * diff.xy;
+		}
+		if (damping + tex_damping > 0.0) {
+			float v = length(VELOCITY);
+			float damp = (damping + tex_damping) * mix(1.0, rand_from_seed(alt_seed), damping_random);
+			v -= damp * DELTA;
+			if (v < 0.0) {
+				VELOCITY = vec3(0.0);
+			} else {
+				VELOCITY = normalize(VELOCITY) * v;
+			}
+		}
+		float base_angle = (initial_angle + tex_angle) * mix(1.0, angle_rand, initial_angle_random);
+		base_angle += CUSTOM.y * LIFETIME * (angular_velocity + tex_angular_velocity) * mix(1.0, rand_from_seed(alt_seed) * 2.0 - 1.0, angular_velocity_random);
+		CUSTOM.x = base_angle * degree_to_rad;
+		CUSTOM.z = (anim_offset + tex_anim_offset) * mix(1.0, anim_offset_rand, anim_offset_random) + tv * (anim_speed + tex_anim_speed) * mix(1.0, rand_from_seed(alt_seed), anim_speed_random);
+	}
+	float tex_scale = textureLod(scale_texture, vec2(tv, 0.0), 0.0).r;
+	float tex_hue_variation = 0.0;
+	float hue_rot_angle = (hue_variation + tex_hue_variation) * pi * 2.0 * mix(1.0, hue_rot_rand * 2.0 - 1.0, hue_variation_random);
+	float hue_rot_c = cos(hue_rot_angle);
+	float hue_rot_s = sin(hue_rot_angle);
+	mat4 hue_rot_mat = mat4(vec4(0.299, 0.587, 0.114, 0.0),
+			vec4(0.299, 0.587, 0.114, 0.0),
+			vec4(0.299, 0.587, 0.114, 0.0),
+			vec4(0.000, 0.000, 0.000, 1.0)) +
+		mat4(vec4(0.701, -0.587, -0.114, 0.0),
+			vec4(-0.299, 0.413, -0.114, 0.0),
+			vec4(-0.300, -0.588, 0.886, 0.0),
+			vec4(0.000, 0.000, 0.000, 0.0)) * hue_rot_c +
+		mat4(vec4(0.168, 0.330, -0.497, 0.0),
+			vec4(-0.328, 0.035,  0.292, 0.0),
+			vec4(1.250, -1.050, -0.203, 0.0),
+			vec4(0.000, 0.000, 0.000, 0.0)) * hue_rot_s;
+	COLOR = hue_rot_mat * textureLod(color_ramp, vec2(tv, 0.0), 0.0) * color_value;
+
+	TRANSFORM[0] = vec4(cos(CUSTOM.x), -sin(CUSTOM.x), 0.0, 0.0);
+	TRANSFORM[1] = vec4(sin(CUSTOM.x), cos(CUSTOM.x), 0.0, 0.0);
+	TRANSFORM[2] = vec4(0.0, 0.0, 1.0, 0.0);
+	float base_scale = tex_scale * mix(scale, 1.0, scale_random * scale_rand);
+	if (base_scale < 0.000001) {
+		base_scale = 0.000001;
+	}
+	TRANSFORM[0].xyz *= base_scale;
+	TRANSFORM[1].xyz *= base_scale;
+	TRANSFORM[2].xyz *= base_scale;
+	VELOCITY.z = 0.0;
+	TRANSFORM[3].z = 0.0;
+	if (CUSTOM.y > CUSTOM.w) {		ACTIVE = false;
+	}
+}
+
+"
+
+[sub_resource type="Gradient" id=40]
+offsets = PackedFloat32Array( 0.158397, 0.468333, 0.641667, 0.88, 1 )
+colors = PackedColorArray( 0.588235, 0.588235, 5, 1, 2, 2, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture2D" id=41]
+gradient = SubResource( 40 )
+width = 512
+
+[sub_resource type="Curve" id=42]
+_data = [ Vector2( 0, 0.193251 ), 0.0, 1.28549, 0, 0, Vector2( 0.738779, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), -3.69212, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=43]
+width = 256
+curve = SubResource( 42 )
+
+[sub_resource type="ShaderMaterial" id=47]
+resource_local_to_scene = true
+shader = SubResource( 46 )
+shader_param/direction = Vector3( 1, 0, 0 )
+shader_param/spread = 5.0
+shader_param/flatness = 0.0
+shader_param/initial_linear_velocity = 70.0
+shader_param/initial_angle = 720.0
+shader_param/angular_velocity = 36.0
+shader_param/orbit_velocity = 0.0
+shader_param/linear_accel = 0.0
+shader_param/radial_accel = 0.0
+shader_param/tangent_accel = 0.0
+shader_param/damping = 40.0
+shader_param/scale = 0.1
+shader_param/hue_variation = 0.0
+shader_param/anim_speed = 0.0
+shader_param/anim_offset = 1.0
+shader_param/initial_linear_velocity_random = 0.12
+shader_param/initial_angle_random = 1.0
+shader_param/angular_velocity_random = 1.0
+shader_param/orbit_velocity_random = 0.0
+shader_param/linear_accel_random = 0.0
+shader_param/radial_accel_random = 0.0
+shader_param/tangent_accel_random = 0.0
+shader_param/damping_random = 0.0
+shader_param/scale_random = 0.0
+shader_param/hue_variation_random = 0.0
+shader_param/anim_speed_random = 0.0
+shader_param/anim_offset_random = 1.0
+shader_param/lifetime_randomness = 0.0
+shader_param/emission_box_extents = Vector3( 0.5, 0.5, 1 )
+shader_param/color_value = Color( 1, 1, 1, 0.482353 )
+shader_param/trail_divisor = 1
+shader_param/gravity = Vector3( 0, -1e-06, 0 )
+shader_param/on_stand = false
+shader_param/color_ramp = SubResource( 41 )
+shader_param/scale_texture = SubResource( 43 )
+
+[sub_resource type="Shader" id=36]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.5.beta's ParticleProcessMaterial.
+
+shader_type particles;
+uniform vec3 direction;
+uniform float spread;
+uniform float flatness;
+uniform float initial_linear_velocity;
+uniform float initial_angle;
+uniform float angular_velocity;
+uniform float orbit_velocity;
+uniform float linear_accel;
+uniform float radial_accel;
+uniform float tangent_accel;
+uniform float damping;
+uniform float scale;
+uniform float hue_variation;
+uniform float anim_speed;
+uniform float anim_offset;
+uniform float initial_linear_velocity_random;
+uniform float initial_angle_random;
+uniform float angular_velocity_random;
+uniform float orbit_velocity_random;
+uniform float linear_accel_random;
+uniform float radial_accel_random;
+uniform float tangent_accel_random;
+uniform float damping_random;
+uniform float scale_random;
+uniform float hue_variation_random;
+uniform float anim_speed_random;
+uniform float anim_offset_random;
+uniform float lifetime_randomness;
+uniform vec3 emission_box_extents;
+uniform vec4 color_value : source_color;
+uniform int trail_divisor;
+uniform vec3 gravity;
+uniform sampler2D color_ramp;
+uniform sampler2D scale_texture;
+
+uniform bool on_stand=false;
+
+// Collisions
+uniform sampler2D map_texture;
+const float material_collision[33] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
+									1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+									1.0, 1.0, 1.0, 1.0, 0.0, 0.0/* 25 empty*/, 1.0, 1.0, 1.0, 0.0, 
+									0.0,0.0,1.0};
+const float material_collision_above[33] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 
+									1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+									0.0, 0.0, 0.0, 0.0, 0.0, 0.0/* 25 empty*/, 1.0, 1.0, 1.0, 0.0, 
+									0.0,0.0,1.0};
+
+
+float check_position(vec2 pos) {
+	vec4 smp=texelFetch(map_texture, ivec2(pos), 0);
+//	vec4 smp=textureLod(map_texture, pos, 0.0);
+	if (!on_stand)
+		return material_collision[min(32,int(round(smp.g*255.0)))];
+	else
+		return material_collision_above[min(32,int(round(smp.g*255.0)))];
+}
+
+float rand_from_seed(inout uint seed) {
+	int k;
+	int s = int(seed);
+	if (s == 0)
+	s = 305420679;
+	k = s / 127773;
+	s = 16807 * (s - k * 127773) - 2836 * k;
+	if (s < 0)
+		s += 2147483647;
+	seed = uint(s);
+	return float(seed % uint(65536)) / 65535.0;
+}
+
+float rand_from_seed_m1_p1(inout uint seed) {
+	return rand_from_seed(seed) * 2.0 - 1.0;
+}
+
+uint hash(uint x) {
+	x = ((x >> uint(16)) ^ x) * uint(73244475);
+	x = ((x >> uint(16)) ^ x) * uint(73244475);
+	x = (x >> uint(16)) ^ x;
+	return x;
+}
+
+void vertex() {
+	uint base_number = NUMBER / uint(trail_divisor);
+	uint alt_seed = hash(base_number + uint(1) + RANDOM_SEED);
+	float angle_rand = rand_from_seed(alt_seed);
+	float scale_rand = rand_from_seed(alt_seed);
+	float hue_rot_rand = rand_from_seed(alt_seed);
+	float anim_offset_rand = rand_from_seed(alt_seed);
+	float pi = 3.14159;
+	float degree_to_rad = pi / 180.0;
+	
+
+	bool restart = false;
+	float tv = 0.0;
+	if (CUSTOM.y > CUSTOM.w) {
+		restart = true;
+		tv = 1.0;
+	}
+
+	if (RESTART || restart) {
+		uint alt_restart_seed = hash(base_number + uint(301184) + RANDOM_SEED);
+		uint alt_restart_seed_2 = hash(base_number + uint(451776*190) + RANDOM_SEED);
+		uint alt_restart_seed_3 = hash(base_number + uint(301184*20) + RANDOM_SEED);
+		float tex_linear_velocity = 0.0;
+		float tex_angle = 0.0;
+		float tex_anim_offset = 0.0;
+		float spread_rad = spread * degree_to_rad;
+		float angle1_rad = 0.0;
+		angle1_rad = rand_from_seed_m1_p1(alt_restart_seed) * spread_rad;
+		{
+			float angle1_rad_2 = rand_from_seed_m1_p1(alt_restart_seed_2) * spread_rad;
+			float angle1_rad_3 = rand_from_seed_m1_p1(alt_restart_seed_3) * spread_rad;
+			angle1_rad = (angle1_rad + angle1_rad_2 + angle1_rad_3)/3.0;
+			angle1_rad += direction.x != 0.0 ? atan(direction.y, direction.x) : sign(direction.y) * (pi / 2.0);
+			vec3 rot = vec3(cos(angle1_rad), sin(angle1_rad), 0.0);
+			VELOCITY = rot * initial_linear_velocity * mix(1.0, rand_from_seed(alt_restart_seed), initial_linear_velocity_random);
+		}
+		float base_angle = (initial_angle + tex_angle) * mix(1.0, angle_rand, initial_angle_random);
+		CUSTOM.x = base_angle * degree_to_rad;
+		CUSTOM.y = 0.0;
+		CUSTOM.w = (1.0 - lifetime_randomness * rand_from_seed(alt_restart_seed));
+		CUSTOM.z = (anim_offset + tex_anim_offset) * mix(1.0, anim_offset_rand, anim_offset_random);
+		VELOCITY = (EMISSION_TRANSFORM * vec4(VELOCITY, 0.0)).xyz;
+		TRANSFORM[3].xyz = vec3(rand_from_seed(alt_restart_seed) * 2.0 - 1.0, rand_from_seed(alt_restart_seed) * 2.0 - 1.0, rand_from_seed(alt_restart_seed) * 2.0 - 1.0) * emission_box_extents;
+		TRANSFORM = EMISSION_TRANSFORM * TRANSFORM;
+		VELOCITY.z = 0.0;
+		TRANSFORM[3].z = 0.0;
+	} else {
+		CUSTOM.y += DELTA / LIFETIME;
+		tv = CUSTOM.y / CUSTOM.w;
+		float tex_linear_velocity = 0.0;
+		float tex_orbit_velocity = 0.0;
+		float tex_angular_velocity = 0.0;
+		float tex_linear_accel = 0.0;
+		float tex_radial_accel = 0.0;
+		float tex_tangent_accel = 0.0;
+		float tex_damping = 0.0;
+		float tex_angle = 0.0;
+		float tex_anim_speed = 0.0;
+		float tex_anim_offset = 0.0;
+		vec3 force = gravity;
+		vec3 pos = TRANSFORM[3].xyz;
+		pos.z = 0.0;
+		// apply linear acceleration
+		force += length(VELOCITY) > 0.0 ? normalize(VELOCITY) * (linear_accel + tex_linear_accel) * mix(1.0, rand_from_seed(alt_seed), linear_accel_random) : vec3(0.0);
+		// apply radial acceleration
+		vec3 org = EMISSION_TRANSFORM[3].xyz;
+		vec3 diff = pos - org;
+		force += length(diff) > 0.0 ? normalize(diff) * (radial_accel + tex_radial_accel) * mix(1.0, rand_from_seed(alt_seed), radial_accel_random) : vec3(0.0);
+		// apply tangential acceleration;
+		force += length(diff.yx) > 0.0 ? vec3(normalize(diff.yx * vec2(-1.0, 1.0)), 0.0) * ((tangent_accel + tex_tangent_accel) * mix(1.0, rand_from_seed(alt_seed), tangent_accel_random)) : vec3(0.0);
+		// apply attractor forces
+		VELOCITY += force * DELTA;
+		
+		
+				
+		// collisions
+		vec2 map_inverse_size = 1.0 / vec2(textureSize(map_texture, 0));
+		float sample = check_position(TRANSFORM[3].xy);
+		if (sample > 0.0) {
+				VELOCITY = vec3(0.0, 0.0, 0.0);
+		}
+		
+		
+		
+		
+		
+		
+		
+		// orbit velocity
+		float orbit_amount = (orbit_velocity + tex_orbit_velocity) * mix(1.0, rand_from_seed(alt_seed), orbit_velocity_random);
+		if (orbit_amount != 0.0) {
+		     float ang = orbit_amount * DELTA * pi * 2.0;
+		     mat2 rot = mat2(vec2(cos(ang), -sin(ang)), vec2(sin(ang), cos(ang)));
+		     TRANSFORM[3].xy -= diff.xy;
+		     TRANSFORM[3].xy += rot * diff.xy;
+		}
+		if (damping + tex_damping > 0.0) {
+			float v = length(VELOCITY);
+			float damp = (damping + tex_damping) * mix(1.0, rand_from_seed(alt_seed), damping_random);
+			v -= damp * DELTA;
+			if (v < 0.0) {
+				VELOCITY = vec3(0.0);
+			} else {
+				VELOCITY = normalize(VELOCITY) * v;
+			}
+		}
+		float base_angle = (initial_angle + tex_angle) * mix(1.0, angle_rand, initial_angle_random);
+		base_angle += CUSTOM.y * LIFETIME * (angular_velocity + tex_angular_velocity) * mix(1.0, rand_from_seed(alt_seed) * 2.0 - 1.0, angular_velocity_random);
+		CUSTOM.x = base_angle * degree_to_rad;
+		CUSTOM.z = (anim_offset + tex_anim_offset) * mix(1.0, anim_offset_rand, anim_offset_random) + tv * (anim_speed + tex_anim_speed) * mix(1.0, rand_from_seed(alt_seed), anim_speed_random);
+	}
+	float tex_scale = textureLod(scale_texture, vec2(tv, 0.0), 0.0).r;
+	float tex_hue_variation = 0.0;
+	float hue_rot_angle = (hue_variation + tex_hue_variation) * pi * 2.0 * mix(1.0, hue_rot_rand * 2.0 - 1.0, hue_variation_random);
+	float hue_rot_c = cos(hue_rot_angle);
+	float hue_rot_s = sin(hue_rot_angle);
+	mat4 hue_rot_mat = mat4(vec4(0.299, 0.587, 0.114, 0.0),
+			vec4(0.299, 0.587, 0.114, 0.0),
+			vec4(0.299, 0.587, 0.114, 0.0),
+			vec4(0.000, 0.000, 0.000, 1.0)) +
+		mat4(vec4(0.701, -0.587, -0.114, 0.0),
+			vec4(-0.299, 0.413, -0.114, 0.0),
+			vec4(-0.300, -0.588, 0.886, 0.0),
+			vec4(0.000, 0.000, 0.000, 0.0)) * hue_rot_c +
+		mat4(vec4(0.168, 0.330, -0.497, 0.0),
+			vec4(-0.328, 0.035,  0.292, 0.0),
+			vec4(1.250, -1.050, -0.203, 0.0),
+			vec4(0.000, 0.000, 0.000, 0.0)) * hue_rot_s;
+	COLOR = hue_rot_mat * textureLod(color_ramp, vec2(tv, 0.0), 0.0) * color_value;
+
+	TRANSFORM[0] = vec4(cos(CUSTOM.x), -sin(CUSTOM.x), 0.0, 0.0);
+	TRANSFORM[1] = vec4(sin(CUSTOM.x), cos(CUSTOM.x), 0.0, 0.0);
+	TRANSFORM[2] = vec4(0.0, 0.0, 1.0, 0.0);
+	float base_scale = tex_scale * mix(scale, 1.0, scale_random * scale_rand);
+	if (base_scale < 0.000001) {
+		base_scale = 0.000001;
+	}
+	TRANSFORM[0].xyz *= base_scale;
+	TRANSFORM[1].xyz *= base_scale;
+	TRANSFORM[2].xyz *= base_scale;
+	VELOCITY.z = 0.0;
+	TRANSFORM[3].z = 0.0;
+	if (CUSTOM.y > CUSTOM.w) {		ACTIVE = false;
+	}
+}
+
+"
+
+[sub_resource type="Gradient" id=32]
+offsets = PackedFloat32Array( 0, 0.118321, 0.245, 0.385, 1 )
+colors = PackedColorArray( 0.0196078, 0.0196078, 1, 0, 0.196078, 0.196078, 10, 1, 10, 10, 1, 1, 10, 10, 1, 0.501961, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture2D" id=33]
+gradient = SubResource( 32 )
+
+[sub_resource type="Curve" id=34]
+_data = [ Vector2( 0, 0.0950919 ), 0.0, 1.26871, 0, 0, Vector2( 1, 0.223926 ), -0.934612, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=35]
+width = 256
+curve = SubResource( 34 )
+
+[sub_resource type="ShaderMaterial" id=48]
+resource_local_to_scene = true
+shader = SubResource( 36 )
+shader_param/direction = Vector3( 1, 0, 0 )
+shader_param/spread = 5.0
+shader_param/flatness = 0.0
+shader_param/initial_linear_velocity = 80.0
+shader_param/initial_angle = 720.0
+shader_param/angular_velocity = 36.0
+shader_param/orbit_velocity = 0.0
+shader_param/linear_accel = 0.0
+shader_param/radial_accel = 0.0
+shader_param/tangent_accel = 0.0
+shader_param/damping = 50.0
+shader_param/scale = 0.1
+shader_param/hue_variation = 0.0
+shader_param/anim_speed = 3.0
+shader_param/anim_offset = 1.0
+shader_param/initial_linear_velocity_random = 0.1
+shader_param/initial_angle_random = 1.0
+shader_param/angular_velocity_random = 1.0
+shader_param/orbit_velocity_random = 0.0
+shader_param/linear_accel_random = 0.0
+shader_param/radial_accel_random = 0.0
+shader_param/tangent_accel_random = 0.0
+shader_param/damping_random = 0.0
+shader_param/scale_random = 0.0
+shader_param/hue_variation_random = 0.0
+shader_param/anim_speed_random = 0.0
+shader_param/anim_offset_random = 1.0
+shader_param/lifetime_randomness = 0.0
+shader_param/emission_box_extents = Vector3( 2, 0.1, 0.1 )
+shader_param/color_value = Color( 1, 1, 1, 1 )
+shader_param/trail_divisor = 1
+shader_param/gravity = Vector3( 0, -1e-06, 0 )
+shader_param/on_stand = false
+shader_param/color_ramp = SubResource( 33 )
+shader_param/scale_texture = SubResource( 35 )
+
+[sub_resource type="Animation" id=49]
+resource_name = "grow"
+length = 300.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 9.6 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+
+[node name="Control" type="Node"]
+script = SubResource( 1 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+autostart = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 127
+
+[node name="Loading" parent="CanvasLayer" instance=ExtResource( 2 )]
+
+[node name="ShaderHacks" type="Node2D" parent="."]
+
+[node name="Flare" parent="ShaderHacks" instance=ExtResource( 1 )]
+position = Vector2( 31, 2137 )
+custom_pixel_map = true
+script = null
+
+[node name="BulletSpark" parent="ShaderHacks" instance=ExtResource( 3 )]
+position = Vector2( 78, 2136 )
+script = null
+
+[node name="GPUParticles2D" parent="ShaderHacks/BulletSpark" index="0"]
+script = SubResource( 10 )
+
+[node name="Player" parent="ShaderHacks" instance=ExtResource( 4 )]
+position = Vector2( 117, 2139 )
+custom_pixel_map = true
+script = SubResource( 13 )
+
+[node name="HoldPoint" parent="ShaderHacks/Player/Torso" index="5"]
+script = null
+
+[node name="AlternateHealth" parent="ShaderHacks/Player" index="8"]
+script = null
+
+[node name="RunDebris" parent="ShaderHacks/Player" index="13"]
+emitting = true
+
+[node name="StandParticles" parent="ShaderHacks/Player" index="16"]
+emitting = true
+
+[node name="RustyChest" parent="ShaderHacks" instance=ExtResource( 5 )]
+position = Vector2( 209, 2141 )
+custom_pixel_map = true
+script = null
+
+[node name="GPUParticles2D" parent="ShaderHacks/RustyChest" index="4"]
+script = SubResource( 10 )
+
+[node name="EnemyArthoma" parent="ShaderHacks" instance=ExtResource( 6 )]
+position = Vector2( 243, 2140 )
+script = null
+
+[node name="AnimationPlayer" parent="ShaderHacks/EnemyArthoma" index="2"]
+anims/RESET = SubResource( 3 )
+anims/attack = SubResource( 4 )
+anims/death = SubResource( 5 )
+anims/die = SubResource( 6 )
+anims/idle = SubResource( 7 )
+anims/stun = SubResource( 8 )
+anims/walk = SubResource( 9 )
+
+[node name="Smoke" parent="ShaderHacks/EnemyArthoma/Sprite2D" index="2"]
+script = SubResource( 10 )
+
+[node name="AcidBullet" parent="ShaderHacks" instance=ExtResource( 8 )]
+position = Vector2( 275, 2139 )
+script = null
+
+[node name="boubles" parent="ShaderHacks" instance=ExtResource( 9 )]
+position = Vector2( 299, 2142 )
+script = null
+
+[node name="AnimationPlayer" parent="ShaderHacks/boubles" index="5"]
+anims/RESET = SubResource( 11 )
+anims/splat = SubResource( 12 )
+
+[node name="BulletSpark2" parent="ShaderHacks" instance=ExtResource( 10 )]
+position = Vector2( 330, 2142 )
+script = SubResource( 14 )
+
+[node name="GPUParticles2D" parent="ShaderHacks/BulletSpark2" index="0"]
+script = SubResource( 10 )
+
+[node name="FlameEffect" parent="ShaderHacks" instance=ExtResource( 11 )]
+position = Vector2( 381, 2129 )
+script = null
+
+[node name="Flame_smoke" parent="ShaderHacks/FlameEffect" index="0"]
+emitting = true
+process_material = SubResource( 47 )
+
+[node name="Flame_core" parent="ShaderHacks/FlameEffect" index="1"]
+emitting = true
+process_material = SubResource( 48 )
+
+[node name="Smoketrail" parent="ShaderHacks/FlameEffect" index="2"]
+position = Vector2( 2, -9 )
+
+[node name="Mushroom" parent="ShaderHacks" instance=ExtResource( 12 )]
+position = Vector2( 454, 2050 )
+script = null
+
+[node name="small" parent="ShaderHacks/Mushroom" index="4"]
+emitting = true
+
+[node name="big" parent="ShaderHacks/Mushroom" index="5"]
+emitting = true
+one_shot = false
+
+[node name="AnimationPlayer" parent="ShaderHacks/Mushroom" index="6"]
+anims/grow = SubResource( 49 )
+
+[node name="Explosion" parent="ShaderHacks" instance=ExtResource( 13 )]
+position = Vector2( 468, 2138 )
+script = null
+
+[node name="GPUParticles2D" parent="ShaderHacks/Explosion" index="1"]
+script = SubResource( 10 )
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+
+[editable path="ShaderHacks/BulletSpark"]
+[editable path="ShaderHacks/Player"]
+[editable path="ShaderHacks/Player/CanvasLayer/CanvasCenter/CanInteract/UltimateTooltip"]
+[editable path="ShaderHacks/RustyChest"]
+[editable path="ShaderHacks/EnemyArthoma"]
+[editable path="ShaderHacks/boubles"]
+[editable path="ShaderHacks/BulletSpark2"]
+[editable path="ShaderHacks/FlameEffect"]
+[editable path="ShaderHacks/Mushroom"]
+[editable path="ShaderHacks/Explosion"]
