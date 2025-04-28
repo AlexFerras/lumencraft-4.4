@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Nodes/Objects/Deco/Campsite.png" type="Texture2D" id=1]
+
+[node name="StaticBody2D" type="StaticBody2D"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array( 25.1782, 55.7797, 98.5944, 85.1462, 155.103, 48.2156, 131.521, 5.05582, 74.9229, -4.58544, 49.4517, 14.7677 )
+
+[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="."]
+position = Vector2( -36.0842, -23.4735 )
+polygon = PackedVector2Array( 25.1782, 55.7797, 51.5743, 62.3389, 59.6901, 53.3491, 51.3246, 36.4931, 39.463, 33.996 )
+
+[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array( 43.421, -11.8522, 79.4617, -26.9803, 68.3381, -66.1357, 7.38037, -78.5942, -5.23658, -18.8193 )
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array( -8.23325, 4.52937, -77.4051, -83.8707, -155.025, -51.0075, -139.897, 13.0648, -51.1847, 26.13 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 1 )

@@ -1,0 +1,200 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Objects/Deco/Damian/tentacle_T001__00012.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/roots_.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Buildings/Reactor/Smoke_1.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/DeathParticles.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/roots_001.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Objects/Deco/Damian/tentacle_T001__00012_shadow.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/sea_flower.gd" type="Script" id=8]
+
+[sub_resource type="Shader" id=55]
+code = "shader_type canvas_item;
+uniform mat4 global_transform;
+varying vec2 global_position;
+
+uniform float kicked_time=0.0;
+uniform float move_mod=1.0;
+uniform float move_speed=1.0;
+uniform vec4 emision_mask_color :source_color =vec4(0.0,1.0,0.0,1.0);
+uniform vec4 emision_color=vec4(0.0,3.5,0.0,1.0);
+uniform float emision_threshold=0.2;
+
+// NOTE: Shader automatically converted from Godot Engine 3.4.rc's CanvasItemMaterial.
+
+uniform int particles_anim_h_frames;
+uniform int particles_anim_v_frames;
+uniform bool particles_anim_loop;
+
+void vertex() {
+	mat4 glo = global_transform;
+	mat2 ddd = mat2(glo);
+	global_position = (EXTRA_MATRIX * glo * vec4(VERTEX, 0.0, 1.0)).xy;
+}
+
+void fragment() {
+	
+	//float kicked= 5.0*clamp(1.0-pow(fract(TIME*0.5)*3.0,0.1),0.0,1.0);
+	float kicked= 5.0*clamp(0.5-abs(0.5-pow(kicked_time*0.5,0.1)),0.0,1.0);
+	float tim=move_speed*TIME;
+	COLOR = texture(TEXTURE, UV + vec2(sin(tim+UV.x*(10.0)+kicked*2.0*sin(tim)),cos(tim+UV.y*(7.0)-kicked*3.0*sin(tim*2.0))) * (0.03+kicked*0.04)*(1.0-
+	8.0*distance(UV,vec2(0.5)))*move_mod);
+	COLOR=COLOR+max(COLOR*emision_mask_color-vec4(emision_threshold),vec4(0.0))*emision_color;
+}"
+
+[sub_resource type="ShaderMaterial" id=70]
+shader = SubResource( 55 )
+shader_param/global_transform = null
+shader_param/kicked_time = 0.0
+shader_param/move_mod = 0.238
+shader_param/move_speed = 1.0
+shader_param/emision_mask_color = Color( 0.301961, 0.309804, 0.231373, 1 )
+shader_param/emision_color = Plane( 21.125, 20, 300, 0 )
+shader_param/emision_threshold = 0.322
+shader_param/particles_anim_h_frames = null
+shader_param/particles_anim_v_frames = null
+shader_param/particles_anim_loop = null
+
+[sub_resource type="CanvasItemMaterial" id=62]
+particles_animation = true
+particles_anim_h_frames = 5
+particles_anim_v_frames = 3
+particles_anim_loop = true
+
+[sub_resource type="Curve" id=63]
+_data = [ Vector2( 0, 0.0935583 ), 0.0, 0.417178, 0, 1, Vector2( 1, 0.510736 ), 0.417178, 0.0, 1, 0 ]
+
+[sub_resource type="Gradient" id=3]
+offsets = PackedFloat32Array( 0, 0.399573, 0.67735, 1 )
+colors = PackedColorArray( 0.74902, 0.74902, 0.74902, 0.352941, 0.564706, 0.564706, 0.564706, 0.454902, 1, 1, 1, 0.494118, 1, 1, 1, 0 )
+
+[sub_resource type="CanvasItemMaterial" id=66]
+particles_animation = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id=68]
+offsets = PackedFloat32Array( 0.909434, 1 )
+colors = PackedColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=69]
+gradient = SubResource( 68 )
+
+[sub_resource type="ParticleProcessMaterial" id=67]
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 300.0
+initial_velocity_random = 0.54
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 300.0
+angle = 720.0
+angle_random = 1.0
+color_ramp = SubResource( 69 )
+anim_offset = 1.0
+anim_offset_random = 1.0
+
+[sub_resource type="CircleShape2D" id=64]
+radius = 103.17
+
+[node name="Tentacle_4legs_col_2" type="Node2D"]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 720, 715 )
+rotation = -4.39614
+scale = Vector2( 2.25622, 2.35756 )
+z_index = 700
+z_as_relative = false
+script = ExtResource( 8 )
+__meta__ = {
+"_editor_description_": "w"
+}
+
+[node name="Roots" type="Sprite2D" parent="."]
+visible = false
+position = Vector2( 1.0498, -0.299805 )
+z_index = -500
+z_as_relative = false
+texture = ExtResource( 3 )
+
+[node name="ZIndexer" parent="Roots" instance=ExtResource( 1 )]
+z_index = -500
+
+[node name="Roots001" type="Sprite2D" parent="."]
+visible = false
+rotation = 2.32652
+z_index = -500
+z_as_relative = false
+texture = ExtResource( 6 )
+
+[node name="ZIndexer" parent="Roots001" instance=ExtResource( 1 )]
+z_index = -500
+
+[node name="Body002" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 0, 0.654902 )
+material = SubResource( 70 )
+position = Vector2( 3.18985, -16.4234 )
+rotation = -0.00294727
+scale = Vector2( 0.350944, 0.288735 )
+z_index = -500
+texture = ExtResource( 7 )
+
+[node name="Body001" type="Sprite2D" parent="."]
+material = SubResource( 70 )
+position = Vector2( 4.23364, -14.1724 )
+scale = Vector2( 0.366355, 0.320425 )
+z_index = -500
+texture = ExtResource( 2 )
+
+[node name="Smoke" type="CPUParticles2D" parent="."]
+visible = false
+modulate = Color( 0.678431, 0.360784, 0.568627, 1 )
+material = SubResource( 62 )
+position = Vector2( 11.0498, 14.7002 )
+scale = Vector2( 24.3768, 22.1509 )
+z_index = 92
+amount = 6
+lifetime = 3.0
+draw_order = 1
+texture = ExtResource( 4 )
+direction = Vector2( 0, -1 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 1.0
+initial_velocity_random = 0.5
+angular_velocity = 42.0
+angular_velocity_random = 1.0
+scale_amount = 0.1
+scale_amount_curve = SubResource( 63 )
+color_ramp = SubResource( 3 )
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+material = SubResource( 66 )
+z_index = -500
+z_as_relative = false
+emitting = false
+amount = 14
+lifetime = 10.0
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 67 )
+texture = ExtResource( 5 )
+
+[node name="ZIndexer" parent="GPUParticles2D" instance=ExtResource( 1 )]
+z_index = -500
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 700
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2( 5.66022, -9.35974 )
+scale = Vector2( 0.3813, 0.3813 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2( 9.3623, -16.1528 )
+shape = SubResource( 64 )
+disabled = true
+
+[connection signal="area_entered" from="Area2D" to="." method="on_enter"]

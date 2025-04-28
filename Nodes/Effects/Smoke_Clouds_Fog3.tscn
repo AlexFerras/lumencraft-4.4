@@ -1,0 +1,61 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Resources/Textures/clouds__00335_00178.png" type="Texture2D" id=1]
+
+[sub_resource type="Gradient" id=102]
+offsets = PackedFloat32Array( 0, 0.345794, 0.623832, 0.787383, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 1, 1, 1, 0.294118, 1, 1, 1, 0.466667, 1, 1, 1, 0.299103, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=103]
+gradient = SubResource( 102 )
+
+[sub_resource type="Curve" id=104]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.115299, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=105]
+curve = SubResource( 104 )
+
+[sub_resource type="Curve" id=106]
+max_value = 0.01
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.00702273 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=107]
+curve = SubResource( 106 )
+
+[sub_resource type="Curve" id=108]
+max_value = 2.0
+_data = [ Vector2( 0, 0.265909 ), 0.0, 0.854168, 0, 0, Vector2( 0.478936, 0.556818 ), 0.820001, 0.820001, 0, 0, Vector2( 1, 1.13864 ), 1.32973, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=109]
+curve = SubResource( 108 )
+
+[sub_resource type="ParticleProcessMaterial" id=110]
+emission_shape = 2
+emission_box_extents = Vector3( 250, 250, 0 )
+flag_disable_z = true
+direction = Vector3( 0, 0, 0 )
+spread = 60.0
+gravity = Vector3( 0, 2, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+orbit_velocity_curve = SubResource( 107 )
+damping_curve = SubResource( 105 )
+angle = 360.0
+angle_random = 1.0
+scale_random = 0.2
+scale_curve = SubResource( 109 )
+color_ramp = SubResource( 103 )
+
+[node name="Smoke_Clouds_Fog3" type="GPUParticles2D"]
+modulate = Color( 0.870588, 0.756863, 1, 1 )
+position = Vector2( 368, -166 )
+rotation = 0.0443904
+scale = Vector2( 0.25, 0.25 )
+z_index = 1000
+amount = 85
+lifetime = 75.0
+preprocess = 200.0
+speed_scale = 0.25
+visibility_rect = Rect2( -1000, -100, 5000, 5000 )
+process_material = SubResource( 110 )
+texture = ExtResource( 1 )

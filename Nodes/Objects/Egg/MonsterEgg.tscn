@@ -1,0 +1,103 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Nodes/Objects/Egg/Egg_001c.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Objects/Egg/Egg_003.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+
+var hp := 3
+
+var destroyed: bool
+var spider_ultimate_hack: Array
+var spider_timer: float
+
+func _ready() -> void:
+	Utils.set_collisions($Detector, Const.ENEMY_COLLISION_LAYER, Utils.PASSIVE)
+	set_process(false)
+
+func _process(delta: float) -> void:
+	if not spider_ultimate_hack.is_empty():
+		spider_timer += delta
+		
+		for spider in spider_ultimate_hack:
+			spider.sprite.rotation = spider.heading.angle()
+			spider.heading = spider.get_meta(\"direction\")
+			spider.position += spider.heading * 60 * delta
+			spider.animator.play(\"walk\")
+			spider.current_speed = 1
+		
+		if spider_timer >= 0.5:
+			for spider in spider_ultimate_hack:
+				spider.ignore_all_targets = false
+				spider.tick_timer_60 = -1
+			spider_ultimate_hack.clear()
+
+func on_enter(area: Area2D) -> void:
+	if destroyed:
+		return
+	
+	if area.is_in_group(\"player_projectile\"):
+		## TODO: SFX
+		Utils.on_hit(area)
+		
+		var data: Dictionary= area.get_meta(\"data\")
+		hp -= data.damage
+		
+		if hp <= 0:
+			destroyed = true
+			
+			for i in 1 + randi() % 10:
+				Utils.game.map.pickables.spawn_premium_pickable_nice(global_position, Const.ItemIDs.LUMEN,  Utils.random_point_in_circle(120, 70))
+			
+			$Sprite2D.hide()
+			$Sprite2.show()
+			
+			var seq := create_tween()
+			seq.tween_interval(1)
+#			seq.tween_callback(self, \"spawn_enemies\")
+			seq.tween_interval(4)
+			seq.tween_property($Sprite2, \"modulate:a\", 0.0, 0.5)
+			seq.tween_callback(Callable(self, \"queue_free\"))
+
+func spawn_enemies():
+	for i in 1 + randi() % 10:
+		var spider := preload(\"res://Nodes/Enemies/Swarm/SwarmEnemy.tscn\").instantiate() ## TODO: wybieralne?
+		spider.ignore_all_targets = true
+		spider.position = position
+		spider.set_meta(\"direction\", Vector2.RIGHT.rotated(randf() * TAU))
+		spider_ultimate_hack.append(spider)
+		get_parent().call_deferred(\"add_child\", spider)
+	
+	call_deferred(\"set_process\", true)
+"
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 9.0
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 8.0
+
+[node name="MonsterEgg" type="Node2D"]
+script = SubResource( 3 )
+
+[node name="Detector" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detector"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 2 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.025, 0.025 )
+texture = ExtResource( 1 )
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2( 0.03, 0.03 )
+texture = ExtResource( 2 )
+
+[connection signal="area_entered" from="Detector" to="." method="on_enter"]

@@ -1,0 +1,460 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Resources/Fonts/Fent240.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Fonts/Fent120.tres" type="FontFile" id=2]
+
+[sub_resource type="GDScript" id=55]
+script/source = "extends CanvasLayer
+
+var win: bool
+
+func _ready() -> void:
+	Utils.game.set_physics_process(false)
+	Utils.game.disable_music = true
+	Music.stop()
+	if win:
+		$\"%MainLabel\".text = \"Victory!\"
+		$\"%AnimationPlayer\".play(\"Display_victory\")
+		Utils.play_sample(preload(\"res://SFX/UI/Win_0.wav\"))
+	else:
+		$\"%MainLabel\".text = \"Defeat!\"
+		$\"%AnimationPlayer\".play(\"Display_defeat\")
+		Utils.play_sample(preload(\"res://SFX/UI/cinematic_LowDrone1.wav\"))
+
+func change_scene_to_file():
+	get_tree().paused = true
+	if Save.story_mode:
+		get_tree().change_scene_to_file(Const.TITLE_SCENE)
+	elif Utils.editor:
+		Utils.game.exit(false)
+	else:
+		Utils.set_meta(\"scoring_rules\", Utils.game.map.scoring_rules)
+		get_tree().change_scene_to_file(\"res://Resources/Anarchy/Scenes/anarchy_summary_screen.tscn\")
+
+func end(anim_name: String) -> void:
+	get_tree().paused = false
+	queue_free()
+
+func set_death_message(message: String):
+	$\"%DefeatLabel\".text = message
+"
+
+[sub_resource type="ShaderMaterial" id=52]
+
+[sub_resource type="Animation" id=53]
+resource_name = "Display_defeat"
+length = 5.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect/Control/Clipper:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 1080 ), Vector2( 3822, 1080 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorRect/Control/Clipper:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Vector2( 960, 0 ), Vector2( -951, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("ColorRect:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 2, 3 ),
+"transitions": PackedFloat32Array( 1, 0.5, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("ColorRect:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("ColorRect/Control/Clipper/MainLabel:self_modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 3, 4 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("ColorRect:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 4, 5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/6/type = "method"
+tracks/6/path = NodePath(".")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 4 ),
+"transitions": PackedFloat32Array( 1 ),
+"values": [ {
+"args": [  ],
+"method": "change_scene_to_file"
+} ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("ColorRect/Control/Clipper/MainLabel:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 2.61, 0.39, 0.05, 1 ) ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("ColorRect/Control/Clipper/DefeatLabel:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("ColorRect/Control/Clipper/DefeatLabel:self_modulate")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PackedFloat32Array( 3, 4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=56]
+resource_name = "Display_victory"
+length = 5.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect/Control/Clipper:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 1080 ), Vector2( 2440, 1080 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorRect/Control/Clipper:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Vector2( 960, 0 ), Vector2( -260, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("ColorRect:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 2, 3 ),
+"transitions": PackedFloat32Array( 1, 0.5, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("ColorRect:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("ColorRect/Control/Clipper/MainLabel:self_modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 3, 4 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("ColorRect:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 4, 5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/6/type = "method"
+tracks/6/path = NodePath(".")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 4 ),
+"transitions": PackedFloat32Array( 1 ),
+"values": [ {
+"args": [  ],
+"method": "change_scene_to_file"
+} ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("ColorRect/Control/Clipper/MainLabel:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 2.43, 0.81, 2.89, 1 ) ]
+}
+
+[sub_resource type="Animation" id=54]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect/Control/Clipper:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1920, 1080 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorRect/Control/Clipper:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("ColorRect:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("ColorRect:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("ColorRect/Control/Clipper/MainLabel:self_modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("ColorRect:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("ColorRect/Control/Clipper/MainLabel:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 2.61, 0.39, 0.05, 1 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("ColorRect/Control/Clipper/DefeatLabel:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("ColorRect/Control/Clipper/DefeatLabel:self_modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[node name="Result" type="CanvasLayer" groups=["result"]]
+process_mode = 3
+layer = 12
+script = SubResource( 55 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 1, 1, 1, 0 )
+
+[node name="Control" type="Control" parent="ColorRect"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+
+[node name="Clipper" type="ReferenceRect" parent="ColorRect/Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_right = 1920.0
+offset_bottom = 1080.0
+clip_contents = true
+
+[node name="MainLabel" type="Label" parent="ColorRect/Control/Clipper"]
+unique_name_in_owner = true
+modulate = Color( 2.61, 0.39, 0.05, 1 )
+material = SubResource( 52 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -934.0
+offset_top = -540.0
+offset_right = 934.0
+offset_bottom = 540.0
+pivot_offset = Vector2( 960, 540 )
+theme_override_colors/font_color = Color( 0.501961, 0.501961, 0.501961, 1 )
+theme_override_colors/font_outline_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "Defeat!"
+align = 1
+valign = 1
+
+[node name="DefeatLabel" type="Label" parent="ColorRect/Control/Clipper"]
+unique_name_in_owner = true
+visible = false
+modulate = Color( 2.61, 0.39, 0.05, 1 )
+material = SubResource( 52 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1895.0
+offset_top = -391.0
+offset_right = 1895.0
+offset_bottom = 689.0
+pivot_offset = Vector2( 960, 540 )
+theme_override_colors/font_color = Color( 0.501961, 0.501961, 0.501961, 1 )
+theme_override_colors/font_outline_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 2 )
+text = "You died"
+align = 1
+valign = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+anims/Display_defeat = SubResource( 53 )
+anims/Display_victory = SubResource( 56 )
+anims/RESET = SubResource( 54 )
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="end"]

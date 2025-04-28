@@ -1,0 +1,125 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Workshop/Weapon/WeaponWorkshopBase.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Buildings/Workshop/WorkshopStand.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/WorkshopShadow2x3.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Buildings/Icons/IconShotgunWorkshop.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Computer4.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Computer5.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Computer6.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Computer1.png" type="Texture2D" id=9]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Computer2.png" type="Texture2D" id=11]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 42.5802, 31 )
+
+[node name="ShotgunWorkshop" instance=ExtResource( 1 )]
+radius = 25.0
+weapon_name = "SHOTGUN"
+
+[node name="FloodLight" parent="." index="0"]
+position = Vector2( -18.077, -1.261 )
+
+[node name="LightSprite" parent="." index="1"]
+position = Vector2( 8.68686, -0.061 )
+
+[node name="CollisionShape2D" parent="." index="2"]
+position = Vector2( -0.58017, -2.38419e-07 )
+shape = SubResource( 1 )
+
+[node name="Shadow" parent="." index="3"]
+position = Vector2( 0.0127217, 0.93901 )
+scale = Vector2( 0.100754, 0.100754 )
+texture = ExtResource( 3 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Sprite2D" parent="." index="4"]
+position = Vector2( 10.1568, -0.061 )
+
+[node name="Computer4" type="Sprite2D" parent="Sprite2D/Screens" index="0"]
+position = Vector2( -346.165, 562.635 )
+scale = Vector2( 1.3, 1.3 )
+texture = ExtResource( 6 )
+
+[node name="Computer5" type="Sprite2D" parent="Sprite2D/Screens" index="1"]
+position = Vector2( 162.003, 562.635 )
+scale = Vector2( 1.3, 1.3 )
+texture = ExtResource( 7 )
+
+[node name="Computer6" type="Sprite2D" parent="Sprite2D/Screens" index="2"]
+position = Vector2( 668.072, 562.635 )
+scale = Vector2( 1.3, 1.3 )
+texture = ExtResource( 8 )
+
+[node name="Computer1" type="Sprite2D" parent="Sprite2D/Screens" index="3"]
+position = Vector2( -469.315, -782.097 )
+scale = Vector2( 1.3, 1.3 )
+texture = ExtResource( 9 )
+centered = false
+
+[node name="Computer2" type="Sprite2D" parent="Sprite2D/Screens" index="4"]
+position = Vector2( 27.5015, -782.097 )
+scale = Vector2( 1.3, 1.3 )
+texture = ExtResource( 11 )
+centered = false
+
+[node name="WorkshopStand" parent="Sprite2D/Stands" index="0" instance=ExtResource( 2 )]
+position = Vector2( -544, 660.309 )
+scale = Vector2( 13, 13 )
+target_screen = NodePath("../../../ComputerScreen")
+override_position = 1
+
+[node name="WorkshopStand2" parent="Sprite2D/Stands" index="1" instance=ExtResource( 2 )]
+position = Vector2( -31.6936, 660.309 )
+scale = Vector2( 13, 13 )
+target_screen = NodePath("../../../ComputerScreen")
+override_position = 1
+
+[node name="WorkshopStand3" parent="Sprite2D/Stands" index="2" instance=ExtResource( 2 )]
+position = Vector2( 466.672, 660.309 )
+scale = Vector2( 13, 13 )
+target_screen = NodePath("../../../ComputerScreen")
+override_position = 1
+
+[node name="WorkshopStand4" parent="Sprite2D/Stands" index="3" instance=ExtResource( 2 )]
+position = Vector2( -304.453, -659.016 )
+rotation = -3.14159
+scale = Vector2( 13, 13 )
+target_screen = NodePath("../../../ComputerScreen")
+flip_icon = true
+override_position = 2
+
+[node name="WorkshopStand5" parent="Sprite2D/Stands" index="4" instance=ExtResource( 2 )]
+position = Vector2( 206.862, -659.016 )
+rotation = -3.14159
+scale = Vector2( 13, 13 )
+target_screen = NodePath("../../../ComputerScreen")
+flip_icon = true
+override_position = 2
+
+[node name="LavaChecks" parent="." index="5"]
+position = Vector2( 9, -1 )
+
+[node name="ComputerScreen" parent="." index="6"]
+position = Vector2( 0, 20 )
+
+[node name="Position1" parent="ComputerScreen" index="2"]
+offset_top = -704.0
+offset_bottom = -4.0
+
+[node name="Position2" parent="ComputerScreen" index="3"]
+offset_top = 0.0
+offset_bottom = 700.0
+
+[node name="Position2Pos" parent="ComputerScreen" index="4"]
+position = Vector2( 0, -320 )
+
+[node name="HealthBar" parent="." index="11"]
+position = Vector2( 6.923, -7.261 )
+
+[node name="TerrainMask" parent="." index="13" instance=ExtResource( 4 )]
+visible = false
+
+[editable path="FloodLight"]

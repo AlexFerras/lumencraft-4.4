@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Materials/PickableShine.tres" type="Material" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "tool
+extends Pickup
+
+@export var type: int
+
+func _init() -> void:
+	id = Constants.ItemIDs.ARTIFACT
+	data = type
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 4.0
+
+[node name="Artifact" type="PixelMapRigidBody" groups=["artifacts"]]
+script = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource( 1 )
+scale = Vector2( 0.02, 0.02 )

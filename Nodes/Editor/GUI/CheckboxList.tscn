@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends VBoxContainer
+
+var single_select: bool: set = set_single_select
+var group: ButtonGroup
+
+signal item_selected
+
+func set_single_select(s: bool):
+	single_select = s
+	
+	if single_select:
+		group = ButtonGroup.new()
+		group.connect(\"pressed\", Callable(self, \"selected\"))
+	else:
+		group = null
+
+func add_item(text: String, metadata) -> CheckBox:
+	var item := CheckBox.new()
+	item.text = text
+	item.tooltip_text = text
+	item.clip_text = true
+	
+	if metadata != null:
+		item.set_meta(\"metadata\", metadata)
+	
+	if single_select:
+		item.group = group
+	
+	add_child(item)
+	return item
+
+func get_selected_items() -> Array:
+	var ret: Array
+	if single_select:
+		if group.get_pressed_button():
+			ret.append(group.get_pressed_button())
+	else:
+		for button in get_children():
+			if button.pressed:
+				ret.append(button)
+		
+	return ret
+
+func selected(button: CheckBox):
+	emit_signal(\"item_selected\", button.get_index())
+"
+
+[node name="CheckBoxList" type="VBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+script = SubResource( 1 )

@@ -1,0 +1,231 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Turret/TurretRocketLauncher.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Turret/TurretBase.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/Flashlight.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Buildings/Turret/TurretComputer.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=7]
+[ext_resource path="res://Nodes/Buildings/Icons/IconRocketTurret.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Resources/Textures/gradient.png" type="Texture2D" id=10]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=11]
+[ext_resource path="res://Nodes/Buildings/Common/HealthBar.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Nodes/Buildings/Turret/UpgradeStar.png" type="Texture2D" id=13]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Buildings/Turret/GunTurret.gd\"
+
+var missile_count := 3
+
+func _target_found():
+	shoot_timer = 2.5
+
+func _shoot():
+	for i in missile_count:
+		var bullet := preload(\"res://Nodes/Buildings/Turret/Missile.tscn\").instantiate() as Node2D
+		bullet.rotation = angle_to_target + randf_range(-0.05, 0.05)
+		Utils.game.map.add_child(bullet)
+		bullet.global_position = shoot_point.global_position
+		await get_tree().create_timer(0.2).timeout
+
+func _refresh_upgrades(upgrades: Dictionary):
+	missile_count = 3 + upgrades.missile_count
+	shoot_delay = base_shoot_delay - upgrades.reload_speed
+"
+
+[sub_resource type="CircleShape2D" id=11]
+radius = 7.96106
+
+[sub_resource type="CircleShape2D" id=14]
+radius = 600.0
+
+[sub_resource type="CircleShape2D" id=15]
+radius = 7.91719
+
+[sub_resource type="Shader" id=18]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise;
+uniform float ray_length = 300;
+//
+//vec3 mod2893(vec3 x) {
+//  return x - floor(x * (1.0 / 289.0)) * 289.0;
+//}
+
+float rand(vec2 co){
+	return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+}
+void fragment() {
+	COLOR=texture(TEXTURE,UV)*COLOR;
+	float noise_tex = texture(noise, vec2(SCREEN_UV.x*5.0+TIME *0.2, SCREEN_UV.y*5.0+TIME *0.2)).r;
+	COLOR.a *= 2.0*pow(noise_tex,2.0) * (1.0-UV.x * ray_length/300.0 );
+//	COLOR.a = (max(0.0, snoise( vec3( SCREEN_UV*50.0, TIME*2.0 ) ))*0.5 + 0.3) * (1.0-UV.x);
+	COLOR.rgb = vec3(1.0,0.0,0.0);
+}
+"
+
+[sub_resource type="FastNoiseLite" id=20]
+period = 8.5
+persistence = 0.0
+lacunarity = 0.1
+
+[sub_resource type="NoiseTexture" id=19]
+width = 128
+height = 128
+seamless = true
+bump_strength = 13.5
+noise = SubResource( 20 )
+
+[sub_resource type="ShaderMaterial" id=21]
+shader = SubResource( 18 )
+shader_param/ray_length = 200.0
+shader_param/noise = SubResource( 19 )
+
+[sub_resource type="GDScript" id=22]
+script/source = "extends Sprite2D
+
+var texture_width=128.0
+@export var start_point : Vector2
+@export var end_point : Vector2
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	start_point=get_parent().global_position
+	set_as_top_level(true)
+	texture_width=texture.get_width()
+
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _physics_process(delta):
+
+	var diff= end_point -start_point
+	var length=diff.length()
+	global_position=start_point +diff*0.5
+	global_scale.x=length/texture_width
+	global_rotation=diff.angle()
+
+"
+
+[node name="RocketTurret" type="Area2D"]
+script = SubResource( 1 )
+radius = 10.0
+base_max_range = 600.0
+base_shoot_delay = 3.0
+
+[node name="TurretComputer" parent="." instance=ExtResource( 6 )]
+target_screen = NodePath("../ComputerScreen")
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 5 )]
+
+[node name="PreferredSize" type="ReferenceRect" parent="ComputerScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -270.0
+offset_right = 450.0
+offset_bottom = 270.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Detector" type="Area2D" parent="."]
+visible = false
+collision_layer = 32
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detector"]
+shape = SubResource( 14 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 15 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( 0, -0.0556183 )
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 2 )
+
+[node name="Top" type="Sprite2D" parent="Sprite2D"]
+scale = Vector2( 0.7, 0.7 )
+texture = ExtResource( 1 )
+offset = Vector2( 10, 0 )
+
+[node name="ShootPoint" type="Marker2D" parent="Sprite2D/Top"]
+position = Vector2( 509.921, 0 )
+scale = Vector2( 12.5, 12.5 )
+
+[node name="FlashLight2" type="Node2D" parent="Sprite2D/Top/ShootPoint"]
+position = Vector2( -32, 0 )
+script = ExtResource( 3 )
+texture = ExtResource( 4 )
+offset = Vector2( 164, 0 )
+drop_shadow = true
+follow_rotation = true
+is_static = true
+
+[node name="LaserStart" type="Node2D" parent="Sprite2D/Top/ShootPoint"]
+position = Vector2( -5.4, 0.801983 )
+
+[node name="Laser" type="Sprite2D" parent="Sprite2D/Top/ShootPoint"]
+visible = false
+material = SubResource( 21 )
+position = Vector2( 54.4449, 0.817734 )
+scale = Vector2( 0.935, 0.005 )
+z_index = 610
+z_as_relative = false
+texture = ExtResource( 10 )
+script = SubResource( 22 )
+
+[node name="ZIndexer" parent="Sprite2D/Top/ShootPoint/Laser" instance=ExtResource( 9 )]
+z_index = 600
+offset = 10
+
+[node name="FlashLight" type="Node2D" parent="."]
+scale = Vector2( 0.35, 0.35 )
+script = ExtResource( 3 )
+texture = ExtResource( 11 )
+is_static = true
+
+[node name="LavaChecks" type="Node2D" parent="."]
+visible = false
+script = ExtResource( 7 )
+
+[node name="Marker2D" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.177034, -10.1691 )
+
+[node name="Position2D2" type="Marker2D" parent="LavaChecks"]
+position = Vector2( 10.6158, -0.67112 )
+
+[node name="Position2D3" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.303259, 10.8225 )
+
+[node name="Position2D4" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -11.9958, 0.722435 )
+
+[node name="Icon" parent="." instance=ExtResource( 8 )]
+
+[node name="HealthBar" parent="." instance=ExtResource( 12 )]
+position = Vector2( 0, -5 )
+scale = Vector2( 0.6, 0.6 )
+
+[node name="UpgradeStars" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Sprite2D" type="Sprite2D" parent="UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( -2.875, -7.875 )
+scale = Vector2( 0.108974, 0.108974 )
+texture = ExtResource( 13 )
+
+[node name="Sprite2" type="Sprite2D" parent="UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( 3.125, -7.875 )
+scale = Vector2( 0.108974, 0.108974 )
+texture = ExtResource( 13 )

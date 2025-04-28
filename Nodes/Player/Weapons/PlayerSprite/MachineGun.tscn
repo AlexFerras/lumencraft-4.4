@@ -1,0 +1,82 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/PlayerSprite/MachineGun.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Player/Weapons/PlayerSprite/GunSprite.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Player/Weapons/PlayerSprite/MachineGunGlow.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Effects/MuzzleFlash/MuzzleFlash.tscn" type="PackedScene" id=4]
+
+[sub_resource type="Shader" id=14]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise;
+uniform float ray_length = 300;
+uniform float noise_scale = 5;
+
+uniform vec4 ray_color :source_color = vec4(1.0,0.0,0.0,1.0);
+
+void fragment() {
+	float noise_tex = texture(noise, vec2(SCREEN_UV.x*noise_scale+TIME *0.2, SCREEN_UV.y*noise_scale+TIME *0.2)).r;
+	COLOR.a = 2.0 * noise_tex * (1.0-UV.x * ray_length/300.0 ) * ray_color.a;
+	
+//	COLOR.a = (max(0.0, snoise( vec3( SCREEN_UV*50.0, TIME*2.0 ) ))*0.5 + 0.3) * (1.0-UV.x);
+	COLOR.rgb = ray_color.rgb;
+}
+"
+
+[sub_resource type="FastNoiseLite" id=11]
+period = 8.5
+persistence = 0.0
+lacunarity = 0.1
+
+[sub_resource type="NoiseTexture" id=15]
+width = 128
+height = 128
+seamless = true
+bump_strength = 13.5
+noise = SubResource( 11 )
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = SubResource( 14 )
+shader_param/ray_length = 300.0
+shader_param/noise_scale = 15.0
+shader_param/ray_color = Color( 0, 0.93, 1, 0.3 )
+shader_param/noise = SubResource( 15 )
+
+[node name="MachineGun" type="Node2D"]
+script = ExtResource( 2 )
+autofire = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( -2, 0 )
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 1 )
+
+[node name="LaserSight" type="Line2D" parent="Sprite2D"]
+unique_name_in_owner = true
+show_behind_parent = true
+material = SubResource( 12 )
+position = Vector2( 240, -9.53674e-07 )
+scale = Vector2( 20, 20 )
+points = PackedVector2Array( 0, 0, 100, 0 )
+width = 1.0
+texture_mode = 2
+
+[node name="Glow" type="Sprite2D" parent="Sprite2D"]
+modulate = Color( 10, 10, 10, 1 )
+z_index = 10
+texture = ExtResource( 3 )
+
+[node name="ShootPoint" type="Node2D" parent="Sprite2D"]
+position = Vector2( 190, 0 )
+scale = Vector2( 20, 20 )
+
+[node name="MuzzleFlash" parent="Sprite2D/ShootPoint" instance=ExtResource( 4 )]
+position = Vector2( 6.5, 0 )
+scale = Vector2( 0.25, 0.25 )
+
+[node name="Sprite2" type="Sprite2D" parent="Sprite2D"]
+z_index = 2
+texture = ExtResource( 1 )
+offset = Vector2( 170, 0 )
+region_enabled = true
+region_rect = Rect2( 340, 0, 306, 112 )

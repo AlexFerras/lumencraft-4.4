@@ -1,0 +1,1273 @@
+[gd_scene load_steps=36 format=2]
+
+[ext_resource path="res://Resources/Materials/PixelMapMaterial.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Terrain/Images/FloorMoss.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Map/MapDarkness_.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Map/MapLightHalo.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Buildings/Reactor/Reactor.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Resources/Terrain/Images/FloorBiomass.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=9]
+[ext_resource path="res://Nodes/Buildings/Icons/IconPylon.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Buildings/Icons/IconWall.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Resources/Materials/TerrainMaterials.tres" type="PixelMapMaterialData" id=12]
+[ext_resource path="res://Nodes/Buildings/Icons/IconLab.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Nodes/Buildings/Icons/IconGate.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Tools/TerrainDrawer/TerrainDrawer.tscn" type="PackedScene" id=16]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=17]
+[ext_resource path="res://Nodes/Buildings/Icons/IconSniperTurret.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.tscn" type="PackedScene" id=19]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveData/ScriptedWaves.gd" type="Script" id=20]
+[ext_resource path="res://Resources/Terrain/Images/FloorGlowingBiomass.png" type="Texture2D" id=21]
+[ext_resource path="res://Resources/Terrain/Images/FloorFungus.png" type="Texture2D" id=22]
+[ext_resource path="res://Resources/Terrain/Images/FloorGround.png" type="Texture2D" id=23]
+[ext_resource path="res://Resources/Terrain/Images/FloorSandy.png" type="Texture2D" id=24]
+[ext_resource path="res://Resources/Terrain/Images/FloorSteel.png" type="Texture2D" id=25]
+[ext_resource path="res://Resources/Terrain/Images/FloorDirt.jpg" type="Texture2D" id=26]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.gdshader" type="Shader" id=27]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex_waved.gdshader" type="Shader" id=28]
+[ext_resource path="res://Nodes/Objects/Map/LavaSource.tscn" type="PackedScene" id=36]
+
+[sub_resource type="Resource" id=12]
+script = ExtResource( 20 )
+wave_file = "res://Maps/DemoFilmikWaves.cfg"
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends Node2D
+
+func _enter_tree() -> void:
+	if visible:
+		Utils.game.map.connect(\"ready\", Callable(self, \"add_items\").bind(), CONNECT_DEFERRED)
+
+func add_items():
+	var player := Utils.game.main_player
+	player.add_item(Const.ItemIDs.LUMEN, 990)
+	player.add_item(Const.ItemIDs.METAL_SCRAP, 1000)
+	player.add_item(Const.ItemIDs.AMMO, 500, Const.Ammo.BULLETS)
+	player.add_item(Const.ItemIDs.AMMO, 10, Const.Ammo.ROCKETS)
+	player.add_item(Const.ItemIDs.FLARE, 20)
+	player.add_item(Const.ItemIDs.MAGNUM, 1)
+	player.add_item(Const.ItemIDs.MACHINE_GUN, 1)
+	player.add_item(Const.ItemIDs.ROCKET_LAUNCHER, 1)
+	Save.unlock_tech(\"many_drones\")
+"
+
+[sub_resource type="ShaderMaterial" id=14]
+shader = ExtResource( 27 )
+shader_param/resolution1 = 0.625
+shader_param/resolution2 = 0.875
+shader_param/resolution3 = 1.5
+shader_param/resolution4 = 0.5
+shader_param/hsvoffset1 = 0.513
+shader_param/hsvsaturation1 = -0.289
+shader_param/hsvlight1 = -0.093
+shader_param/hsvoffset2 = 0.459
+shader_param/hsvsaturation2 = -0.211
+shader_param/hsvlight2 = -0.134
+shader_param/hsvoffset3 = 0.01
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = -0.891
+shader_param/hsvsaturation4 = -0.741
+shader_param/hsvlight4 = 0.0
+shader_param/texture1 = ExtResource( 23 )
+shader_param/texture2 = ExtResource( 26 )
+shader_param/texture3 = ExtResource( 25 )
+shader_param/texture4 = ExtResource( 24 )
+
+[sub_resource type="PixelMapMaterialData" id=11]
+
+[sub_resource type="ShaderMaterial" id=15]
+shader = ExtResource( 28 )
+shader_param/resolution1 = 6.0
+shader_param/resolution2 = 3.0
+shader_param/resolution3 = 7.0
+shader_param/resolution4 = 3.092
+shader_param/multiply1 = 1.0
+shader_param/multiply2 = 8.0
+shader_param/multiply3 = 1.0
+shader_param/multiply4 = 1.0
+shader_param/wavy1 = 1.0
+shader_param/wavy2 = 0.6
+shader_param/wavy3 = 0.3
+shader_param/wavy4 = 0.0
+shader_param/hsvoffset1 = -0.058
+shader_param/hsvsaturation1 = -0.189
+shader_param/hsvlight1 = 0.0
+shader_param/hsvoffset2 = -0.058
+shader_param/hsvsaturation2 = -0.189
+shader_param/hsvlight2 = 0.0
+shader_param/hsvoffset3 = 0.0
+shader_param/hsvsaturation3 = -0.571
+shader_param/hsvlight3 = -0.127
+shader_param/hsvoffset4 = 0.0
+shader_param/hsvsaturation4 = -0.418
+shader_param/hsvlight4 = 0.0
+shader_param/texture1 = ExtResource( 8 )
+shader_param/texture2 = ExtResource( 21 )
+shader_param/texture3 = ExtResource( 22 )
+shader_param/texture4 = ExtResource( 3 )
+
+[sub_resource type="GDScript" id=10]
+script/source = "extends Node2D
+
+var queue = []
+
+func _ready() -> void:
+	queue = get_children()
+	queue.invert()
+	
+	var drawer = $\"../TerrainDrawer\"
+	
+	for building in queue:
+		call_deferred(\"remove_child\", building)
+	await get_tree().create_timer(5.2).timeout
+	while not queue.is_empty():
+		
+		await get_tree().create_timer(0.2).timeout
+		var preview = queue.pop_back()
+		if preview is ReferenceRect:
+			drawer.draw_at(preview.position + preview.size * 0.5)
+			drawer.set_process(true)
+			continue
+		else:
+			break
+		
+		var icon = preview.texture.resource_path
+		if preview.filename:
+			icon = preview.filename
+		else:
+			preview.set_script(load(\"res://Nodes/Buildings/Icons/GenericPreview.gd\"))
+		
+		var building
+		for b in Const.Buildings:
+			if b.get(\"icon\", \"\") == icon:
+				building = load(b.scene).instantiate()
+				break
+
+		if building is BaseBuilding:
+			building.angle = preview.rotation
+		else:
+			building.rotation = preview.rotation
+		
+		add_child(preview)
+		preview.position = get_viewport().canvas_transform * (preview.position)
+		Utils.game.place_building(building, preview)
+
+	Utils.game.core.start()
+
+	while not queue.is_empty():
+		await get_tree().create_timer(3).timeout
+
+		var preview = queue.pop_back()
+		if preview is ReferenceRect:
+			drawer.draw_at(preview.position + preview.size * 0.5)
+			drawer.set_process(true)
+			continue
+
+		var icon = preview.texture.resource_path
+		if preview.filename:
+			icon = preview.filename
+		else:
+			preview.set_script(load(\"res://Nodes/Buildings/Icons/GenericPreview.gd\"))
+
+		var building
+		for b in Const.Buildings:
+			prints(icon)
+#			prints (icon, icon.get_file(), icon.get_basename())
+			if icon.get_file() == \"Icon\" + b.scene.get_file():
+#			if b.get(\"scene\", \"\") == icon:
+				building = load(b.scene).instantiate()
+				break
+
+		
+		if building is BaseBuilding:
+			building.angle = preview.rotation
+		else:
+			building.rotation = preview.rotation
+
+		add_child(preview)
+		preview.position = get_viewport().canvas_transform * (preview.position)
+		Utils.game.place_building(building, preview)
+
+#
+#func place_building(building: Node2D, preview: Node2D):
+#	Utils.log_message(\"Building preview placed: %s\" % building.name)
+#	if building is BaseBuilding:
+#		building.hack = true # ;_;
+#		map.add_child(building)
+#		map.remove_child(building)
+#		building.hack = false
+#	else:
+#		building.set_meta(\"built\", true)
+#
+#	preview.on_placed()
+#	preview.position = get_viewport().canvas_transform.affine_inverse().xform(preview.global_position)
+#	building.position = preview.position
+#	preview.get_parent().remove_child(preview) # Psuje multibuild.
+#	add_child(preview)
+#	preview.add_to_group(\"blueprints\")
+#	preview.scale *= 0.25
+#	preview.modulate.a = 0.5
+#	# Tu można walnąć shader.
+#
+#	Utils.game.map.post_process.stop_build_mode(preview.position)
+#
+#	building_queue.append({preview = preview, building = building})
+"
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+disable_darkness = true
+disable_fog_of_war = true
+wave_data = SubResource( 12 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 17 )
+
+[node name="InventoryHack" type="Node2D" parent="."]
+script = SubResource( 13 )
+
+[node name="TerrainDrawer" parent="." instance=ExtResource( 16 )]
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 1 )
+z_index = 500
+z_as_relative = false
+material_data = ExtResource( 12 )
+texture_path = "res://Maps/FakeDemo.png"
+debug_flags = 4
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, null, null ]
+
+[node name="ZIndexer" parent="PixelMap" instance=ExtResource( 5 )]
+z_index = 500
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 4 )]
+ambient_color = Color( 0.129412, 0.12549, 0.14902, 1 )
+
+[node name="MapLightHalo" parent="PixelMap" instance=ExtResource( 6 )]
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 14 )
+scale = Vector2( 8, 8 )
+z_index = -1000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 11 )
+texture_path = "res://Maps/DemoFilmikFloor1.png"
+debug_flags = 4
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ null, null, null, null ]
+
+[node name="ZIndexer" parent="Floor" instance=ExtResource( 5 )]
+z_index = -1000
+
+[node name="Floor2" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 15 )
+scale = Vector2( 8, 8 )
+z_index = -1000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 11 )
+texture_path = "res://Maps/DemoFilmikFloor2.png"
+debug_flags = 4
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ null, null, null, null ]
+layer = 2
+
+[node name="ZIndexer" parent="Floor2" instance=ExtResource( 5 )]
+z_index = -1000
+
+[node name="LavaSource" parent="." instance=ExtResource( 36 )]
+position = Vector2( 1920, 288 )
+fluid_source_id = 1
+fluid_radius = 3000.0
+fluid_flow_speed = 10.0
+fluid_dmg_durability_threshold = 4
+fluid_dmg = 4
+fluid_is_simulated = true
+
+[node name="Core" parent="." instance=ExtResource( 7 )]
+position = Vector2( 1136, 992 )
+
+[node name="Start" type="Marker2D" parent="."]
+position = Vector2( 923.961, 968.873 )
+
+[node name="FakeBuilder" type="Node2D" parent="."]
+modulate = Color( 1, 0, 0, 1 )
+z_index = 100
+script = SubResource( 10 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="ReferenceRect" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1219.33
+offset_top = 560.0
+offset_right = 1235.33
+offset_bottom = 576.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect2" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1203.33
+offset_top = 576.0
+offset_right = 1219.33
+offset_bottom = 592.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect3" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1203.33
+offset_top = 560.0
+offset_right = 1219.33
+offset_bottom = 576.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect4" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1219.33
+offset_top = 592.0
+offset_right = 1235.33
+offset_bottom = 608.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect5" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1203.33
+offset_top = 592.0
+offset_right = 1219.33
+offset_bottom = 608.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect6" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1219.33
+offset_top = 576.0
+offset_right = 1235.33
+offset_bottom = 592.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect7" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1219.33
+offset_top = 608.0
+offset_right = 1235.33
+offset_bottom = 624.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect8" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1235.33
+offset_top = 608.0
+offset_right = 1251.33
+offset_bottom = 624.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect9" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1235.33
+offset_top = 624.0
+offset_right = 1251.33
+offset_bottom = 640.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect10" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1235.33
+offset_top = 656.0
+offset_right = 1251.33
+offset_bottom = 672.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect11" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1251.33
+offset_top = 672.0
+offset_right = 1267.33
+offset_bottom = 688.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect12" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1235.33
+offset_top = 640.0
+offset_right = 1251.33
+offset_bottom = 656.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect13" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1251.33
+offset_top = 656.0
+offset_right = 1267.33
+offset_bottom = 672.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect14" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1283.33
+offset_top = 688.0
+offset_right = 1299.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect15" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 672.0
+offset_right = 1283.33
+offset_bottom = 688.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect18" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1315.33
+offset_top = 704.0
+offset_right = 1331.33
+offset_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect19" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1299.33
+offset_top = 688.0
+offset_right = 1315.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect16" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1203.33
+offset_top = 608.0
+offset_right = 1219.33
+offset_bottom = 624.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect17" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1219.33
+offset_top = 624.0
+offset_right = 1235.33
+offset_bottom = 640.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect20" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1251.33
+offset_top = 640.0
+offset_right = 1267.33
+offset_bottom = 656.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect21" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1283.33
+offset_top = 672.0
+offset_right = 1299.33
+offset_bottom = 688.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect22" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 656.0
+offset_right = 1283.33
+offset_bottom = 672.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect23" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 688.0
+offset_right = 1283.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect24" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1299.33
+offset_top = 672.0
+offset_right = 1315.33
+offset_bottom = 688.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect25" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1315.33
+offset_top = 688.0
+offset_right = 1331.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect26" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1331.33
+offset_top = 688.0
+offset_right = 1347.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect27" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1331.33
+offset_top = 704.0
+offset_right = 1347.33
+offset_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect28" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1347.33
+offset_top = 688.0
+offset_right = 1363.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect29" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1347.33
+offset_top = 704.0
+offset_right = 1363.33
+offset_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect30" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1363.33
+offset_top = 704.0
+offset_right = 1379.33
+offset_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect31" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1379.33
+offset_top = 688.0
+offset_right = 1395.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect32" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1363.33
+offset_top = 688.0
+offset_right = 1379.33
+offset_bottom = 704.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect33" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1379.33
+offset_top = 704.0
+offset_right = 1395.33
+offset_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect34" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 1056.0
+offset_right = 1283.33
+offset_bottom = 1072.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect35" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1299.33
+offset_top = 704.0
+offset_right = 1315.33
+offset_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect36" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 1072.0
+offset_right = 1283.33
+offset_bottom = 1088.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect37" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1283.33
+offset_top = 1072.0
+offset_right = 1299.33
+offset_bottom = 1088.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect38" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 1088.0
+offset_right = 1283.33
+offset_bottom = 1104.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect39" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1283.33
+offset_top = 1088.0
+offset_right = 1299.33
+offset_bottom = 1104.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect40" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1283.33
+offset_top = 1104.0
+offset_right = 1299.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect41" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1283.33
+offset_top = 1120.0
+offset_right = 1299.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect42" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 1104.0
+offset_right = 1283.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect43" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1267.33
+offset_top = 1120.0
+offset_right = 1283.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect44" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1235.33
+offset_top = 1104.0
+offset_right = 1251.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect45" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1251.33
+offset_top = 1104.0
+offset_right = 1267.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect46" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1235.33
+offset_top = 1120.0
+offset_right = 1251.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect47" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1251.33
+offset_top = 1120.0
+offset_right = 1267.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect48" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1203.33
+offset_top = 1104.0
+offset_right = 1219.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect49" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1219.33
+offset_top = 1104.0
+offset_right = 1235.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect50" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1203.33
+offset_top = 1120.0
+offset_right = 1219.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect51" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1219.33
+offset_top = 1120.0
+offset_right = 1235.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect52" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1171.33
+offset_top = 1104.0
+offset_right = 1187.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect53" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1187.33
+offset_top = 1104.0
+offset_right = 1203.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect54" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1171.33
+offset_top = 1120.0
+offset_right = 1187.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect55" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1187.33
+offset_top = 1120.0
+offset_right = 1203.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect56" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1139.33
+offset_top = 1104.0
+offset_right = 1155.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect57" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1155.33
+offset_top = 1104.0
+offset_right = 1171.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect58" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1139.33
+offset_top = 1120.0
+offset_right = 1155.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect59" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1155.33
+offset_top = 1120.0
+offset_right = 1171.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect60" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1107.33
+offset_top = 1104.0
+offset_right = 1123.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect61" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1123.33
+offset_top = 1104.0
+offset_right = 1139.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect62" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1107.33
+offset_top = 1120.0
+offset_right = 1123.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect63" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1123.33
+offset_top = 1120.0
+offset_right = 1139.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect64" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1075.33
+offset_top = 1104.0
+offset_right = 1091.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect65" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1091.33
+offset_top = 1104.0
+offset_right = 1107.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect66" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1075.33
+offset_top = 1120.0
+offset_right = 1091.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect67" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1091.33
+offset_top = 1120.0
+offset_right = 1107.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect68" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1043.33
+offset_top = 1104.0
+offset_right = 1059.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect69" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1059.33
+offset_top = 1104.0
+offset_right = 1075.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect70" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1043.33
+offset_top = 1120.0
+offset_right = 1059.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect71" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1059.33
+offset_top = 1120.0
+offset_right = 1075.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect72" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1011.33
+offset_top = 1104.0
+offset_right = 1027.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect73" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1027.33
+offset_top = 1104.0
+offset_right = 1043.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect74" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1011.33
+offset_top = 1120.0
+offset_right = 1027.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect75" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 1027.33
+offset_top = 1120.0
+offset_right = 1043.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect76" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 979.33
+offset_top = 1104.0
+offset_right = 995.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect77" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 995.33
+offset_top = 1104.0
+offset_right = 1011.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect78" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 979.33
+offset_top = 1120.0
+offset_right = 995.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect79" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 995.33
+offset_top = 1120.0
+offset_right = 1011.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect80" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 947.57
+offset_top = 1104.0
+offset_right = 963.57
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect81" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 963.57
+offset_top = 1104.0
+offset_right = 979.57
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect82" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 947.57
+offset_top = 1120.0
+offset_right = 963.57
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect83" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 963.57
+offset_top = 1120.0
+offset_right = 979.57
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect84" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 915.33
+offset_top = 1104.0
+offset_right = 931.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect85" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 931.33
+offset_top = 1104.0
+offset_right = 947.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect86" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 915.33
+offset_top = 1120.0
+offset_right = 931.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect87" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 931.33
+offset_top = 1120.0
+offset_right = 947.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect88" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 883.7
+offset_top = 1104.0
+offset_right = 899.7
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect89" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 899.33
+offset_top = 1104.0
+offset_right = 915.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect90" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 883.7
+offset_top = 1120.0
+offset_right = 899.7
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect91" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 899.7
+offset_top = 1120.0
+offset_right = 915.7
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect92" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 851.33
+offset_top = 1104.0
+offset_right = 867.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect93" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 867.33
+offset_top = 1104.0
+offset_right = 883.33
+offset_bottom = 1120.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect94" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 851.33
+offset_top = 1120.0
+offset_right = 867.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect95" type="ReferenceRect" parent="FakeBuilder"]
+offset_left = 867.33
+offset_top = 1120.0
+offset_right = 883.33
+offset_bottom = 1136.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Pylon" parent="FakeBuilder" instance=ExtResource( 10 )]
+position = Vector2( 976, 896 )
+
+[node name="Pylon3" parent="FakeBuilder" instance=ExtResource( 10 )]
+position = Vector2( 896, 896 )
+
+[node name="Pylon2" parent="FakeBuilder" instance=ExtResource( 10 )]
+position = Vector2( 816, 896 )
+
+[node name="Pylon4" parent="FakeBuilder" instance=ExtResource( 10 )]
+position = Vector2( 736, 896 )
+
+[node name="Pylon5" parent="FakeBuilder" instance=ExtResource( 10 )]
+position = Vector2( 704, 832 )
+
+[node name="Wall4" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 499.33, 832 )
+rotation = -0.00879342
+
+[node name="Wall" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 707.33, 624 )
+rotation = 1.5708
+
+[node name="Wall2" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 675.33, 800 )
+rotation = -0.785398
+
+[node name="Wall3" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 563.33, 1168 )
+rotation = -0.523599
+
+[node name="Wall8" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 579.33, 1184 )
+rotation = -0.523599
+
+[node name="Wall6" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 800, 1312 )
+rotation = -1.83259
+
+[node name="Wall5" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 768, 1232 )
+rotation = 0.785397
+
+[node name="Wall7" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 771.33, 1296 )
+rotation = -1.8326
+
+[node name="Wall9" parent="FakeBuilder" instance=ExtResource( 11 )]
+position = Vector2( 739.33, 1232 )
+rotation = -2.35619
+
+[node name="Sprite2D" parent="FakeBuilder" instance=ExtResource( 18 )]
+position = Vector2( 640, 1136 )
+rotation = 1.8326
+
+[node name="Sprite2" parent="FakeBuilder" instance=ExtResource( 18 )]
+position = Vector2( 720, 1184 )
+rotation = 2.35619
+
+[node name="Sprite3" parent="FakeBuilder" instance=ExtResource( 18 )]
+position = Vector2( 675.33, 832 )
+rotation = -2.36264
+
+[node name="Sprite6" parent="FakeBuilder" instance=ExtResource( 18 )]
+position = Vector2( 691.33, 816 )
+rotation = -2.36264
+
+[node name="Sprite7" parent="FakeBuilder" instance=ExtResource( 18 )]
+position = Vector2( 707.33, 800 )
+rotation = -2.36264
+
+[node name="Sprite5" parent="FakeBuilder" instance=ExtResource( 18 )]
+position = Vector2( 659.33, 848 )
+rotation = -2.35619
+
+[node name="Sprite4" parent="FakeBuilder" instance=ExtResource( 18 )]
+position = Vector2( 723.33, 784 )
+rotation = -2.35619
+
+[node name="Sprite8" parent="FakeBuilder" instance=ExtResource( 15 )]
+position = Vector2( 663, 1178 )
+rotation = 0.523598
+
+[node name="Sprite9" parent="FakeBuilder" instance=ExtResource( 13 )]
+position = Vector2( 896, 1024 )
+
+[node name="Sprite10" parent="FakeBuilder" instance=ExtResource( 15 )]
+position = Vector2( 592, 832 )
+
+[node name="Sprite11" parent="FakeBuilder" instance=ExtResource( 15 )]
+position = Vector2( 704, 720 )
+rotation = 1.57079
+
+[node name="WaveSpawner" parent="." instance=ExtResource( 19 )]
+position = Vector2( 336, 320 )
+__meta__ = {
+"_gizmo_extents_": 150.0
+}

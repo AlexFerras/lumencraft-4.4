@@ -1,0 +1,68 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Common/Computer/GenericComputer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Buildings/Workshop/WorkshopStand.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Fonts/Font14Outline.tres" type="FontFile" id=3]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=4]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Fonts/Font28Outline.tres" type="FontFile" id=6]
+[ext_resource path="res://Nodes/Editor/Icons/Settings.png" type="Texture2D" id=7]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 0.501961 )
+
+[node name="WorkshopStand" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Labels" type="Node2D" parent="." index="4"]
+position = Vector2( 0, 2 )
+
+[node name="UpgradeLabel" type="Label" parent="Labels" index="0"]
+unique_name_in_owner = true
+modulate = Color( 2, 1, 0, 1 )
+offset_left = -15.0
+offset_top = -9.0
+offset_right = 97.0
+offset_bottom = 10.0
+scale = Vector2( 0.2, 0.2 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "0/5"
+
+[node name="QueuePanel" type="PanelContainer" parent="Labels" index="1"]
+unique_name_in_owner = true
+offset_left = -15.0
+offset_right = 135.0
+offset_bottom = 46.0
+scale = Vector2( 0.2, 0.2 )
+theme_override_styles/panel = SubResource( 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Labels/QueuePanel" index="0"]
+offset_right = 150.0
+offset_bottom = 46.0
+alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="Labels/QueuePanel/HBoxContainer" index="0"]
+offset_left = 56.0
+offset_right = 96.0
+offset_bottom = 46.0
+custom_minimum_size = Vector2( 40, 0 )
+texture = ExtResource( 7 )
+expand = true
+stretch_mode = 6
+
+[node name="QueueLabel" type="Label" parent="Labels/QueuePanel/HBoxContainer" index="1"]
+unique_name_in_owner = true
+offset_left = 100.0
+offset_right = 150.0
+offset_bottom = 46.0
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 6 )
+text = "10"
+valign = 2
+
+[node name="LightSprite" type="Node2D" parent="." index="5"]
+position = Vector2( 0, -10 )
+scale = Vector2( 0.01, 0.01 )
+script = ExtResource( 4 )
+texture = ExtResource( 5 )
+is_static = true

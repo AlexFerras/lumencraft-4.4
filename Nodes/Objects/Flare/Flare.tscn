@@ -1,0 +1,571 @@
+[gd_scene load_steps=26 format=2]
+
+[ext_resource path="res://Nodes/Objects/Flare/Flare4.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Objects/Flare/Particle2.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Reactor/Smoke_1.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=4]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Effects/Shadow.gd" type="Script" id=7]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends \"res://Nodes/Player/Weapons/Throwable/ThrowableWeapon.gd\"
+
+@onready var sprite := $Sprite2D as Sprite2D
+@onready var light := $LightSprite as LightSprite
+@onready var animator := $AnimationPlayer as AnimationPlayer
+@onready var burn_ray_start := $Sprite2D/burn_ray_start
+@onready var burn_ray_end := $Sprite2D/burn_ray_end
+
+@export var lifetime: float = 3600
+
+var timer: int
+var burns=true
+const SHIFT = 8
+
+var base_color:Color
+var target_scale := Vector2.ZERO
+var target_position := Vector2.ZERO
+var target_modulate_hue := 0.0
+
+func _ready():
+	$Loop.stream.audio_stream = Utils.random_sound(\"res://SFX/Flare/SPRAY_CAN_Spray_Loop_0\")
+	base_color = light.modulate
+	Utils.init_player_projectile(self, $Area2D, {damage = 1, damage_timeout=300})
+	Utils.add_to_tracker($LightSprite, Utils.game.map.flares_tracker, $LightSprite.radius, 999999)
+	set_meta(\"isFlare\", true)
+	set_meta(\"object_type\", \"Flare\")
+
+func _physics_process(delta: float) -> void:
+	sprite.rotation += linear_velocity.x * 0.1 * delta
+	light.scale = lerp(light.scale, target_scale, 0.1)
+	light.position = lerp(light.position, target_position, 0.1)
+	light.modulate.h = lerp(light.modulate.h, target_modulate_hue, 0.01)
+	
+	timer += 1
+	if timer % 4 == 0:
+		if burns && !high && Utils.game.map.pixel_map.rayCastQTFromTo(burn_ray_start.global_position,burn_ray_end.global_position,1<<Const.Materials.TAR,false,false):
+			Utils.game.map.pixel_map.update_damage_circle((burn_ray_start.global_position+burn_ray_end.global_position)*0.5,3,122,1,255,1<<Const.Materials.TAR)
+
+		target_scale = Vector2.ONE * randf_range(0.9, 1.1)
+		target_position = Vector2(randf_range(-SHIFT, SHIFT), randf_range(-SHIFT, SHIFT))
+		target_modulate_hue = base_color.h + randf_range(-SHIFT, SHIFT) / 800.0
+	
+	if timer >= lifetime and burns:
+		animator.play(\"die_out\")
+		Utils.remove_from_tracker($LightSprite)
+		burns = false
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	if anim_name == \"die_out\":
+		queue_free()
+
+func on_hit():
+	if has_meta(\"last_attacked\"):
+		if linear_velocity.length_squared() > 1.0:
+			linear_velocity = linear_velocity.bounce( - linear_velocity.rotated(randf_range(0, PI)-PI/2 ).normalized() )
+		else:
+			linear_velocity = Vector2.RIGHT.rotated(randf_range(0, TAU) ) * randf_range(10,60)
+		reduce_lifetime( 120 )
+			
+func reduce_lifetime( value:float ):
+	lifetime -= value
+"
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 2.0
+
+[sub_resource type="AudioStreamRandomizer" id=24]
+
+[sub_resource type="Animation" id=21]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Loop:playing")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Loop:pitch_scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.7 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Loop:volume_db")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ -20.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Sprite2D/Smoke:amount")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 20 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Sprite2D/Smoke:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite2D/GPUParticles2D:amount")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 64 ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Sprite2D/GPUParticles2D:emitting")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Sprite2D/GPUParticles2D:explosiveness")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Sprite2D/Smoke:explosiveness")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("LightSprite:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+tracks/10/type = "value"
+tracks/10/path = NodePath("LightSprite:scale")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("Sprite2D:self_modulate")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/12/type = "value"
+tracks/12/path = NodePath("LightSprite:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 0.560784, 0, 1 ) ]
+}
+tracks/13/type = "value"
+tracks/13/path = NodePath("Area2D/CollisionShape2D:disabled")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=22]
+resource_name = "die_out"
+length = 20.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Loop:pitch_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.3, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.7, 1.2, 0.4 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Loop:volume_db")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.3, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ -20.0, 10.0, -80.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Loop:playing")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Sprite2D/Smoke:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 2 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Sprite2D/GPUParticles2D:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 1.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("LightSprite:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 0.3, 5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1.3, 1.3 ), Vector2( 1e-05, 1e-05 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Sprite2D:self_modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 10, 17, 20 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 0.301961, 0.301961, 0.301961, 1 ), Color( 0.3, 0.3, 0.3, 0 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("LightSprite:modulate:a")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0.3, 2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Area2D/CollisionShape2D:disabled")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=23]
+resource_name = "start"
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Loop:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( -0.5, -0.5 ),
+"update": 0,
+"values": [ 0.0, -20.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Loop:pitch_scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( 2, 2 ),
+"update": 0,
+"values": [ 1.0, 0.7 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LightSprite:modulate:a")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("LightSprite:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 0.4, 0.6 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1e-05, 1e-05 ), Vector2( 1.2, 1.2 ), Vector2( 1, 1 ) ]
+}
+
+[sub_resource type="CanvasItemMaterial" id=14]
+blend_mode = 1
+particles_animation = true
+particles_anim_h_frames = 5
+particles_anim_v_frames = 3
+particles_anim_loop = true
+
+[sub_resource type="Gradient" id=15]
+offsets = PackedFloat32Array( 0, 0.476289, 1 )
+colors = PackedColorArray( 1, 1, 1, 0.883332, 1, 1, 1, 0.129412, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture2D" id=11]
+gradient = SubResource( 15 )
+
+[sub_resource type="Curve" id=16]
+max_value = 0.3
+_data = [ Vector2( 0, 0.136364 ), 0.0, 0.0409091, 0, 0, Vector2( 1, 0.3 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=13]
+curve = SubResource( 16 )
+
+[sub_resource type="ParticleProcessMaterial" id=17]
+emission_shape = 2
+emission_box_extents = Vector3( 0, 2, 0 )
+flag_disable_z = true
+spread = 5.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 40.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 22.75
+scale = 0.01
+scale_random = 0.1
+scale_curve = SubResource( 13 )
+color_ramp = SubResource( 11 )
+anim_offset = 1.0
+anim_offset_random = 1.0
+
+[sub_resource type="CanvasItemMaterial" id=20]
+blend_mode = 1
+
+[sub_resource type="Gradient" id=3]
+offsets = PackedFloat32Array( 0, 0.191321, 1 )
+colors = PackedColorArray( 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=25]
+gradient = SubResource( 3 )
+
+[sub_resource type="Curve" id=18]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), -0.301136, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=26]
+curve = SubResource( 18 )
+
+[sub_resource type="ParticleProcessMaterial" id=5]
+lifetime_randomness = 1.0
+emission_shape = 2
+emission_box_extents = Vector3( 0, 0.5, 0 )
+flag_disable_z = true
+spread = 25.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 40.0
+orbit_velocity = 0.0
+orbit_velocity_random = 1.0
+damping = 40.0
+angle = 360.0
+angle_random = 1.0
+scale = 0.15
+scale_random = 0.5
+scale_curve = SubResource( 26 )
+color_ramp = SubResource( 25 )
+
+[node name="Flare" type="PixelMapRigidBody"]
+z_index = 200
+z_as_relative = false
+gravity_scale = 0.0
+radius = 2
+pixel_map_bounce = 0.4
+script = SubResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="LightSprite" type="Node2D" parent="."]
+modulate = Color( 1, 0.560784, 0, 1 )
+position = Vector2( 1, 1 )
+script = ExtResource( 4 )
+texture = ExtResource( 5 )
+drop_shadow = true
+radius = 80.0
+
+[node name="LightSprite2" type="Node2D" parent="LightSprite"]
+modulate = Color( 1, 0.560784, 0, 0.329412 )
+scale = Vector2( 0.6, 0.6 )
+script = ExtResource( 4 )
+texture = ExtResource( 5 )
+radius = 80.0
+
+[node name="Loop" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource( 24 )
+volume_db = -20.0
+pitch_scale = 0.7
+autoplay = true
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "start"
+anims/RESET = SubResource( 21 )
+anims/die_out = SubResource( 22 )
+anims/start = SubResource( 23 )
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.025, 0.025 )
+texture = ExtResource( 1 )
+script = ExtResource( 7 )
+
+[node name="Smoke" type="GPUParticles2D" parent="Sprite2D"]
+modulate = Color( 1, 0.882353, 0.419608, 1 )
+show_behind_parent = true
+material = SubResource( 14 )
+position = Vector2( 120, 0 )
+scale = Vector2( 20, 40 )
+amount = 20
+local_coords = false
+process_material = SubResource( 17 )
+texture = ExtResource( 3 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Sprite2D"]
+show_behind_parent = true
+material = SubResource( 20 )
+position = Vector2( 100, 0 )
+scale = Vector2( 40, 80 )
+amount = 64
+lifetime = 0.3
+local_coords = false
+process_material = SubResource( 5 )
+texture = ExtResource( 2 )
+
+[node name="burn_ray_start" type="Node2D" parent="Sprite2D"]
+
+[node name="burn_ray_end" type="Node2D" parent="Sprite2D"]
+position = Vector2( 160, 0 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 6 )]
+z_index = 200
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

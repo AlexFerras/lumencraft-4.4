@@ -1,0 +1,227 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://SFX/Weapons/pour.wav" type="AudioStream" id=1]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/RepairKitWave.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Reactor/sprites/particles_0.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/Napalm.png" type="Texture2D" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+@onready var napalm_point=$napalm_point
+@onready var particles=$GPUParticles2D
+@onready var napalm_sound=$\"napalm_sound\"
+@onready var anim=$\"AnimationPlayer\"
+var player: Player
+var napalm_cost=0.0
+var coverage := 1.0
+
+func set_player(p: Player):
+	player = p
+
+func _ready() -> void:
+	napalm_point.set_as_top_level(true)
+	napalm_point.global_position=global_position+(Vector2.RIGHT.rotated(player.get_shoot_rotation()))*10
+	napalm_sound.play(randf_range(0,5))
+	napalm_cost=player.get_current_item().get(\"napalm_cost\",0.0)
+	Utils.subscribe_tech(self, \"napalm_coverage\")
+
+func _tech_unlocked(tech: String):
+	coverage = 2.0
+
+func put_away():
+	particles.emitting=false
+	napalm_sound.volume_db=linear_to_db(0.0)
+
+func _physics_process(delta):
+	var actual_angle=(napalm_point.global_position-global_position).angle()
+	var new_angle=lerp_angle(actual_angle,player.get_shoot_rotation(),0.05)
+	napalm_point.global_position=global_position+(Vector2.RIGHT.rotated(new_angle)).normalized()*10
+	if player.is_shooting() and not player.build_menu:
+		anim.play(\"uses\")
+		if !napalm_sound.playing:
+			#napalm_sound.stream= Utils.random_sound(\"res://SFX/Weapons/liquid\")
+			napalm_sound.play()
+		particles.emitting=true
+		napalm_sound.volume_db=linear_to_db(clamp(db_to_linear(napalm_sound.volume_db)+0.2,0,2.0))
+	
+		napalm_cost += 0.01 * Utils.game.map.pixel_map.update_material_spiral(global_position, 25, Const.Materials.TAR, (2 + randi() % 15) * coverage, 1 << Const.Materials.EMPTY) / coverage
+		var napalm_available = player.get_item_count(Const.ItemIDs.NAPALM)
+		player.subtract_item(Const.ItemIDs.NAPALM, min(int(napalm_cost), napalm_available))
+
+		if napalm_available<napalm_cost:
+			queue_free()
+		napalm_cost-=int(napalm_cost)
+	else:
+		anim.play(\"idle\")
+		napalm_sound.volume_db=linear_to_db(clamp(db_to_linear(napalm_sound.volume_db)-0.2,0,2.0))
+		particles.emitting=false
+
+
+func _exit_tree() -> void:
+	particles.emitting=false
+	var trans=global_transform
+	remove_child(particles)
+	Utils.game.map.add_child(particles)
+	particles.global_transform=trans
+	get_tree().create_timer(2).connect(\"timeout\", Callable(particles, \"queue_free\"))
+	
+"
+
+[sub_resource type="Gradient" id=8]
+offsets = PackedFloat32Array( 0, 0.069241, 0.720648, 0.998668, 1 )
+colors = PackedColorArray( 0, 0, 0, 0, 0, 0, 0.0705882, 0.454902, 0.462745, 0.462745, 0.462745, 0.254902, 0.992157, 1, 1, 0, 0.992157, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=9]
+gradient = SubResource( 8 )
+width = 128
+
+[sub_resource type="Curve" id=10]
+_data = [ Vector2( 0, 0.903374 ), 0.0, -1.20914, 0, 0, Vector2( 0.21875, 0.940184 ), 0.530021, 0.530021, 0, 0, Vector2( 0.610332, 0.363497 ), -2.44456, -2.44456, 0, 0, Vector2( 0.985769, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=11]
+width = 128
+curve = SubResource( 10 )
+
+[sub_resource type="ParticleProcessMaterial" id=12]
+emission_shape = 1
+emission_sphere_radius = 5.0
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 20.0
+angular_velocity = 720.0
+angular_velocity_random = 0.54
+orbit_velocity = 0.0
+orbit_velocity_random = 1.0
+angle = 720.0
+angle_random = 1.0
+scale = 2.0
+scale_curve = SubResource( 11 )
+color_ramp = SubResource( 9 )
+hue_variation_random = 0.31
+
+[sub_resource type="CircleShape2D" id=5]
+
+[sub_resource type="Animation" id=13]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("RepearToolGun:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( -6.55675, 2.47207 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("RepearToolGun:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=15]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/path = NodePath("RepearToolGun:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.9 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Vector2( -5.586, 3 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("RepearToolGun:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.9 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ 24.0 ]
+}
+
+[sub_resource type="Animation" id=14]
+resource_name = "uses"
+tracks/0/type = "value"
+tracks/0/path = NodePath("RepearToolGun:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.9 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Vector2( -6.55675, 2.47207 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("RepearToolGun:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.9 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ 0.0 ]
+}
+
+[node name="Napalm" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+position = Vector2( 8.97914, 2.57964 )
+amount = 41
+fixed_fps = 60
+local_coords = false
+draw_order = 1
+process_material = SubResource( 12 )
+texture = ExtResource( 3 )
+
+[node name="napalm_point" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 40, 0 )
+scale = Vector2( 0.5, 0.5 )
+z_index = 4096
+texture = ExtResource( 2 )
+
+[node name="Area2D" type="Area2D" parent="napalm_point"]
+scale = Vector2( 2, 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="napalm_point/Area2D"]
+shape = SubResource( 5 )
+
+[node name="napalm_sound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 1 )
+volume_db = 6.303
+pitch_scale = 0.69
+bus = "SFX"
+
+[node name="RepearToolGun" type="Sprite2D" parent="."]
+position = Vector2( -6.55675, 2.47207 )
+scale = Vector2( 0.04, 0.04 )
+texture = ExtResource( 4 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 13 )
+anims/idle = SubResource( 15 )
+anims/uses = SubResource( 14 )

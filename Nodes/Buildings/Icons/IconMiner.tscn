@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Miner/MinerPhoto.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/Socket.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Icons/GenericPreview.gd" type="Script" id=6]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=7]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=8]
+
+[node name="Icon" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+script = ExtResource( 6 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 8 )
+scale = Vector2( 1e-05, 1e-05 )
+z_index = -1
+texture = ExtResource( 7 )
+
+[node name="Socket" type="Sprite2D" parent="."]
+texture = ExtResource( 2 )

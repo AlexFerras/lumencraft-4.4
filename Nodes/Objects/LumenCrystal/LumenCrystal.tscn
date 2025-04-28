@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenCrystal.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Buildings/Common/RayGroup.gd" type="Script" id=4]
+[ext_resource path="res://Nodes/Buildings/Common/RayChecker.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenCrystal.png" type="Texture2D" id=6]
+
+[node name="LumenCrystal" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.5, 0.5 )
+z_index = 2
+texture = ExtResource( 6 )
+
+[node name="RayGroup" type="Node2D" parent="."]
+script = ExtResource( 4 )
+
+[node name="RayChecker" parent="RayGroup" instance=ExtResource( 5 )]
+position = Vector2( -34.1135, -19.1765 )
+checked_material = 27
+
+[node name="End" type="Node2D" parent="RayGroup/RayChecker"]
+position = Vector2( 85.7736, 46.6033 )
+
+[node name="RayChecker2" parent="RayGroup" instance=ExtResource( 5 )]
+position = Vector2( -36.59, 17.8029 )
+checked_material = 27
+
+[node name="End" type="Node2D" parent="RayGroup/RayChecker2"]
+position = Vector2( 63.0812, -63.2988 )
+
+[node name="RayChecker3" parent="RayGroup" instance=ExtResource( 5 )]
+position = Vector2( 0.745068, 42.9977 )
+checked_material = 27
+
+[node name="End" type="Node2D" parent="RayGroup/RayChecker3"]
+position = Vector2( 11.245, -79.3171 )

@@ -1,0 +1,72 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Nodes/Effects/Explosion/NeutronFX.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+func _ready() -> void:
+	Utils.init_player_projectile(self, self, {damage = 50})
+	Utils.game.map.post_process.add_shockwave(global_position, 200 * scale.x)
+	
+	Utils.game.shake(20 * scale.x)
+	await get_tree().create_timer(10).timeout
+	queue_free()
+
+func on_hit():
+	pass
+"
+
+[sub_resource type="CanvasItemMaterial" id=2]
+blend_mode = 1
+
+[sub_resource type="Animation" id=3]
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.7, 4 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ 0, 31, 31 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.7 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 100.0
+
+[node name="Explosion" type="Area2D" groups=[
+"player_bullet",
+]]
+scale = Vector2( 0.35, 0.35 )
+script = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color( 1.7, 1.5, 1.5, 1 )
+material = SubResource( 2 )
+texture = ExtResource( 3 )
+hframes = 8
+vframes = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Explode"
+anims/Explode = SubResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource( 4 )

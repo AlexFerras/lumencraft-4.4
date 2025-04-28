@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Player/Fear.gd" type="Script" id=1]
+[ext_resource path="res://SFX/Fear/voice_male_breathing_fast_01.wav" type="AudioStream" id=2]
+[ext_resource path="res://SFX/Fear/voice_male_breathing_medium_01.wav" type="AudioStream" id=3]
+[ext_resource path="res://SFX/Fear/voice_male_breathing_slow_01.wav" type="AudioStream" id=4]
+
+[node name="Fear" type="Sprite2D"]
+visible = false
+z_index = -4096
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2( 2, 2 )
+handle_input_locally = false
+hdr = false
+disable_3d = true
+usage = 0
+render_target_update_mode = 1
+gui_disable_input = true
+
+[node name="DarknessSprite" type="Sprite2D" parent="SubViewport"]
+scale = Vector2( 0.5, 0.5 )
+
+[node name="BreathFast" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 2 )
+max_distance = 500.0
+attenuation = 2.0
+bus = "Breath"
+
+[node name="BreathMedium" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
+max_distance = 500.0
+attenuation = 2.0
+bus = "Breath"
+
+[node name="BreathSlow" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 4 )
+max_distance = 500.0
+attenuation = 2.0
+bus = "Breath"
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_top = -3.0
+offset_right = 40.0
+offset_bottom = 11.0
+
+[connection signal="finished" from="BreathFast" to="." method="_on_BreathFast_finished"]
+[connection signal="finished" from="BreathMedium" to="." method="_on_BreathMedium_finished"]
+[connection signal="finished" from="BreathSlow" to="." method="_on_BreathSlow_finished"]

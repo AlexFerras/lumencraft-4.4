@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dacajh4hqxm6f"
+path="res://.godot/imported/Tunnel 1.ogg-de80bc24de417cbade254f401a17d306.oggvorbisstr"
+
+[deps]
+
+source_file="res://Music/Tunnel 1.ogg"
+dest_files=["res://.godot/imported/Tunnel 1.ogg-de80bc24de417cbade254f401a17d306.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,56 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Effects/Debris/Particles.gdshader" type="Shader" id=1]
+
+[sub_resource type="Gradient" id=1]
+offsets = PackedFloat32Array( 0, 0.908088, 1 )
+colors = PackedColorArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=2]
+gradient = SubResource( 1 )
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource( 1 )
+shader_param/direction = Vector3( 1, 0, 0 )
+shader_param/spread = 180.0
+shader_param/flatness = 0.0
+shader_param/initial_linear_velocity = 100.0
+shader_param/initial_angle = 0.0
+shader_param/angular_velocity = 555.0
+shader_param/orbit_velocity = 0.0
+shader_param/linear_accel = 0.0
+shader_param/radial_accel = 0.0
+shader_param/tangent_accel = 0.0
+shader_param/damping = 100.0
+shader_param/scale = 0.3
+shader_param/hue_variation = 0.0
+shader_param/anim_speed = 0.0
+shader_param/anim_offset = 1.0
+shader_param/initial_linear_velocity_random = 0.613
+shader_param/initial_angle_random = 1.0
+shader_param/angular_velocity_random = 0.0
+shader_param/orbit_velocity_random = 0.0
+shader_param/linear_accel_random = 0.0
+shader_param/radial_accel_random = 0.0
+shader_param/tangent_accel_random = 0.0
+shader_param/damping_random = 0.0
+shader_param/scale_random = -0.987
+shader_param/hue_variation_random = 0.0
+shader_param/anim_speed_random = 0.0
+shader_param/anim_offset_random = 1.0
+shader_param/lifetime_randomness = 0.0
+shader_param/emission_texture_point_count = null
+shader_param/color_value = Color( 1, 1, 1, 1 )
+shader_param/trail_divisor = 1
+shader_param/gravity = Vector3( 0, -1e-06, 0 )
+shader_param/explosion_time = 0.0
+shader_param/explosion_position = Vector2( 0, 0 )
+shader_param/explosion_radius = 50.0
+shader_param/explosion_strength = 200.0
+shader_param/spawn = 0
+shader_param/spawn2 = 0
+shader_param/radius = 10.0
+shader_param/angle_jump = 0.1
+shader_param/repelers_positions_count = null
+shader_param/color_ramp = SubResource( 2 )

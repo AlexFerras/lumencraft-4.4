@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/UI/SeismicMap/SeismicMapMain.gd" type="Script" id=1]
+
+[sub_resource type="CanvasItemMaterial" id=1]
+blend_mode = 1
+
+[node name="SeismicMap" type="TextureRect"]
+material = SubResource( 1 )
+offset_right = 40.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 1430, 1430 )
+expand = true
+stretch_mode = 6
+flip_v = true
+script = ExtResource( 1 )

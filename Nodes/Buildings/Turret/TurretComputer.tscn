@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Turret/TurretComputer.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerInteractable.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Buildings/Turret/InteractionHighlight.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Buildings/Turret/InteractionHighlightRed.png" type="Texture2D" id=4]
+
+[sub_resource type="CircleShape2D" id=46]
+radius = 160.0
+
+[node name="TurretComputer" type="Node2D"]
+script = ExtResource( 1 )
+highlight_green = ExtResource( 3 )
+highlight_red = ExtResource( 4 )
+
+[node name="PlayerDetector" type="Area2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+script = ExtResource( 2 )
+can_interact = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetector"]
+visible = false
+shape = SubResource( 46 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_as_relative = false
+
+[node name="Highlight" type="Sprite2D" parent="Sprite2D"]
+visible = false
+scale = Vector2( 0.5, 0.5 )
+z_index = -1002
+z_as_relative = false

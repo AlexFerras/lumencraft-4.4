@@ -1,0 +1,95 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Enemies/Swarm/demo_pack.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/Textures/TexturedCircle3_256.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Lights/LightCaps2.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Enemies/Swarm/SwarmEnemy.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Enemies/Swarm/SwarmKamikazeEnemy.gd" type="Script" id=6]
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/Sprite3/LightSprite:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "blink"
+length = 0.5
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/Sprite3/LightSprite:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.3, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 2.0, 1.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D/Sprite3/LightSprite:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.025, 0.025 ), Vector2( 0.05, 0.05 ), Vector2( 0.025, 0.025 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite2D/Sprite3/Sprite2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.3, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.501961, 0.501961, 0.501961, 1 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 0.501961, 0.501961, 0.501961, 1 ) ]
+}
+
+[node name="Enemy_Swarm" instance=ExtResource( 5 )]
+script = ExtResource( 6 )
+
+[node name="Sprite2D" parent="." index="1"]
+frame = 29
+
+[node name="Sprite3" type="Sprite2D" parent="Sprite2D" index="2"]
+position = Vector2( -13.333, -5.078 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+
+[node name="Sprite2" type="Sprite2D" parent="Sprite2D/Sprite3" index="0"]
+modulate = Color( 0.501961, 0.501961, 0.501961, 1 )
+position = Vector2( -0.638306, 23.8831 )
+scale = Vector2( 0.213333, 0.213333 )
+texture = ExtResource( 4 )
+hframes = 4
+
+[node name="LightSprite" type="Node2D" parent="Sprite2D/Sprite3" index="1"]
+modulate = Color( 1, 0, 0, 0 )
+position = Vector2( -11.8756, 33.906 )
+scale = Vector2( 0.025, 0.025 )
+script = ExtResource( 1 )
+texture = ExtResource( 3 )
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="Sprite2D/Sprite3" index="2"]
+root_node = NodePath("../../..")
+autoplay = "blink"
+anims/RESET = SubResource( 1 )
+anims/blink = SubResource( 2 )

@@ -1,0 +1,2282 @@
+[gd_scene load_steps=66 format=2]
+
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex_waved.gdshader" type="Shader" id=6]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=7]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=8]
+[ext_resource path="res://Resources/Terrain/Images/FloorStone.png" type="Texture2D" id=9]
+[ext_resource path="res://Resources/Terrain/Images/FloorBiomass.png" type="Texture2D" id=10]
+[ext_resource path="res://Resources/Terrain/Images/FloorGlowingBiomass.png" type="Texture2D" id=11]
+[ext_resource path="res://Nodes/Pickups/LumenClumpPickup.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.gdshader" type="Shader" id=13]
+[ext_resource path="res://Resources/Terrain/Images/FloorWormBiomass.png" type="Texture2D" id=14]
+[ext_resource path="res://Nodes/Objects/Mushrooms/Mushroom.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Nodes/Objects/Chest/Chest.tscn" type="PackedScene" id=16]
+[ext_resource path="res://Nodes/Objects/AlienNest/AlienNest.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Nodes/Objects/Chest/RustyChest.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Resources/Terrain/Images/FloorBlood3.png" type="Texture2D" id=19]
+[ext_resource path="res://Nodes/Objects/OreVein/MetalVein.tscn" type="PackedScene" id=20]
+[ext_resource path="res://Nodes/Objects/Map/LavaSource.tscn" type="PackedScene" id=21]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Blood.tres" type="Resource" id=22]
+[ext_resource path="res://Nodes/Enemies/Pider/Pider.tscn" type="PackedScene" id=23]
+[ext_resource path="res://Nodes/Pickups/MetalNuggetPickup.tscn" type="PackedScene" id=24]
+[ext_resource path="res://Nodes/Map/PixelMapFloor.tscn" type="PackedScene" id=25]
+[ext_resource path="res://Nodes/Effects/DarknessByDistance.tscn" type="PackedScene" id=26]
+[ext_resource path="res://Nodes/Pickups/SimplePickup.tscn" type="PackedScene" id=27]
+[ext_resource path="res://Nodes/Effects/SmokeBigFog.tscn" type="PackedScene" id=28]
+[ext_resource path="res://Nodes/Enemies/Wednesday/Frog.tscn" type="PackedScene" id=29]
+[ext_resource path="res://Nodes/Objects/Map/RedLight.tscn" type="PackedScene" id=30]
+[ext_resource path="res://Nodes/Buildings/Reactor/Reactor.tscn" type="PackedScene" id=31]
+[ext_resource path="res://Nodes/Enemies/CrystalUrasectus/CrystalUrasectus.tscn" type="PackedScene" id=32]
+[ext_resource path="res://Nodes/Objects/Deco/Spider_Eggs/spider_egg_T001.tscn" type="PackedScene" id=33]
+[ext_resource path="res://Nodes/Objects/Egg/MonsterEgg.tscn" type="PackedScene" id=34]
+[ext_resource path="res://Nodes/Objects/Deco/Tentacles/tentacles_ground_legs.tscn" type="PackedScene" id=35]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/sea_flower5_col.tscn" type="PackedScene" id=36]
+[ext_resource path="res://Nodes/Buildings/Tower/Tower.tscn" type="PackedScene" id=37]
+[ext_resource path="res://Nodes/Buildings/Storage/NoobStorage.gd" type="Script" id=39]
+[ext_resource path="res://Nodes/Buildings/Storage/Storage.tscn" type="PackedScene" id=40]
+[ext_resource path="res://Nodes/Objects/Hole/Hole.tscn" type="PackedScene" id=43]
+[ext_resource path="res://Nodes/Objects/Deco/Tentacles/tentacles_v001_01.tscn" type="PackedScene" id=45]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/sea_flower.tscn" type="PackedScene" id=46]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.tscn" type="PackedScene" id=47]
+[ext_resource path="res://Nodes/Objects/New_Asset_Test/new_asset_test.tscn" type="PackedScene" id=48]
+[ext_resource path="res://Nodes/Enemies/Arthoma/Arthoma.tscn" type="PackedScene" id=51]
+[ext_resource path="res://Nodes/Pickups/Ammo/AmmoPickup.tscn" type="PackedScene" id=53]
+[ext_resource path="res://Nodes/Objects/Helper/EditorPlacer.tscn" type="PackedScene" id=54]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/sea_flower4.tscn" type="PackedScene" id=55]
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenCrystal.tscn" type="PackedScene" id=56]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=57]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=59]
+[ext_resource path="res://Nodes/Map/MapMarker/MonsterArrow.png" type="Texture2D" id=66]
+[ext_resource path="res://Resources/Terrain/Images/FloorMarble.jpg" type="Texture2D" id=68]
+[ext_resource path="res://Resources/Terrain/Images/FloorDryMoss.jpg" type="Texture2D" id=69]
+[ext_resource path="res://Resources/Terrain/Images/FloorDarkGround.jpg" type="Texture2D" id=85]
+
+[sub_resource type="Shader" id=69]
+code = "shader_type canvas_item;
+
+uniform float contrast = 8.5;
+
+// All components are in the range [0…1], including hue.
+vec3 rgb2hsv(vec3 c)
+{
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+// All components are in the range [0…1], including hue.
+vec3 hsv2rgb(vec3 c)
+{
+	c.r=c.g*contrast;
+	c.g+=0.0;
+	c.b+=0.0;
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+void fragment() {
+	ivec2 size = textureSize(TEXTURE, 0);
+	vec4 color = texelFetch(TEXTURE,ivec2(UV*vec2(size)),0);
+	COLOR.rgb = hsv2rgb(rgb2hsv(vec3(1.0,color.g,1.0)));
+	COLOR.rgb *= color.r;
+//	COLOR.rgb = vec3(COLOR.g*80.0);
+	}"
+
+[sub_resource type="ShaderMaterial" id=70]
+shader = SubResource( 69 )
+shader_param/contrast = 80.0
+
+[sub_resource type="GDScript" id=71]
+script/source = "extends \"res://Scripts/MapEvents.gd\"
+
+func _config_map(config: Dictionary):
+	Save.clones = 10
+
+func _ready() -> void:
+	map.wave_manager.connect(\"wave_defeated\", Callable(self, \"on_end_wave\"))
+	
+	if CustomRunner.is_custom_running():
+		Utils.game.main_player.add_item(Const.ItemIDs.SPEAR)
+
+func _game_start():
+	map.scoring_rules.monster_nests_destroyed = 10000
+	Utils.game.ui.set_objective(0, \"Defeat all waves.\")
+
+func on_end_wave():
+	if map.wave_manager.is_finished():
+		SteamAPI.unlock_achievement(\"WIN_1\")
+		Utils.game.win(\"You won! Game will finish in 2 minutes.\")
+		get_tree().create_timer(120, false).connect(\"timeout\", Callable(Utils.game.ui, \"show_result\").bind(true))
+"
+
+[sub_resource type="GDScript" id=85]
+resource_name = "AchievementTracker"
+script/source = "extends Timer
+
+func _ready() -> void:
+	connect(\"timeout\", Callable(self, \"check_achievement\"))
+
+func check_achievement():
+	if Save.scoreboard.get(\"enemies_slain\", 0) >= 100:
+		SteamAPI.unlock_achievement(\"DAMIAN_MAP_50_KILLS\")
+		stop()
+"
+
+[sub_resource type="PixelMapMaterialData" id=86]
+resource_local_to_scene = true
+name_table = PackedStringArray( "Dirt", "Clay", "Rocks", "Poor Metal", "Metal", "Rich Metal", "Rock6", "Rock9", "Foam", "Steel", "Fireproof Foam", "Unused", "Concrete", "Unused", "Unused", "Unused", "Unused", "Unnamed", "Unnamed", "Unnamed", "Low building", "Wall", "Upgraded Wall", "Upgraded II Wall", "Tar", "Empty", "Dead Lumen", "Lumen", "Gate", "Water", "Lava", "Unnamed", "Building", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed" )
+durability_table = PackedInt32Array( 1, 5, 100, 1, 3, 9, 6, 9, 1, 8, 1, 1, 80, 2, 2, 1, 1, 2, 1, 1, 255, 2, 4, 6, 1, 1, 25, 1, 254, 1, 1, 1, 9999, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 )
+simulated_materials = PackedInt32Array( 15, 16 )
+reaction_table = PackedInt32Array( 15, 16, 14 )
+
+[sub_resource type="Gradient" id=87]
+offsets = PackedFloat32Array( 0.00566572, 1 )
+colors = PackedColorArray( 0.1, 0.1, 0.1, 1, 0.694118, 0.619608, 0.780392, 1 )
+
+[sub_resource type="ShaderMaterial" id=81]
+shader = ExtResource( 13 )
+shader_param/resolution1 = 35.5
+shader_param/resolution2 = 39.402
+shader_param/resolution3 = 30.22
+shader_param/resolution4 = 22.392
+shader_param/hsvoffset1 = -0.184
+shader_param/hsvsaturation1 = -0.243
+shader_param/hsvlight1 = -0.053
+shader_param/hsvoffset2 = 0.027
+shader_param/hsvsaturation2 = 0.0
+shader_param/hsvlight2 = -0.138
+shader_param/hsvoffset3 = 2.349
+shader_param/hsvsaturation3 = -0.222
+shader_param/hsvlight3 = -0.13
+shader_param/hsvoffset4 = 3.503
+shader_param/hsvsaturation4 = 0.113
+shader_param/hsvlight4 = -0.102
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 9 )
+shader_param/texture2 = ExtResource( 69 )
+shader_param/texture3 = ExtResource( 68 )
+shader_param/texture4 = ExtResource( 85 )
+
+[sub_resource type="PixelMapMaterialData" id=1]
+durability_table = PackedInt32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=88]
+shader = ExtResource( 6 )
+shader_param/resolution1 = 30.0
+shader_param/resolution2 = 15.0
+shader_param/resolution3 = 36.71
+shader_param/resolution4 = 25.0
+shader_param/multiply1 = 2.528
+shader_param/multiply2 = 1.056
+shader_param/multiply3 = 0.676
+shader_param/multiply4 = 0.636
+shader_param/wavy1 = 1.6
+shader_param/wavy2 = 1.4
+shader_param/wavy3 = 0.0
+shader_param/wavy4 = 0.0
+shader_param/hsvoffset1 = 0.988
+shader_param/hsvsaturation1 = 0.0
+shader_param/hsvlight1 = 0.053
+shader_param/hsvoffset2 = -0.247
+shader_param/hsvsaturation2 = -0.007
+shader_param/hsvlight2 = 0.04
+shader_param/hsvoffset3 = 0.781
+shader_param/hsvsaturation3 = -0.037
+shader_param/hsvlight3 = -0.014
+shader_param/hsvoffset4 = 0.046
+shader_param/hsvsaturation4 = 1.0
+shader_param/hsvlight4 = 0.0
+shader_param/black_as_empty = false
+shader_param/texture1 = ExtResource( 11 )
+shader_param/texture2 = ExtResource( 10 )
+shader_param/texture3 = ExtResource( 14 )
+shader_param/texture4 = ExtResource( 19 )
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Node2D
+
+func _enter_tree() -> void:
+	if visible:
+		Utils.game.map.connect(\"ready\", Callable(self, \"add_items\").bind(), CONNECT_DEFERRED)
+
+func add_items():
+	var player := Utils.game.main_player
+	player.add_item(Const.ItemIDs.LUMEN, 99)
+	player.add_item(Const.ItemIDs.METAL_SCRAP, 100)
+	player.add_item(Const.ItemIDs.AMMO, 500, Const.Ammo.BULLETS)
+	player.add_item(Const.ItemIDs.AMMO, 10, Const.Ammo.ROCKETS)
+	player.add_item(Const.ItemIDs.FLARE, 20)
+	player.add_item(Const.ItemIDs.PICKAXE, 1, \"DiamondPickaxe\")
+	player.add_item(Const.ItemIDs.MAGNUM, 1)
+	player.add_item(Const.ItemIDs.MACHINE_GUN, 1)
+	player.add_item(Const.ItemIDs.ROCKET_LAUNCHER, 1)
+"
+
+[node name="Map" type="Node2D"]
+material = SubResource( 70 )
+z_as_relative = false
+script = ExtResource( 7 )
+wave_file_path = "res://Maps/map_challange_T001_wave_spam.cfg"
+
+[node name="MapEvents" type="Node" parent="."]
+script = SubResource( 71 )
+
+[node name="AchievementTracker" type="Timer" parent="."]
+wait_time = 0.25
+autostart = true
+script = SubResource( 85 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 8 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+z_index = 500
+z_as_relative = false
+material_data = SubResource( 86 )
+texture_path = "res://Maps/map_challange_T001.png"
+debug_flags = 4
+script = ExtResource( 59 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, null, null, null, null ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="DarknessByDistance" parent="PixelMap" instance=ExtResource( 26 )]
+gradient = SubResource( 87 )
+min_distance = 125.0
+
+[node name="Smoke" parent="PixelMap" instance=ExtResource( 28 )]
+modulate = Color( 0.556863, 0.623529, 0.647059, 1 )
+position = Vector2( -95, 60 )
+scale = Vector2( 1536, 964 )
+
+[node name="ZIndexer" parent="PixelMap" instance=ExtResource( 5 )]
+z_index = 500
+
+[node name="PixelMapFloor" parent="PixelMap" instance=ExtResource( 25 )]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 57 )]
+visible = false
+modulate = Color( 0.694118, 0.619608, 0.780392, 1 )
+ambient_color = Color( 1, 1, 1, 1 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+show_behind_parent = true
+material = SubResource( 81 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 1 )
+texture_path = "res://Maps/map_challange_T001_floor.png"
+debug_flags = 4
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ null, null, null, null ]
+custom_material = true
+
+[node name="ZIndexer" parent="Floor" instance=ExtResource( 5 )]
+z_index = -1000
+offset = -1000
+
+[node name="Floor2" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 88 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 1 )
+texture_path = "res://Maps/map_challange_T001_floor2.png"
+debug_flags = 4
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ null, null, null, ExtResource( 22 ) ]
+layer = 2
+custom_material = true
+
+[node name="ZIndexer" parent="Floor2" instance=ExtResource( 5 )]
+z_index = -1000
+offset = -1000
+
+[node name="WaveSpawner_left" parent="." instance=ExtResource( 47 )]
+position = Vector2( 128, 752 )
+radius = 40.0
+
+[node name="WaveSpawner_mid" parent="." instance=ExtResource( 47 )]
+position = Vector2( 232, 1854 )
+radius = 40.0
+
+[node name="WaveSpawner_right" parent="." instance=ExtResource( 47 )]
+position = Vector2( 1715, 1781 )
+radius = 30.0
+
+[node name="MetalVein3" parent="." instance=ExtResource( 20 )]
+position = Vector2( 1494, 125 )
+count = 800
+
+[node name="MetalVein4" parent="." instance=ExtResource( 20 )]
+position = Vector2( 1170, 1214 )
+count = 2000
+
+[node name="MetalVein5" parent="." instance=ExtResource( 20 )]
+position = Vector2( 1860, 1460 )
+count = 2600
+
+[node name="MetalVein" parent="." instance=ExtResource( 20 )]
+position = Vector2( 827, 157 )
+count = 800
+
+[node name="MetalVein2" parent="." instance=ExtResource( 20 )]
+position = Vector2( 430, 120 )
+count = 1800
+
+[node name="Sea_Flora_T004" parent="." instance=ExtResource( 55 )]
+position = Vector2( 826, 1157 )
+rotation = -1.53574
+scale = Vector2( 0.163143, 0.163143 )
+
+[node name="Sea_Flora_T005" parent="." instance=ExtResource( 55 )]
+position = Vector2( 846, 1154 )
+rotation = 0.275942
+scale = Vector2( 0.163143, 0.163143 )
+
+[node name="Sea_Flora_T006" parent="." instance=ExtResource( 55 )]
+position = Vector2( 1405, 826 )
+scale = Vector2( 0.120146, 0.120146 )
+
+[node name="new_asset_test6" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.780392, 0.913725, 0.6, 1 )
+position = Vector2( 863, 1159 )
+rotation = -1.43009
+scale = Vector2( 0.0815512, 0.0815512 )
+__meta__ = {
+"_editor_description_": "w"
+}
+
+[node name="new_asset_test7" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.780392, 0.913725, 0.6, 1 )
+position = Vector2( 1577, 741 )
+rotation = -1.4602
+scale = Vector2( 0.100445, 0.102735 )
+__meta__ = {
+"_editor_description_": "w"
+}
+
+[node name="Sea_Flora_T007" parent="." instance=ExtResource( 55 )]
+position = Vector2( 1396, 822 )
+rotation = -2.44108
+scale = Vector2( 0.116692, 0.116692 )
+
+[node name="new_asset_test10" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.780392, 0.913725, 0.6, 1 )
+position = Vector2( 1257, 794 )
+rotation = 2.13608
+scale = Vector2( 0.090852, 0.0929237 )
+__meta__ = {
+"_editor_description_": "w"
+}
+
+[node name="Tentacle_4legs_col_1" parent="." instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 811.01, 835 )
+rotation = 1.97497
+scale = Vector2( 0.530208, 0.554022 )
+
+[node name="Tentacle_4legs_col_5" parent="." instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 1760, 533 )
+rotation = 3.10448
+scale = Vector2( 0.3738, 0.39059 )
+
+[node name="Tentacle_grounded_col_2" parent="." instance=ExtResource( 35 )]
+position = Vector2( 1839, 151 )
+rotation = 1.58075
+scale = Vector2( 0.451244, 0.471512 )
+
+[node name="Tentacle_grounded_col_3" parent="." instance=ExtResource( 35 )]
+position = Vector2( 157, 1939 )
+rotation = -2.39396
+scale = Vector2( 0.451244, 0.471512 )
+
+[node name="Tentacle_4legs_col_3" parent="." instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 1937, 347 )
+rotation = -0.771469
+scale = Vector2( 0.257292, 0.268848 )
+
+[node name="Tentacle_4legs_col_6" parent="." instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 1851, 170 )
+rotation = -0.771469
+scale = Vector2( 0.40067, 0.407976 )
+
+[node name="Tentacle_4legs_col_4" parent="." instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 1888, 609 )
+rotation = -2.82362
+scale = Vector2( 0.350202, 0.365932 )
+
+[node name="Sea_Flora_Col_001" parent="." instance=ExtResource( 36 )]
+modulate = Color( 0.45098, 0.419608, 1, 1 )
+position = Vector2( 1043, 14.0001 )
+rotation = 2.13608
+scale = Vector2( 0.0913815, 0.0934653 )
+
+[node name="Sea_Flora_Col_002" parent="." instance=ExtResource( 36 )]
+modulate = Color( 0.419608, 0.701961, 1, 1 )
+position = Vector2( 1067, 18 )
+rotation = -1.25656
+scale = Vector2( 0.0673932, 0.06893 )
+
+[node name="Sea_Flora_Col_003" parent="." instance=ExtResource( 36 )]
+modulate = Color( 0.419608, 0.701961, 1, 1 )
+position = Vector2( 1054, 14 )
+rotation = -2.08317
+scale = Vector2( 0.0888612, 0.0908875 )
+
+[node name="new_asset_test" parent="." instance=ExtResource( 48 )]
+position = Vector2( 1878, 631 )
+scale = Vector2( 0.0978332, 0.0978332 )
+
+[node name="new_asset_test14" parent="." instance=ExtResource( 48 )]
+position = Vector2( 1951, 459 )
+scale = Vector2( 0.093426, 0.093426 )
+
+[node name="new_asset_test15" parent="." instance=ExtResource( 48 )]
+position = Vector2( 1817, 442 )
+rotation = -1.53814
+scale = Vector2( 0.109154, 0.109154 )
+
+[node name="new_asset_test17" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.843137, 0.792157, 0.792157, 1 )
+position = Vector2( 1807, 187 )
+rotation = 0.837703
+scale = Vector2( 0.109154, 0.109154 )
+
+[node name="new_asset_test18" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.423529, 0.862745, 0.282353, 1 )
+position = Vector2( 1866, 296 )
+rotation = -1.53814
+scale = Vector2( 0.109154, 0.109154 )
+
+[node name="new_asset_test16" parent="." instance=ExtResource( 48 )]
+position = Vector2( 1971, 396 )
+rotation = -1.53814
+scale = Vector2( 0.109154, 0.109154 )
+
+[node name="new_asset_test3" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.666667, 1, 0.729412, 1 )
+position = Vector2( 1565, 743 )
+rotation = 2.27866
+scale = Vector2( 0.110887, 0.110887 )
+
+[node name="new_asset_test11" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.666667, 1, 0.729412, 1 )
+position = Vector2( 1910, 717 )
+rotation = 2.27866
+scale = Vector2( 0.101126, 0.101126 )
+
+[node name="new_asset_test8" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.666667, 1, 0.729412, 1 )
+position = Vector2( 1976, 592 )
+scale = Vector2( 0.109265, 0.109265 )
+
+[node name="new_asset_test9" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.666667, 1, 0.729412, 1 )
+position = Vector2( 1979, 606 )
+rotation = -0.893344
+scale = Vector2( 0.109265, 0.109265 )
+
+[node name="Mushroom" parent="." instance=ExtResource( 15 )]
+position = Vector2( 1915, 178 )
+rotation = 1.61702
+scale = Vector2( 0.897546, 0.897546 )
+random_growth = false
+
+[node name="sea_flower" parent="." instance=ExtResource( 46 )]
+position = Vector2( 1717, 1084 )
+rotation = 2.31287
+scale = Vector2( 0.157908, 0.157908 )
+
+[node name="sea_flower2" parent="." instance=ExtResource( 46 )]
+position = Vector2( 798, 1165 )
+rotation = 0.743611
+scale = Vector2( 0.135339, 0.135339 )
+
+[node name="Sea_Flora_T011" parent="." instance=ExtResource( 55 )]
+position = Vector2( 1553, 749 )
+rotation = 0.275942
+scale = Vector2( 0.108034, 0.108034 )
+
+[node name="Sea_Flower_T004" type="Node2D" parent="."]
+
+[node name="Sea_Flora_T007" parent="Sea_Flower_T004" instance=ExtResource( 55 )]
+position = Vector2( 379.999, 1791 )
+rotation = -2.44108
+scale = Vector2( 0.162964, 0.162964 )
+
+[node name="Tentacle_4legs_col_1" parent="Sea_Flower_T004" instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 43.9955, 911.997 )
+rotation = -2.39457
+scale = Vector2( 0.511994, 0.534991 )
+
+[node name="Tentacle_4legs_col_6" parent="Sea_Flower_T004" instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 41.9955, 755.997 )
+rotation = -2.39895
+scale = Vector2( 0.45199, 0.472292 )
+
+[node name="Tentacle_4legs_col_2" parent="Sea_Flower_T004" instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 192.995, 1824 )
+rotation = -2.52392
+scale = Vector2( 0.622513, 0.650474 )
+
+[node name="Tentacle_4legs_col_5" parent="Sea_Flower_T004" instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 1790, 1748 )
+rotation = 3.10448
+scale = Vector2( 0.31042, 0.368179 )
+
+[node name="Tentacle_4legs_col_7" parent="Sea_Flower_T004" instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 1777, 1779 )
+rotation = -0.407929
+scale = Vector2( 0.31042, 0.368179 )
+
+[node name="Tentacle_grounded_col_2" parent="Sea_Flower_T004" instance=ExtResource( 35 )]
+position = Vector2( 171, 1937 )
+rotation = 1.74551
+scale = Vector2( 0.766094, 0.800505 )
+
+[node name="Tentacle_4legs_col_3" parent="Sea_Flower_T004" instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 1910, 1203 )
+rotation = -0.771469
+scale = Vector2( 0.500009, 0.522467 )
+
+[node name="Tentacle_4legs_col_4" parent="Sea_Flower_T004" instance=ExtResource( 45 )]
+modulate = Color( 0.984314, 0.984314, 0.984314, 1 )
+position = Vector2( 685.996, 1374 )
+rotation = 2.33048
+scale = Vector2( 0.504638, 0.527305 )
+
+[node name="new_asset_test" parent="Sea_Flower_T004" instance=ExtResource( 48 )]
+position = Vector2( 1836, 1723 )
+scale = Vector2( 0.19978, 0.19978 )
+
+[node name="Mushroom" parent="Sea_Flower_T004" instance=ExtResource( 15 )]
+position = Vector2( 1755, 1820 )
+rotation = -1.00445
+scale = Vector2( 0.896559, 0.896559 )
+random_growth = false
+
+[node name="sea_flower" parent="Sea_Flower_T004" instance=ExtResource( 46 )]
+position = Vector2( 1921, 571.997 )
+rotation = -3.08035
+scale = Vector2( 0.155254, 0.155254 )
+
+[node name="new_asset_test13" parent="Sea_Flower_T004" instance=ExtResource( 48 )]
+position = Vector2( 1364.5, 1600 )
+rotation = 2.31287
+scale = Vector2( 0.173664, 0.151909 )
+
+[node name="sea_flower4" parent="Sea_Flower_T004" instance=ExtResource( 46 )]
+position = Vector2( 1352, 1609.04 )
+rotation = 0.615586
+scale = Vector2( 0.19978, 0.19978 )
+
+[node name="new_asset_test12" parent="." instance=ExtResource( 48 )]
+modulate = Color( 0.780392, 0.913725, 0.6, 1 )
+position = Vector2( 1538, 757 )
+rotation = -1.43009
+scale = Vector2( 0.115894, 0.115894 )
+__meta__ = {
+"_editor_description_": "w"
+}
+
+[node name="new_asset_test13" parent="." instance=ExtResource( 48 )]
+position = Vector2( 1922, 473 )
+rotation = 2.31287
+scale = Vector2( 0.086561, 0.0684592 )
+
+[node name="sea_flower4" parent="." instance=ExtResource( 46 )]
+position = Vector2( 1920, 538 )
+rotation = -2.52601
+scale = Vector2( 0.0998222, 0.0998222 )
+
+[node name="Mushroom54" parent="." instance=ExtResource( 15 )]
+position = Vector2( 1788, 1446 )
+rotation = 2.16447
+scale = Vector2( 0.50098, 0.50098 )
+random_growth = false
+
+[node name="InventoryHack" type="Node2D" parent="."]
+visible = false
+script = SubResource( 2 )
+
+[node name="Core" parent="." instance=ExtResource( 31 )]
+position = Vector2( 1165, 321 )
+__meta__ = {
+"has_power": true,
+"range_expander_radius": 350.0
+}
+start_on = true
+
+[node name="Start" type="Marker2D" parent="."]
+position = Vector2( 1065, 55 )
+
+[node name="StartArea" type="Node2D" parent="."]
+
+[node name="SmallCave" type="Node2D" parent="StartArea"]
+
+[node name="LumenCrystal" parent="StartArea/SmallCave" instance=ExtResource( 56 )]
+position = Vector2( 1725, 1514 )
+scale = Vector2( 0.4, 0.4 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal2" parent="StartArea/SmallCave" instance=ExtResource( 56 )]
+position = Vector2( 819, 832 )
+scale = Vector2( 0.166439, 0.166439 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal3" parent="StartArea/SmallCave" instance=ExtResource( 56 )]
+position = Vector2( 850, 824 )
+rotation = 2.62359
+scale = Vector2( 0.166439, 0.166439 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal4" parent="StartArea/SmallCave" instance=ExtResource( 56 )]
+position = Vector2( 1119, 126 )
+rotation = 2.62359
+scale = Vector2( 0.238312, 0.238312 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal5" parent="StartArea/SmallCave" instance=ExtResource( 56 )]
+position = Vector2( 1077, 133 )
+rotation = -0.355373
+scale = Vector2( 0.238312, 0.238312 )
+pixelmap_scale_mul = 0.94
+
+[node name="Mushroom47" parent="StartArea/SmallCave" instance=ExtResource( 15 )]
+position = Vector2( 1791, 1419 )
+rotation = -1.51146
+scale = Vector2( 0.847505, 0.847505 )
+random_growth = false
+
+[node name="RustyChest" parent="StartArea/SmallCave" instance=ExtResource( 18 )]
+position = Vector2( 892, 881 )
+
+[node name="SimplePickup" parent="StartArea/SmallCave/RustyChest" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 10
+
+[node name="SimplePickup2" parent="StartArea/SmallCave/RustyChest" instance=ExtResource( 27 )]
+position = Vector2( -0.350098, -0.98999 )
+item = "MEDPACK"
+
+[node name="RustyChest2" parent="StartArea/SmallCave" instance=ExtResource( 18 )]
+position = Vector2( 360, 835 )
+
+[node name="SimplePickup" parent="StartArea/SmallCave/RustyChest2" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 10
+
+[node name="SimplePickup2" parent="StartArea/SmallCave/RustyChest2" instance=ExtResource( 27 )]
+item = "MEDPACK"
+
+[node name="Base" type="Node2D" parent="StartArea"]
+
+[node name="Chest" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 157, 692 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Chest3" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 736, 479 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest3" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Chest7" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 917, 540 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest7" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Chest9" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1163, 409 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest9" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 60
+
+[node name="SimplePickup3" parent="StartArea/Base/Chest9" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 30
+
+[node name="SimplePickup2" parent="StartArea/Base/Chest9" instance=ExtResource( 27 )]
+item = "MAGNUM"
+
+[node name="AmmoPickup" parent="StartArea/Base/Chest9" instance=ExtResource( 53 )]
+collision_layer = 3
+amount = 150
+
+[node name="Chest10" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1769, 1757 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest10" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 200
+
+[node name="SimplePickup3" parent="StartArea/Base/Chest10" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 200
+
+[node name="Chest11" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1790, 1132 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest11" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 200
+
+[node name="SimplePickup3" parent="StartArea/Base/Chest11" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 200
+
+[node name="Chest12" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 134, 837 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest12" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 200
+
+[node name="SimplePickup3" parent="StartArea/Base/Chest12" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 200
+
+[node name="Chest13" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 628, 844 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest13" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 200
+
+[node name="SimplePickup3" parent="StartArea/Base/Chest13" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 200
+
+[node name="Chest14" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 159, 1928 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest14" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 200
+
+[node name="SimplePickup3" parent="StartArea/Base/Chest14" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 200
+
+[node name="Chest15" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1931, 690 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest15" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 200
+
+[node name="SimplePickup3" parent="StartArea/Base/Chest15" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 200
+
+[node name="Chest8" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1544, 807 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest8" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Chest4" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1734, 410 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest4" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Chest5" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1866, 709 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest5" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Chest6" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 1739, 1392 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest6" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Chest2" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 217, 916 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="StartArea/Base/Chest2" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 30
+
+[node name="Tower2" parent="StartArea/Base" instance=ExtResource( 37 )]
+position = Vector2( 1376, 238 )
+rotation = -4.73778
+
+[node name="Tower8" parent="StartArea/Base" instance=ExtResource( 37 )]
+position = Vector2( 1076, 440 )
+rotation = -3.02796
+
+[node name="Tower10" parent="StartArea/Base" instance=ExtResource( 37 )]
+position = Vector2( 982, 204 )
+rotation = -4.64831
+
+[node name="Walls" type="Node2D" parent="StartArea/Base"]
+position = Vector2( 0, -1 )
+
+[node name="LumenCrystal" parent="StartArea/Base" instance=ExtResource( 56 )]
+position = Vector2( 1746, 1505 )
+rotation = -0.898394
+scale = Vector2( 0.5, 0.5 )
+
+[node name="LumenCrystal2" parent="StartArea/Base" instance=ExtResource( 56 )]
+position = Vector2( 195, 686 )
+rotation = -3.34405
+scale = Vector2( 0.341381, 0.341381 )
+
+[node name="LumenCrystal6" parent="StartArea/Base" instance=ExtResource( 56 )]
+position = Vector2( 1305, 1467 )
+rotation = -1.309
+scale = Vector2( 0.272687, 0.272687 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal7" parent="StartArea/Base" instance=ExtResource( 56 )]
+position = Vector2( 1333, 1474 )
+rotation = 0.0415195
+scale = Vector2( 0.272687, 0.272687 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal3" parent="StartArea/Base" instance=ExtResource( 56 )]
+position = Vector2( 1318.31, 1490 )
+rotation = -1.309
+scale = Vector2( 0.484112, 0.484112 )
+pixelmap_scale_mul = 0.94
+
+[node name="Secret" type="Node2D" parent="StartArea"]
+
+[node name="RustyChest" parent="StartArea/Secret" instance=ExtResource( 18 )]
+position = Vector2( 1124, 755 )
+
+[node name="AmmoPickup" parent="StartArea/Secret/RustyChest" instance=ExtResource( 53 )]
+amount = 30
+
+[node name="AmmoPickup2" parent="StartArea/Secret/RustyChest" instance=ExtResource( 53 )]
+amount = 30
+
+[node name="AmmoPickup3" parent="StartArea/Secret/RustyChest" instance=ExtResource( 53 )]
+amount = 30
+
+[node name="SimplePickup" parent="StartArea/Secret/RustyChest" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 15
+
+[node name="SimplePickup2" parent="StartArea/Secret/RustyChest" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 15
+
+[node name="Chest" parent="StartArea/Secret" instance=ExtResource( 16 )]
+position = Vector2( 741, 1118 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="AmmoPickup" parent="StartArea/Secret/Chest" instance=ExtResource( 53 )]
+position = Vector2( 2, 1 )
+amount = 3
+ammo_type = 1
+
+[node name="EnemyCrystalUrasectus" parent="StartArea" instance=ExtResource( 32 )]
+position = Vector2( 1777, 1104 )
+
+[node name="UpperArea" type="Node2D" parent="."]
+
+[node name="LumenVein" type="Node2D" parent="UpperArea"]
+position = Vector2( 0, -0.561768 )
+
+[node name="LumenCrystal" parent="UpperArea/LumenVein" instance=ExtResource( 56 )]
+position = Vector2( 51, 826.562 )
+scale = Vector2( 0.450938, 0.450938 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal4" parent="UpperArea/LumenVein" instance=ExtResource( 56 )]
+position = Vector2( 571, 796.562 )
+rotation = 1.07383
+scale = Vector2( 0.450938, 0.450938 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal2" parent="UpperArea/LumenVein" instance=ExtResource( 56 )]
+position = Vector2( 1895, 1145.56 )
+rotation = 4.48403
+scale = Vector2( 0.6, 0.6 )
+
+[node name="LumenCrystal3" parent="UpperArea/LumenVein" instance=ExtResource( 56 )]
+position = Vector2( 1850, 1024.56 )
+rotation = 1.77061
+scale = Vector2( 0.6, 0.6 )
+
+[node name="RuinedFacility" type="Node2D" parent="UpperArea"]
+
+[node name="Chests" type="Node2D" parent="UpperArea/RuinedFacility"]
+
+[node name="RustyChest" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1821, 221 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest" instance=ExtResource( 53 )]
+position = Vector2( 0.450195, 1 )
+collision_layer = 3
+amount = 20
+
+[node name="RustyChest6" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1853, 310 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest6" instance=ExtResource( 53 )]
+collision_layer = 3
+amount = 5
+ammo_type = 1
+
+[node name="RustyChest2" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1882, 665 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest2" instance=ExtResource( 27 )]
+item = "REPAIR_KIT"
+amount = 15
+
+[node name="SimplePickup2" parent="UpperArea/RuinedFacility/Chests/RustyChest2" instance=ExtResource( 27 )]
+position = Vector2( -1, 0 )
+item = "METAL_SCRAP"
+amount = 15
+
+[node name="RustyChest3" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1840.47, 686.19 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest3" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 20
+
+[node name="RustyChest5" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1820, 241.19 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest5" instance=ExtResource( 53 )]
+collision_layer = 3
+amount = 30
+
+[node name="RustyChest7" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1786.12, 1063.08 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest7" instance=ExtResource( 53 )]
+collision_layer = 3
+amount = 40
+
+[node name="RustyChest4" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1853, 334.92 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest4" instance=ExtResource( 27 )]
+item = "METAL_SCRAP"
+amount = 20
+
+[node name="RustyChest8" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 18 )]
+position = Vector2( 1895, 1101 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest8" instance=ExtResource( 27 )]
+position = Vector2( 0.669922, 2.3302 )
+item = "METAL_SCRAP"
+amount = 25
+
+[node name="Lights" type="Node2D" parent="UpperArea/RuinedFacility"]
+
+[node name="RedLamp" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1882, 509 )
+z_index = 500
+
+[node name="RedLamp3" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1935, 336 )
+rotation = 7.85397
+z_index = 565
+
+[node name="RedLamp10" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1940, 228 )
+rotation = 10.9922
+z_index = 565
+
+[node name="RedLamp11" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1941, 180 )
+rotation = 7.86223
+z_index = 565
+
+[node name="RedLamp12" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1887, 219 )
+rotation = 10.9716
+z_index = 565
+
+[node name="RedLamp13" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1805, 242 )
+rotation = 12.605
+z_index = 565
+
+[node name="RedLamp14" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1806, 186 )
+rotation = 12.605
+z_index = 565
+
+[node name="RedLamp15" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1850, 112 )
+rotation = 14.1077
+z_index = 565
+
+[node name="RedLamp9" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1873, 368 )
+rotation = 7.85397
+z_index = 565
+
+[node name="RedLamp4" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1962, 451 )
+rotation = 7.85397
+z_index = 565
+
+[node name="RedLamp8" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1908, 501 )
+rotation = 7.85397
+z_index = 565
+
+[node name="RedLamp5" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1897, 646 )
+rotation = 6.32268
+z_index = 565
+
+[node name="RedLamp7" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 30 )]
+position = Vector2( 1908, 1077 )
+rotation = 9.42476
+z_index = 565
+
+[node name="Enemies" type="Node2D" parent="UpperArea"]
+
+[node name="Smart" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 810, 873 )
+
+[node name="Smart2" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 881, 847 )
+
+[node name="Smart3" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 922, 855 )
+
+[node name="Smart4" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 905, 834 )
+
+[node name="Smart27" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 847, 1123 )
+
+[node name="Smart28" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 888, 1131 )
+
+[node name="Smart29" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 871, 1110 )
+
+[node name="Smart30" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1064, 943 )
+
+[node name="Smart31" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1126, 969 )
+
+[node name="Smart32" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1114, 946 )
+
+[node name="Smart6" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 575, 889 )
+
+[node name="Smart12" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 616, 897 )
+
+[node name="Smart13" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 599, 876 )
+
+[node name="Smart9" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1854, 475 )
+
+[node name="Smart10" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1742, 596 )
+
+[node name="Smart11" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1824, 1073 )
+
+[node name="Smart14" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1841, 243 )
+
+[node name="Smart15" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1875, 488 )
+
+[node name="Enemy_Arthoma" parent="UpperArea/Enemies" instance=ExtResource( 51 )]
+position = Vector2( 1784, 1141.58 )
+rotation = 0.20604
+
+[node name="Enemy_Arthoma2" parent="UpperArea/Enemies" instance=ExtResource( 51 )]
+position = Vector2( 1855, 203 )
+
+[node name="Enemy_Arthoma3" parent="UpperArea/Enemies" instance=ExtResource( 51 )]
+position = Vector2( 1858, 674 )
+
+[node name="Smart16" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1720, 1127 )
+
+[node name="Smart17" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1946, 510 )
+
+[node name="Smart18" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1791, 510 )
+
+[node name="Smart19" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 820, 914.51 )
+
+[node name="Smart20" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1792, 440 )
+
+[node name="Smart21" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1724, 472 )
+
+[node name="Smart22" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1907, 303 )
+
+[node name="Smart24" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 846.25, 901.6 )
+
+[node name="Smart25" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 838.679, 860 )
+
+[node name="Smart26" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1908, 206 )
+
+[node name="Smart23" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1900, 377 )
+
+[node name="Smart5" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1392, 1215 )
+
+[node name="Smart7" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1783, 1801 )
+
+[node name="Smart8" parent="UpperArea/Enemies" instance=ExtResource( 23 )]
+position = Vector2( 1753, 1439 )
+
+[node name="Enemy_Arthoma4" parent="UpperArea/Enemies" instance=ExtResource( 51 )]
+position = Vector2( 1707, 1443 )
+
+[node name="Enemy_Arthoma5" parent="UpperArea/Enemies" instance=ExtResource( 51 )]
+position = Vector2( 1743, 1418 )
+
+[node name="Enemy_Arthoma6" parent="UpperArea/Enemies" instance=ExtResource( 51 )]
+position = Vector2( 1746, 1474 )
+
+[node name="Chest" parent="UpperArea" instance=ExtResource( 16 )]
+position = Vector2( 275, 849 )
+rotation = -2.64035
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="UpperArea/Chest" instance=ExtResource( 27 )]
+item = "SHOTGUN"
+
+[node name="Chest2" parent="UpperArea" instance=ExtResource( 16 )]
+position = Vector2( 1840, 1222 )
+rotation = -1.57079
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup" parent="UpperArea/Chest2" instance=ExtResource( 27 )]
+item = "SHOTGUN"
+
+[node name="LowerArea" type="Node2D" parent="."]
+position = Vector2( 0, 1 )
+
+[node name="DeadEnd" type="Node2D" parent="LowerArea"]
+
+[node name="Smart" parent="LowerArea/DeadEnd" instance=ExtResource( 23 )]
+position = Vector2( 87, 832 )
+
+[node name="Smart2" parent="LowerArea/DeadEnd" instance=ExtResource( 23 )]
+position = Vector2( 81, 722 )
+
+[node name="Smart3" parent="LowerArea/DeadEnd" instance=ExtResource( 23 )]
+position = Vector2( 57, 875 )
+
+[node name="Smart4" parent="LowerArea/DeadEnd" instance=ExtResource( 23 )]
+position = Vector2( 92, 936 )
+
+[node name="Smart5" parent="LowerArea/DeadEnd" instance=ExtResource( 23 )]
+position = Vector2( 185, 725 )
+
+[node name="Smart6" parent="LowerArea/DeadEnd" instance=ExtResource( 23 )]
+position = Vector2( 181, 749 )
+
+[node name="Smart7" parent="LowerArea/DeadEnd" instance=ExtResource( 23 )]
+position = Vector2( 79, 803 )
+
+[node name="Enemy_Arthoma" parent="LowerArea/DeadEnd" instance=ExtResource( 51 )]
+position = Vector2( 387, 852 )
+
+[node name="Enemy_Arthoma2" parent="LowerArea/DeadEnd" instance=ExtResource( 51 )]
+position = Vector2( 674, 1325 )
+
+[node name="Marker" parent="LowerArea/DeadEnd" instance=ExtResource( 4 )]
+visible = false
+position = Vector2( 2474.8, 3057.42 )
+arrow = ExtResource( 66 )
+max_radius = 10000.0
+
+[node name="Finale" type="Node2D" parent="LowerArea"]
+
+[node name="Smart" parent="LowerArea/Finale" instance=ExtResource( 23 )]
+position = Vector2( 551, 1571 )
+
+[node name="Smart2" parent="LowerArea/Finale" instance=ExtResource( 23 )]
+position = Vector2( 467, 1646 )
+
+[node name="Smart3" parent="LowerArea/Finale" instance=ExtResource( 23 )]
+position = Vector2( 597, 1424 )
+
+[node name="Smart6" parent="LowerArea/Finale" instance=ExtResource( 23 )]
+position = Vector2( 547, 1509 )
+
+[node name="Smart7" parent="LowerArea/Finale" instance=ExtResource( 23 )]
+position = Vector2( 569, 1435 )
+
+[node name="Chest" parent="LowerArea/Finale" instance=ExtResource( 16 )]
+position = Vector2( 569, 834 )
+__meta__ = {
+"pickup_container": true
+}
+
+[node name="SimplePickup2" parent="LowerArea/Finale/Chest" instance=ExtResource( 27 )]
+item = "MEDPACK"
+amount = 2
+
+[node name="AmmoPickup" parent="LowerArea/Finale/Chest" instance=ExtResource( 53 )]
+amount = 4
+ammo_type = 1
+
+[node name="SimplePickup" parent="LowerArea/Finale/Chest" instance=ExtResource( 27 )]
+item = "LUMEN"
+amount = 10
+
+[node name="LumenCrystal" parent="." instance=ExtResource( 56 )]
+position = Vector2( 1780.06, 1487 )
+rotation = 0.18197
+scale = Vector2( 0.38282, 0.379295 )
+
+[node name="LumenCrystal2" parent="." instance=ExtResource( 56 )]
+position = Vector2( 1768.03, 1510.99 )
+rotation = -2.36971
+scale = Vector2( 0.381094, 0.38103 )
+
+[node name="LumenCrystal3" parent="." instance=ExtResource( 56 )]
+position = Vector2( 731.981, 350.67 )
+rotation = 0.18197
+scale = Vector2( 0.38282, 0.379295 )
+
+[node name="LumenCrystal4" parent="." instance=ExtResource( 56 )]
+position = Vector2( 719.955, 374.659 )
+rotation = -2.36971
+scale = Vector2( 0.381094, 0.38103 )
+
+[node name="LumenCrystal5" parent="." instance=ExtResource( 56 )]
+position = Vector2( 904, 653 )
+rotation = -0.103911
+scale = Vector2( 0.381094, 0.38103 )
+
+[node name="LumenCrystal6" parent="." instance=ExtResource( 56 )]
+position = Vector2( 1167, 810.3 )
+rotation = -1.06075
+scale = Vector2( 0.381094, 0.38103 )
+
+[node name="LumenCrystal7" parent="." instance=ExtResource( 56 )]
+position = Vector2( 1483, 839 )
+rotation = -0.84561
+scale = Vector2( 0.381094, 0.38103 )
+
+[node name="LumenCrystal8" parent="." instance=ExtResource( 56 )]
+position = Vector2( 1814, 485 )
+rotation = -0.84561
+scale = Vector2( 0.381094, 0.38103 )
+
+[node name="MonsterEgg" parent="." instance=ExtResource( 34 )]
+position = Vector2( 686, 1373 )
+scale = Vector2( 0.955699, 0.946273 )
+
+[node name="Mushrooms" type="Node2D" parent="."]
+
+[node name="new_asset_test11" parent="Mushrooms" instance=ExtResource( 36 )]
+position = Vector2( 516, 418 )
+rotation = 3.44385
+scale = Vector2( 0.0980798, 0.0980798 )
+
+[node name="new_asset_test12" parent="Mushrooms" instance=ExtResource( 36 )]
+position = Vector2( 367, 487 )
+rotation = 2.10625
+scale = Vector2( 0.092929, 0.092929 )
+
+[node name="Sea_Flora_T004" parent="Mushrooms" instance=ExtResource( 55 )]
+position = Vector2( 508, 429 )
+rotation = -2.63345
+scale = Vector2( 0.112044, 0.112044 )
+
+[node name="new_asset_test13" parent="Mushrooms" instance=ExtResource( 36 )]
+position = Vector2( 855, 485 )
+rotation = 0.150591
+scale = Vector2( 0.123953, 0.123953 )
+
+[node name="new_asset_test14" parent="Mushrooms" instance=ExtResource( 36 )]
+position = Vector2( 821, 469 )
+rotation = -2.41785
+scale = Vector2( 0.0978529, 0.0978529 )
+
+[node name="sea_flower" parent="Mushrooms" instance=ExtResource( 46 )]
+position = Vector2( 915.344, 437.354 )
+rotation = -2.34711
+scale = Vector2( 0.126166, 0.126166 )
+
+[node name="sea_flower2" parent="Mushrooms" instance=ExtResource( 46 )]
+position = Vector2( 1022.47, 23.9373 )
+rotation = 1.80587
+scale = Vector2( 0.0996771, 0.0996771 )
+
+[node name="new_asset_test15" parent="Mushrooms" instance=ExtResource( 36 )]
+modulate = Color( 0.223529, 0.843137, 0.890196, 1 )
+position = Vector2( 1034, 34 )
+rotation = 1.87359
+scale = Vector2( 0.0637403, 0.0637403 )
+
+[node name="sea_flower3" parent="Mushrooms" instance=ExtResource( 46 )]
+position = Vector2( 1095, 80 )
+rotation = 0.450156
+scale = Vector2( 0.0814086, 0.0861163 )
+
+[node name="new_asset_test16" parent="Mushrooms" instance=ExtResource( 36 )]
+position = Vector2( 1077, 18 )
+rotation = -0.122845
+scale = Vector2( -0.0667159, 0.0736065 )
+
+[node name="Mushroom2" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1712, 1412 )
+rotation = 5.19401
+scale = Vector2( 0.718756, 0.718756 )
+
+[node name="Mushroom3" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1685, 1427 )
+rotation = 2.8231
+scale = Vector2( 0.679665, 0.679665 )
+
+[node name="Mushroom4" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1574, 811 )
+rotation = 5.27732
+scale = Vector2( 0.829139, 0.829139 )
+random_growth = false
+
+[node name="Mushroom58" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1647, 1605 )
+rotation = 5.9862
+scale = Vector2( 0.608022, 0.608022 )
+random_growth = false
+
+[node name="Mushroom7" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1926, 452 )
+rotation = 1.67219
+scale = Vector2( 0.867959, 0.867959 )
+random_growth = false
+
+[node name="Mushroom64" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1873, 115 )
+rotation = 2.24251
+scale = Vector2( 0.7877, 0.7877 )
+random_growth = false
+
+[node name="Mushroom66" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1818, 118 )
+rotation = 1.22523
+scale = Vector2( 0.7877, 0.7877 )
+random_growth = false
+
+[node name="Mushroom65" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1810, 175 )
+rotation = -0.186025
+scale = Vector2( 0.602952, 0.602952 )
+random_growth = false
+
+[node name="Mushroom8" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1196, 800.75 )
+rotation = 3.93745
+scale = Vector2( 0.464974, 0.464974 )
+random_growth = false
+
+[node name="Mushroom9" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1060, 719 )
+rotation = 2.31425
+scale = Vector2( 0.39416, 0.39416 )
+random_growth = false
+
+[node name="Mushroom10" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1714, 1156 )
+rotation = -0.436418
+scale = Vector2( 0.516259, 0.516259 )
+
+[node name="Mushroom11" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 706, 448 )
+rotation = 6.54605
+scale = Vector2( 0.529758, 0.529758 )
+
+[node name="Mushroom12" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 846, 475 )
+rotation = 2.51361
+scale = Vector2( 0.916529, 0.916529 )
+random_growth = false
+
+[node name="Mushroom13" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 765, 391 )
+rotation = 3.69354
+scale = Vector2( 0.792672, 0.792672 )
+
+[node name="Mushroom14" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1248, 1440 )
+rotation = -0.0689421
+scale = Vector2( 0.542891, 0.542891 )
+random_growth = false
+
+[node name="Mushroom15" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1194, 1397.15 )
+rotation = 1.51188
+scale = Vector2( 0.4502, 0.4502 )
+random_growth = false
+
+[node name="Mushroom16" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1270, 1558 )
+rotation = -0.463779
+scale = Vector2( 0.444664, 0.444664 )
+random_growth = false
+
+[node name="Mushroom17" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1685, 1657 )
+rotation = 0.570478
+scale = Vector2( 0.870972, 0.891154 )
+random_growth = false
+
+[node name="Mushroom18" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1279, 1403 )
+rotation = 2.68563
+scale = Vector2( 0.863519, 0.863519 )
+random_growth = false
+
+[node name="Mushroom24" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1250, 1375 )
+rotation = 4.54668
+scale = Vector2( 0.863519, 0.863519 )
+random_growth = false
+
+[node name="Mushroom26" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1221, 1385 )
+rotation = 4.68831
+scale = Vector2( 0.863519, 0.863519 )
+random_growth = false
+
+[node name="Mushroom32" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1232, 1410 )
+rotation = 5.77995
+scale = Vector2( 0.863519, 0.863519 )
+random_growth = false
+
+[node name="Mushroom33" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1271, 1386 )
+rotation = 3.87429
+scale = Vector2( 0.863519, 0.863519 )
+random_growth = false
+
+[node name="Mushroom34" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1271, 1386 )
+rotation = 3.87429
+scale = Vector2( 0.863519, 0.863519 )
+random_growth = false
+
+[node name="Mushroom19" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1655, 1391 )
+rotation = 2.11286
+scale = Vector2( 0.438297, 0.438297 )
+random_growth = false
+
+[node name="Mushroom20" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1806, 1229 )
+rotation = 5.90629
+scale = Vector2( 0.888356, 0.888356 )
+
+[node name="Mushroom21" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1769, 1035 )
+rotation = 1.52199
+scale = Vector2( 0.221946, 0.221946 )
+
+[node name="Mushroom22" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1790, 1027 )
+rotation = 6.61577
+scale = Vector2( 0.25877, 0.25877 )
+
+[node name="Mushroom23" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1871, 1245 )
+rotation = 4.40962
+scale = Vector2( 0.491063, 0.491063 )
+
+[node name="Mushroom25" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 604, 1333 )
+rotation = 7.24332
+scale = Vector2( 0.424464, 0.424464 )
+random_growth = false
+
+[node name="Mushroom48" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 579, 1350 )
+rotation = 1.78849
+scale = Vector2( 0.520996, 0.520996 )
+random_growth = false
+
+[node name="Mushroom49" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 556, 1357 )
+rotation = 1.63893
+scale = Vector2( 0.520996, 0.520996 )
+random_growth = false
+
+[node name="Mushroom27" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 246, 797 )
+rotation = 0.815322
+scale = Vector2( -0.879501, -0.879501 )
+random_growth = false
+
+[node name="Mushroom28" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 133, 683 )
+rotation = 2.17882
+scale = Vector2( 0.862417, 0.862417 )
+
+[node name="Mushroom29" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 131, 944 )
+rotation = 5.49671
+scale = Vector2( 1.12249, 1.12249 )
+
+[node name="Mushroom30" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 225.11, 946.82 )
+rotation = 0.774816
+scale = Vector2( 0.309131, 0.309131 )
+
+[node name="Mushroom31" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 185, 940 )
+rotation = 5.43574
+scale = Vector2( 1.31658, 1.32601 )
+random_growth = false
+
+[node name="Mushroom36" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 536, 1366 )
+rotation = 7.50895
+scale = Vector2( 0.53952, 0.53952 )
+
+[node name="Mushroom37" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 541, 1638 )
+rotation = 4.08601
+scale = Vector2( 0.534096, 0.534096 )
+
+[node name="Mushroom38" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1261, 1520 )
+rotation = 0.545333
+scale = Vector2( 0.596058, 0.596058 )
+
+[node name="Mushroom57" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1244, 1474.78 )
+rotation = 2.38681
+scale = Vector2( 0.596058, 0.596058 )
+random_growth = false
+
+[node name="Mushroom55" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1698, 1431 )
+rotation = 1.78548
+scale = Vector2( 0.631882, 0.632493 )
+random_growth = false
+
+[node name="Mushroom56" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1723, 1456 )
+rotation = 2.83764
+scale = Vector2( 0.520996, 0.520996 )
+random_growth = false
+
+[node name="Mushroom59" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1916, 495 )
+rotation = 1.16976
+scale = Vector2( 0.894574, 0.894574 )
+random_growth = false
+
+[node name="Mushroom60" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 917, 676 )
+rotation = 0.432144
+scale = Vector2( 0.66192, 0.66192 )
+random_growth = false
+
+[node name="Mushroom61" parent="Mushrooms" instance=ExtResource( 15 )]
+position = Vector2( 1068, 772 )
+rotation = 0.295831
+scale = Vector2( 0.623556, 0.623556 )
+random_growth = false
+
+[node name="SeaFlowers" type="Node2D" parent="."]
+
+[node name="sea_flower" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 881, 816 )
+scale = Vector2( -0.0785975, -0.0785975 )
+
+[node name="sea_flower10" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 634, 1371 )
+rotation = 1.16956
+scale = Vector2( 0.12425, 0.12425 )
+
+[node name="sea_flower2" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1643, 674 )
+scale = Vector2( 0.0958557, 0.0958557 )
+
+[node name="sea_flower4" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1778.57, 1031.27 )
+
+[node name="sea_flower5" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1897, 1034 )
+rotation = -2.02458
+
+[node name="sea_flower6" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 534, 846 )
+rotation = -1.63582
+scale = Vector2( 0.16873, 0.16873 )
+
+[node name="sea_flower7" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1672, 1637 )
+rotation = -2.02458
+
+[node name="sea_flower8" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1587, 1458 )
+rotation = -2.02458
+
+[node name="sea_flower9" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1782, 373 )
+rotation = -2.02458
+scale = Vector2( 0.124447, 0.124447 )
+
+[node name="sea_flower26" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1975, 118 )
+rotation = -2.02458
+scale = Vector2( 0.100978, 0.100978 )
+
+[node name="sea_flower19" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 833.999, 832.999 )
+rotation = -0.678933
+scale = Vector2( 0.112106, 0.112106 )
+
+[node name="sea_flower22" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1707, 1389 )
+rotation = -0.678933
+scale = Vector2( 0.112106, 0.112106 )
+
+[node name="sea_flower23" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1787, 1455 )
+rotation = -0.678933
+scale = Vector2( 0.112106, 0.112106 )
+
+[node name="sea_flower20" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1086, 158 )
+rotation = -1.74797
+scale = Vector2( 0.112106, 0.112106 )
+
+[node name="sea_flower21" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1078, 143 )
+rotation = -1.74797
+scale = Vector2( -0.0854485, -0.0854485 )
+
+[node name="sea_flower13" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 614, 1383 )
+rotation = -4.76862
+scale = Vector2( 0.0898559, 0.0898559 )
+
+[node name="sea_flower14" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 256, 1768 )
+rotation = -4.94626
+
+[node name="sea_flower15" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 493, 1558 )
+rotation = -7.52892
+scale = Vector2( 0.0924783, 0.0924783 )
+
+[node name="sea_flower16" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1631, 1586 )
+rotation = -6.28319
+
+[node name="sea_flower17" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 744, 1310 )
+rotation = -1.27933
+scale = Vector2( 0.0938161, 0.0938161 )
+
+[node name="sea_flower18" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 551, 1611 )
+rotation = -1.27933
+scale = Vector2( 0.102786, 0.102786 )
+
+[node name="sea_flower25" parent="SeaFlowers" instance=ExtResource( 46 )]
+position = Vector2( 1690, 1415 )
+
+[node name="Holes" type="Node2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Hole" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1580, 858 )
+total_monsters = 4
+max_monsters_at_once = 4
+spawn_batch = 4
+
+[node name="Hole2" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1950, 624 )
+total_monsters = 2
+max_monsters_at_once = 2
+spawn_batch = 2
+
+[node name="Hole3" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1185, 627 )
+rotation = 0.743611
+total_monsters = 4
+max_monsters_at_once = 3
+
+[node name="Hole4" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1728, 1491 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 1
+spawn_interval = 2.0
+
+[node name="Hole5" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1750, 575 )
+total_monsters = 7
+max_monsters_at_once = 3
+spawn_batch = 2
+spawn_interval = 2.0
+
+[node name="Hole6" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1550, 1366 )
+total_monsters = 4
+max_monsters_at_once = 4
+spawn_batch = 2
+
+[node name="Hole9" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1721, 1672 )
+total_monsters = 26
+max_monsters_at_once = 12
+spawn_interval = 3.0
+
+[node name="Hole10" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1171, 979 )
+total_monsters = 12
+
+[node name="Hole60" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1236, 1030 )
+total_monsters = 14
+max_monsters_at_once = 7
+spawn_batch = 7
+
+[node name="Hole61" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1325, 1095 )
+total_monsters = 14
+max_monsters_at_once = 7
+
+[node name="Hole11" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1645, 1480 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+spawn_interval = 0.5
+
+[node name="Hole12" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 645, 1142 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+
+[node name="Hole13" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1551, 1478 )
+total_monsters = 24
+max_monsters_at_once = 8
+spawn_batch = 4
+spawn_interval = 2.0
+
+[node name="Hole14" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1633, 723 )
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole53" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1633, 723 )
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole55" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1515, 809 )
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole57" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1617, 899 )
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole56" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1452, 671 )
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole15" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1187, 560 )
+max_monsters_at_once = 4
+
+[node name="Hole16" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1477, 1287 )
+
+[node name="Hole17" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 630, 366 )
+total_monsters = 8
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole18" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1275, 1444 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+spawn_interval = 3.0
+
+[node name="Hole33" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1192, 1337 )
+total_monsters = 12
+spawn_batch = 1
+
+[node name="Hole34" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 806, 1136 )
+total_monsters = 14
+max_monsters_at_once = 7
+spawn_batch = 2
+
+[node name="Hole35" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1302, 1566 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+spawn_interval = 3.0
+
+[node name="Hole36" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1142, 1488 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+
+[node name="Hole37" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 870, 1609 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+
+[node name="Hole38" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1076, 1317 )
+max_monsters_at_once = 5
+spawn_batch = 2
+
+[node name="Hole39" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 196, 96 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole40" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 155, 194 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole41" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 415, 629 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole42" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 247, 407 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole43" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 136, 533 )
+max_monsters_at_once = 5
+spawn_batch = 2
+
+[node name="Hole44" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 78, 755 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+
+[node name="Hole45" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 387, 919 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+
+[node name="Hole46" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 845, 693 )
+max_monsters_at_once = 5
+spawn_batch = 2
+
+[node name="Hole47" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 797, 726 )
+max_monsters_at_once = 5
+spawn_batch = 2
+
+[node name="Hole48" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 714, 738 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole49" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 848, 835 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole50" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 864, 877 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole51" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 842, 870 )
+total_monsters = 3
+max_monsters_at_once = 3
+spawn_batch = 1
+
+[node name="Hole52" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 578, 916 )
+max_monsters_at_once = 5
+spawn_batch = 2
+
+[node name="Hole54" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1046, 737 )
+total_monsters = 3
+max_monsters_at_once = 3
+spawn_interval = 3.0
+
+[node name="Hole59" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 880, 552 )
+total_monsters = 2
+max_monsters_at_once = 2
+spawn_interval = 3.0
+
+[node name="Hole58" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 572, 877 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole19" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 958, 1331 )
+max_monsters_at_once = 5
+spawn_batch = 2
+
+[node name="Hole20" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1360, 1186 )
+total_monsters = 14
+max_monsters_at_once = 7
+spawn_batch = 2
+
+[node name="Hole24" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1154, 1190 )
+total_monsters = 12
+spawn_batch = 1
+
+[node name="Hole28" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 569, 639 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole32" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 407, 677 )
+total_monsters = 5
+max_monsters_at_once = 5
+spawn_batch = 1
+
+[node name="Hole25" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 632, 878 )
+total_monsters = 3
+max_monsters_at_once = 3
+spawn_batch = 1
+
+[node name="Hole26" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 195, 1155 )
+total_monsters = 14
+max_monsters_at_once = 7
+spawn_batch = 2
+
+[node name="Hole22" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1911, 838 )
+max_monsters_at_once = 10
+spawn_batch = 1
+
+[node name="Hole27" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 148, 782 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+
+[node name="Hole30" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 138, 394 )
+total_monsters = 4
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole31" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 358, 308 )
+total_monsters = 2
+max_monsters_at_once = 2
+spawn_batch = 1
+
+[node name="Hole29" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 100, 891 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+
+[node name="Hole23" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1698, 886 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 1
+
+[node name="Hole21" parent="Holes" instance=ExtResource( 43 )]
+position = Vector2( 1852, 1081 )
+max_monsters_at_once = 5
+spawn_batch = 2
+
+[node name="LumenClumpPlacer" parent="." instance=ExtResource( 54 )]
+position = Vector2( 1035, 973 )
+z_index = 4096
+radius = 1000.0
+scene = ExtResource( 12 )
+amount = 40
+
+[node name="MetalNuggetPlacer" parent="." instance=ExtResource( 54 )]
+position = Vector2( 1030, 980 )
+z_index = 4096
+radius = 1000.0
+scene = ExtResource( 24 )
+amount = 20
+
+[node name="LightSprite2" type="Node2D" parent="."]
+modulate = Color( 0.905882, 0.537255, 0.992157, 1 )
+position = Vector2( 1789, 1169 )
+script = ExtResource( 2 )
+texture = ExtResource( 3 )
+is_static = true
+
+[node name="LightSprite3" type="Node2D" parent="."]
+modulate = Color( 0.207843, 0.545098, 1, 1 )
+position = Vector2( 1047, 959 )
+script = ExtResource( 2 )
+texture = ExtResource( 3 )
+is_static = true
+
+[node name="AlienNest12" parent="." instance=ExtResource( 17 )]
+position = Vector2( 625, 835 )
+max_spawn = 1
+min_sec_spawn = 30.0
+max_resource_drops = 3
+sprite = 3
+
+[node name="EnemyArthoma" parent="AlienNest12" instance=ExtResource( 51 )]
+position = Vector2( -30.4307, -16.7795 )
+
+[node name="AlienNest13" parent="." instance=ExtResource( 17 )]
+position = Vector2( 143, 846 )
+rotation = 2.02014
+max_spawn = 1
+min_sec_spawn = 30.0
+max_resource_drops = 3
+sprite = 3
+
+[node name="EnemyArthoma" parent="AlienNest13" instance=ExtResource( 51 )]
+position = Vector2( -30.4307, -16.7795 )
+
+[node name="AlienNest14" parent="." instance=ExtResource( 17 )]
+position = Vector2( 1935, 685 )
+rotation = 0.0353211
+max_spawn = 1
+min_sec_spawn = 30.0
+max_resource_drops = 3
+sprite = 3
+
+[node name="EnemyArthoma" parent="AlienNest14" instance=ExtResource( 51 )]
+position = Vector2( -30.4307, -16.7795 )
+
+[node name="AlienNest15" parent="." instance=ExtResource( 17 )]
+position = Vector2( 1798, 1132 )
+rotation = 1.65654
+max_spawn = 1
+min_sec_spawn = 30.0
+max_resource_drops = 3
+sprite = 3
+
+[node name="EnemyArthoma" parent="AlienNest15" instance=ExtResource( 51 )]
+position = Vector2( -30.4307, -16.7795 )
+
+[node name="AlienNest16" parent="." instance=ExtResource( 17 )]
+position = Vector2( 1766, 1751 )
+rotation = -0.713366
+max_spawn = 1
+min_sec_spawn = 30.0
+max_resource_drops = 3
+sprite = 3
+
+[node name="EnemyArthoma" parent="AlienNest16" instance=ExtResource( 51 )]
+position = Vector2( -30.4307, -16.7795 )
+
+[node name="AlienNest17" parent="." instance=ExtResource( 17 )]
+position = Vector2( 169, 1923 )
+rotation = 0.787306
+max_spawn = 1
+min_sec_spawn = 30.0
+max_resource_drops = 3
+sprite = 3
+
+[node name="EnemyArthoma" parent="AlienNest17" instance=ExtResource( 51 )]
+position = Vector2( -30.4307, -16.7795 )
+
+[node name="Spider_Egg_Web" parent="." instance=ExtResource( 33 )]
+position = Vector2( 508, 902 )
+rotation = -0.0907606
+scale = Vector2( -0.101426, -0.101426 )
+
+[node name="LavaSource" parent="." instance=ExtResource( 21 )]
+position = Vector2( 101.125, 1415.63 )
+fluid_radius = 405.0
+fluid_dmg_materials_mask = 402653183
+fluid_dmg_durability_threshold = 4
+fluid_dmg = 4
+fluid_is_simulated = true
+source_id = 1
+
+[node name="LavaSource2" parent="." instance=ExtResource( 21 )]
+position = Vector2( 1065.25, 1777.48 )
+z_index = 1911
+fluid_radius = 545.0
+fluid_dmg_materials_mask = 402653183
+fluid_dmg_durability_threshold = 4
+fluid_dmg = 4
+fluid_is_simulated = true
+source_id = 2
+
+[node name="LavaSource3" parent="." instance=ExtResource( 21 )]
+position = Vector2( 1290.51, 887.802 )
+fluid_radius = 98.0
+fluid_dmg_materials_mask = 402653183
+fluid_dmg_durability_threshold = 4
+fluid_dmg = 4
+fluid_is_simulated = true
+source_id = 4
+
+[node name="Frog" parent="." instance=ExtResource( 29 )]
+position = Vector2( 1231, 2007 )
+
+[node name="new_asset_test19" parent="." instance=ExtResource( 36 )]
+position = Vector2( 497, 424 )
+rotation = -1.16961
+scale = Vector2( 0.12042, 0.12042 )
+
+[node name="NoobStorage" parent="." instance=ExtResource( 40 )]
+position = Vector2( 1271, 333 )
+script = ExtResource( 39 )
+difficulted = false

@@ -1,0 +1,77 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Turret/Turrent_T001_icon.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/AngleIndicator.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=5]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Turret/SniperIcon.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Buildings/Turret/IconTurret.png" type="Texture2D" id=8]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Buildings/Icons/GenericPreview.gd\"
+@onready var attack_range= $attack_range_visual
+func set_as_preview():
+	super.set_as_preview()
+	set_meta(\"custom_canvas\", true)
+	
+	attack_range.set_meta(\"range_expander_color\", 2.0)
+	attack_range.add_to_group(\"range_draw\")
+	attack_range.set_meta(\"custom_canvas\", true)
+	attack_range.set_meta(\"range_expander_radius\", 200.0)
+	attack_range.circle_radius=200
+	
+func on_moved():
+	attack_range.visible=true
+	Utils.game.map.post_process.range_dirty = true
+
+func on_placed():
+	remove_meta(\"range_expander_radius\")
+	attack_range.visible=false
+	Utils.game.map.post_process.range_dirty = true
+"
+
+[node name="SniperTurret" type="Sprite2D"]
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="AngleIndicator" type="Sprite2D" parent="."]
+visible = false
+position = Vector2( 400, 0 )
+texture = ExtResource( 2 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 5 )
+position = Vector2( 0.867768, 0.118702 )
+scale = Vector2( 439.558, 393.689 )
+z_index = -1
+texture = ExtResource( 4 )
+
+[node name="attack_range_visual" parent="." instance=ExtResource( 3 )]
+visible = false
+modulate = Color( 0.501961, 1, 1, 1 )
+max_radius = 99999.0
+circle_radius = 150.0
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+self_modulate = Color( 2, 1, 0, 1 )
+scale = Vector2( 2.62456, 2.62456 )
+texture = ExtResource( 8 )
+
+[node name="Sprite2D" type="Sprite2D" parent="Unused"]
+modulate = Color( 0.658824, 0.329412, 0, 1 )
+position = Vector2( -0.336397, 2.69114 )
+rotation = -0.261799
+scale = Vector2( 0.260848, 0.260848 )
+texture = ExtResource( 7 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.700052, 0.811286 )
+texture = ExtResource( 6 )

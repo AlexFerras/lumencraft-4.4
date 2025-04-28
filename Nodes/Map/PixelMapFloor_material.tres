@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/Map/PixelMapFloor.gdshader" type="Shader" id=1]
+[ext_resource path="res://Resources/Terrain/tar.jpg" type="Texture2D" id=2]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/tar_index = 24.0
+shader_param/tar_color = Plane( 1.34, 1.353, 1.067, 0.73 )
+shader_param/tar_border_color = Plane( 0.255, 0.895, 4.497, 1 )
+shader_param/global_transform = Transform2D( 4000, 0, 0, 4000, 0, 0 )
+shader_param/tar_texture = ExtResource( 2 )

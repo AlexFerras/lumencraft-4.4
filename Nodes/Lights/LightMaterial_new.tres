@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite_new.gdshader" type="Shader" id=1]
+[ext_resource path="res://Resources/Textures/NoiseRGB.png" type="Texture2D" id=2]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/global_transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+shader_param/shadow_intensity = 1.0
+shader_param/light_position = Vector2( 0, 0 )
+shader_param/NUM_SAMPLES = 32
+shader_param/NUM_SAMPLES_SHORT = 10
+shader_param/WEIGHT = 0.3
+shader_param/DECAY = 1.0
+shader_param/random_noise = ExtResource( 2 )

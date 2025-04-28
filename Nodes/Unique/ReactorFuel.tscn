@@ -1,0 +1,754 @@
+[gd_scene load_steps=38 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_micro.tres" type="FontFile" id=1]
+[ext_resource path="res://Nodes/Unique/LumenChamber_cables.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Unique/ReactorFuel.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Unique/syren.wav" type="AudioStream" id=4]
+[ext_resource path="res://Nodes/Pickups/Resources/PlaceholderLumen.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Textures/lights_vfx/Lamp_light_Radial_main_T001.png" type="Texture2D" id=6]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=7]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/GenericComputer.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Unique/LumenChamber.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothHalfCircle.png" type="Texture2D" id=12]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=13]
+[ext_resource path="res://Nodes/Objects/Map/RedLamp.png" type="Texture2D" id=14]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+
+@onready var checker_pos: Vector2 = $Marker2D.global_position
+
+var check_timer: float
+
+func _physics_process(delta: float) -> void:
+	check_timer += delta
+	if check_timer >= 0.5:
+		check_timer = 0
+		if not Utils.game.map.pixel_map.is_pixel_solid(checker_pos, Utils.walkable_collision_mask):
+			queue_free()
+"
+
+[sub_resource type="Animation" id=40]
+length = 3.63
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:playing")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../RedLamp/Light3D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.2, 0.9, 1.4, 1.6, 1.8, 2.5, 3, 3.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 0 ), Color( 3, 1, 1, 1 ), Color( 3, 1, 1, 1 ), Color( 1, 0, 0, 0 ), Color( 1, 0, 0, 0 ), Color( 3, 1, 1, 1 ), Color( 3, 1, 1, 1 ), Color( 1, 0, 0, 0 ), Color( 1, 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=43]
+resource_name = "PowerOFF"
+length = 6.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 4, 6 ),
+"transitions": PackedFloat32Array( 0.5, -2 ),
+"update": 3,
+"values": [ 0.464, -80.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 5.9 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../RedLamp/Light3D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1, 0, 0, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:pitch_scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 4 ),
+"transitions": PackedFloat32Array( -2, -2 ),
+"update": 0,
+"values": [ 1.0, 0.01 ]
+}
+
+[sub_resource type="Animation" id=30]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:playing")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:volume_db")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../RedLamp/Light3D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:pitch_scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=32]
+length = 3.63
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 0.5, 0.5 ),
+"update": 0,
+"values": [ -80.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../RedLamp/Light3D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0.2, 0.5, 1.4, 1.6, 1.8, 2.1, 3, 3.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 3,
+"values": [ Color( 3, 0, 0, 1 ), Color( 3, 0, 0, 1 ), Color( 1, 0, 0, 0 ), Color( 1, 0, 0, 0 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 0 ), Color( 1, 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=31]
+length = 4.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 3.9 ),
+"transitions": PackedFloat32Array( 0.5, -2 ),
+"update": 3,
+"values": [ 0.464, -80.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 3.8 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../RedLamp/Light3D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1, 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=20]
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("LampaHalo4:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0.313726 ), Color( 1, 0.466667, 0.0745098, 0.196078 ), Color( 0.705882, 0.0666667, 0.0666667, 0.313726 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LampaHalo3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0.196078 ), Color( 1.86275, 1, 0.290196, 0.196078 ), Color( 0.705882, 0.0666667, 0.0666667, 0.196078 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LampaHalo2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0.196078 ), Color( 1.86275, 1, 0.290196, 0.196078 ), Color( 0.705882, 0.0666667, 0.0666667, 0.196078 ) ]
+}
+
+[sub_resource type="Animation" id=41]
+resource_name = "BlinkOFF"
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("LampaHalo4:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 2 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LampaHalo3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 2 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LampaHalo2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 2 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0 ) ]
+}
+
+[sub_resource type="Animation" id=42]
+resource_name = "BlinkON"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("LampaHalo4:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0.313726 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LampaHalo3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0.196078 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LampaHalo2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.705882, 0.0666667, 0.0666667, 0.196078 ) ]
+}
+
+[sub_resource type="Animation" id=21]
+length = 0.001
+
+[sub_resource type="GDScript" id=26]
+script/source = "extends \"res://Nodes/Buildings/Common/Computer/GenericComputer.gd\"
+
+@onready var fuel = get_parent()
+
+func _setup():
+	if not active:
+		return
+	
+	if fuel.need_to_start > 0:
+		screen.set_title(\"Start Reactor\")
+		screen.set_description(tr(\"Need %s more Lumen to start the reactor.\") % fuel.need_to_start)
+		screen.set_interact_action(tr(\"Add %s Lumen\") % 1)
+	else:
+		var add := get_add()
+		screen.set_title(\"Add Lumen\")
+		screen.set_description(tr(\"Puts up to %s Lumen into the reactor, increases time by up to %s seconds.\") % [add, fuel.lumen_fuel_value * add])
+		screen.set_icon(Utils.get_item_icon(Const.ItemIDs.LUMEN))
+		screen.set_interact_action(tr(\"Add %s Lumen\") % add)
+
+func get_add() -> int:
+	var add := 1
+	if fuel.need_to_start <= 0:
+		add = min( 5, screen.current_player.get_item_count(Const.ItemIDs.LUMEN) )
+		if (fuel.fuel_level + fuel.lumen_fuel_value * add) > fuel.max_fuel:
+			add -= floor( ((fuel.fuel_level + fuel.lumen_fuel_value * add) - fuel.max_fuel) / fuel.lumen_fuel_value )
+	return add
+
+func _can_use() -> bool:
+	return screen.current_player.get_item_count(Const.ItemIDs.LUMEN) > 0 and (fuel.reactor.is_running or fuel.need_to_start > 0)
+
+func _make():
+	var add := get_add()
+	fuel.add_lumen(add)
+	screen.current_player.subtract_item(Const.ItemIDs.LUMEN, add)
+	reload()
+"
+
+[sub_resource type="GDScript" id=45]
+script/source = "extends Sprite2D
+
+func _ready() -> void:
+	Utils.game.map.pixel_map.update_material_mask_rotated(global_position, texture.get_data(), Const.Materials.STOP, Vector3(scale.x, scale.y, global_rotation), 0xFFFFFFFF, 255)
+"
+
+[sub_resource type="StyleBoxFlat" id=18]
+bg_color = Color( 0.862745, 0.176471, 0.329412, 1 )
+corner_radius_top_left = 20
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=33]
+bg_color = Color( 0.86, 0.18, 0.33, 0.2 )
+corner_radius_top_left = 20
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=29]
+bg_color = Color( 0, 0.482353, 0.356863, 1 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=35]
+bg_color = Color( 0, 0.48, 0.36, 0.2 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=27]
+bg_color = Color( 0.0352941, 0.631373, 0.478431, 1 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=34]
+bg_color = Color( 0.04, 0.63, 0.48, 0.2 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=38]
+bg_color = Color( 0.862745, 0.176471, 0.329412, 1 )
+corner_radius_top_left = 32
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=39]
+bg_color = Color( 0.86, 0.18, 0.33, 0.2 )
+corner_radius_top_left = 32
+anti_aliasing = false
+
+[sub_resource type="RectangleShape2D" id=44]
+extents = Vector2( 163.621, 124.314 )
+
+[sub_resource type="ShaderMaterial" id=36]
+resource_local_to_scene = true
+shader = ExtResource( 7 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 8 )
+
+[sub_resource type="ShaderMaterial" id=37]
+resource_local_to_scene = true
+shader = ExtResource( 7 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 8 )
+
+[node name="ReactorFuel" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[node name="RedLamp" type="Node2D" parent="."]
+position = Vector2( 0, 61 )
+rotation = 1.5708
+script = SubResource( 3 )
+
+[node name="Sprite2D" type="Sprite2D" parent="RedLamp"]
+scale = Vector2( 0.0243902, 0.0243902 )
+texture = ExtResource( 14 )
+
+[node name="Light3D" type="Node2D" parent="RedLamp"]
+modulate = Color( 1, 0, 0, 0 )
+rotation = 1.5708
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 13 )
+texture = ExtResource( 12 )
+offset = Vector2( 0, -55 )
+
+[node name="Marker2D" type="Marker2D" parent="RedLamp"]
+position = Vector2( -2.22656, 0 )
+scale = Vector2( 0.0243902, 0.0243902 )
+
+[node name="SyrenAnimation" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+root_node = NodePath("../SYRENS")
+anims/Loop = SubResource( 40 )
+anims/PowerOFF = SubResource( 43 )
+anims/RESET = SubResource( 30 )
+anims/Start = SubResource( 32 )
+anims/Stop = SubResource( 31 )
+next/Start = "Loop"
+
+[node name="SYRENS" type="AudioStreamPlayer2D" parent="."]
+position = Vector2( 0, 61 )
+stream = ExtResource( 4 )
+max_distance = 1500.0
+attenuation = 2.0
+bus = "Siren"
+
+[node name="Chambers" type="Node2D" parent="."]
+modulate = Color( 0.52549, 0.541176, 0.564706, 1 )
+position = Vector2( 1, 17 )
+
+[node name="LumenChamber" parent="Chambers" instance=ExtResource( 11 )]
+position = Vector2( 35, -17 )
+rotation = 0.052656
+z_index = 800
+
+[node name="LumenChamber2" parent="Chambers" instance=ExtResource( 11 )]
+position = Vector2( 0, 20 )
+rotation = 1.56519
+z_index = 800
+
+[node name="CollisionShape2D" parent="Chambers/LumenChamber2" index="0"]
+position = Vector2( 41.3197, 0.231656 )
+
+[node name="LumenChamber3" parent="Chambers" instance=ExtResource( 11 )]
+position = Vector2( -37, -17 )
+rotation = 3.16014
+z_index = 800
+
+[node name="LumenChamberCables" type="Sprite2D" parent="."]
+position = Vector2( 1, 10 )
+rotation = -0.0244567
+scale = Vector2( 0.204023, 0.204023 )
+z_index = 800
+texture = ExtResource( 2 )
+
+[node name="LampaAnimator" type="AnimationPlayer" parent="."]
+anims/Blink = SubResource( 20 )
+anims/BlinkOFF = SubResource( 41 )
+anims/BlinkON = SubResource( 42 )
+anims/RESET = SubResource( 21 )
+next/BlinkON = "Blink"
+
+[node name="LampaHalo2" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 0.705882, 0.0666667, 0.0666667, 0.196078 )
+self_modulate = Color( 1.79, 1.91, 1.32, 1 )
+position = Vector2( -31, 1 )
+rotation = 4.71312
+scale = Vector2( 0.107998, 0.163749 )
+z_index = 1183
+texture = ExtResource( 6 )
+
+[node name="LampaHalo3" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 0.705882, 0.0666667, 0.0666667, 0.196078 )
+self_modulate = Color( 1.79, 1.91, 1.32, 1 )
+position = Vector2( 35, 0 )
+rotation = 4.71312
+scale = Vector2( 0.107998, 0.163749 )
+z_index = 1183
+texture = ExtResource( 6 )
+
+[node name="LampaHalo4" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 0.705882, 0.0666667, 0.0666667, 0.313726 )
+self_modulate = Color( 1.79, 1.91, 1.32, 1 )
+position = Vector2( -1, 38 )
+rotation = 4.71312
+scale = Vector2( 0.107998, 0.163749 )
+z_index = 1183
+texture = ExtResource( 6 )
+
+[node name="GenericComputer" parent="." instance=ExtResource( 10 )]
+position = Vector2( 1, 76 )
+script = SubResource( 26 )
+target_screen = NodePath("../ComputerScreen")
+secondary_icon = ExtResource( 5 )
+
+[node name="Sprite2D" parent="GenericComputer" index="2"]
+script = SubResource( 45 )
+
+[node name="LabelMode" type="Label" parent="GenericComputer"]
+unique_name_in_owner = true
+offset_left = -14.0
+offset_top = 3.0
+offset_right = 186.0
+offset_bottom = 48.0
+scale = Vector2( 0.1, 0.1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "LOW"
+align = 1
+
+[node name="FuelBars" type="HBoxContainer" parent="GenericComputer"]
+unique_name_in_owner = true
+offset_left = -15.0
+offset_top = -5.0
+offset_right = 285.0
+offset_bottom = 35.0
+scale = Vector2( 0.1, 0.1 )
+theme_override_constants/separation = 0
+
+[node name="ProgressBar" type="ProgressBar" parent="GenericComputer/FuelBars"]
+offset_right = 50.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.17
+theme_override_styles/fg = SubResource( 18 )
+theme_override_styles/bg = SubResource( 33 )
+max_value = 300.0
+step = 0.001
+value = 300.0
+percent_visible = false
+
+[node name="ProgressBar2" type="ProgressBar" parent="GenericComputer/FuelBars"]
+offset_left = 50.0
+offset_right = 249.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.67
+theme_override_styles/fg = SubResource( 29 )
+theme_override_styles/bg = SubResource( 35 )
+min_value = 300.0
+max_value = 1500.0
+step = 0.001
+value = 300.0
+percent_visible = false
+
+[node name="ProgressBar3" type="ProgressBar" parent="GenericComputer/FuelBars"]
+offset_left = 249.0
+offset_right = 300.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.17
+theme_override_styles/fg = SubResource( 27 )
+theme_override_styles/bg = SubResource( 34 )
+min_value = 1500.0
+max_value = 1800.0
+step = 0.001
+value = 1500.0
+percent_visible = false
+
+[node name="Label" type="Label" parent="GenericComputer"]
+unique_name_in_owner = true
+offset_left = -14.0
+offset_top = -5.0
+offset_right = 266.0
+offset_bottom = 40.0
+scale = Vector2( 0.1, 0.1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "10 min left"
+align = 1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="GenericComputer"]
+
+[node name="CenterContainer" type="CenterContainer" parent="GenericComputer/CanvasLayer"]
+unique_name_in_owner = true
+anchor_right = 1.0
+offset_top = 104.0
+offset_bottom = 124.0
+
+[node name="FuelBarsOnScreen" type="HBoxContainer" parent="GenericComputer/CanvasLayer/CenterContainer"]
+unique_name_in_owner = true
+offset_left = 1670.0
+offset_right = 2170.0
+offset_bottom = 50.0
+custom_minimum_size = Vector2( 500, 50 )
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="GenericComputer/CanvasLayer/CenterContainer/FuelBarsOnScreen"]
+offset_right = 84.0
+offset_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.17
+theme_override_styles/fg = SubResource( 38 )
+theme_override_styles/bg = SubResource( 39 )
+max_value = 300.0
+value = 300.0
+percent_visible = false
+
+[node name="ProgressBar2" type="ProgressBar" parent="GenericComputer/CanvasLayer/CenterContainer/FuelBarsOnScreen"]
+offset_left = 84.0
+offset_right = 415.0
+offset_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.67
+theme_override_styles/fg = SubResource( 29 )
+theme_override_styles/bg = SubResource( 35 )
+min_value = 300.0
+max_value = 1500.0
+value = 300.0
+percent_visible = false
+
+[node name="ProgressBar3" type="ProgressBar" parent="GenericComputer/CanvasLayer/CenterContainer/FuelBarsOnScreen"]
+offset_left = 415.0
+offset_right = 500.0
+offset_bottom = 50.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.17
+theme_override_styles/fg = SubResource( 27 )
+theme_override_styles/bg = SubResource( 34 )
+min_value = 1500.0
+max_value = 1800.0
+value = 1500.0
+percent_visible = false
+
+[node name="Label2" type="Label" parent="GenericComputer/CanvasLayer/CenterContainer"]
+unique_name_in_owner = true
+offset_left = 1809.0
+offset_top = 2.0
+offset_right = 2031.0
+offset_bottom = 47.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "10 min left"
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="GenericComputer"]
+scale = Vector2( 0.1, 0.1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GenericComputer/StaticBody2D2"]
+shape = SubResource( 44 )
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 9 )]
+position = Vector2( 0, 67 )
+
+[node name="Header" parent="ComputerScreen/BuyUpgradeWindow/VBoxContainer" index="0"]
+material = SubResource( 36 )
+
+[node name="PanelContainer" parent="ComputerScreen/BuyUpgradeWindow/VBoxContainer" index="2"]
+material = SubResource( 37 )
+
+[node name="PreferredSize" type="ReferenceRect" parent="ComputerScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -680.0
+offset_right = 400.0
+
+[connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_entered_screen"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited_screen"]
+
+[editable path="Chambers/LumenChamber2"]
+[editable path="GenericComputer"]
+[editable path="ComputerScreen"]
+[editable path="ComputerScreen/BuyUpgradeWindow"]
+[editable path="ComputerScreen/BuyUpgradeWindow/VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue2"]
+[editable path="ComputerScreen/BuyUpgradeWindow/VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue"]

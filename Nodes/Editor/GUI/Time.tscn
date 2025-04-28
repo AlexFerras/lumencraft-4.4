@@ -1,0 +1,60 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends HBoxContainer
+
+signal time_changed(time)
+
+@export var min_1s: bool
+
+func _ready() -> void:
+	validate_time()
+
+func set_time(time: float):
+	$SpinBox.value = int(time) / 60
+	$SpinBox2.value = int(time) % 60
+	validate_time()
+
+func get_time() -> float:
+	return $SpinBox.value * 60 + $SpinBox2.value
+
+func time_changed(dupa) -> void:
+	validate_time()
+	emit_signal(\"time_changed\", get_time())
+
+func validate_time():
+	if not min_1s:
+		return
+	
+	if $SpinBox.value == 0 and $SpinBox2.value == 0:
+		$SpinBox2.value = 1
+"
+
+[sub_resource type="Theme" id=2]
+LineEdit/constants/minimum_spaces = 5
+
+[sub_resource type="Theme" id=1]
+LineEdit/constants/minimum_spaces = 4
+
+[node name="HBoxContainer" type="HBoxContainer"]
+offset_right = 152.0
+offset_bottom = 24.0
+script = SubResource( 3 )
+
+[node name="SpinBox" type="SpinBox" parent="."]
+offset_right = 46.0
+offset_bottom = 24.0
+theme = SubResource( 2 )
+max_value = 999.0
+suffix = "m"
+
+[node name="SpinBox2" type="SpinBox" parent="."]
+offset_left = 50.0
+offset_right = 92.0
+offset_bottom = 24.0
+theme = SubResource( 1 )
+max_value = 59.0
+suffix = "s"
+
+[connection signal="value_changed" from="SpinBox" to="." method="time_changed"]
+[connection signal="value_changed" from="SpinBox2" to="." method="time_changed"]

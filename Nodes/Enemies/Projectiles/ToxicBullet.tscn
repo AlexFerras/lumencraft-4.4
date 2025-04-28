@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Tools/Circle2D.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+var direction: Vector2
+
+func _ready() -> void:
+	Utils.init_enemy_projectile(self, self, {damage = 5})
+
+func _physics_process(delta: float) -> void:
+	var move := direction * 100 * delta
+	if Utils.game.map.physics.raycast(global_position, global_position + move):
+		queue_free()
+	else:
+		position += move
+
+func on_hit():
+	queue_free()
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 4.0
+
+[node name="ToxicBullet" type="Area2D"]
+script = SubResource( 1 )
+
+[node name="Circle" parent="." instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+radius = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )

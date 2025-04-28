@@ -1,0 +1,295 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Resources/Textures/cloud_noise_rgba.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Effects/PostProcessManager.gd" type="Script" id=3]
+
+[sub_resource type="Shader" id=18]
+code = "shader_type canvas_item;
+uniform float tail_speed = 200.0; // mnoznik jak szybko schodzi
+uniform float head_speed = 600.0; // mnoznik jak szybko leci
+uniform float shockfactor=10.0;
+uniform float stoper_smooth=4.0;
+uniform float color_power=2.0;
+uniform float color_deformation=2.0;
+uniform float noise_strength=1.0;
+uniform float noise_tiling=4.0;
+uniform vec4 color=vec4(1.0,1.0,1.0,1.0);
+uniform bool design_mode=false;
+uniform float design_radius=100.0;
+uniform mat4 global_transform;
+uniform vec2 camera_zoom;
+uniform sampler2D noise_texture;
+uniform vec2 reveal_center = vec2(2800.0,2500.0);
+uniform float reveal_time = 0.0;
+uniform bool build_mode = false;
+
+float map(float value, float low1, float high1, float low2, float high2)
+{
+	return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+}
+
+
+uniform sampler2D shock_data : hint_default_black;
+uniform int shock_data_count=0;
+
+uniform sampler2D range_data : hint_default_black;
+uniform int range_data_count=0;
+uniform float real_time=0;
+
+
+varying vec2 world_pos;
+//varying vec2 shockcenter;
+
+
+uniform vec2 center= vec2(4000.0,4000.0);
+
+void vertex() {
+	world_pos=(global_transform * vec4(VERTEX, 0.0, 1.0)).xy;
+//	shockcenter=center;
+}
+
+
+float  r(vec2 s){
+return fract(43.*sin(s.x*13.+s.y*78.));}
+
+
+float random(in float x){
+    return fract(sin(x)*43758.5453);
+}
+
+float random2(in vec2 st){
+    return fract(sin(dot(st.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+float randomChar(in vec2 outer,in vec2 inner){
+    float grid = 5.;
+    vec2 margin = vec2(.2,.05);
+    float seed = 23.;
+    vec2 borders = step(margin,inner)*step(margin,1.-inner);
+    return step(.5,random2(outer*seed+floor(inner*grid))) * borders.x * borders.y;
+}
+
+float matrix(in vec2 st, float tim){
+    float rows = 500.0;
+    vec2 ipos = floor(st*rows)+vec2(1.,0.);
+
+    ipos += vec2(.0,floor(tim*20.*random(ipos.x)));
+
+    vec2 fpos = fract(st*rows);
+    vec2 centere = (.5-fpos);
+
+    float pct = random2(ipos);
+    float glow = (1.-dot(centere,centere)*3.)*2.0;
+
+    return randomChar(ipos,fpos) * pct * glow;
+}
+float when_lt(float x, float y) {
+  return max(sign(y - x), 0.0);
+}
+float when_gt(float x, float y) {
+  return max(sign(x - y), 0.0);
+}
+
+
+
+
+
+
+void fragment()
+{
+	const int texture_width=128;
+	vec2 real_shockcenter=vec2(0.0,0.0);
+	vec4 final_color=vec4(0.0);
+	vec2 final_uv=vec2(0.0);
+	
+	
+
+
+	for(int i=0;i<shock_data_count+(design_mode?0:0);i+=4)
+	{
+		real_shockcenter = texelFetch(shock_data, ivec2(i%texture_width,i/texture_width), 0).xy+(design_mode?vec2(2750.0):vec2(0.0));
+		vec2 radius_time = texelFetch(shock_data, ivec2((i+1)%texture_width,i/texture_width), 0).xy;
+		vec4 shock_col = vec4(texelFetch(shock_data, ivec2((i+2)%texture_width,i/texture_width), 0).xy,texelFetch(shock_data, ivec2((i+3)%texture_width,i/texture_width), 0).xy)+(design_mode?vec4(1.0):vec4(0.0));
+		float time_offset=(design_mode?mod(TIME*0.5 ,1.0):(real_time-radius_time.y)*0.5);
+		float time_fade=clamp(5.0-time_offset*2.0,0.0,1.0);
+		float radius=radius_time.x+(design_mode?design_radius:0.0);
+		vec2 position=(world_pos);
+
+		float stoper=1.0-clamp(pow(distance(position,real_shockcenter)/radius,stoper_smooth),0.0,1.0);
+		float startradius = time_offset*tail_speed*shock_col.a; // mnoznik jak szybko schodzi
+		float size = time_offset*head_speed; // mnoznik jak szybko leci
+
+		float PI =3.141592653589;
+
+		vec2 shiftedUV=vec2(0.0);
+		vec3 noise=texture(noise_texture,(position*1.0-(position-real_shockcenter)*1.5*(time_offset*0.2+1.0) )*noise_tiling*0.001).xyz;
+		float m_distance = distance(position,real_shockcenter)+0.0;
+		if( m_distance > startradius && m_distance < (startradius+size))
+		{
+			float sin_dist = sin((m_distance -startradius)/size* PI )*shockfactor*stoper;
+			shiftedUV= ( normalize(position-real_shockcenter)*sin_dist );
+		}
+		
+		float is_wave=clamp((clamp(1.0-(m_distance - (startradius+size)),0.0,1.0)-clamp(1.0-(m_distance - (startradius))*0.01,0.0,1.0))*stoper,0.0,1.0);
+		float fro=(clamp(1.0-(m_distance - (startradius+size)),0.0,1.0));
+		float bac=clamp(1.0-(m_distance - (startradius)+0.0)*0.05,0.0,1.0);
+		is_wave=clamp((fro-bac)*stoper,0.0,1.0);
+		final_color.rgba+=pow(((noise.xy)*stoper*is_wave).r,color_power)*color*shock_col*time_fade;
+		final_uv+=shiftedUV*0.001*camera_zoom*time_fade+(noise.xy-0.5)*noise_strength*stoper*time_fade*is_wave*min(1.0,(1.0/(radius*0.01)));
+	}
+	
+	final_color+=texture(SCREEN_TEXTURE,SCREEN_UV + final_uv);
+	
+	float lt=(design_mode?mod(TIME*0.2*(build_mode?1.0:-3.0),1.0):(real_time-reveal_time)*0.2*(build_mode?1.0:-3.0));
+	
+	vec2 st = world_pos*0.001;
+	
+	
+	
+	float reveal=1.0-clamp((distance(reveal_center,world_pos)-lt*1000.0+0.0)*0.05,0.0,1.0);
+	float real_reveal=0.0;
+	float real_reveal_green=0.0;
+	float needs_border=0.0;
+	int col_mask = 0;
+	{
+		/*
+		{
+			int i =0;
+		     vec2 building_center = vec2(2600.0);
+            vec2 building_radius_and_color = vec2(200.0,0.0);
+            float dist=(1.0-clamp((distance(building_center,world_pos)-building_radius_and_color.x)*0.6,0.0,1.0));
+            real_reveal=max(real_reveal,dist);
+//            max_color=min(max_color,building_radius_and_color.y);
+            col_mask |= (int(dist) << int(building_radius_and_color.y));
+			needs_border=clamp(needs_border+step(0.01,dist)*step(dist,0.99)*step(2.0,building_radius_and_color.y)*step(building_radius_and_color.y,3.00),0.0,10.5);
+		real_reveal_green=max(real_reveal_green,dist*step(0.0,building_radius_and_color.y)*step(building_radius_and_color.y,0.0));
+		}
+		{
+			int i =2;
+		     vec2 building_center = vec2(2400.0);
+            vec2 building_radius_and_color = vec2(200.0,2.0);
+            float dist=(1.0-clamp((distance(building_center,world_pos)-building_radius_and_color.x)*0.6,0.0,1.0));
+            real_reveal=max(real_reveal,dist);
+//            max_color=min(max_color,building_radius_and_color.y);
+            col_mask |= (int(dist) << int(building_radius_and_color.y));
+			needs_border=clamp(needs_border+step(0.01,dist)*step(dist,0.99)*step(2.0,building_radius_and_color.y)*step(building_radius_and_color.y,3.00),0.0,10.5);
+		real_reveal_green=max(real_reveal_green,dist*step(0.0,building_radius_and_color.y)*step(building_radius_and_color.y,0.0));
+
+		}
+		{
+			int i =4;
+		     vec2 building_center = vec2(2400.0,2600);
+            vec2 building_radius_and_color = vec2(200.0,0.0);
+            float dist=(1.0-clamp((distance(building_center,world_pos)-building_radius_and_color.x)*0.6,0.0,1.0));
+            real_reveal=max(real_reveal,dist);
+//            max_color=min(max_color,building_radius_and_color.y);
+            col_mask |= (int(dist) << int(building_radius_and_color.y));
+			needs_border=clamp(needs_border+step(0.01,dist)*step(dist,0.99)*step(2.0,building_radius_and_color.y)*step(building_radius_and_color.y,3.00),0.0,10.5);
+		real_reveal_green=max(real_reveal_green,dist*step(0.0,building_radius_and_color.y)*step(building_radius_and_color.y,0.0));
+
+		}
+	
+	{
+			int i =6;
+		     vec2 building_center = vec2(2400.0);
+            vec2 building_radius_and_color = vec2(250.0,3.0);
+            float dist=(1.0-clamp((distance(building_center,world_pos)-building_radius_and_color.x)*0.6,0.0,1.0));
+            real_reveal=max(real_reveal,dist);
+//            max_color=min(max_color,building_radius_and_color.y);
+            col_mask |= (int(dist) << int(building_radius_and_color.y));
+			needs_border=clamp(needs_border+step(0.01,dist)*step(dist,0.99)*step(2.0,building_radius_and_color.y)*step(building_radius_and_color.y,3.00),0.0,10.5);
+		real_reveal_green=max(real_reveal_green,dist*step(0.0,building_radius_and_color.y)*step(building_radius_and_color.y,0.0));
+
+		}	
+	{
+			int i =8;
+		     vec2 building_center = vec2(2400.0,2700);
+            vec2 building_radius_and_color = vec2(150.0,2.0);
+            float dist=(1.0-clamp((distance(building_center,world_pos)-building_radius_and_color.x)*0.6,0.0,1.0));
+            real_reveal=max(real_reveal,dist);
+//            max_color=min(max_color,building_radius_and_color.y);
+            col_mask |= (int(dist) << int(building_radius_and_color.y));
+			needs_border=clamp(needs_border+step(0.01,dist)*step(dist,0.99)*step(2.0,building_radius_and_color.y)*step(building_radius_and_color.y,3.00),0.0,10.5);
+		real_reveal_green=max(real_reveal_green,dist*step(0.0,building_radius_and_color.y)*step(building_radius_and_color.y,0.0));
+
+		}*/
+		if(reveal>0.0)
+        for(int i=0;i<range_data_count ;i+=2)
+        {
+			
+		     vec2 building_center = texelFetch(range_data, ivec2(i%texture_width,i/texture_width), 0).xy+(design_mode?vec2(2600.0):vec2(0.0));
+            vec2 building_radius_and_color = texelFetch(range_data, ivec2((i+1)%texture_width,i/texture_width), 0).xy+(design_mode?vec2(200.0,0.0):vec2(0.0));
+            float dist=(1.0-clamp((distance(building_center,world_pos)-building_radius_and_color.x)*0.6,0.0,1.0));
+			if(dist>0.0)
+			{
+				real_reveal=max(real_reveal,dist);
+				//            max_color=min(max_color,building_radius_and_color.y);
+				col_mask |= (int(dist) << int(building_radius_and_color.y));
+				needs_border=needs_border+step(0.01,dist)*step(dist,0.99)*step(2.0,building_radius_and_color.y)*step(building_radius_and_color.y,2.00);
+				real_reveal_green=max(real_reveal_green,dist*step(0.0,building_radius_and_color.y)*step(building_radius_and_color.y,0.0));
+			}
+
+        }
+		//max_color = float(was_c[0])*0.0 + float(was_c[1])*1.0;
+	}
+	vec3 normal_tint=vec3(1.0,1.0,1.0);
+	vec3 tint = vec3(matrix(st,-mod(TIME,100.0)*2.1)*0.5+1.0);
+	//tint=tint*vec3(0.7+float(max(((col_mask >> 1) & 1)-(col_mask & 1), 0)),1.0*float((col_mask & 1)),0.7+float(max(((col_mask >> 2) & 1), 0)));
+	vec3 tintmod=vec3(0.0);
+	float is0=float((col_mask >> 0) & 1);
+	float is1=float((col_mask >> 1) & 1);
+	float is2=float((col_mask >> 2) & 1);
+	float is3=float((col_mask >> 3) & 1);
+	tintmod.z=is2*1.2-is2*is0*0.6;
+	//tintmod.r=min(is3+is1,1.0)-min(is1+is3,1.0)*is0-is2*min(is3+is1,1.0)*1.0+is0*is2*is3+0.5*max(is0*is3-is2*is0,0.0);
+	//optibized above dont try to understand
+	tintmod.r=-(is0 + is2 - 1.0) *min(1.0, is1 + is3) + 0.5* max(0.0, is0* (is3 - is2)) + is0*is2*is3;
+	
+	tint=tint*(vec3(0.7,1.0,0.7)+tintmod);
+	tint+=(min(needs_border*0.4+step(real_reveal,.99)+0.4*step(0.01,real_reveal_green)*step(real_reveal_green,0.99),1.0))*vec3(0.0,2.0,4.6);
+	tint=real_reveal*reveal*tint + (1.0-real_reveal*reveal)*normal_tint;
+	
+	
+	final_color=final_color*vec4(tint,1.0);
+	
+	
+	
+	
+	COLOR = final_color;
+}
+	"
+
+[sub_resource type="ShaderMaterial" id=19]
+shader = SubResource( 18 )
+shader_param/tail_speed = 200.0
+shader_param/head_speed = 600.0
+shader_param/shockfactor = 4.0
+shader_param/stoper_smooth = 1.0
+shader_param/color_power = 1.0
+shader_param/color_deformation = 2.0
+shader_param/noise_strength = 0.5
+shader_param/noise_tiling = 10.0
+shader_param/color = Plane( 0.387, 0.179, 0.076, 1 )
+shader_param/design_mode = false
+shader_param/design_radius = 125.0
+shader_param/global_transform = Transform2D( 761.093, 0, 0, 428.115, 2039.53, 2264.66 )
+shader_param/camera_zoom = Vector2( 2.52269, 2.52269 )
+shader_param/reveal_center = Vector2( 2800, 2500 )
+shader_param/reveal_time = 0.0
+shader_param/build_mode = false
+shader_param/shock_data_count = 0
+shader_param/range_data_count = 0
+shader_param/real_time = 22972.5
+shader_param/center = Vector2( 4000, 4000 )
+shader_param/noise_texture = ExtResource( 1 )
+
+[node name="PostProcessManager" type="Sprite2D"]
+material = SubResource( 19 )
+position = Vector2( 2039.53, 2264.66 )
+scale = Vector2( 761.093, 428.115 )
+z_index = 1
+z_as_relative = false
+texture = ExtResource( 2 )
+centered = false
+script = ExtResource( 3 )

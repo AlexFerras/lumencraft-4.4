@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Effects/Debris/Debris.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Effects/Debris/debris_particles_material.tres" type="Material" id=2]
+
+[sub_resource type="CanvasItemMaterial" id=1]
+particles_animation = true
+particles_anim_h_frames = 4
+particles_anim_v_frames = 4
+particles_anim_loop = false
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends GPUParticles2D
+
+
+func _ready():
+	process_material.set_shader_parameter(\"map_texture\", Utils.game.map.pixel_map.get_texture())
+	$Timer.start(lifetime)
+	
+func explosion_happened(pos, radius, strength):
+	process_material.set_shader_parameter(\"explosion_position\", pos)
+	process_material.set_shader_parameter(\"explosion_radius\", radius)
+	process_material.set_shader_parameter(\"explosion_strength\", strength)
+
+	#one yield was unreliable
+	await get_tree().physics_frame	
+	await get_tree().physics_frame	
+	process_material.set_shader_parameter(\"explosion_position\", Vector2(0,0))
+
+"
+
+[node name="GPUParticles2D" type="GPUParticles2D" groups=["debris_particles"]]
+material = SubResource( 1 )
+z_index = -4
+emitting = false
+lifetime = 60.0
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+fract_delta = false
+visibility_rect = Rect2( -10000, -10000, 20000, 20000 )
+local_coords = false
+process_material = ExtResource( 2 )
+texture = ExtResource( 1 )
+script = SubResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+process_mode = 3
+process_mode = 0
+
+[connection signal="timeout" from="Timer" to="." method="queue_free"]

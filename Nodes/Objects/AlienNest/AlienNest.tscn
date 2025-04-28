@@ -1,0 +1,349 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Nodes/Objects/AlienNest/Alien_building_T001.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Map/ZIndexer.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Enemies/Common/HealthBar.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Resources/Materials/BuildingDestruction.tres" type="Material" id=4]
+[ext_resource path="res://Nodes/Objects/AlienNest/Alien_building_T001shadow.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=6]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+tool
+
+@export var max_spawn: int = 5
+@export var min_sec_spawn: float = 5.0
+@export var max_resource_drops: int = 10
+@export var sprite: int = 1: set = set_sprite
+@export var swarm_scene: PackedScene
+
+var swarm: Swarm
+var enemy: Prefab.FakePrefab
+var current_alive: int
+var destroyed: bool
+var activatween: Tween
+@export var attack_base: bool
+
+@export var max_hp := 150
+@export var hp: int
+var spawn_timer=0.0
+@onready var sprite_node=$Sprite2D
+@onready var shadow_node=$shadow
+
+signal hp_changed
+
+func _enter_tree() -> void:
+	if hp == 0 and not Engine.is_editor_hint():
+		hp = max_hp
+
+func set_sprite(spr):
+	sprite=spr
+	if not is_inside_tree():
+		await self.ready
+	
+	sprite_node.texture = load(\"res://Nodes/Objects/AlienNest/Alien_building_T00%s.png\" % sprite)
+	shadow_node.texture = load(\"res://Nodes/Objects/AlienNest/Alien_building_T00%sshadow.png\" % sprite)
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
+	connect(\"hp_changed\", Callable($HealthBarRoot/HealthBar, \"update_value\"))
+	
+	sprite_node.texture = load(\"res://Nodes/Objects/AlienNest/Alien_building_T00%s.png\" % sprite)
+	shadow_node.texture = load(\"res://Nodes/Objects/AlienNest/Alien_building_T00%sshadow.png\" % sprite)
+	var shape: CollisionShape2D = $StaticBody2D.get_child(sprite - 1)
+	shape.disabled = false
+	
+	shape = shape.duplicate()
+	$Detector.add_child(shape)
+	shape.shape = shape.shape.duplicate()
+	#shape.shape.radius += 4
+	
+	Utils.set_collisions($Detector, Const.ENEMY_COLLISION_LAYER, Utils.PASSIVE)
+	
+	if enemy:
+		return
+	
+	if swarm_scene:
+		if attack_base:
+			swarm = Utils.game.map.swarm_manager.request_swarm(swarm_scene.resource_path, null, true)
+		else:
+			swarm = Utils.game.map.swarm_manager.request_swarm(swarm_scene.resource_path)
+	else:
+		swarm = Utils.get_node_by_type(self, Swarm)
+		
+		if swarm:
+			swarm.connect(\"spawned_enemy\", Callable(self, \"add_enemy\"))
+			swarm.connect(\"died\", Callable(self, \"kill_enemy\"))
+			swarm.connect(\"spawned_resource\", Callable(self, \"on_resource_spawn\"))
+			swarm._infinity = true
+			swarm.auto_remove = false
+			swarm.global_rotation=0.0
+			swarm.just_wander = true
+			await get_tree().idle_frame
+	
+	if not swarm:
+		for child in get_children():
+			if child is BaseEnemy:
+				enemy = Prefab.fake_create(child)
+				break
+	
+	assert(swarm != null or enemy != null, \"Ustaw swarm_scene albo dodaj Swarm lub BaseEnemy jako child joł\")
+	
+	for i in max_spawn:
+		call_deferred(\"spawn_enemy\")
+	
+	if not attack_base:
+		activatween = create_tween().set_loops()
+		activatween.tween_callback(Callable(self, \"activate\")).set_delay(randf_range(0.4, 0.6))
+
+func activate():
+	if Utils.game.map.player_tracker.getAnyTrackingNode2DInCircle(global_position, 200, true):
+		activatween.kill()
+		activatween = null
+
+func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+	
+	if activatween:
+		return
+	
+	spawn_timer -= delta
+	if spawn_timer <= 0 and (swarm or current_alive < max_spawn):
+		spawn_timer = min_sec_spawn
+		
+		if swarm:
+			current_alive = swarm.getNumOfUnitsInCircle(global_position, 200, false, true)
+			if current_alive >= max_spawn:
+				return
+		
+		Utils.play_sample(Utils.random_sound(\"res://SFX/Enemies/spawn\"), global_position)
+		
+		spawn_enemy()
+
+func spawn_enemy():
+	if enemy:
+		var instance: BaseEnemy = enemy.instantiate()
+		instance.add_to_group(get_group(), true)
+		connect_instance(instance)
+		instance.position = position
+		if attack_base and Utils.game.core:
+			instance.tracking_enabled = false
+			instance.connect(\"ready\", Callable(instance, \"launch_attack\").bind(Utils.game.core))
+		get_parent().add_child(instance)
+		instance.global_rotation=0.0
+		current_alive += 1
+	else:
+		swarm.custom_spawn(global_position)
+
+func add_enemy():
+	current_alive += 1
+
+func kill_enemy():
+	current_alive -= 1
+	if destroyed:
+		if current_alive == 0:
+			queue_free()
+		else:
+			return
+	
+	if swarm and current_alive < max_spawn:
+		swarm.how_many += 1
+
+func on_resource_spawn():
+	max_resource_drops -= 1
+	if swarm and max_resource_drops == 0:
+		swarm.probability_spawn_resource = 0
+
+func on_enter(area: Area2D) -> void:
+	if destroyed or Engine.is_editor_hint():
+		return
+	
+	if area.is_in_group(\"player_projectile\"):
+		## TODO: SFX
+		Utils.get_audio_manager(\"gore_hit\").play(global_position)
+		var data: Dictionary= area.get_meta(\"data\")
+		hp -= BaseEnemy.handle_damage(self, {}, data)
+		Utils.on_hit(area)
+		emit_signal(\"hp_changed\")
+		if area.get(\"player\"):
+			var enemies=Utils.game.map.enemy_tracker.getTrackingNodes2DInCircle(global_position,50.0,true)
+			for i in enemies:
+				if i is GenericStateEnemy:
+					(i as GenericStateEnemy).go_to_destination(area.player.global_position)
+				#	(i as GenericStateEnemy).set_target(area.player)
+		
+		if hp < max_hp and sprite_node:
+			if not sprite_node.material:
+				sprite_node.material = load(\"res://Resources/Materials/BuildingDestruction.tres\").duplicate()
+				sprite_node.material.set_shader_parameter(\"frames\", Vector2(sprite_node.hframes,sprite_node.vframes))
+				if sprite_node.texture:
+					sprite_node.material.set_shader_parameter(\"scale\", sprite_node.global_scale*sprite_node.texture.get_size()*0.01)
+			sprite_node.material.set_shader_parameter(\"destruction\", 1 - float(hp) / max_hp)
+	
+		
+		if hp <= 0:
+			destroy()
+
+func destroy():
+	destroyed = true
+	var explosion=preload(\"res://Nodes/Effects/Explosion/Explosion.tscn\").instantiate()
+	explosion.pitch=0.4
+	Utils.play_sample(\"res://SFX/Enemies/nest_die.wav\",global_position,false,1.2)
+	explosion.type=explosion.NEUTRAL
+	explosion.modulate=Color(0.0,1.0,1.5,1.0)
+	explosion.scale = Vector2.ONE * 0.25
+	explosion.position = global_position
+	Utils.game.map.call_deferred(\"add_child\",explosion)
+	Utils.game.map.pixel_map.flesh_manager.spawn_in_position(global_position, 140, Vector2.ZERO,Color(0.4,0.7,1.0,0.2))
+	
+	if swarm and not swarm_scene:
+		var tmp=global_position
+		remove_child(swarm)
+		swarm.auto_remove=true
+		swarm._infinity = false
+		swarm.how_many = swarm.enemies_spawned
+		Utils.game.map.add_child(swarm)
+		swarm.global_position=tmp
+		swarm.global_rotation=0.0
+	if Utils.game.map.scoring_rules.has(\"monster_nests_destroyed\"):
+		Save.count_score(\"monster_nests_destroyed\")
+	queue_free()
+
+func _get_save_data() -> Dictionary:
+	var data := Save.get_properties(self, [\"current_alive\", \"destroyed\", \"hp\"])
+	if enemy:
+		data._enemy = enemy._get_save_data()
+	return data
+
+func _set_save_data(data: Dictionary):
+	Save.set_properties(self, data)
+	if \"_enemy\" in data:
+		enemy = Prefab.create_fake_from_data(data._enemy)
+	
+	await Utils.game.map_initialized
+	
+	for instance in get_tree().get_nodes_in_group(get_group()):
+		connect_instance(instance)
+
+func _on_LavaChecks_lava_touching():
+	destroy()
+	pass # Replace with function body.
+
+func get_group() -> String:
+	return str(\"__\", Utils.game.map.get_path_to(self), \"__\")
+
+func connect_instance(instance: BaseEnemy):
+	if max_resource_drops == 0:
+		instance.probability_spawn_resource = 0
+		instance.connect(\"ready\", Callable(instance, \"reset_loot\"))
+	else:
+		instance.connect(\"resource_spawned\", Callable(self, \"on_resource_spawn\"))
+	instance.connect(\"died\", Callable(self, \"kill_enemy\"))
+
+func is_kill_damage(dmg: int) -> bool:
+	return dmg >= hp
+"
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 22.552
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 21.3479
+
+[sub_resource type="CircleShape2D" id=6]
+radius = 27.224
+
+[sub_resource type="Animation" id=1]
+resource_name = "Animation"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0, 14 ]
+}
+
+[sub_resource type="Animation" id=2]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[node name="AlienNest" type="Node2D"]
+z_index = 808
+z_as_relative = false
+script = SubResource( 3 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+visible = false
+position = Vector2( -0.420456, 0.280304 )
+z_index = 1
+shape = SubResource( 4 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+visible = false
+position = Vector2( 0.889893, 1.22134 )
+z_index = 1157
+shape = SubResource( 5 )
+disabled = true
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+visible = false
+position = Vector2( -0.792809, 9.07661 )
+z_index = 752
+shape = SubResource( 6 )
+disabled = true
+
+[node name="Detector" type="Area2D" parent="."]
+
+[node name="shadow" type="Sprite2D" parent="."]
+scale = Vector2( 0.65, 0.65 )
+texture = ExtResource( 5 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource( 4 )
+scale = Vector2( 0.13, 0.13 )
+texture = ExtResource( 1 )
+hframes = 5
+vframes = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Animation"
+anims/Animation = SubResource( 1 )
+anims/RESET = SubResource( 2 )
+
+[node name="ZIndexer" type="Node" parent="."]
+script = ExtResource( 2 )
+z_index = 800
+offset = 8
+
+[node name="HealthBarRoot" parent="." instance=ExtResource( 3 )]
+position = Vector2( 0, -15 )
+scale = Vector2( 3, 1 )
+
+[node name="LavaChecks" type="Node2D" parent="."]
+script = ExtResource( 6 )
+
+[node name="Marker2D" type="Marker2D" parent="LavaChecks"]
+
+[connection signal="area_entered" from="Detector" to="." method="on_enter"]
+[connection signal="lava_touching" from="LavaChecks" to="." method="_on_LavaChecks_lava_touching"]

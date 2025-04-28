@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/GenericComputer.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerInteractable.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Map/Objects/FakeComputer.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Materials/Hologram.tres" type="Material" id=5]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/ScreenHighlight.png" type="Texture2D" id=6]
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 163.621, 124.314 )
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 141.293, 98.82 )
+
+[node name="GenericComputer" type="Node2D"]
+z_index = 600
+z_as_relative = false
+script = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 5 )
+
+[node name="PlayerDetector" type="Area2D" parent="."]
+position = Vector2( 0, 21.3071 )
+scale = Vector2( 0.1, 0.1 )
+script = ExtResource( 3 )
+one_player_only = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetector"]
+position = Vector2( 0, 23.229 )
+shape = SubResource( 6 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 4 )
+
+[node name="Highlight" type="Sprite2D" parent="Sprite2D"]
+visible = false
+position = Vector2( 0, 25 )
+texture = ExtResource( 6 )
+
+[node name="Icon" type="Sprite2D" parent="."]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = ExtResource( 5 )
+position = Vector2( 0, 2.5 )
+
+[node name="SecondaryIcon" type="Sprite2D" parent="."]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = ExtResource( 5 )
+position = Vector2( 9.5, 5.5 )
+scale = Vector2( 0.15, 0.15 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 600

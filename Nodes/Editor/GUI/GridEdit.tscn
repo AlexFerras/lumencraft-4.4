@@ -1,0 +1,93 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends PanelContainer
+
+var rect_prefab: PackedScene
+
+signal changed
+
+func _ready() -> void:
+	rect_prefab = Prefab.create($GridContainer/ColorRect)
+
+func set_amount(amount: int):
+	if amount == $GridContainer.get_child_count():
+		return
+	
+	var mask = get_mask()
+	
+	for child in $GridContainer.get_children():
+		child.free()
+	
+	for i in amount:
+		var item = rect_prefab.instantiate()
+		$GridContainer.add_child(item)
+		item.connect(\"changed\", Callable(self, \"emit_signal\").bind(\"changed\"))
+	
+	set_mask(mask)
+	emit_signal(\"changed\")
+
+func get_mask() -> Array:
+	var ret: Array
+	ret.resize($GridContainer.get_child_count())
+	
+	for i in ret.size():
+		ret[i] = $GridContainer.get_child(i).pressed
+	
+	return ret
+
+func set_mask(mask: Array):
+	for i in min($GridContainer.get_child_count(), mask.size()):
+		$GridContainer.get_child(i).button_pressed = mask[i]
+"
+
+[sub_resource type="GDScript" id=2]
+resource_name = "GridItem"
+script/source = "extends ColorRect
+
+var pressed: bool: set = set_pressed
+
+signal changed
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		self.button_pressed = not pressed
+		emit_signal(\"changed\")
+
+func set_pressed(p):
+	pressed = p
+	if pressed:
+		color = Color.GREEN
+	else:
+		color = Color.RED
+"
+
+[node name="GridEdit" type="PanelContainer"]
+offset_right = 22.0
+offset_bottom = 14.0
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource( 1 )
+script = SubResource( 3 )
+
+[node name="GridContainer" type="GridContainer" parent="."]
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 42.0
+offset_bottom = 42.0
+theme_override_constants/v_separation = 2
+theme_override_constants/h_separation = 2
+columns = 10
+
+[node name="ColorRect" type="ColorRect" parent="GridContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 40 )
+color = Color( 1, 0, 0, 1 )
+script = SubResource( 2 )

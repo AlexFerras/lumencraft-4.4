@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends \"res://Nodes/Player/Weapons/Ranged/PlayerBullet.gd\"
+
+@onready var shape: CircleShape2D = $CollisionShape2D.shape
+
+var life_time := 0.8
+var power: float
+
+func _ready():
+	get_meta(\"data\").keep = true
+
+func _physics_process(delta: float) -> void:
+	life_time -= delta
+	if life_time <= 0:
+		queue_free()
+	
+	scale += Vector2.ONE * delta * (1 + power * 1.5)
+	Utils.game.map.pixel_map.update_damage_circle(global_position, 3, 122, 1, 255, 1 << Const.Materials.TAR)
+	global_position += dir * speed * delta
+	
+	var radius := shape.radius * scale.x
+	if not Utils.game.map.pixel_map.isCircleEmpty(global_position, radius, Player.get_weapon_mask(get_meta(\"data\"))):
+		Utils.explode_circle_no_debris(global_position, radius * 1.8, 255, 10, 10, Utils.player_bullet_collision_mask & (~Utils.fire_resistant_mask), true, 0.1)
+		queue_free()
+"
+
+[sub_resource type="CircleShape2D" id=20]
+radius = 3.0
+
+[node name="Flame" type="Area2D"]
+z_index = 700
+z_as_relative = false
+script = SubResource( 3 )
+speed = 200.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 20 )

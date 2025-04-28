@@ -1,0 +1,187 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_player_top_left.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_inventory_left.tscn" type="PackedScene" id=2]
+[ext_resource path="res://SFX/UI/LowHealth.wav" type="AudioStream" id=3]
+[ext_resource path="res://Nodes/UI/PlayerUI/PlayerUI.gd" type="Script" id=15]
+[ext_resource path="res://Nodes/UI/PlayerUI/Indicators.png" type="Texture2D" id=20]
+
+[sub_resource type="GDScript" id=45]
+script/source = "extends AudioStreamPlayer
+
+func _ready() -> void:
+	update_config()
+
+func update_config():
+	volume_db = -80 * int(not Save.config.low_health_alarm)
+
+func _notification(what: int) -> void:
+	if not Save.config.low_health_alarm:
+		return
+	
+	match what:
+		NOTIFICATION_PAUSED:
+			volume_db = -5
+		NOTIFICATION_UNPAUSED:
+			volume_db = 0
+"
+
+[sub_resource type="Animation" id=46]
+resource_name = "Heartbeat"
+loop = true
+tracks/0/type = "audio"
+tracks/0/path = NodePath("AudioStreamPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 3 )
+} ],
+"times": PackedFloat32Array( 0 )
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Content/Status/Hp/Control/Icon:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 0.5, 0.5 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 0.8, 0.8 ) ]
+}
+
+[sub_resource type="Animation" id=47]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Content/Status/Hp/Control/Icon:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 0.5 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+
+[node name="Player" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 15 )
+
+[node name="Indicator" type="Sprite2D" parent="."]
+position = Vector2( 15, 85 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 20 )
+hframes = 5
+region_enabled = true
+region_rect = Rect2( 0, 0, 60, 11 )
+
+[node name="TopLeft" parent="." instance=ExtResource( 1 )]
+offset_right = 1384.0
+offset_bottom = 287.0
+
+[node name="CurrentAmmo" parent="TopLeft/Content/PlayerItems" index="1"]
+hide_on_empty = true
+
+[node name="QuickBinds" parent="TopLeft/Content/PlayerItems" index="4"]
+visible = false
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="TopLeft" groups=["config_observers"]]
+stream = ExtResource( 3 )
+bus = "SFX"
+script = SubResource( 45 )
+
+[node name="HealthAnimator" type="AnimationPlayer" parent="TopLeft"]
+unique_name_in_owner = true
+anims/Heartbeat = SubResource( 46 )
+anims/RESET = SubResource( 47 )
+
+[node name="Inventory" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.0
+anchor_bottom = 0.0
+offset_top = 265.0
+offset_right = 524.0
+offset_bottom = 1457.0
+
+[node name="Content" parent="Inventory" index="0"]
+offset_right = 492.0
+offset_bottom = 1192.0
+
+[node name="InventoryButton" parent="Inventory/Content" index="0"]
+offset_right = 124.0
+offset_bottom = 75.0
+theme_type_variation = "1111_yellow"
+
+[node name="MarginContainer" parent="Inventory/Content/InventoryButton" index="0"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 124.0
+offset_bottom = 75.0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_left = 0
+
+[node name="MainHB" parent="Inventory/Content/InventoryButton/MarginContainer" index="0"]
+offset_left = 0.0
+offset_right = 124.0
+
+[node name="HudInventoryContent" parent="Inventory/Content" index="1"]
+offset_top = 81.0
+offset_right = 460.0
+offset_bottom = 1192.0
+
+[node name="ItemsAndTooltips" parent="Inventory/Content/HudInventoryContent" index="1"]
+offset_right = 460.0
+
+[node name="Choose" parent="Inventory/Content/HudInventoryContent/ItemsAndTooltips/Controls" index="0"]
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Secondary" parent="Inventory/Content/HudInventoryContent/ItemsAndTooltips/Controls" index="1"]
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Use" parent="Inventory/Content/HudInventoryContent/ItemsAndTooltips/Controls" index="2"]
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Mouse" parent="Inventory/Content/HudInventoryContent/ItemsAndTooltips/Controls" index="3"]
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Joy" parent="Inventory/Content/HudInventoryContent/ItemsAndTooltips/Controls" index="4"]
+offset_top = 315.0
+offset_bottom = 414.0
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Joy2" parent="Inventory/Content/HudInventoryContent/ItemsAndTooltips/Controls" index="5"]
+offset_top = 420.0
+offset_bottom = 519.0
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="ActionTooltips" parent="Inventory/Content/HudInventoryContent" index="2"]
+offset_right = 460.0
+
+[node name="Throw" parent="Inventory/Content/HudInventoryContent/ActionTooltips" index="0"]
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Map" parent="Inventory/Content/HudInventoryContent/ActionTooltips" index="1"]
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Build" parent="Inventory/Content/HudInventoryContent/ActionTooltips" index="2"]
+theme_type_variation = "0010_yellow_border_transparent"
+
+[connection signal="visibility_changed" from="." to="TopLeft/HealthAnimator" method="stop"]
+
+[editable path="TopLeft"]
+[editable path="TopLeft/Content/Status"]
+[editable path="TopLeft/Content/Status/Lumen"]
+[editable path="TopLeft/Content/Status/Metal"]
+[editable path="TopLeft/Content/Status/IconValue3"]
+[editable path="TopLeft/Content/Status/IconValue4"]
+[editable path="Inventory"]
+[editable path="Inventory/Content/InventoryButton"]

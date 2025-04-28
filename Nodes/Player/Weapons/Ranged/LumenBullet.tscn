@@ -1,0 +1,77 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Effects/SimpleTrail.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Textures/gradient_smooth.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=9]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Player/Weapons/Ranged/PlayerBullet.gd\"
+
+func _ready() -> void:
+	Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/gun_revolver_pistol_shot\"), self).pitch_scale = 1.5
+
+func _physics_process(delta: float) -> void:
+	var ray := Utils.game.map.pixel_map.rayCastQTDistance(global_position,  dir, speed * delta, Player.get_weapon_mask(get_meta(\"data\")))
+	if ray:
+		global_position = ray.hit_position
+		Utils.explode_circle(ray.hit_position, 15, 1000, 5, 6, -1)
+		Utils.play_sample(Utils.get_material_hit_sound(ray.hit_position), self)
+		destroy(false)
+	else:
+		global_position += dir * speed * delta
+
+func destroy(blood: bool):
+	super.destroy(blood)
+	var trace := preload(\"res://Nodes/Player/Weapons/Ranged/LumenTrace.tscn\").instantiate()
+	trace.position = global_position
+	Utils.game.map.call_deferred(\"add_child\", trace)
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 8, 1 )
+
+[node name="LumenBullet" type="Area2D"]
+z_index = 700
+z_as_relative = false
+collision_mask = 33
+script = SubResource( 1 )
+speed = 500.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -7.26639, 0.0371208 )
+shape = SubResource( 2 )
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+position = Vector2( 181.156, -57.8747 )
+
+[node name="BulletLight" type="Node2D" parent="."]
+modulate = Color( 0.690196, 1, 0.976471, 1 )
+scale = Vector2( 0.4, 0.4 )
+script = ExtResource( 9 )
+texture = ExtResource( 8 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 700
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color( 0.43, 2, 4, 1 )
+position = Vector2( 5.74434, 0.0225086 )
+rotation = -3.14159
+scale = Vector2( 0.03, -0.015 )
+z_index = 700
+z_as_relative = false
+texture = ExtResource( 3 )
+
+[node name="Trail" type="Sprite2D" parent="."]
+modulate = Color( 0, 0.86, 0.831333, 0.560784 )
+scale = Vector2( 0.0442477, 0.015 )
+z_index = 700
+z_as_relative = false
+texture = ExtResource( 3 )
+script = ExtResource( 2 )
+unit_size = 0.5
+
+[node name="ZIndexer" parent="Trail" instance=ExtResource( 1 )]
+z_index = 700

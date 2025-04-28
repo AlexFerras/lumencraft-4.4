@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/UI/AutoAction/AutoAction.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends HBoxContainer
+
+@export var action # (String, \"move\", \"look\", \"shoot\", \"shoot2\", \"interact\", \"accept\", \"switch\", \"half_switch\", \"build\", \"throw_item\", \"inventory\", \"map\", \"menu\", \"run\")
+
+var player
+
+func _ready() -> void:
+	set_icons()
+	connect(\"resized\", Callable(self, \"refresh\"))
+	Utils.connect(\"joypad_updated\", Callable(self, \"set_icons\"))
+
+func set_input_player(p):
+	player = p
+
+func set_icons():
+	for i in get_child_count():
+		get_child(i).hide()
+	
+	match action:
+		\"accept\":
+			if using_joypad():
+				set_action(0, \"shoot\")
+			else:
+				set_action(0, \"shoot\", true)
+		\"switch\":
+			if using_joypad():
+				set_action(0, \"prev_slot\")
+				set_action(1, \"next_slot\")
+			else:
+				set_action(0, \"full_switch\")
+		\"half_switch\":
+			set_action(0, \"next_slot\")
+		_:
+			set_action(0, action)
+	
+	call_deferred(\"refresh\")
+
+func set_action(idx: int, action_name: String, favor_mouse := true):
+	var auto := get_child(idx * 2)
+	auto.prefix = \"p1_\"
+	auto.action_name = action_name
+	auto.favor_mouse = favor_mouse
+	auto.show()
+	auto.refresh()
+	
+	if idx == 1:
+		$Slash.show()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED and is_visible_in_tree():
+		call_deferred(\"refresh\")
+
+func refresh() -> void:
+	for auto in get_children():
+		if auto is TextureRect and auto.visible:
+			auto.refresh()
+
+func using_joypad() -> bool:
+	if is_instance_valid(player):
+		return player.using_joypad()
+	else:
+		return Utils.is_using_joypad()
+"
+
+[node name="ActionIcon" type="HBoxContainer"]
+alignment = 1
+script = SubResource( 1 )
+
+[node name="AutoAction" parent="." instance=ExtResource( 1 )]
+offset_right = 0.0
+offset_bottom = 14.0
+
+[node name="Slash" type="Label" parent="."]
+offset_left = 4.0
+offset_right = 9.0
+offset_bottom = 14.0
+text = "/"
+
+[node name="AutoAction2" parent="." instance=ExtResource( 1 )]
+offset_left = 13.0
+offset_right = 13.0
+offset_bottom = 14.0

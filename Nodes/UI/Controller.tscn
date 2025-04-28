@@ -1,0 +1,202 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Resources/Fonts/Font60.tres" type="FontFile" id=1]
+[ext_resource path="res://Nodes/UI/Controller.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Sprite2D
+
+@onready var control := $Control
+
+func set_button(button: String, text: String):
+	control.get_node(button).text = text
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 4.0
+content_margin_right = 4.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0, 0, 0, 0.627451 )
+
+[sub_resource type="Theme" id=3]
+Label/styles/normal = SubResource( 2 )
+
+[node name="Controller" type="Sprite2D"]
+texture = ExtResource( 2 )
+script = SubResource( 1 )
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array( 528, -477, 800, -800, 1200, -800 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D12" type="Line2D" parent="."]
+position = Vector2( 100, 700 )
+points = PackedVector2Array( -433, -663, -900, -900, -1300, -900 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D13" type="Line2D" parent="."]
+position = Vector2( -200, 300 )
+points = PackedVector2Array( -307, -573, -600, -800, -1000, -800 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D3" type="Line2D" parent="."]
+position = Vector2( -200, 600 )
+points = PackedVector2Array( 453, -449, 1000, 100, 1400, 100 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D4" type="Line2D" parent="."]
+position = Vector2( 45, 269 )
+points = PackedVector2Array( 513, -477, 755, -269, 1155, -269 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D6" type="Line2D" parent="."]
+position = Vector2( 100, 100 )
+points = PackedVector2Array( 374, -461, 700, -600, 1100, -600 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D5" type="Line2D" parent="."]
+position = Vector2( -63, 388 )
+points = PackedVector2Array( 513, -477, 863, -188, 1263, -188 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D2" type="Line2D" parent="."]
+points = PackedVector2Array( 476, -559, 600, -1100, 1000, -1100 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D8" type="Line2D" parent="."]
+points = PackedVector2Array( -528, -477, -800, -800, -1200, -800 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D9" type="Line2D" parent="."]
+points = PackedVector2Array( -476, -559, -600, -1100, -1000, -1100 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D7" type="Line2D" parent="."]
+position = Vector2( -1000, 0 )
+points = PackedVector2Array( 2200, 400, 1800, 400, 1262, -170 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D10" type="Line2D" parent="."]
+position = Vector2( -1123, 92 )
+points = PackedVector2Array( 1723, -1292, 1323, -1292, 1240, -407 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Line2D11" type="Line2D" parent="."]
+position = Vector2( -1123, 92 )
+points = PackedVector2Array( 523, -1292, 923, -1292, 1011, -409 )
+default_color = Color( 1, 0.772549, 0, 1 )
+
+[node name="Control" type="Control" parent="."]
+offset_left = -1422.0
+offset_top = -1446.0
+offset_right = 1674.0
+offset_bottom = 761.0
+theme = SubResource( 3 )
+
+[node name="Select" type="Label" parent="Control"]
+offset_left = 822.0
+offset_top = 177.0
+offset_right = 1222.0
+offset_bottom = 246.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Map"
+align = 2
+
+[node name="Start" type="Label" parent="Control"]
+offset_left = 1622.0
+offset_top = 177.0
+offset_right = 2022.0
+offset_bottom = 246.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Menu"
+
+[node name="RT" type="Label" parent="Control"]
+offset_left = 2022.0
+offset_top = 277.0
+offset_right = 2494.0
+offset_bottom = 346.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Shoot/Use"
+
+[node name="RB" type="Label" parent="Control"]
+offset_left = 2222.0
+offset_top = 577.0
+offset_right = 2641.0
+offset_bottom = 646.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Run/Dash"
+
+[node name="Y" type="Label" parent="Control"]
+offset_left = 2222.0
+offset_top = 877.0
+offset_right = 2622.0
+offset_bottom = 946.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Throw"
+
+[node name="B" type="Label" parent="Control"]
+offset_left = 2222.0
+offset_top = 1377.0
+offset_right = 2852.0
+offset_bottom = 1446.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Build/Cancel"
+
+[node name="A" type="Label" parent="Control"]
+offset_left = 2222.0
+offset_top = 1577.0
+offset_right = 2622.0
+offset_bottom = 1646.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Accept"
+
+[node name="X" type="Label" parent="Control"]
+offset_left = 2222.0
+offset_top = 1777.0
+offset_right = 2692.0
+offset_bottom = 1846.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Inventory"
+
+[node name="R" type="Label" parent="Control"]
+offset_left = 2222.0
+offset_top = 2077.0
+offset_right = 3008.0
+offset_bottom = 2146.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Aim/Look Around"
+
+[node name="DPad" type="Label" parent="Control"]
+offset_left = 46.0
+offset_top = 1177.0
+offset_right = 625.0
+offset_bottom = 1246.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Select Item"
+align = 2
+
+[node name="L" type="Label" parent="Control"]
+offset_left = 222.0
+offset_top = 877.0
+offset_right = 622.0
+offset_bottom = 946.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Move"
+align = 2
+
+[node name="LB" type="Label" parent="Control"]
+offset_left = 103.0
+offset_top = 577.0
+offset_right = 627.0
+offset_bottom = 646.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Alt Action"
+
+[node name="LT" type="Label" parent="Control"]
+offset_left = 148.0
+offset_top = 277.0
+offset_right = 828.0
+offset_bottom = 346.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Secondary use"

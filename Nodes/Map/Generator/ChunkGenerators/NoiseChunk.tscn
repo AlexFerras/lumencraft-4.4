@@ -1,0 +1,60 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Map/Generator/ChunkGenerators/Rectangle.png" type="Texture2D" id=1]
+
+[sub_resource type="Shader" id=3]
+code = "shader_type canvas_item;
+
+uniform float cut_off : hint_range(0.0, 1.0) = 0.5;
+
+void fragment() {
+	vec4 color = texture(TEXTURE, UV);
+	
+	float r = step(color.r, cut_off);
+	
+	COLOR = vec4(r, r, r, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/cut_off = 0.445
+
+[sub_resource type="FastNoiseLite" id=1]
+resource_local_to_scene = true
+period = 43.4
+persistence = 0.281
+lacunarity = 1.83
+
+[sub_resource type="NoiseTexture" id=2]
+resource_local_to_scene = true
+width = 256
+height = 256
+noise = SubResource( 1 )
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends \"res://Nodes/Map/Generator/ChunkGenerator.gd\"
+
+func generate(size: Vector2):
+	texture.width = size.x
+	texture.height = size.y
+	
+	texture.noise.seed = rng.randi()
+	await texture.changed
+	ready = true
+"
+
+[sub_resource type="CanvasItemMaterial" id=8]
+blend_mode = 1
+
+[node name="NoiseChunk" type="TextureRect"]
+material = SubResource( 4 )
+texture = SubResource( 2 )
+script = SubResource( 5 )
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+visible = false
+material = SubResource( 8 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+expand = true

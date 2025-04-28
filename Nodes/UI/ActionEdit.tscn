@@ -1,0 +1,70 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/UI/AutoAction/AutoAction.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Resources/Fonts/Font40.tres" type="FontFile" id=2]
+[ext_resource path="res://Nodes/UI/ClickableLabel.gd" type="Script" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+func setup(action: String):
+	name = action
+	
+	$Label.text = get_action_name(action)
+	
+	set_meta(\"label\", $Label)
+	
+	await self.ready
+	$Keyboard.action_name = action
+#	$Keyboard.favor_mouse = action != \"next_slot\" and action != \"prev_slot\"
+	$Joypad.action_name = action
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED:
+		$Label.text = get_action_name(name)
+
+func get_action_name(action: String) -> String:
+	match action:
+		\"shoot\":
+			return \"Attack\"
+		\"shoot2\":
+			return \"Alt Attack\"
+		\"throw_item\":
+			return \"Drop Item\"
+		\"slot1\", \"slot2\", \"slot3\", \"slot4\":
+			return tr(\"Slot %s\") % int(action)
+		_:
+			return action.capitalize()
+
+func set_joypad(joypad: bool):
+	$Keyboard.visible = not joypad
+	$Joypad.visible = joypad
+"
+
+[node name="ActionEdit" type="HBoxContainer"]
+offset_right = 1090.0
+offset_bottom = 70.0
+alignment = 2
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1082.0
+offset_top = 12.0
+offset_right = 1082.0
+offset_bottom = 58.0
+mouse_filter = 0
+theme_override_fonts/font = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="Keyboard" parent="." instance=ExtResource( 1 )]
+offset_left = 1086.0
+offset_right = 1086.0
+offset_bottom = 70.0
+joypad_mode = 1
+favor_mouse = false
+
+[node name="Joypad" parent="." instance=ExtResource( 1 )]
+offset_left = 1090.0
+offset_right = 1090.0
+offset_bottom = 70.0
+joypad_mode = 2

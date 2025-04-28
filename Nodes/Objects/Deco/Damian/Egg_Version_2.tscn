@@ -1,0 +1,146 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Nodes/Objects/Deco/Damian/Egg_002.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Objects/Deco/Damian/Egg_002_shadow.png" type="Texture2D" id=4]
+
+[sub_resource type="GDScript" id=20]
+script/source = "extends StaticBody2D
+
+@onready var shroom=$MushroomAnim00
+@onready var small_particles=$small
+@onready var big_particles=$big
+var kicked_time=0
+var last_=0
+@export var hp=10
+@export var lumens_inside=5
+@export var max_grow=1.0
+@export var grow_time=60.0
+@export var random_growth=true
+
+var dead=false
+var autogrow := true
+
+func _ready():
+	$Detector.collision_layer = Const.ENEMY_COLLISION_LAYER
+	$Detector.collision_mask = 0
+	
+	if random_growth:
+		global_scale=Vector2.ONE*(0.1+randf_range(0.0,0.3))
+		max_grow=randf_range(0.25,1.0)
+	shroom.material = shroom.material.duplicate()
+	
+	var audio=Utils.create_audio_manager(\"gore_audio\")
+	if audio:
+		audio.set_sample(\"res://SFX/Misc/mushroom/gore\")
+		audio.max_samples = 6
+		audio.min_delay = 0.1
+
+func z_index_change(time := 4.0):
+	if global_scale.x>0.5:
+		z_index=ZIndexer.Indexes.PIX_MAP
+	else:
+		z_index=ZIndexer.Indexes.SMALL_DECOR
+	
+func can_grow():
+	if global_scale.x>=max_grow || is_equal_approx(global_scale.x,max_grow):
+		return false
+	return true
+	
+func grow(time := 4.0, scale_add=0.1):
+	if !can_grow():
+		return
+
+	Utils.play_sample(Utils.random_sound(\"res://SFX/Misc/mushroom/squeezing\"),self)
+	var seq := create_tween()
+	seq.tween_property(self, \"global_scale\", min(global_scale.x + scale_add, max_grow) * Vector2.ONE, time).set_trans(Tween.TRANS_ELASTIC)
+	seq.tween_callback(Callable(self, \"z_index_change\"))
+
+func on_enter(area: Area2D) -> void:
+	if dead:
+		return
+	
+	if area.is_in_group(\"player_projectile\"):
+		Utils.on_hit(area)
+		kicked_time=0.05
+		var data: Dictionary = area.get_meta(\"data\")
+		var dmg: int = data.damage
+		hp-=dmg
+		small_particles.emitting=true
+		if hp<=0:
+			Utils.game.map.pixel_map.flesh_manager.spawn_in_position(global_position, int(50*global_scale.x+1), data.get(\"velocity\", Vector2()) * 0.15,Color(0.6,0.8,0.11))
+			small_particles.emitting=false
+			big_particles.emitting=true
+			for i in lumens_inside*global_scale.x:
+				Utils.game.map.pickables.spawn_premium_pickable_nice(global_position, Const.ItemIDs.LUMEN, Utils.random_point_in_circle(120, 70))
+			
+			$CollisionShape2D.set_deferred(\"disabled\",true)
+			get_tree().create_timer(5).connect(\"timeout\", Callable(self, \"queue_free\"))
+			dead=true
+			var seq := create_tween()
+			seq.tween_property(shroom, \"modulate:a\", 0.0 , 0.5).set_trans(Tween.TRANS_SINE)	
+			seq.parallel().tween_property($LightSprite, \"modulate:a\", 0.0 , 2.0).set_trans(Tween.TRANS_SINE)
+			Utils.play_sample(\"res://SFX/Misc/mushroom/gore2.wav\", self, false, 2.0)
+			Utils.play_sample(Utils.random_sound(\"res://SFX/Misc/mushroom/air-release.wav\"),self,false,2.0)
+		Utils.get_audio_manager(\"gore_audio\").play(self)
+	
+	if Player.get_from_area(area):
+		kicked_time = 0.2
+"
+
+[sub_resource type="CircleShape2D" id=21]
+radius = 6.78583
+
+[sub_resource type="Animation" id=32]
+resource_name = "grow"
+length = 300.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 9.6 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+
+[node name="Egg_Alien_V2" type="StaticBody2D"]
+position = Vector2( 2837, 2715 )
+rotation = -0.38843
+z_index = 140
+z_as_relative = false
+script = SubResource( 20 )
+random_growth = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -0.132282, 1.39685 )
+shape = SubResource( 21 )
+
+[node name="Detector" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Detector"]
+position = Vector2( -0.757568, 1.85107 )
+scale = Vector2( 0.430028, 0.430028 )
+polygon = PackedVector2Array( -28.9587, 3.22559, -21.3296, 21.4229, -7.14478, 29.7412, 20.9326, 28.667, 41.3818, 9.39648, 43.2422, -7.42969, 34.3418, -28.6602, 11.5488, -40.5, -5.27808, -42.3613, -18.2905, -35.123, -30.5212, -17.5146 )
+
+[node name="Egg_Anim" type="Sprite2D" parent="."]
+position = Vector2( 0.416664, 0.166664 )
+scale = Vector2( 0.3, 0.3 )
+z_index = 2
+texture = ExtResource( 3 )
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2( 0.0620117, -0.000976563 )
+scale = Vector2( 0.290507, 0.314286 )
+texture = ExtResource( 4 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/grow = SubResource( 32 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 2 )]
+z_index = 140
+
+[connection signal="area_entered" from="Detector" to="." method="on_enter"]

@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Objects/Map/WaterSource.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Nodes/Objects/Map/crater.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "tool
+extends Node2D
+
+func _ready() -> void:
+	if not Engine.is_editor_hint():
+		queue_free()
+
+func _draw() -> void:
+	draw_arc(Vector2(), get_parent().fluid_radius, 0, TAU, 16, Color.CYAN if get_parent().fluid_type == get_parent().FLUID_MATERIAL.WATER else Color.RED)
+"
+
+[node name="LavaSource" groups=["lava_source"] instance=ExtResource( 1 )]
+fluid_dmg_materials_mask = 327154687
+fluid_type = 30
+source_id = -1
+
+[node name="Crater" type="Sprite2D" parent="." index="0"]
+scale = Vector2( 0.1, 0.1 )
+z_index = -977
+z_as_relative = false
+texture = ExtResource( 3 )
+
+[node name="ZIndexer" parent="Crater" index="0" instance=ExtResource( 2 )]
+process_priority = 10
+z_index = -1000
+offset = 23
+
+[node name="Gizmo" type="Node2D" parent="." index="1"]
+z_index = 500
+script = SubResource( 1 )
+
+[node name="Timer" type="Timer" parent="." index="2"]
+wait_time = 0.5
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="try_spawn"]

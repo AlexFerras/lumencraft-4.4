@@ -1,0 +1,63 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Resources/Textures/clouds__00335_00178.png" type="Texture2D" id=1]
+
+[sub_resource type="Gradient" id=120]
+offsets = PackedFloat32Array( 0, 0.0163551, 0.0490654, 0.109813, 0.53972, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 1, 1, 1, 0.505882, 1, 1, 1, 0.0823529, 1, 1, 1, 0.188235, 1, 1, 1, 0.556863, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=121]
+gradient = SubResource( 120 )
+
+[sub_resource type="Curve" id=122]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.115299, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=123]
+curve = SubResource( 122 )
+
+[sub_resource type="Curve" id=124]
+max_value = 0.01
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.000795455 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=125]
+curve = SubResource( 124 )
+
+[sub_resource type="Curve" id=126]
+max_value = 2.0
+_data = [ Vector2( 0, 0.265909 ), 0.0, 0.854168, 0, 0, Vector2( 0.478936, 0.556818 ), 0.820001, 0.820001, 0, 0, Vector2( 1, 1.13864 ), 1.32973, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=127]
+curve = SubResource( 126 )
+
+[sub_resource type="ParticleProcessMaterial" id=128]
+emission_shape = 2
+emission_box_extents = Vector3( 300, 0, 0 )
+flag_disable_z = true
+direction = Vector3( 0, 1, 0 )
+spread = 20.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 50.0
+initial_velocity_random = 0.2
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+orbit_velocity_curve = SubResource( 125 )
+damping_curve = SubResource( 123 )
+angle = 360.0
+angle_random = 1.0
+scale_random = 0.2
+scale_curve = SubResource( 127 )
+color_ramp = SubResource( 121 )
+
+[node name="Smoke_Clouds_Fog5" type="GPUParticles2D"]
+modulate = Color( 0.741176, 0.627451, 0.843137, 1 )
+position = Vector2( 3, 306 )
+rotation = -0.3604
+scale = Vector2( 0.25, 0.25 )
+z_index = 1000
+amount = 85
+lifetime = 85.0
+preprocess = 400.0
+speed_scale = 0.5
+visibility_rect = Rect2( -1000, -100, 5000, 5000 )
+process_material = SubResource( 128 )
+texture = ExtResource( 1 )

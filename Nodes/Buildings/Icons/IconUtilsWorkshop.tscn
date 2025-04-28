@@ -1,0 +1,83 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Workshop/Utils/UtilsPhoto.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Icons/GenericPreview.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Buildings/Common/Socket.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Lab/tech_icons/repair_tool_upgrade.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=14]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=15]
+
+[node name="Sprite2D" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="Socket" type="Sprite2D" parent="."]
+position = Vector2( 16, -12 )
+texture = ExtResource( 3 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+material = ExtResource( 15 )
+position = Vector2( 0, -40 )
+scale = Vector2( 337.76, 128 )
+z_index = -1
+
+[node name="BoundingRect3" type="Sprite2D" parent="BoundingRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 15 )
+position = Vector2( -0.0414496, 0.03125 )
+scale = Vector2( 1.00663, 1.0625 )
+z_index = -1
+texture = ExtResource( 14 )
+
+[node name="BoundingRect2" type="Sprite2D" parent="BoundingRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 15 )
+position = Vector2( 0.082899, 0.828125 )
+scale = Vector2( 0.757935, 0.40625 )
+z_index = -1
+texture = ExtResource( 14 )
+
+[node name="GroundRect" type="Sprite2D" parent="."]
+material = ExtResource( 15 )
+use_parent_material = true
+position = Vector2( -25.25, 33.75 )
+scale = Vector2( 386.5, 275.5 )
+z_index = -1
+
+[node name="GroundRect2" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 15 )
+use_parent_material = true
+position = Vector2( -0.0155239, -0.253176 )
+scale = Vector2( 0.968952, 0.493648 )
+z_index = -1
+texture = ExtResource( 14 )
+
+[node name="GroundRect3" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 15 )
+use_parent_material = true
+position = Vector2( 0.137775, 0.240472 )
+scale = Vector2( 0.662354, 0.435572 )
+z_index = -1
+texture = ExtResource( 14 )
+
+[node name="TerrainDetectionEdge" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array( -216, -104, -216, 32, -100, 32, -100, 160, 156, 160, 156, -104, -216, -104 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+position = Vector2( 24, -12 )
+scale = Vector2( 1.32015, 1.32015 )
+texture = ExtResource( 5 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.9, 0.9 )
+texture = ExtResource( 4 )

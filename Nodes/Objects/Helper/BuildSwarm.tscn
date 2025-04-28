@@ -1,0 +1,173 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+const BUILD_TIME = 5
+const RNG_OFFSET = 16
+const NANITE_SIZE = Vector2.ONE * 6
+
+var nanite_count: int
+var target: Node2D
+var blueprint: Node2D
+var drone: Node2D
+var nanites: Array
+var mask: PackedVector2Array
+var granulation: int
+
+var is_target_process: bool
+var is_target_physics: bool
+
+func _ready() -> void:
+	mask = blueprint.get_sprite_mask()
+	nanite_count = max(mask.size() / 10, 1)
+	nanites.resize(nanite_count)
+
+	for i in nanite_count:
+		var builder := NaniteBuilder.new()
+		builder.offset = randf_range(-RNG_OFFSET, RNG_OFFSET)
+		builder.position = global_position + Utils.random_point_in_circle(8)
+		nanites[i] = builder
+	
+	for audio in get_children():
+		audio.global_position = target.position
+	
+	granulation = mask.size() / nanite_count
+	set_process(false)
+
+func _physics_process(delta: float) -> void:
+	var finished := true
+	
+	for i in nanites.size():
+		var nanite: NaniteBuilder = nanites[i]
+		
+		var pos: Vector2 = nanite.position
+		nanite.position = nanite.position.move_toward(get_target_position(i), 100 * delta)
+		
+		if not nanite.finished:
+			finished = false
+			if pos.distance_squared_to(nanite.position) < 2:
+				nanite.finished = true
+	
+	if finished:
+		set_physics_process(false)
+		set_process(true)
+		
+		Utils.game.map.add_child(target)
+		if target is BaseBuilding:
+			target.set_disabled(true, true)
+			target.set_physics_process_internal(false)
+			target.first_check = false
+		elif target.get_meta(\"demolish\", false):
+			target.set_physics_process(true)
+			target.get_meta(\"lol\").set_physics_process(true)
+		
+		is_target_process = target.is_processing()
+		target.set_process(false)
+		is_target_physics = target.is_physics_processing()
+		target.set_physics_process(false)
+		
+		var seq := create_tween()
+		seq.tween_property(target, \"modulate\", Color(10, 10, 10), BUILD_TIME).from(Color.TRANSPARENT)
+		seq.parallel().tween_property(self, \"modulate:a\", 0.0, BUILD_TIME)
+		seq.tween_property(target, \"modulate\", Color.WHITE, 0.2)
+		seq.tween_callback(Callable(blueprint, \"set_physics_process\").bind(false))
+		seq.tween_callback(Callable(self, \"finish\"))
+	
+	update()
+
+func _process(delta: float) -> void:
+	if not is_instance_valid(target):
+		queue_free()
+		return
+	
+	for i in nanites.size():
+		var nanite: NaniteBuilder = nanites[i]
+		nanite.position = get_target_position(i)
+	
+	for audio in get_children():
+		if not audio.playing:
+			Utils.play_sample(Utils.random_sound(\"res://SFX/Building/Construction/\"), audio, false, 1.2)
+	
+	update()
+
+func finish():
+	if not blueprint.can_build:
+		blueprint.cancel()
+#		drone.give_back = blueprint.building_data.cost.duplicate()
+		BuildInterface.unred()
+		
+		if drone.building.has_method(\"build_fail\"):
+			drone.building.build_fail()
+		
+		if drone.building.has_signal(\"destroyed\"):
+			drone.building.emit_signal(\"destroyed\")
+		
+		Utils.log_message(\"Building failed: %s\" % target.name)
+		
+		if blueprint.has_meta(\"demolish\"):
+			Utils.game.ui.notify(\"Deconstruction finished\")
+		else:
+			Utils.game.ui.notify(\"Construction failed\")
+		
+		Utils.play_sample(\"res://SFX/UI/BuildFailed.wav\", self, false, 1.5)
+		target.queue_free()
+		queue_free()
+		return
+
+	Utils.game.ui.notify(\"Construction finished\")
+	target.set_process(is_target_process)
+	target.set_physics_process(is_target_physics)
+	if target is BaseBuilding:
+		get_tree().call_group(\"construction_observers\", \"building_placed\", target.building_data.name)
+		target.build()
+		target.on_placed()
+		target.set_physics_process_internal(true)
+	elif target.has_method(\"on_placed\"):
+		get_tree().call_group(\"construction_observers\", \"building_placed\", target.get_meta(\"building_name\"))
+		target.on_placed()
+	queue_free()
+
+func _draw() -> void:
+	draw_set_transform(-global_position, 0, Vector2.ONE)
+	for nanite in nanites:
+		draw_texture_rect(preload(\"res://Nodes/Objects/Helper/BuildNanite.png\"), Rect2(nanite.position - NANITE_SIZE * 0.5, NANITE_SIZE), false, Color.WHITE.darkened(randf()))
+
+func get_target_position(i: int) -> Vector2:
+	var j := clamp(i * granulation + nanites[i].offset, 0, mask.size() - 1)
+	return target.position + mask[j].rotated(target.rotation) + Vector2(randf_range(-1, 1), randf_range(-1, 1))
+
+class NaniteBuilder:
+	var position: Vector2
+	var offset: int
+	var finished: bool
+"
+
+[node name="NaniteSwarm" type="Node2D" groups=["dont_save"]]
+z_index = 10
+script = SubResource( 1 )
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="AudioStreamPlayer2D3" type="AudioStreamPlayer2D" parent="."]
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="AudioStreamPlayer2D4" type="AudioStreamPlayer2D" parent="."]
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="AudioStreamPlayer2D5" type="AudioStreamPlayer2D" parent="."]
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"

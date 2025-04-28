@@ -1,0 +1,315 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/missions_window.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothRect.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Map/ZIndexer.gd" type="Script" id=3]
+[ext_resource path="res://Maps/Campaign/HubNodes/NiceElevator.png" type="Texture2D" id=5]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends GenericInteractable
+
+var loading: Node
+var blocking_buildings: Array
+
+func _ready() -> void:
+	loading = preload(\"res://Scenes/Campaign/ElevatorLoading.tscn\").instantiate()
+	Utils.add_child(loading)
+	loading.hide()
+	
+	$UI.hide()
+	$\"%Missions/%ExitButton\".connect(\"pressed\", Callable(self, \"close_ui\"))
+	$\"%Missions/%StartGame\".connect(\"pressed\", Callable(self, \"start_game\"))
+
+func _interact(player: Player):
+	for building in blocking_buildings:
+		if is_blocking(building):
+			Utils.play_ui_sample(Utils.UI_FAIL)
+			Utils.game.map.add_dmg_number().custom(self, \"Upgrade in progress.\", Color.YELLOW)
+			return
+	
+	get_tree().paused = true
+	$UI.show()
+	set_process_input(true)
+	Utils.game.ui.block_menu = true
+	Utils.game.ui.hide()
+
+func start_game() -> void:
+	var selected_node = $\"%Missions\".selected_node
+	if not selected_node or not selected_node.is_unlocked():
+		return
+	
+	$UI.hide()
+	$AnimationPlayer.play_backwards(\"NiceElevator\")
+	await $AnimationPlayer.animation_finished
+	
+	var l = preload(\"res://Scenes/ScreenLoading.tscn\").instantiate()
+	Utils.add_child(l)
+	await RenderingServer.frame_post_draw
+	l.queue_free()
+	
+	Utils.game.hide()
+	Utils.game.ui.hide()
+	
+	loading.show()
+	loading.start()
+	Utils.set_meta(\"loading_background\", loading)
+	
+	var data: Dictionary
+	Save.campaign.current_map = selected_node.map_id
+	match selected_node.map_id:
+		\"random1\":
+#			start_random_map({enemy_multiplier = 0.7, wave_count = 10, map_size = 2048, objective = 0, start_weapon = \"MACHINE_GUN\", biome = 0}, 0)
+			start_random_map({starting_resources =100,enemy_multiplier = 0.7, wave_count = 10, map_size = 4096, objective = 0, map_biome = 0}, 0, 0.5)
+		\"random2\":
+			start_random_map({starting_resources =200,enemy_multiplier = 0.9, wave_count = 15, map_size = 4096, objective = 0, map_biome = 0}, 1, 0.75)
+		\"random3\":
+			start_random_map({starting_resources =300,enemy_multiplier = 1.1, wave_count = 20, map_size = 4096, objective = 0, map_biome = 0}, 2, 0.9)
+		\"random4\":
+			start_random_map({starting_resources =300,enemy_multiplier = 1.5, wave_count = 25, map_size = 4096, objective = 0, map_biome = 0}, 3, 1.2)
+		\"endless\":
+			var endless_data: Dictionary
+			endless_data.objective = 0
+			endless_data.map_biome = 0
+			endless_data.enemy_multiplier = 1.5 + Save.campaign.endless_depth * 0.1
+			endless_data.wave_count = 30
+			endless_data.wave_time_multiplier = 1.0 + Save.campaign.endless_depth * 0.1
+			endless_data.item_multiplier = clamp(1.0 - Save.campaign.endless_depth * 0.01,0.01,1.0)
+			endless_data.resource_rate = 1.0
+			start_random_map(endless_data, 3, 1.2+Save.campaign.endless_depth * 0.1)
+		\"info_center_map\":
+			data[selected_node.map_id] = true
+			continue
+		_:
+			var map_name: String = Const.CampaignLevels[selected_node.map_id].get(\"map_file\", \"\")
+			if not map_name.is_empty():
+				if Music.is_switch_build():
+					var f := File.new()
+					if f.file_exists(\"res://Maps/Campaign/Switch/%s.lcmap\" % map_name):
+						start_crafted_map(\"res://Maps/Campaign/Switch/%s.lcmap\" % map_name, data)
+						return
+				start_crafted_map(\"res://Maps/Campaign/%s.lcmap\" % map_name, data)
+
+func start_random_map(data := {}, random_map_idx = null, wave_multiplier=1.0):
+	var generator = load(\"res://Nodes/Map/Generator/GeneratedMapBase.tscn\").instantiate()
+	
+	for param in data:
+		if param in generator:
+			generator.set(param, data[param])
+	
+	generator.connect(\"external_configure\", Callable(self, \"configure_map\").bind(data))
+	Utils.add_child(generator)
+	
+	await generator.finished
+
+	if random_map_idx is int:
+		var seeed = generator.get_node(\"%GeneratedMapBase\").my_seed
+		var spawners = 0
+		for object in generator.map_file.objects:
+			if object.name == \"Wave Spawner\":
+				spawners += 1
+		var waves = get_waves_for_campaign_random_map(random_map_idx, seeed, spawners,wave_multiplier)
+		if !waves.is_empty():
+			generator.map_file.wave_data = waves
+
+	generator.queue_free()
+	start_map(generator.map_file)
+
+func configure_map(map: MapFile, data: Dictionary):
+	Save.campaign.configure_map(map, data)
+
+func start_crafted_map(map: String, data := {}):
+	var map_file := MapFile.new()
+	map_file.load_from_file(map)
+	configure_map(map_file, data)
+	start_map(map_file)
+
+func start_map(map):
+	if is_queued_for_deletion():
+		return
+	Utils.game.queue_free()
+	
+	var campaign := Save.campaign
+	Save.new_game()
+	Save.campaign = campaign
+	Save.data.achievements_enabled = true
+	
+	Utils.call_super_deferred(Game, \"start_map\", [map])
+
+func close_ui():
+	set_process_input(false)
+	await get_tree().idle_frame
+	get_tree().paused = false
+	$UI.hide()
+	Utils.game.ui.block_menu = false
+	Utils.game.ui.show()
+
+func _input(event: InputEvent) -> void:
+	if not $UI.visible:
+		return
+	
+	if event.is_action(\"ui_accept\") and event.is_pressed():
+		start_game()
+
+func get_waves_for_campaign_random_map(map_idx: int, seeed :int, spawners: int, wave_multiplier:float):
+	var waves_gen = CustomizableWavesGenerator.new()
+	waves_gen.set_emergency_swarm(\"Strong Spider Swarm\")
+	waves_gen.waves_enemies_generator.set_additional_time_before_first_wave_in_min(12)
+	waves_gen.waves_enemies_generator.set_min_time_between_waves_in_min(8)
+	waves_gen.waves_enemies_generator.set_additional_time_for_boss_waves_in_min(7)
+	waves_gen.waves_enemies_generator.set_additional_threat_for_boss_waves(600)
+
+	waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Spider Swarm\", 1, 22)
+	waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Worm Swarm\", 3, 28)
+	waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Strong Spider Swarm\", 5, 48)
+	waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Slow Swarm\", 14, 48)
+	
+	if map_idx != 0:
+		waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Turtle\", 1, 100)
+
+	match map_idx:
+		0:
+			return waves_gen.generate_map_waves(seeed, spawners, 10, wave_multiplier, false)
+		#	return waves_gen.generate_map_waves(seeed, spawners, 10, 0.5, false)
+		1:
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Strong Worm Swarm\", 12, 64)
+
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Arthoma\", 5, 100)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Suicidoma\", 8, 30)
+
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Crystal GRUBAS\", 1, 100)
+
+			return waves_gen.generate_map_waves(seeed, spawners, 15, wave_multiplier, false)
+		#	return waves_gen.generate_map_waves(seeed, spawners, 15, 0.75, false)
+		2:
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Flying Swarm\", 8, 28)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Strong Worm Swarm\", 12, 64)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Explosive Swarm\", 18, 48)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Shooting Swarm\", 16, 28)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Flying Shooting Swarm\", 22, 64)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Strong Flying Swarm\", 24, 100)
+
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Arthoma\", 5, 100)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Suicidoma\", 8, 30)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Suicacidoma\", 10, 30)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Acidoma\", 10, 100)
+
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Crystal GRUBAS\", 1, 100)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"King\", 11, 100)
+
+			return waves_gen.generate_map_waves(seeed, spawners, 20, wave_multiplier, false)
+		#	return waves_gen.generate_map_waves(seeed, spawners, 20, 0.9, false)
+		3:
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Flying Swarm\", 8, 28)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Strong Worm Swarm\", 12, 64)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Explosive Swarm\", 18, 48)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Shooting Swarm\", 16, 28)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Flying Shooting Swarm\", 22, 64)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Strong Flying Swarm\", 24, 100)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Black Spider Swarm\", 28, 100)
+
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Arthoma\", 5, 100)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Suicidoma\", 8, 30)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Suicacidoma\", 10, 30)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Acidoma\", 10, 100)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Gobbler\", 16, 100)
+
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"Crystal GRUBAS\", 1, 100)
+			waves_gen.add_new_enemy_type_to_waves_enemies_generator(\"King\", 11, 100)
+
+			return waves_gen.generate_map_waves(seeed, spawners, 25, wave_multiplier, false)
+			#return waves_gen.generate_map_waves(seeed, spawners, 25, 1.2, false)
+		_:
+			return {}
+
+func is_blocking(building: BaseBuilding) -> bool:
+	if building.building_name == \"Lab\":
+		return not building.making.is_empty()
+	elif building.building_name.ends_with(\"Workshop\"):
+		return building.busy
+	
+	return false
+
+func _exit_tree() -> void:
+	if not Utils.has_meta(\"loading_background\") or Utils.get_meta(\"loading_background\") != loading:
+		loading.queue_free()
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 7.5, 7.5 )
+
+[sub_resource type="Animation" id=7]
+length = 50.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 ]
+}
+
+[sub_resource type="Animation" id=8]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 49 ]
+}
+
+[node name="Elevator" type="Area2D"]
+process_mode = 3
+z_index = 190
+z_as_relative = false
+script = SubResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -0.5, 2.5 )
+shape = SubResource( 1 )
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 0, 0.517647 )
+position = Vector2( 1.5, 3 )
+scale = Vector2( 0.285, 0.285 )
+texture = ExtResource( 2 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.15, 0.15 )
+texture = ExtResource( 5 )
+hframes = 10
+vframes = 5
+frame = 49
+
+[node name="ZIndexer" type="Node" parent="."]
+script = ExtResource( 3 )
+z_index = 200
+offset = -10
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 50
+
+[node name="Missions" parent="UI" instance=ExtResource( 1 )]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1793.0
+offset_top = -1010.0
+offset_right = 1793.0
+offset_bottom = 996.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_speed = 64.0
+anims/NiceElevator = SubResource( 7 )
+anims/RESET = SubResource( 8 )

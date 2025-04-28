@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b3l32s7gggtv6"
+path="res://.godot/imported/Mysterious atmosphere 4.ogg-7d9d9fcc45ed349b2d13588ee56ef2cf.oggvorbisstr"
+
+[deps]
+
+source_file="res://Music/Mysterious atmosphere 4.ogg"
+dest_files=["res://.godot/imported/Mysterious atmosphere 4.ogg-7d9d9fcc45ed349b2d13588ee56ef2cf.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

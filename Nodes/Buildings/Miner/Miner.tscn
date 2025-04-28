@@ -1,0 +1,1180 @@
+[gd_scene load_steps=43 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Miner/Miner.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Buildings/Miner/rotator_layer_002.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Miner/general_layer_006.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Buildings/Miner/layer_001.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Miner/top_layer_008.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Buildings/Miner/shadow_layer_003.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Miner/bridge_layer_004.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Buildings/Miner/small_rotator_layer_007.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Buildings/Miner/mechanic_layer_005.png" type="Texture2D" id=9]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Buildings/Miner/general_layer_006shadow.png" type="Texture2D" id=11]
+[ext_resource path="res://SFX/Building/mine_hum2.wav" type="AudioStream" id=12]
+[ext_resource path="res://Resources/Textures/Smoke_particle.png" type="Texture2D" id=13]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=14]
+[ext_resource path="res://Resources/Textures/lights_vfx/1.png" type="Texture2D" id=15]
+[ext_resource path="res://Resources/Textures/lights_vfx/Lamp_light_Radial_main_T001.png" type="Texture2D" id=16]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=17]
+[ext_resource path="res://Nodes/Unique/FearBuilding.gd" type="Script" id=18]
+[ext_resource path="res://Nodes/Buildings/Tower/lampa_halo_small3.png" type="Texture2D" id=19]
+[ext_resource path="res://Resources/Textures/lights_vfx/radial_spot_light_001.png" type="Texture2D" id=20]
+
+[sub_resource type="Animation" id=79]
+resource_name = "PowerOFF"
+length = 5.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("LightSprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 5 ),
+"transitions": PackedFloat32Array( 2 ),
+"update": 3,
+"values": [ Color( 0.878431, 1.12941, 1.59608, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LightSprite:is_static")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=80]
+resource_name = "PowerON"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("LightSprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 0.5 ),
+"update": 3,
+"values": [ Color( 0.878431, 1.12941, 1.59608, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LightSprite:is_static")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=81]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("LightSprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 0.878431, 1.12941, 1.59608, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LightSprite:is_static")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+
+[sub_resource type="Gradient" id=1]
+offsets = PackedFloat32Array( 0.0135135, 0.797297 )
+colors = PackedColorArray( 1, 1, 1, 0.337255, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=2]
+gradient = SubResource( 1 )
+width = 512
+
+[sub_resource type="Curve" id=74]
+_data = [ Vector2( 0, 0.420455 ), 0.0, 1.28549, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=4]
+width = 256
+curve = SubResource( 74 )
+
+[sub_resource type="ParticleProcessMaterial" id=75]
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 467.39
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 54.35
+angle = 720.0
+angle_random = 1.0
+scale = 0.1
+scale_curve = SubResource( 4 )
+color_ramp = SubResource( 2 )
+
+[sub_resource type="Animation" id=76]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite2D/Piston:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( -3, 144 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Sprite2D/Rotor:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../Sprite2D/Wheel:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("../Sprite2D/Rotor:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("../AudioStreamPlayer2D:playing")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("../Sprite2D/Rotor/GPUParticles2D:emitting")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=77]
+resource_name = "Stop"
+tracks/0/type = "value"
+tracks/0/path = NodePath("../AudioStreamPlayer2D:playing")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Sprite2D/Rotor/GPUParticles2D:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=73]
+resource_name = "Work"
+length = 16.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite2D/Piston:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 4 ),
+"transitions": PackedFloat32Array( -2, -2 ),
+"update": 0,
+"values": [ Vector2( -3, 144 ), Vector2( -3, 81 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Sprite2D/Rotor:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 8 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, -360.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../Sprite2D/Wheel:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 4 ),
+"transitions": PackedFloat32Array( -2, -2 ),
+"update": 0,
+"values": [ 0.0, 45.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("../Sprite2D/Rotor:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 10.7 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 100 ), Vector2( 0, -100 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("../Sprite2D/Rotor/GPUParticles2D:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("../AudioStreamPlayer2D:playing")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=78]
+resource_name = "Work"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite2D/Piston:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 4 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ Vector2( -3, 144 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Sprite2D/Rotor:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 4 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../Sprite2D/Wheel:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 4 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ 0.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("../Sprite2D/Rotor:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 4 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Vector2( 0, 100 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("../Sprite2D/Rotor/GPUParticles2D:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 4 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("../AudioStreamPlayer2D:playing")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=82]
+resource_name = "AlarmLOOP"
+length = 3.5
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Light_Arround_Building:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1.5, 3.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 2, 0, 0, 1 ), Color( 0.02, 0.4, 2, 1 ), Color( 2, 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Light_Arround_Building:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.5, 3.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.398, 0.32 ), Vector2( 0.333, 0.252 ), Vector2( 0.398, 0.32 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Light_Arround_Building:is_static")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Light_Arround_Building:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 1.5, 3.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 2, 0, 0, 1 ), Color( 0.02, 0.4, 2, 1 ), Color( 2, 0, 0, 1 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Light_Arround_Building:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 1.5, 3.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.398, 0.32 ), Vector2( 0.333, 0.252 ), Vector2( 0.398, 0.32 ) ]
+}
+
+[sub_resource type="Animation" id=83]
+resource_name = "AlarmON"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Light_Arround_Building:is_static")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.001 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Light_Arround_Building:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.5, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 3,
+"values": [ Vector2( 0.398, 0.32 ), Vector2( 0.398, 0.32 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Light_Arround_Building:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0.5, 1.5, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ Color( 1, 0, 0, 1 ), Color( 0.0196078, 0.4, 1, 1 ), Color( 1, 0, 0, 1 ) ]
+}
+tracks/3/type = "animation"
+tracks/3/path = NodePath("LightsAnimatior")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"clips": PackedStringArray( "PowerOFF" ),
+"times": PackedFloat32Array( 0 )
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("LampaHalo3:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 1.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("LampaHalo4:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 1.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Light_Radial_Spot:is_static")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Light_Radial_Spot:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 1.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 2.34902, 2.77647, 2.99216, 0.596078 ) ]
+}
+
+[sub_resource type="Animation" id=84]
+length = 2.3
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("LampaHalo3:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5, 1.1, 1.8, 2.3 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1.86275, 1, 0.290196, 0.101961 ), Color( 1.86275, 1, 0.290196, 0.137255 ), Color( 1.86275, 1, 0.290196, 0.0823529 ), Color( 1.86275, 1, 0.290196, 0.137255 ), Color( 1.86275, 1, 0.290196, 0.101961 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LampaHalo4:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.5, 1.1, 1.8, 2.3 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1.86275, 1, 0.290196, 0.101961 ), Color( 1.86275, 1, 0.290196, 0.137255 ), Color( 1.86275, 1, 0.290196, 0.0823529 ), Color( 1.86275, 1, 0.290196, 0.137255 ), Color( 1.86275, 1, 0.290196, 0.101961 ) ]
+}
+
+[sub_resource type="Animation" id=85]
+resource_name = "PowerOFF"
+length = 2.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("LampaHalo3:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 2.3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LampaHalo4:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 2.3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/2/type = "animation"
+tracks/2/path = NodePath("LightsAnimatior")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"clips": PackedStringArray( "PowerOFF" ),
+"times": PackedFloat32Array( 0 )
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Light_Arround_Building:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 2.3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Light_Arround_Building:is_static")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 2.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Light_Radial_Spot:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 2.3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 2.34902, 2.77647, 2.99216, 0 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Light_Radial_Spot:is_static")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 2.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=86]
+resource_name = "PowerON"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("LampaHalo3:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 1.4, 1.9, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0.0835465 ), Color( 1.86275, 1, 0.290196, 0.054902 ), Color( 1.86275, 1, 0.290196, 0.101961 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LampaHalo4:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 1.4, 1.9, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0.0835465 ), Color( 1.86275, 1, 0.290196, 0.054902 ), Color( 1.86275, 1, 0.290196, 0.101961 ) ]
+}
+tracks/2/type = "animation"
+tracks/2/path = NodePath("LightsAnimatior")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"clips": PackedStringArray( "PowerON" ),
+"times": PackedFloat32Array( 0 )
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Light_Arround_Building:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0.5, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.398, 0.32 ), Vector2( 0.398, 0.32 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Light_Radial_Spot:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 2.34902, 2.77647, 2.99216, 0.596078 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Light_Arround_Building:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.94902, 0.67451, 0.470588, 1 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Light_Arround_Building:is_static")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Light_Radial_Spot:is_static")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=87]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("LampaHalo4:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LampaHalo3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../LightSprite:is_static")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Light_Radial_Spot:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 2.34902, 2.77647, 2.99216, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Light_Arround_Building:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 2.34902, 2.77647, 2.99216, 0 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Light_Arround_Building:is_static")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Light_Radial_Spot:is_static")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Light_Radial_Spot:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.18041, 0.166872 ) ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Light_Arround_Building:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.567217, 0.616237 ) ]
+}
+
+[sub_resource type="Animation" id=88]
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Building_Light_Spot2:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5, 1 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.729412, 0.764706, 0.596078, 0.243137 ), Color( 0.729412, 0.764706, 0.596078, 0.313726 ), Color( 0.729412, 0.764706, 0.596078, 0.243137 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Building_Light_Spot3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.5, 1 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.729412, 0.764706, 0.596078, 0.243137 ), Color( 0.729412, 0.764706, 0.596078, 0.313726 ), Color( 0.729412, 0.764706, 0.596078, 0.243137 ) ]
+}
+
+[sub_resource type="Animation" id=89]
+resource_name = "PowerOFF"
+length = 2.168
+tracks/0/type = "value"
+tracks/0/path = NodePath("Building_Light_Spot2:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 2.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.807843, 1, 0.486275, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Building_Light_Spot3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 2.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 0.807843, 1, 0.486275, 0 ) ]
+}
+
+[sub_resource type="Animation" id=90]
+resource_name = "PowerON"
+length = 2.168
+tracks/0/type = "value"
+tracks/0/path = NodePath("Building_Light_Spot2:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.6, 0.9, 2.1 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ Color( 0.807843, 1, 0.486275, 0.243137 ), Color( 0.807843, 1, 0.486275, 0.109804 ), Color( 0.729412, 0.764706, 0.596078, 0.243137 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Building_Light_Spot3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.6, 0.9, 2.1 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ Color( 0.807843, 1, 0.486275, 0.243137 ), Color( 0.807843, 1, 0.486275, 0.109804 ), Color( 0.729412, 0.764706, 0.596078, 0.243137 ) ]
+}
+
+[sub_resource type="Animation" id=91]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Building_Light_Spot2:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 0.807843, 1, 0.486275, 0.490196 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Building_Light_Spot3:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 0.807843, 1, 0.486275, 0.490196 ) ]
+}
+
+[node name="Miner" type="Area2D"]
+script = ExtResource( 1 )
+radius = 18.0
+
+[node name="LightsAnimator" type="AnimationPlayer" parent="."]
+anims/PowerOFF = SubResource( 79 )
+anims/PowerON = SubResource( 80 )
+anims/RESET = SubResource( 81 )
+
+[node name="LightSprite" type="Node2D" parent="."]
+modulate = Color( 0.878431, 1.12941, 1.59608, 0 )
+position = Vector2( 0.80741, 4.22132 )
+rotation = 3.14159
+scale = Vector2( 0.0389314, -0.0366989 )
+script = ExtResource( 14 )
+texture = ExtResource( 17 )
+is_static = true
+
+[node name="LightSprite2" type="Node2D" parent="."]
+visible = false
+modulate = Color( 2.1098, 1.98039, 1.43529, 0.509804 )
+position = Vector2( 55, -3 )
+rotation = 3.11901
+scale = Vector2( 0.306333, 0.39207 )
+script = ExtResource( 14 )
+texture = ExtResource( 16 )
+offset = Vector2( 174.865, 0 )
+follow_rotation = true
+is_static = true
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+scale = Vector2( 0.8, 0.8 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+visible = false
+position = Vector2( 0.278293, 0.0102467 )
+scale = Vector2( 0.0895923, 0.0895923 )
+polygon = PackedVector2Array( 257, -442.1, 289.329, -418.43, 292.5, -205, 270, -193, 268, 140, 334, 140, 373, 165.9, 368.7, 378, 318.5, 407, 278.3, 407, 275, 394, 176, 394, 137, 446, -155, 446, -187.3, 392, -274, 392, -285, 403, -332, 404, -370, 381.1, -371.9, 169, -327.5, 143, -280.2, 139, -282, -190, -307, -206.9, -309.117, -418.43, -268.6, -445 )
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="."]
+visible = false
+position = Vector2( 0.222634, 0.00819736 )
+scale = Vector2( 0.0716738, 0.0716738 )
+z_index = 705
+polygon = PackedVector2Array( 256.808, -448.449, 299.222, -423, 302.485, -204.403, 278.341, -188.09, 277.036, 129.039, 339.026, 134.912, 382.093, 166.233, 380.788, 379.61, 323.366, 414.194, 276.384, 413.542, 265.29, 401.796, 179.809, 401.144, 142.615, 454.651, -160.811, 450.736, -194.09, 403.754, -333.078, 416.152, -383.976, 380.915, -385.933, 170.149, -338.951, 136.87, -297.842, 125.124, -293.274, -184.827, -319.375, -209.623, -320.68, -420.39, -270.436, -454.974 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.072, 0.072 )
+z_index = 600
+z_as_relative = false
+texture = ExtResource( 3 )
+
+[node name="shadow" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+scale = Vector2( 10, 10 )
+texture = ExtResource( 11 )
+
+[node name="InnerShadow2" type="Sprite2D" parent="Sprite2D"]
+modulate = Color( 1, 1, 1, 0.407843 )
+show_behind_parent = true
+texture = ExtResource( 4 )
+
+[node name="Rotor" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+texture = ExtResource( 2 )
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Sprite2D/Rotor"]
+emitting = false
+amount = 59
+local_coords = false
+process_material = SubResource( 75 )
+texture = ExtResource( 13 )
+
+[node name="MiddleShadow" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+texture = ExtResource( 6 )
+
+[node name="Beam" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+texture = ExtResource( 7 )
+
+[node name="Piston" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+position = Vector2( -3, 144 )
+texture = ExtResource( 9 )
+
+[node name="Wheel" type="Sprite2D" parent="Sprite2D"]
+position = Vector2( 0, -292 )
+texture = ExtResource( 8 )
+
+[node name="Pipe" type="Sprite2D" parent="Sprite2D"]
+position = Vector2( 3, -193 )
+texture = ExtResource( 5 )
+
+[node name="ZIndexer" parent="Sprite2D" instance=ExtResource( 10 )]
+z_index = 600
+
+[node name="Production" type="Node" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Production"]
+playback_speed = 5.0
+anims/RESET = SubResource( 76 )
+anims/Stop = SubResource( 77 )
+anims/Work = SubResource( 73 )
+anims/start = SubResource( 78 )
+next/start = "Work"
+
+[node name="spawn_point" type="Marker2D" parent="."]
+position = Vector2( 19.799, -2.2981 )
+
+[node name="stale_check" type="Marker2D" parent="."]
+position = Vector2( 45.1223, -3.0976 )
+__meta__ = {
+"_gizmo_extents_": 30.0
+}
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 12 )
+pitch_scale = 0.74
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="FearBuilding" type="Node2D" parent="."]
+script = ExtResource( 18 )
+primary_animator = NodePath("../LightsAnimator")
+secondary_animator = NodePath("LightSubsystem")
+
+[node name="LightSubsystem" type="AnimationPlayer" parent="FearBuilding"]
+anims/AlarmLOOP = SubResource( 82 )
+anims/AlarmON = SubResource( 83 )
+anims/Blinks = SubResource( 84 )
+anims/PowerOFF = SubResource( 85 )
+anims/PowerON = SubResource( 86 )
+anims/RESET = SubResource( 87 )
+next/AlarmON = "AlarmLOOP"
+next/PowerON = "Blinks"
+
+[node name="LightsAnimatior" type="AnimationPlayer" parent="FearBuilding"]
+anims/Blink = SubResource( 88 )
+anims/PowerOFF = SubResource( 89 )
+anims/PowerON = SubResource( 90 )
+anims/RESET = SubResource( 91 )
+next/PowerON = "Blink"
+
+[node name="Light_Radial_Spot" type="Node2D" parent="FearBuilding"]
+modulate = Color( 2.34902, 2.77647, 2.99216, 0 )
+position = Vector2( 3, 4 )
+scale = Vector2( 0.18041, 0.166872 )
+script = ExtResource( 14 )
+texture = ExtResource( 20 )
+follow_rotation = true
+is_static = true
+
+[node name="Light_Arround_Building" type="Node2D" parent="FearBuilding"]
+modulate = Color( 2.34902, 2.77647, 2.99216, 0 )
+position = Vector2( 1, -1 )
+scale = Vector2( 0.567217, 0.616237 )
+script = ExtResource( 14 )
+texture = ExtResource( 16 )
+follow_rotation = true
+is_static = true
+
+[node name="LampaHalo4" type="Sprite2D" parent="FearBuilding"]
+modulate = Color( 1.86275, 1, 0.290196, 0 )
+position = Vector2( 2.98019e-08, -39 )
+rotation = -1.56078
+scale = Vector2( 0.161503, -0.12749 )
+z_index = 4096
+texture = ExtResource( 19 )
+
+[node name="LampaHalo3" type="Sprite2D" parent="FearBuilding"]
+modulate = Color( 1.86275, 1, 0.290196, 0 )
+position = Vector2( -1, 1 )
+rotation = -3.14727
+scale = Vector2( 0.222014, -0.170876 )
+z_index = -3
+texture = ExtResource( 16 )
+
+[node name="Building_Light_Spot2" type="Sprite2D" parent="FearBuilding"]
+modulate = Color( 0.807843, 1, 0.486275, 0.490196 )
+position = Vector2( -3, 49 )
+rotation = -3.13821
+scale = Vector2( 0.1022, -0.0988503 )
+z_index = 1000
+texture = ExtResource( 15 )
+
+[node name="Building_Light_Spot3" type="Sprite2D" parent="FearBuilding"]
+modulate = Color( 0.807843, 1, 0.486275, 0.490196 )
+position = Vector2( 2, -44 )
+rotation = 0.0395072
+scale = Vector2( 0.1022, -0.0988503 )
+z_index = -2
+texture = ExtResource( 15 )

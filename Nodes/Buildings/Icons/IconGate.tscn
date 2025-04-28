@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Wall/GatePhoto.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Common/Socket.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=5]
+[ext_resource path="res://Nodes/Buildings/Wall/GateIcon.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Wall/IconFloodLight.png" type="Texture2D" id=7]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Buildings/Icons/GenericPreview.gd\"
+
+func custom_check(pos: Vector2, size: Vector2, rot: float) -> int:
+	for i in get_tree().get_nodes_in_group(\"Gate\"):
+		if (target_building == null or target_building != i) and i.global_position.distance_to(pos)<40:
+			return BuildInterface.ERROR_GATE
+	for i in BuildInterface.CHECKS.size() / 2:
+		if Utils.game.map.pixel_map.rayCastQTFromTo(pos + (size * BuildInterface.CHECKS[i * 2]).rotated(rot), pos + (size * BuildInterface.CHECKS[i * 2 + 1]).rotated(rot), ~(Utils.walls_mask) & Utils.walkable_collision_mask, true):
+			return BuildInterface.ERROR_TERRAIN
+	return OK
+"
+
+[node name="Gate" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 2 )
+script = SubResource( 1 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 5 )
+position = Vector2( -1.14441e-05, -0.487084 )
+scale = Vector2( 232, 79.8196 )
+z_index = -1
+texture = ExtResource( 4 )
+
+[node name="Socket" type="Sprite2D" parent="."]
+position = Vector2( -154.005, -0.581787 )
+texture = ExtResource( 3 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+scale = Vector2( 1.3043, 1.3043 )
+texture = ExtResource( 6 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.699208, 0.699208 )
+texture = ExtResource( 1 )
+
+[node name="IconFloodLight" type="Sprite2D" parent="."]
+position = Vector2( -152, -48 )
+rotation = -1.5708
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 7 )

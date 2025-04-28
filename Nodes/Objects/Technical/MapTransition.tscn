@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends PlayerDetector
+
+@export var target_map: String
+@export var target_entrance: int
+
+func change_map(player) -> void:
+	if not Utils.game.map.try_exit():
+		return
+	
+	Save.start_point = target_entrance
+	Utils.game.goto_map(\"res://Maps/Story/\" + target_map + \".tscn\")
+"
+
+[node name="MapTransition" type="Area2D"]
+script = SubResource( 1 )
+once = false
+
+[connection signal="player_entered" from="." to="." method="change_map"]

@@ -1,0 +1,169 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://Nodes/Player/Pets/helper/StateHelperPet.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Player/Pets/helper/PetHelperIdle.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Enemies/Common/TargetingController.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Enemies/Common/ContextController.gd" type="Script" id=4]
+
+[sub_resource type="Animation" id=13]
+length = 0.001
+
+[sub_resource type="Animation" id=24]
+resource_name = "attack"
+length = 15.0
+
+[sub_resource type="Animation" id=16]
+length = 41.0
+step = 1.0
+
+[sub_resource type="Animation" id=4]
+length = 5.0
+
+[sub_resource type="Animation" id=22]
+resource_name = "generic"
+
+[sub_resource type="Animation" id=23]
+resource_name = "idle"
+length = 1.6
+loop = true
+
+[sub_resource type="Animation" id=25]
+resource_name = "walk"
+
+[sub_resource type="Animation" id=26]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/AnimationPlayer:playback_speed")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 40.0 ]
+}
+
+[sub_resource type="Animation" id=27]
+resource_name = "attack1"
+length = 36.0
+step = 1.0
+
+[sub_resource type="Animation" id=28]
+resource_name = "die"
+length = 36.0
+loop = true
+step = 1.0
+
+[sub_resource type="Animation" id=29]
+resource_name = "idle"
+length = 73.2
+loop = true
+step = 1.0
+
+[sub_resource type="Animation" id=30]
+resource_name = "idle_2"
+length = 24.0
+loop = true
+step = 1.0
+
+[sub_resource type="Animation" id=31]
+resource_name = "attack1"
+length = 36.0
+loop = true
+step = 1.0
+
+[sub_resource type="Animation" id=32]
+resource_name = "walk"
+length = 17.4
+loop = true
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/AnimationPlayer:playback_speed")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 40.0 ]
+}
+
+[sub_resource type="Animation" id=33]
+resource_name = "walk_3"
+length = 17.4
+loop = true
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/AnimationPlayer:playback_speed")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 40.0 ]
+}
+
+[sub_resource type="CircleShape2D" id=7]
+radius = 5.0
+
+[node name="StateHelperPet" type="Node2D"]
+z_as_relative = false
+script = ExtResource( 1 )
+path_resolution = 11
+
+[node name="ContextController" type="Node" parent="."]
+script = ExtResource( 4 )
+heading_map_resolution = 3
+navigation_fov = 90.0
+sight_range = 100.0
+
+[node name="TargetController" type="Node" parent="."]
+script = ExtResource( 3 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "generic"
+anims/RESET = SubResource( 13 )
+anims/attack = SubResource( 24 )
+anims/death = SubResource( 16 )
+anims/die = SubResource( 4 )
+anims/generic = SubResource( 22 )
+anims/idle = SubResource( 23 )
+anims/walk = SubResource( 25 )
+next/death = "die"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( -88, -38 )
+scale = Vector2( 0.02, 0.02 )
+texture = ExtResource( 2 )
+offset = Vector2( 4400, 1900 )
+hframes = 9
+vframes = 7
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
+root_node = NodePath("../..")
+autoplay = "walk"
+playback_speed = 40.0
+anims/RESET = SubResource( 26 )
+anims/attack1 = SubResource( 27 )
+anims/die = SubResource( 28 )
+anims/idle = SubResource( 29 )
+anims/idle_2 = SubResource( 30 )
+anims/turn = SubResource( 31 )
+anims/walk = SubResource( 32 )
+anims/walk_3 = SubResource( 33 )
+
+[node name="Hitbox" type="Area2D" parent="Sprite2D"]
+position = Vector2( 4400, 1900 )
+scale = Vector2( 33.3334, 33.3334 )
+collision_layer = 32
+collision_mask = 32
+
+[node name="Shape2D" type="CollisionShape2D" parent="Sprite2D/Hitbox"]
+shape = SubResource( 7 )

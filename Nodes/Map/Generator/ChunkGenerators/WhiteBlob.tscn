@@ -1,0 +1,2869 @@
+[gd_scene load_steps=28 format=2]
+
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Effects/trail.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Map/Generator/WhiteBlob.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Map/Generator/Floor1_generator.tscn" type="PackedScene" id=4]
+
+[sub_resource type="GDScript" id=14]
+script/source = "extends \"res://Nodes/Map/Generator/ChunkGenerator.gd\"
+tool
+
+func generate(size: Vector2):
+	$fill_island.material=$fill_island.material.duplicate()
+	$fill_island.refresh_scale()
+	$fill_island.my_seed=rng.randi()%10000
+	
+	$fill_island.scale=size
+	
+	ready = true
+"
+
+[sub_resource type="Shader" id=23]
+code = "shader_type canvas_item;
+uniform vec2 scale =vec2(100.0,100.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo=0.5;
+uniform float testowo2=0.5;
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st,vec2 offset)
+{
+	float col=circle((st*2.0),circle_add);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+	
+void fragment()
+{
+    vec3 color = vec3(0.0);
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 sca=scale*0.01;
+	color=vec3(1.0,0.0,0.0);
+	/*
+	//dig difficulty
+	vec2 st=(UV-0.5)*2.0;
+	vec2 offset=vec2(float(seed));
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	color.g=(round(clamp(6.0-pow((round(col*12.0)),1.2),0.0,6.0))*8.0)/255.0;
+	
+	/*color=max(color,multiple_islands(UV_TEX,tex_size,10,0)*vec3(1.0,0.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,100)*vec3(1.0,8.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,200)*vec3(1.0,16.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,300)*vec3(1.0,24.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,400)*vec3(1.0,32.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,500)*vec3(1.0,40.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,600)*vec3(1.0,48.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,700)*vec3(1.0,56.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,800)*vec3(1.0,64.0/255.0,0.0));*/
+//float empty=multiple_islands(UV_TEX,tex_size,100,900);
+  //  COLOR= (1.0-empty)*vec4(color,1.0)+empty*vec4(0.0,0.0,0.0,0.0);
+
+	//random points
+//	vec2 pixel_UV=round(UV/TEXTURE_PIXEL_SIZE)*TEXTURE_PIXEL_SIZE;
+//	COLOR=vec4(0.0,4.0,0.0,1.0)*random_places(pixel_UV,10.0,3);
+/*
+	if(color.r==1.0 && color.g==0.0 && color.b==0.0)
+		if(enlarged_paths(UV,TEXTURE_PIXEL_SIZE,seed)==1.0)
+			color=vec3(0.0,0.0,0.0);
+	*/
+
+		//lumps
+	//color.rgb*=vec3(step(pow(fbm(UV*5.0*10.0+fbm(UV*100.0,2),2),15.0),0.0005));
+	
+	//river
+	float is_river=pow(turb(fbm(UV_s*10.0,4)*0.1+fbm(UV_s*100.0,4)*0.01+UV_s,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_tunnel=pow(turb(fbm(UV_s*test2*10.0,4)*0.3+fbm(UV_s*test2*100.0,4)*0.01+UV_s*test2*2.0,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+
+	//float is_cave=pow(turb(fbm(UV*test2*10.0,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2*2.0+float(seed),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_cave=is_tunnel*15.0;
+	is_cave+=float((fbm(UV_s*70.0+vec2(turb(UV_s*10.0,4),turb(UV_s*11.0,4))*1.095,1)-0.43*test3))*0.629*test4;
+	if(is_cave<-0.016*test5 || is_tunnel<0.006)color=vec3(0.0,0.0,0.0);
+	
+	if( is_river<0.0015)
+		color.r=((is_river/0.0015)+0.3);	
+	if(step(is_river,0.0001)>0.0)
+		color=vec3(1.0,240.0/255.0,0.0);
+	
+	//float is_river=pow(turb(fbm(UV*10.0*test2,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2+float(seed),1)*fbm(UV*test2+2.0,1)*1.0,1.9);
+
+
+	color.rgb*=(1.0-island((UV-vec2(0.5,0.5))*10.0,vec2(float(seed))));
+	
+	if(color.r==0.0 && color.g==0.0 && color.b==0.0)
+		COLOR=vec4(color,0.0);
+	else
+		COLOR=vec4(color,1.0);
+	
+	COLOR=vec4(0.0);
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col*=fbm((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	col+=circle((UV05*2.0),0.0)*additional_circle_add;
+	col=step(cutoff,col);
+	COLOR=vec4(vec3(col),1.0);
+	//COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+	/*	
+	COLOR=vec4(island(UV-0.5,vec2(float(seed))));
+	COLOR=vec4(circle((UV-0.5)*1.5,float(0.0)));
+	COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+		*/
+	//COLOR=vec4(vec3(         step(   turb(UV*30.1,3),0.3   )        ),1.0);
+	//COLOR=vec4(vec3(         island((UV-vec2(0.5))*1.5,vec2(0163323.5))       ),1.0);
+	//COLOR=vec4(vec3(      step(fbm(UV*10.0,8)   ,godotcon)      ),1.0);
+	//COLOR=vec4(vec3(   step( turb(UV*10.0,8) ,godotcon) ),1.0);
+	//COLOR=vec4(0.0);
+	//COLOR+= step(  turb(UV*10.0,7)  , testowo2);
+	
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 23 )
+shader_param/scale = Vector2( 203.767, 188.593 )
+shader_param/seed = 0
+shader_param/noise_type = 0
+shader_param/circle_type = 1
+shader_param/circle_add = 0.272
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 1.047
+shader_param/init_add = 0.302
+shader_param/noise_tile = 3.0
+shader_param/noise_mul = 1.0
+shader_param/cutoff = 0.3
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="Shader" id=8]
+code = "shader_type canvas_item;
+uniform vec2 scale =vec2(100.0,100.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo=0.5;
+uniform float testowo2=0.5;
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st,vec2 offset)
+{
+	float col=circle((st*2.0),circle_add);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+	
+void fragment()
+{
+    vec3 color = vec3(0.0);
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 sca=scale*0.01;
+	color=vec3(1.0,0.0,0.0);
+	/*
+	//dig difficulty
+	vec2 st=(UV-0.5)*2.0;
+	vec2 offset=vec2(float(seed));
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	color.g=(round(clamp(6.0-pow((round(col*12.0)),1.2),0.0,6.0))*8.0)/255.0;
+	
+	/*color=max(color,multiple_islands(UV_TEX,tex_size,10,0)*vec3(1.0,0.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,100)*vec3(1.0,8.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,200)*vec3(1.0,16.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,300)*vec3(1.0,24.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,400)*vec3(1.0,32.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,500)*vec3(1.0,40.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,600)*vec3(1.0,48.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,700)*vec3(1.0,56.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,800)*vec3(1.0,64.0/255.0,0.0));*/
+//float empty=multiple_islands(UV_TEX,tex_size,100,900);
+  //  COLOR= (1.0-empty)*vec4(color,1.0)+empty*vec4(0.0,0.0,0.0,0.0);
+
+	//random points
+//	vec2 pixel_UV=round(UV/TEXTURE_PIXEL_SIZE)*TEXTURE_PIXEL_SIZE;
+//	COLOR=vec4(0.0,4.0,0.0,1.0)*random_places(pixel_UV,10.0,3);
+/*
+	if(color.r==1.0 && color.g==0.0 && color.b==0.0)
+		if(enlarged_paths(UV,TEXTURE_PIXEL_SIZE,seed)==1.0)
+			color=vec3(0.0,0.0,0.0);
+	*/
+
+		//lumps
+	//color.rgb*=vec3(step(pow(fbm(UV*5.0*10.0+fbm(UV*100.0,2),2),15.0),0.0005));
+	
+	//river
+	float is_river=pow(turb(fbm(UV_s*10.0,4)*0.1+fbm(UV_s*100.0,4)*0.01+UV_s,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_tunnel=pow(turb(fbm(UV_s*test2*10.0,4)*0.3+fbm(UV_s*test2*100.0,4)*0.01+UV_s*test2*2.0,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+
+	//float is_cave=pow(turb(fbm(UV*test2*10.0,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2*2.0+float(seed),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_cave=is_tunnel*15.0;
+	is_cave+=float((fbm(UV_s*70.0+vec2(turb(UV_s*10.0,4),turb(UV_s*11.0,4))*1.095,1)-0.43*test3))*0.629*test4;
+	if(is_cave<-0.016*test5 || is_tunnel<0.006)color=vec3(0.0,0.0,0.0);
+	
+	if( is_river<0.0015)
+		color.r=((is_river/0.0015)+0.3);	
+	if(step(is_river,0.0001)>0.0)
+		color=vec3(1.0,240.0/255.0,0.0);
+	
+	//float is_river=pow(turb(fbm(UV*10.0*test2,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2+float(seed),1)*fbm(UV*test2+2.0,1)*1.0,1.9);
+
+
+	color.rgb*=(1.0-island((UV-vec2(0.5,0.5))*10.0,vec2(float(seed))));
+	
+	if(color.r==0.0 && color.g==0.0 && color.b==0.0)
+		COLOR=vec4(color,0.0);
+	else
+		COLOR=vec4(color,1.0);
+	
+	COLOR=vec4(0.0);
+	float col=(0.5-abs(UV.y-0.5))*circle_mul*2.0+(0.5-abs(UV.y-0.5))*circle_add+init_add;
+
+
+	if (noise_type==0)
+		col*=fbm((UV05)*noise_tile*sca*vec2(1.0,1.0)-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+//	col+=circle((UV05*2.0),0.0)*additional_circle_add;
+	col=step(cutoff,col);
+
+	COLOR=vec4(vec3(col),1.0);
+	//COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+	/*	
+	COLOR=vec4(island(UV-0.5,vec2(float(seed))));
+	COLOR=vec4(circle((UV-0.5)*1.5,float(0.0)));
+	COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+		*/
+	//COLOR=vec4(vec3(         step(   turb(UV*30.1,3),0.3   )        ),1.0);
+	//COLOR=vec4(vec3(         island((UV-vec2(0.5))*1.5,vec2(0163323.5))       ),1.0);
+	//COLOR=vec4(vec3(      step(fbm(UV*10.0,8)   ,godotcon)      ),1.0);
+	//COLOR=vec4(vec3(   step( turb(UV*10.0,8) ,godotcon) ),1.0);
+	//COLOR=vec4(0.0);
+	//COLOR+= step(  turb(UV*10.0,7)  , testowo2);
+	
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = SubResource( 8 )
+shader_param/scale = Vector2( 100, 100 )
+shader_param/seed = 1234
+shader_param/noise_type = 0
+shader_param/circle_type = 0
+shader_param/circle_add = 0.0
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 2.977
+shader_param/init_add = 0.0
+shader_param/noise_tile = 1.0
+shader_param/noise_mul = 1.271
+shader_param/cutoff = 0.346
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="Curve" id=10]
+max_value = 2.0
+bake_resolution = 1000
+_data = [ Vector2( 0, 1.72733 ), 0.0, 0.0, 0, 0, Vector2( 0.01, 0.613166 ), 0.0, 0.0, 0, 0, Vector2( 0.02, 0.752681 ), 0.0, 0.0, 0, 0, Vector2( 0.03, 1.00433 ), 0.0, 0.0, 0, 0, Vector2( 0.04, 1.89167 ), 0.0, 0.0, 0, 0, Vector2( 0.05, 0.517606 ), 0.0, 0.0, 0, 0, Vector2( 0.06, 1.1764 ), 0.0, 0.0, 0, 0, Vector2( 0.07, 1.84392 ), 0.0, 0.0, 0, 0, Vector2( 0.08, 1.39341 ), 0.0, 0.0, 0, 0, Vector2( 0.09, 1.4868 ), 0.0, 0.0, 0, 0, Vector2( 0.1, 0.630021 ), 0.0, 0.0, 0, 0, Vector2( 0.11, 0.728008 ), 0.0, 0.0, 0, 0, Vector2( 0.12, 0.855321 ), 0.0, 0.0, 0, 0, Vector2( 0.13, 1.0752 ), 0.0, 0.0, 0, 0, Vector2( 0.14, 1.95089 ), 0.0, 0.0, 0, 0, Vector2( 0.15, 1.34819 ), 0.0, 0.0, 0, 0, Vector2( 0.16, 1.96195 ), 0.0, 0.0, 0, 0, Vector2( 0.17, 1.64408 ), 0.0, 0.0, 0, 0, Vector2( 0.18, 1.40482 ), 0.0, 0.0, 0, 0, Vector2( 0.19, 1.1704 ), 0.0, 0.0, 0, 0, Vector2( 0.2, 1.00851 ), 0.0, 0.0, 0, 0, Vector2( 0.21, 0.726431 ), 0.0, 0.0, 0, 0, Vector2( 0.22, 1.608 ), 0.0, 0.0, 0, 0, Vector2( 0.23, 1.88588 ), 0.0, 0.0, 0, 0, Vector2( 0.24, 1.58239 ), 0.0, 0.0, 0, 0, Vector2( 0.25, 1.22727 ), 0.0, 0.0, 0, 0, Vector2( 0.26, 0.680061 ), 0.0, 0.0, 0, 0, Vector2( 0.27, 1.46552 ), 0.0, 0.0, 0, 0, Vector2( 0.28, 1.66122 ), 0.0, 0.0, 0, 0, Vector2( 0.29, 0.721388 ), 0.0, 0.0, 0, 0, Vector2( 0.3, 0.500187 ), 0.0, 0.0, 0, 0, Vector2( 0.31, 1.15434 ), 0.0, 0.0, 0, 0, Vector2( 0.32, 1.28167 ), 0.0, 0.0, 0, 0, Vector2( 0.33, 1.46617 ), 0.0, 0.0, 0, 0, Vector2( 0.34, 1.4345 ), 0.0, 0.0, 0, 0, Vector2( 0.35, 0.670522 ), 0.0, 0.0, 0, 0, Vector2( 0.36, 1.22515 ), 0.0, 0.0, 0, 0, Vector2( 0.37, 1.63346 ), 0.0, 0.0, 0, 0, Vector2( 0.38, 1.60277 ), 0.0, 0.0, 0, 0, Vector2( 0.39, 1.64651 ), 0.0, 0.0, 0, 0, Vector2( 0.4, 0.798239 ), 0.0, 0.0, 0, 0, Vector2( 0.41, 0.707781 ), 0.0, 0.0, 0, 0, Vector2( 0.42, 1.49726 ), 0.0, 0.0, 0, 0, Vector2( 0.43, 1.81638 ), 0.0, 0.0, 0, 0, Vector2( 0.44, 0.765346 ), 0.0, 0.0, 0, 0, Vector2( 0.45, 1.49767 ), 0.0, 0.0, 0, 0, Vector2( 0.46, 1.88503 ), 0.0, 0.0, 0, 0, Vector2( 0.47, 0.822942 ), 0.0, 0.0, 0, 0, Vector2( 0.48, 0.507391 ), 0.0, 0.0, 0, 0, Vector2( 0.49, 1.1758 ), 0.0, 0.0, 0, 0, Vector2( 0.5, 1.3611 ), 0.0, 0.0, 0, 0, Vector2( 0.51, 1.33024 ), 0.0, 0.0, 0, 0, Vector2( 0.52, 1.6685 ), 0.0, 0.0, 0, 0, Vector2( 0.53, 0.879513 ), 0.0, 0.0, 0, 0, Vector2( 0.54, 1.8437 ), 0.0, 0.0, 0, 0, Vector2( 0.55, 0.962456 ), 0.0, 0.0, 0, 0, Vector2( 0.56, 0.889666 ), 0.0, 0.0, 0, 0, Vector2( 0.57, 1.06601 ), 0.0, 0.0, 0, 0, Vector2( 0.58, 0.865828 ), 0.0, 0.0, 0, 0, Vector2( 0.59, 1.24967 ), 0.0, 0.0, 0, 0, Vector2( 0.6, 1.34981 ), 0.0, 0.0, 0, 0, Vector2( 0.61, 1.714 ), 0.0, 0.0, 0, 0, Vector2( 0.62, 1.64878 ), 0.0, 0.0, 0, 0, Vector2( 0.63, 1.59616 ), 0.0, 0.0, 0, 0, Vector2( 0.64, 1.12299 ), 0.0, 0.0, 0, 0, Vector2( 0.65, 1.36677 ), 0.0, 0.0, 0, 0, Vector2( 0.66, 0.974648 ), 0.0, 0.0, 0, 0, Vector2( 0.67, 1.50531 ), 0.0, 0.0, 0, 0, Vector2( 0.68, 0.699067 ), 0.0, 0.0, 0, 0, Vector2( 0.69, 0.94487 ), 0.0, 0.0, 0, 0, Vector2( 0.7, 0.625162 ), 0.0, 0.0, 0, 0, Vector2( 0.71, 1.32963 ), 0.0, 0.0, 0, 0, Vector2( 0.72, 1.18895 ), 0.0, 0.0, 0, 0, Vector2( 0.73, 1.5588 ), 0.0, 0.0, 0, 0, Vector2( 0.74, 1.9287 ), 0.0, 0.0, 0, 0, Vector2( 0.75, 1.15277 ), 0.0, 0.0, 0, 0, Vector2( 0.76, 1.56742 ), 0.0, 0.0, 0, 0, Vector2( 0.77, 1.4772 ), 0.0, 0.0, 0, 0, Vector2( 0.78, 1.09035 ), 0.0, 0.0, 0, 0, Vector2( 0.79, 1.74672 ), 0.0, 0.0, 0, 0, Vector2( 0.8, 1.62406 ), 0.0, 0.0, 0, 0, Vector2( 0.81, 1.3381 ), 0.0, 0.0, 0, 0, Vector2( 0.82, 0.523367 ), 0.0, 0.0, 0, 0, Vector2( 0.83, 1.42758 ), 0.0, 0.0, 0, 0, Vector2( 0.84, 1.38243 ), 0.0, 0.0, 0, 0, Vector2( 0.85, 1.28338 ), 0.0, 0.0, 0, 0, Vector2( 0.86, 0.61578 ), 0.0, 0.0, 0, 0, Vector2( 0.87, 0.586098 ), 0.0, 0.0, 0, 0, Vector2( 0.88, 1.24818 ), 0.0, 0.0, 0, 0, Vector2( 0.89, 1.10993 ), 0.0, 0.0, 0, 0, Vector2( 0.9, 1.79537 ), 0.0, 0.0, 0, 0, Vector2( 0.91, 1.52952 ), 0.0, 0.0, 0, 0, Vector2( 0.92, 0.982138 ), 0.0, 0.0, 0, 0, Vector2( 0.93, 1.76031 ), 0.0, 0.0, 0, 0, Vector2( 0.94, 1.46069 ), 0.0, 0.0, 0, 0, Vector2( 0.95, 1.37859 ), 0.0, 0.0, 0, 0, Vector2( 0.96, 1.83336 ), 0.0, 0.0, 0, 0, Vector2( 0.97, 0.613316 ), 0.0, 0.0, 0, 0, Vector2( 0.98, 0.988461 ), 0.0, 0.0, 0, 0, Vector2( 0.99, 0.570573 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends Line2D
+tool
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	width_curve.clear_points()
+	for i in 100:
+		width_curve.add_point(Vector2(i/100.0,randf_range(0.5,2.0)))
+
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+"
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+uniform vec2 scale =vec2(100.0,100.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo=0.5;
+uniform float testowo2=0.5;
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st,vec2 offset)
+{
+	float col=circle((st*2.0),circle_add);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+	
+void fragment()
+{
+    vec3 color = vec3(0.0);
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 sca=scale*0.01;
+	color=vec3(1.0,0.0,0.0);
+	/*
+	//dig difficulty
+	vec2 st=(UV-0.5)*2.0;
+	vec2 offset=vec2(float(seed));
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	color.g=(round(clamp(6.0-pow((round(col*12.0)),1.2),0.0,6.0))*8.0)/255.0;
+	
+	/*color=max(color,multiple_islands(UV_TEX,tex_size,10,0)*vec3(1.0,0.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,100)*vec3(1.0,8.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,200)*vec3(1.0,16.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,300)*vec3(1.0,24.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,400)*vec3(1.0,32.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,500)*vec3(1.0,40.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,600)*vec3(1.0,48.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,700)*vec3(1.0,56.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,800)*vec3(1.0,64.0/255.0,0.0));*/
+//float empty=multiple_islands(UV_TEX,tex_size,100,900);
+  //  COLOR= (1.0-empty)*vec4(color,1.0)+empty*vec4(0.0,0.0,0.0,0.0);
+
+	//random points
+//	vec2 pixel_UV=round(UV/TEXTURE_PIXEL_SIZE)*TEXTURE_PIXEL_SIZE;
+//	COLOR=vec4(0.0,4.0,0.0,1.0)*random_places(pixel_UV,10.0,3);
+/*
+	if(color.r==1.0 && color.g==0.0 && color.b==0.0)
+		if(enlarged_paths(UV,TEXTURE_PIXEL_SIZE,seed)==1.0)
+			color=vec3(0.0,0.0,0.0);
+	*/
+
+		//lumps
+	//color.rgb*=vec3(step(pow(fbm(UV*5.0*10.0+fbm(UV*100.0,2),2),15.0),0.0005));
+	
+	//river
+	float is_river=pow(turb(fbm(UV_s*10.0,4)*0.1+fbm(UV_s*100.0,4)*0.01+UV_s,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_tunnel=pow(turb(fbm(UV_s*test2*10.0,4)*0.3+fbm(UV_s*test2*100.0,4)*0.01+UV_s*test2*2.0,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+
+	//float is_cave=pow(turb(fbm(UV*test2*10.0,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2*2.0+float(seed),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_cave=is_tunnel*15.0;
+	is_cave+=float((fbm(UV_s*70.0+vec2(turb(UV_s*10.0,4),turb(UV_s*11.0,4))*1.095,1)-0.43*test3))*0.629*test4;
+	if(is_cave<-0.016*test5 || is_tunnel<0.006)color=vec3(0.0,0.0,0.0);
+	
+	if( is_river<0.0015)
+		color.r=((is_river/0.0015)+0.3);	
+	if(step(is_river,0.0001)>0.0)
+		color=vec3(1.0,240.0/255.0,0.0);
+	
+	//float is_river=pow(turb(fbm(UV*10.0*test2,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2+float(seed),1)*fbm(UV*test2+2.0,1)*1.0,1.9);
+
+
+	color.rgb*=(1.0-island((UV-vec2(0.5,0.5))*10.0,vec2(float(seed))));
+	
+	if(color.r==0.0 && color.g==0.0 && color.b==0.0)
+		COLOR=vec4(color,0.0);
+	else
+		COLOR=vec4(color,1.0);
+	
+	COLOR=vec4(0.0);
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col*=fbm((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	col+=circle((UV05*2.0),0.0)*additional_circle_add;
+	col=step(cutoff,col);
+	COLOR=vec4(vec3(col),1.0);
+	//COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+	/*	
+	COLOR=vec4(island(UV-0.5,vec2(float(seed))));
+	COLOR=vec4(circle((UV-0.5)*1.5,float(0.0)));
+	COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+		*/
+	//COLOR=vec4(vec3(         step(   turb(UV*30.1,3),0.3   )        ),1.0);
+	//COLOR=vec4(vec3(         island((UV-vec2(0.5))*1.5,vec2(0163323.5))       ),1.0);
+	//COLOR=vec4(vec3(      step(fbm(UV*10.0,8)   ,godotcon)      ),1.0);
+	//COLOR=vec4(vec3(   step( turb(UV*10.0,8) ,godotcon) ),1.0);
+	//COLOR=vec4(0.0);
+	//COLOR+= step(  turb(UV*10.0,7)  , testowo2);
+	
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/scale = Vector2( 168.721, 151.169 )
+shader_param/seed = 0
+shader_param/noise_type = 0
+shader_param/circle_type = 0
+shader_param/circle_add = -1.046
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 6.195
+shader_param/init_add = 0.0
+shader_param/noise_tile = 3.945
+shader_param/noise_mul = 0.833
+shader_param/cutoff = 0.4
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 1 )
+shader_param/scale = Vector2( 295.708, 100 )
+shader_param/seed = 0
+shader_param/noise_type = 2
+shader_param/circle_type = 0
+shader_param/circle_add = 0.0
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 3.477
+shader_param/init_add = 0.0
+shader_param/noise_tile = 1.237
+shader_param/noise_mul = 1.637
+shader_param/cutoff = 0.76
+shader_param/NUM_OCTAVES = 5
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = SubResource( 1 )
+shader_param/scale = Vector2( 206.035, 130.494 )
+shader_param/seed = 0
+shader_param/noise_type = 3
+shader_param/circle_type = 0
+shader_param/circle_add = 0.454
+shader_param/additional_circle_add = -0.424
+shader_param/circle_mul = 1.699
+shader_param/init_add = 0.0
+shader_param/noise_tile = 1.237
+shader_param/noise_mul = 1.394
+shader_param/cutoff = 0.76
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 1 )
+shader_param/scale = Vector2( 227.67, 174.998 )
+shader_param/seed = 0
+shader_param/noise_type = 3
+shader_param/circle_type = 0
+shader_param/circle_add = 0.922
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 2.01
+shader_param/init_add = 0.391
+shader_param/noise_tile = 1.237
+shader_param/noise_mul = 0.491
+shader_param/cutoff = 0.3
+shader_param/NUM_OCTAVES = 6
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="Shader" id=15]
+code = "shader_type canvas_item;
+uniform vec2 scale =vec2(100.0,100.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+uniform float tunnel_roughness=0.5;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo2=0.5;
+
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st)
+{
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((st*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((st*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col*=fbm(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge(st,NUM_OCTAVES)*noise_mul;
+	col+=circle((st*2.0),0.0)*additional_circle_add;
+	return step(cutoff,col);
+}
+	
+void fragment()
+{
+    vec3 color = vec3(0.0);
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 sca=scale*0.01;
+	float ratio=scale.x/scale.y;
+	color=vec3(1.0,0.0,0.0);
+	/*
+	//dig difficulty
+	vec2 st=(UV-0.5)*2.0;
+	vec2 offset=vec2(float(seed));
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	color.g=(round(clamp(6.0-pow((round(col*12.0)),1.2),0.0,6.0))*8.0)/255.0;
+	
+	/*color=max(color,multiple_islands(UV_TEX,tex_size,10,0)*vec3(1.0,0.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,100)*vec3(1.0,8.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,200)*vec3(1.0,16.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,300)*vec3(1.0,24.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,400)*vec3(1.0,32.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,500)*vec3(1.0,40.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,600)*vec3(1.0,48.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,700)*vec3(1.0,56.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,800)*vec3(1.0,64.0/255.0,0.0));*/
+//float empty=multiple_islands(UV_TEX,tex_size,100,900);
+  //  COLOR= (1.0-empty)*vec4(color,1.0)+empty*vec4(0.0,0.0,0.0,0.0);
+
+	//random points
+//	vec2 pixel_UV=round(UV/TEXTURE_PIXEL_SIZE)*TEXTURE_PIXEL_SIZE;
+//	COLOR=vec4(0.0,4.0,0.0,1.0)*random_places(pixel_UV,10.0,3);
+/*
+	if(color.r==1.0 && color.g==0.0 && color.b==0.0)
+		if(enlarged_paths(UV,TEXTURE_PIXEL_SIZE,seed)==1.0)
+			color=vec3(0.0,0.0,0.0);
+	*/
+
+		//lumps
+	//color.rgb*=vec3(step(pow(fbm(UV*5.0*10.0+fbm(UV*100.0,2),2),15.0),0.0005));
+	
+	//river
+	float is_river=pow(turb((fbm(UV_s*10.0,4)*0.1+fbm(UV_s*1.0,4)*0.01+UV_s)*3.0,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.5);
+	float is_tunnel=pow(turb(noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3+fbm(UV05*test2*sca*1.0,4)*0.01+UV_s*test3*2.0),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+
+	//float is_cave=pow(turb(fbm(UV*test2*10.0,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2*2.0+float(seed),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_cave=is_tunnel*15.0;
+	is_cave+=float((fbm(UV_s*70.0+vec2(turb(UV_s*10.0,4),turb(UV_s*11.0,4))*1.095,1)-0.43*test3))*0.629*test4;
+	if(is_cave<-0.016*test5 || is_tunnel<0.006)color=vec3(0.0,0.0,0.0);
+	
+	if( is_river<0.0015)
+		color.r=((is_river/0.0015)+0.3);	
+	if(step(is_river,0.0001)>0.0)
+		color=vec3(1.0,240.0/255.0,0.0);
+	
+	//is_river=pow(turb(fbm(UV*10.0*test2,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2+float(seed),1)*fbm(UV*test2+2.0,1)*1.0,1.9);
+
+
+	color.rgb*=(1.0-island((UV-vec2(0.5,0.5))*10.0,vec2(float(seed))));
+	
+	if(color.r==0.0 && color.g==0.0 && color.b==0.0)
+		COLOR=vec4(color,0.0);
+	else
+		COLOR=vec4(color,1.0);
+	
+	COLOR=vec4(0.0);
+
+	is_tunnel=turb(vec2(0.0)+noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3/*+fbm(UV05*test2*sca*1.0,4)*0.01*/+UV*sca*test3),1);
+	is_tunnel=turb(UV*sca*noise_tile+fbm(UV05*sca,NUM_OCTAVES)*tunnel_roughness,1);
+	
+	
+	is_tunnel=pow(is_tunnel/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	/*float is_res=0.0;
+ 	for( int i =0;i<1;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed))));
+		ran_pos.y=random(vec2(float((i+1+seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+5)));
+		//is_res+=island((UV-vec2(0.5,0.5))*10.0;
+		is_res+=island((UV-ran_pos)*100.0/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	is_tunnel= min(1.0,is_res);
+//	is_tunnel= island(UV*sca*noise_tile,vec2(10.0));*/
+	COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff)),1.0);
+//	COLOR=vec4(vec3(island2((UV05)*noise_tile*sca-seedf)),1.0);
+	//COLOR=vec4(vec3(is_tunnel),1.0);
+	//COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+	/*	
+	COLOR=vec4(island(UV-0.5,vec2(float(seed))));
+	COLOR=vec4(circle((UV-0.5)*1.5,float(0.0)));
+	COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+		*/
+	//COLOR=vec4(vec3(         step(   turb(UV*30.1,3),0.3   )        ),1.0);
+	//COLOR=vec4(vec3(         island((UV-vec2(0.5))*1.5,vec2(0163323.5))       ),1.0);
+	//COLOR=vec4(vec3(      step(fbm(UV*10.0,8)   ,godotcon)      ),1.0);
+	//COLOR=vec4(vec3(   step( turb(UV*10.0,8) ,godotcon) ),1.0);
+	//COLOR=vec4(0.0);
+	//COLOR+= step(  turb(UV*10.0,7)  , testowo2);
+	
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=16]
+shader = SubResource( 15 )
+shader_param/scale = Vector2( 3854.24, 2951.96 )
+shader_param/seed = 0
+shader_param/noise_type = 3
+shader_param/circle_type = 0
+shader_param/circle_add = 0.922
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 2.01
+shader_param/init_add = 0.391
+shader_param/noise_tile = 0.133
+shader_param/noise_mul = -0.147
+shader_param/tunnel_roughness = 0.195
+shader_param/cutoff = 0.052
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 0.275
+shader_param/test2 = 2.734
+shader_param/test3 = 0.08
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="Shader" id=17]
+code = "shader_type canvas_item;
+uniform vec2 scale =vec2(100.0,100.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+uniform float tunnel_roughness=0.5;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo2=0.5;
+
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st,vec2 uv05)
+{
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((uv05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((uv05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col*=fbm(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge(st,NUM_OCTAVES)*noise_mul;
+	col+=circle((uv05*2.0),0.0)*additional_circle_add;
+	return step(cutoff,col);
+}
+	
+void fragment()
+{
+    vec3 color = vec3(0.0);
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 sca=scale*0.01;
+	float ratio=scale.x/scale.y;
+	color=vec3(1.0,0.0,0.0);
+	/*
+	//dig difficulty
+	vec2 st=(UV-0.5)*2.0;
+	vec2 offset=vec2(float(seed));
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	color.g=(round(clamp(6.0-pow((round(col*12.0)),1.2),0.0,6.0))*8.0)/255.0;
+	
+	/*color=max(color,multiple_islands(UV_TEX,tex_size,10,0)*vec3(1.0,0.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,100)*vec3(1.0,8.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,200)*vec3(1.0,16.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,300)*vec3(1.0,24.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,400)*vec3(1.0,32.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,500)*vec3(1.0,40.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,600)*vec3(1.0,48.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,700)*vec3(1.0,56.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,800)*vec3(1.0,64.0/255.0,0.0));*/
+//float empty=multiple_islands(UV_TEX,tex_size,100,900);
+  //  COLOR= (1.0-empty)*vec4(color,1.0)+empty*vec4(0.0,0.0,0.0,0.0);
+
+	//random points
+//	vec2 pixel_UV=round(UV/TEXTURE_PIXEL_SIZE)*TEXTURE_PIXEL_SIZE;
+//	COLOR=vec4(0.0,4.0,0.0,1.0)*random_places(pixel_UV,10.0,3);
+/*
+	if(color.r==1.0 && color.g==0.0 && color.b==0.0)
+		if(enlarged_paths(UV,TEXTURE_PIXEL_SIZE,seed)==1.0)
+			color=vec3(0.0,0.0,0.0);
+	*/
+
+		//lumps
+	//color.rgb*=vec3(step(pow(fbm(UV*5.0*10.0+fbm(UV*100.0,2),2),15.0),0.0005));
+	
+	//river
+	float is_river=pow(turb((fbm(UV_s*10.0,4)*0.1+fbm(UV_s*1.0,4)*0.01+UV_s)*3.0,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.5);
+	float is_tunnel=pow(turb(noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3+fbm(UV05*test2*sca*1.0,4)*0.01+UV_s*test3*2.0),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+
+	//float is_cave=pow(turb(fbm(UV*test2*10.0,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2*2.0+float(seed),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_cave=is_tunnel*15.0;
+	is_cave+=float((fbm(UV_s*70.0+vec2(turb(UV_s*10.0,4),turb(UV_s*11.0,4))*1.095,1)-0.43*test3))*0.629*test4;
+	if(is_cave<-0.016*test5 || is_tunnel<0.006)color=vec3(0.0,0.0,0.0);
+	
+	if( is_river<0.0015)
+		color.r=((is_river/0.0015)+0.3);	
+	if(step(is_river,0.0001)>0.0)
+		color=vec3(1.0,240.0/255.0,0.0);
+	
+	//is_river=pow(turb(fbm(UV*10.0*test2,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2+float(seed),1)*fbm(UV*test2+2.0,1)*1.0,1.9);
+
+
+	color.rgb*=(1.0-island((UV-vec2(0.5,0.5))*10.0,vec2(float(seed))));
+	
+	if(color.r==0.0 && color.g==0.0 && color.b==0.0)
+		COLOR=vec4(color,0.0);
+	else
+		COLOR=vec4(color,1.0);
+	
+	COLOR=vec4(0.0);
+
+	is_tunnel=turb(vec2(0.0)+noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3/*+fbm(UV05*test2*sca*1.0,4)*0.01*/+UV*sca*test3),1);
+	is_tunnel=turb((UV)*sca*noise_tile+seedf+fbm(UV05*sca,NUM_OCTAVES)*tunnel_roughness,1);
+	
+	
+	is_tunnel=pow(is_tunnel/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_res=0.0;
+ 	for( int i =0;i<int(sca.x*sca.y*0.1);++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed*30))));
+		ran_pos.y=random(vec2(float((i+1+seed*14)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+5)));
+		//is_res+=island((UV-vec2(0.5,0.5))*10.0;
+		is_res+=island((UV-ran_pos)*sca*0.4/(ran_scale*2.0),vec2(random(ran_pos)*3521.0));
+		//is_res+=island((UV-ran_pos)*100.0/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	
+	//COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff),min(1.0,is_res),0.0),1.0);
+	COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff)-min(1.0,is_res)),1.0);
+	//is_tunnel= island(UV05*sca*noise_tile,vec2(10.0));
+	//COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff)),1.0);
+	//COLOR=vec4(vec3(island2(UV05*2.0*sca-seedf,UV05)),1.0);
+	//COLOR=vec4(vec3(is_tunnel),1.0);
+	//COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+	/*	
+	COLOR=vec4(island(UV-0.5,vec2(float(seed))));
+	COLOR=vec4(circle((UV-0.5)*1.5,float(0.0)));
+	COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+		*/
+	//COLOR=vec4(vec3(         step(   turb(UV*30.1,3),0.3   )        ),1.0);
+	//COLOR=vec4(vec3(         island((UV-vec2(0.5))*1.5,vec2(0163323.5))       ),1.0);
+	//COLOR=vec4(vec3(      step(fbm(UV*10.0,8)   ,godotcon)      ),1.0);
+	//COLOR=vec4(vec3(   step( turb(UV*10.0,8) ,godotcon) ),1.0);
+	//COLOR=vec4(0.0);
+	//COLOR+= step(  turb(UV*10.0,7)  , testowo2);
+	
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=18]
+shader = SubResource( 17 )
+shader_param/scale = Vector2( 2048, 2048 )
+shader_param/seed = 0
+shader_param/noise_type = 3
+shader_param/circle_type = 0
+shader_param/circle_add = 0.92
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 2.0
+shader_param/init_add = 0.0
+shader_param/noise_tile = 0.133
+shader_param/noise_mul = 0.899
+shader_param/tunnel_roughness = 0.195
+shader_param/cutoff = 0.139
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="Shader" id=21]
+code = "shader_type canvas_item;
+uniform vec2 scale =vec2(100.0,100.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+uniform float tunnel_roughness=0.5;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo2=0.5;
+
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st,vec2 uv05)
+{
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((uv05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((uv05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col*=fbm(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge(st,NUM_OCTAVES)*noise_mul;
+	col+=circle((uv05*2.0),0.0)*additional_circle_add;
+	return step(cutoff,col);
+}
+	
+void fragment()
+{
+    vec3 color = vec3(0.0);
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 sca=scale*0.01;
+	float ratio=scale.x/scale.y;
+	color=vec3(1.0,0.0,0.0);
+	/*
+	//dig difficulty
+	vec2 st=(UV-0.5)*2.0;
+	vec2 offset=vec2(float(seed));
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	color.g=(round(clamp(6.0-pow((round(col*12.0)),1.2),0.0,6.0))*8.0)/255.0;
+	
+	/*color=max(color,multiple_islands(UV_TEX,tex_size,10,0)*vec3(1.0,0.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,100)*vec3(1.0,8.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,200)*vec3(1.0,16.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,300)*vec3(1.0,24.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,400)*vec3(1.0,32.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,500)*vec3(1.0,40.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,600)*vec3(1.0,48.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,700)*vec3(1.0,56.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,800)*vec3(1.0,64.0/255.0,0.0));*/
+//float empty=multiple_islands(UV_TEX,tex_size,100,900);
+  //  COLOR= (1.0-empty)*vec4(color,1.0)+empty*vec4(0.0,0.0,0.0,0.0);
+
+	//random points
+//	vec2 pixel_UV=round(UV/TEXTURE_PIXEL_SIZE)*TEXTURE_PIXEL_SIZE;
+//	COLOR=vec4(0.0,4.0,0.0,1.0)*random_places(pixel_UV,10.0,3);
+/*
+	if(color.r==1.0 && color.g==0.0 && color.b==0.0)
+		if(enlarged_paths(UV,TEXTURE_PIXEL_SIZE,seed)==1.0)
+			color=vec3(0.0,0.0,0.0);
+	*/
+
+		//lumps
+	//color.rgb*=vec3(step(pow(fbm(UV*5.0*10.0+fbm(UV*100.0,2),2),15.0),0.0005));
+	
+	//river
+	float is_river=pow(turb((fbm(UV_s*10.0,4)*0.1+fbm(UV_s*1.0,4)*0.01+UV_s)*3.0,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.5);
+	float is_tunnel=pow(turb(noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3+fbm(UV05*test2*sca*1.0,4)*0.01+UV_s*test3*2.0),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+
+	//float is_cave=pow(turb(fbm(UV*test2*10.0,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2*2.0+float(seed),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_cave=is_tunnel*15.0;
+	is_cave+=float((fbm(UV_s*70.0+vec2(turb(UV_s*10.0,4),turb(UV_s*11.0,4))*1.095,1)-0.43*test3))*0.629*test4;
+	if(is_cave<-0.016*test5 || is_tunnel<0.006)color=vec3(0.0,0.0,0.0);
+	
+	if( is_river<0.0015)
+		color.r=((is_river/0.0015)+0.3);	
+	if(step(is_river,0.0001)>0.0)
+		color=vec3(1.0,240.0/255.0,0.0);
+	
+	//is_river=pow(turb(fbm(UV*10.0*test2,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2+float(seed),1)*fbm(UV*test2+2.0,1)*1.0,1.9);
+
+
+	color.rgb*=(1.0-island((UV-vec2(0.5,0.5))*10.0,vec2(float(seed))));
+	
+	if(color.r==0.0 && color.g==0.0 && color.b==0.0)
+		COLOR=vec4(color,0.0);
+	else
+		COLOR=vec4(color,1.0);
+	
+	COLOR=vec4(0.0);
+
+	is_tunnel=turb(vec2(0.0)+noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3/*+fbm(UV05*test2*sca*1.0,4)*0.01*/+UV*sca*test3),1);
+	is_tunnel=turb((UV)*sca*noise_tile+seedf+fbm(UV05*sca,NUM_OCTAVES)*tunnel_roughness,1);
+	
+	
+	is_tunnel=pow(is_tunnel/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_res=0.0;
+ 	for( int i =0;i<int(sca.x*sca.y*0.1);++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed*30))));
+		ran_pos.y=random(vec2(float((i+1+seed*14)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+5)));
+		//is_res+=island((UV-vec2(0.5,0.5))*10.0;
+		is_res+=island((UV-ran_pos)*sca*0.4/(ran_scale*2.0),vec2(random(ran_pos)*3521.0));
+		//is_res+=island((UV-ran_pos)*100.0/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	
+	//COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff),min(1.0,is_res),0.0),1.0);
+	COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff)-min(1.0,is_res)),1.0);
+	//is_tunnel= island(UV05*sca*noise_tile,vec2(10.0));
+	//COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff)),1.0);
+	//COLOR=vec4(vec3(island2(UV05*2.0*sca-seedf,UV05)),1.0);
+	//COLOR=vec4(vec3(is_tunnel),1.0);
+	//COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+	/*	
+	COLOR=vec4(island(UV-0.5,vec2(float(seed))));
+	COLOR=vec4(circle((UV-0.5)*1.5,float(0.0)));
+	COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+		*/
+	//COLOR=vec4(vec3(         step(   turb(UV*30.1,3),0.3   )        ),1.0);
+	//COLOR=vec4(vec3(         island((UV-vec2(0.5))*1.5,vec2(0163323.5))       ),1.0);
+	//COLOR=vec4(vec3(      step(fbm(UV*10.0,8)   ,godotcon)      ),1.0);
+	//COLOR=vec4(vec3(   step( turb(UV*10.0,8) ,godotcon) ),1.0);
+	//COLOR=vec4(0.0);
+	//COLOR+= step(  turb(UV*10.0,7)  , testowo2);
+	
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=22]
+shader = SubResource( 21 )
+shader_param/scale = Vector2( 2048, 2048 )
+shader_param/seed = 0
+shader_param/noise_type = 3
+shader_param/circle_type = 0
+shader_param/circle_add = 0.92
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 2.0
+shader_param/init_add = 0.0
+shader_param/noise_tile = 0.26
+shader_param/noise_mul = 0.899
+shader_param/tunnel_roughness = 0.643
+shader_param/cutoff = 0.05
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="Shader" id=19]
+code = "shader_type canvas_item;
+uniform vec2 scale =vec2(100.0,100.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+uniform float tunnel_roughness=0.5;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo2=0.5;
+
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st,vec2 offset)
+{
+	float col=circle((st*2.0),circle_add);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+	
+void fragment()
+{
+    vec3 color = vec3(0.0);
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 sca=scale*0.01;
+	float ratio=scale.x/scale.y;
+	color=vec3(1.0,0.0,0.0);
+	/*
+	//dig difficulty
+	vec2 st=(UV-0.5)*2.0;
+	vec2 offset=vec2(float(seed));
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	color.g=(round(clamp(6.0-pow((round(col*12.0)),1.2),0.0,6.0))*8.0)/255.0;
+	
+	/*color=max(color,multiple_islands(UV_TEX,tex_size,10,0)*vec3(1.0,0.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,100)*vec3(1.0,8.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,200)*vec3(1.0,16.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,300)*vec3(1.0,24.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,400)*vec3(1.0,32.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,500)*vec3(1.0,40.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,600)*vec3(1.0,48.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,700)*vec3(1.0,56.0/255.0,0.0));
+	color=max(color,multiple_islands(UV_TEX,tex_size,10,800)*vec3(1.0,64.0/255.0,0.0));*/
+//float empty=multiple_islands(UV_TEX,tex_size,100,900);
+  //  COLOR= (1.0-empty)*vec4(color,1.0)+empty*vec4(0.0,0.0,0.0,0.0);
+
+	//random points
+//	vec2 pixel_UV=round(UV/TEXTURE_PIXEL_SIZE)*TEXTURE_PIXEL_SIZE;
+//	COLOR=vec4(0.0,4.0,0.0,1.0)*random_places(pixel_UV,10.0,3);
+/*
+	if(color.r==1.0 && color.g==0.0 && color.b==0.0)
+		if(enlarged_paths(UV,TEXTURE_PIXEL_SIZE,seed)==1.0)
+			color=vec3(0.0,0.0,0.0);
+	*/
+
+		//lumps
+	//color.rgb*=vec3(step(pow(fbm(UV*5.0*10.0+fbm(UV*100.0,2),2),15.0),0.0005));
+	
+	//river
+	float is_river=pow(turb((fbm(UV_s*10.0,4)*0.1+fbm(UV_s*1.0,4)*0.01+UV_s)*3.0,1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.5);
+	float is_tunnel=pow(turb(noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3+fbm(UV05*test2*sca*1.0,4)*0.01+UV_s*test3*2.0),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+
+	//float is_cave=pow(turb(fbm(UV*test2*10.0,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2*2.0+float(seed),1)/**fbm(UV*4.0+2.0,1)*1.0*/,1.9);
+	float is_cave=is_tunnel*15.0;
+	is_cave+=float((fbm(UV_s*70.0+vec2(turb(UV_s*10.0,4),turb(UV_s*11.0,4))*1.095,1)-0.43*test3))*0.629*test4;
+	if(is_cave<-0.016*test5 || is_tunnel<0.006)color=vec3(0.0,0.0,0.0);
+	
+	if( is_river<0.0015)
+		color.r=((is_river/0.0015)+0.3);	
+	if(step(is_river,0.0001)>0.0)
+		color=vec3(1.0,240.0/255.0,0.0);
+	
+	//is_river=pow(turb(fbm(UV*10.0*test2,4)*0.3+fbm(UV*100.0*test2,4)*0.01+UV*test2+float(seed),1)*fbm(UV*test2+2.0,1)*1.0,1.9);
+
+
+	color.rgb*=(1.0-island((UV-vec2(0.5,0.5))*10.0,vec2(float(seed))));
+	
+	if(color.r==0.0 && color.g==0.0 && color.b==0.0)
+		COLOR=vec4(color,0.0);
+	else
+		COLOR=vec4(color,1.0);
+	
+	COLOR=vec4(0.0);
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col*=fbm((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	col+=circle((UV05*2.0),0.0)*additional_circle_add;
+	col=step(cutoff,col);
+	is_tunnel=turb(vec2(seedf*23.0)+noise_tile*(fbm(UV05*sca,NUM_OCTAVES)*0.3/*+fbm(UV05*test2*sca*1.0,4)*0.01*/+UV*sca),1);
+	is_tunnel=turb(UV*sca*noise_tile+fbm(UV05*sca,NUM_OCTAVES)*tunnel_roughness,1);
+	is_tunnel=pow(is_tunnel*fbm(UV*4.0+2.0,1)*50.0,1.9);
+
+	COLOR=vec4(vec3(step((is_tunnel)*100.0,cutoff)),1.0);
+	//COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+	/*	
+	COLOR=vec4(island(UV-0.5,vec2(float(seed))));
+	COLOR=vec4(circle((UV-0.5)*1.5,float(0.0)));
+	COLOR=vec4(island2(UV-0.5,vec2(float(seed))));
+		*/
+	//COLOR=vec4(vec3(         step(   turb(UV*30.1,3),0.3   )        ),1.0);
+	//COLOR=vec4(vec3(         island((UV-vec2(0.5))*1.5,vec2(0163323.5))       ),1.0);
+	//COLOR=vec4(vec3(      step(fbm(UV*10.0,8)   ,godotcon)      ),1.0);
+	//COLOR=vec4(vec3(   step( turb(UV*10.0,8) ,godotcon) ),1.0);
+	//COLOR=vec4(0.0);
+	//COLOR+= step(  turb(UV*10.0,7)  , testowo2);
+	
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=20]
+shader = SubResource( 19 )
+shader_param/scale = Vector2( 2219.29, 2166.14 )
+shader_param/seed = 254
+shader_param/noise_type = 3
+shader_param/circle_type = 0
+shader_param/circle_add = 0.922
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 2.01
+shader_param/init_add = 0.391
+shader_param/noise_tile = 0.133
+shader_param/noise_mul = -0.147
+shader_param/tunnel_roughness = 0.195
+shader_param/cutoff = 0.052
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 0.275
+shader_param/test2 = 2.734
+shader_param/test3 = 0.08
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo2 = 0.5
+
+[sub_resource type="Shader" id=12]
+code = "shader_type canvas_item;
+uniform float range = 3.0;
+void fragment()
+{
+	
+	
+	vec4 my_color=texture(TEXTURE,UV);
+	COLOR=my_color;
+//	bool not_important=my_color.g==0.0;
+	
+//	COLOR=my_color;
+
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&length(col)>0.0)
+				count+=1.0;
+		}
+	if(count>1.0)COLOR=vec4(vec3(1.0),1.0);
+
+	
+}
+"
+
+[sub_resource type="ShaderMaterial" id=13]
+shader = SubResource( 12 )
+shader_param/range = 3.484
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 1 )
+shader_param/scale = Vector2( 1000, 500 )
+shader_param/seed = 0
+shader_param/noise_type = 3
+shader_param/circle_type = 0
+shader_param/circle_add = 0.922
+shader_param/additional_circle_add = 0.0
+shader_param/circle_mul = 2.01
+shader_param/init_add = 0.391
+shader_param/noise_tile = 0.813
+shader_param/noise_mul = 0.846
+shader_param/cutoff = 0.569
+shader_param/NUM_OCTAVES = 6
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo = 0.5
+shader_param/testowo2 = 0.5
+
+[node name="presets" type="TextureRect"]
+script = SubResource( 14 )
+
+[node name="fill_island" type="Sprite2D" parent="."]
+material = SubResource( 3 )
+scale = Vector2( 203.767, 188.593 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="tunel" type="Line2D" parent="."]
+visible = false
+material = SubResource( 9 )
+position = Vector2( 917.581, 267.475 )
+points = PackedVector2Array( 352.068, -208.994, 149.028, -121.441, -37.2404, -91.0714, -183.006, -65.4998, -340.539, 3.94522, -533.639, -57.4409, -479.799, -169.141, 335.87, -474.742, 1242.8, -446.169, 1631.19, -224.991, 1736.83, 176.491, 1656.59, 481.932, 1707.2, 824.151, 2149.56, 1232.64, 2595.9, 1224.48, 2896.94, 1449.99, 2963.91, 1516.21 )
+width = 50.0
+width_curve = SubResource( 10 )
+default_color = Color( 1, 1, 1, 1 )
+texture = ExtResource( 2 )
+texture_mode = 1
+script = SubResource( 11 )
+
+[node name="resource1" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 2 )
+scale = Vector2( 168.721, 151.169 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="resource2" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 4 )
+scale = Vector2( 295.708, 100 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="resource3" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 5 )
+scale = Vector2( 206.035, 130.494 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="maze_like" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 6 )
+scale = Vector2( 227.67, 174.998 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="bedrock_boundunaries" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 16 )
+scale = Vector2( 3854.24, 2951.96 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="bedrock_boundunaries2" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 18 )
+scale = Vector2( 2048, 2048 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="bedrock_boundunaries3" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 18 )
+scale = Vector2( 2048, 2048 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="lumen_swirls2" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 22 )
+scale = Vector2( 2048, 2048 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="lumen_swirls" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 20 )
+scale = Vector2( 2219.29, 2166.14 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="tunel2" type="Line2D" parent="."]
+visible = false
+material = SubResource( 9 )
+position = Vector2( 1756, 1068.07 )
+points = PackedVector2Array( 720.44, 1478.67, 345.961, 1117.65, 564.402, 796.563, 137.419, 332.81, 81.3586, 265.538, -15.0788, 260.241, -90.1877, 252.527, -149.585, 123.362, -340.539, 3.94522, -437.441, -39.7332, -395.441, -275.067 )
+width = 50.0
+width_curve = SubResource( 10 )
+default_color = Color( 1, 1, 1, 1 )
+texture = ExtResource( 2 )
+texture_mode = 1
+script = SubResource( 11 )
+
+[node name="floor1" parent="." instance=ExtResource( 4 )]
+visible = false
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+visible = false
+material = SubResource( 13 )
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+size = Vector2( 1000, 500 )
+handle_input_locally = false
+render_target_update_mode = 0
+
+[node name="maze_like2" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource( 7 )
+scale = Vector2( 1000, 500 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )

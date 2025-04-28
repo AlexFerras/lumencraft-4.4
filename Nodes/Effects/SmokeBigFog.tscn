@@ -1,0 +1,72 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Effects/SmokeBigFog.gdshader" type="Shader" id=2]
+
+[sub_resource type="ShaderMaterial" id=20]
+shader = ExtResource( 2 )
+shader_param/smoke_OCTAVES = 6
+shader_param/smoke_speed = 2.0
+shader_param/smoke_variation_speed = 2.0
+shader_param/smoke_variation_mul = 1.0
+shader_param/smoke_treshold = -0.082
+shader_param/smoke_color = Plane( 0.828, 0.5, 0, 0.3 )
+shader_param/global_transform = Transform2D( 2832.2, 0, 0, 1428.36, -678.831, -201.92 )
+
+[sub_resource type="GDScript" id=21]
+script/source = "extends Sprite2D
+tool
+
+func _ready() -> void:
+	if Music.is_switch_build():
+		queue_free()
+
+func get_canvas_transform() -> Transform2D:
+	if Engine.is_editor_hint():
+		return get_viewport().global_canvas_transform
+	else:
+		return get_viewport().canvas_transform
+
+
+func _process(delta):
+	var trans := get_canvas_transform()
+	var camera_scale := trans.get_scale()
+	var scale_inv = Vector2.ONE / camera_scale
+	
+
+
+	if Engine.is_editor_hint():
+		self.scale=(get_viewport().size ) * scale_inv
+	else:
+		self.scale=(get_viewport().get_visible_rect().size ) * scale_inv
+
+#	if ProjectSettings.get_setting(\"display/window/stretch/aspect\") == \"keep\":
+#		self.scale = Const.RESOLUTION * scale_inv
+#	else:
+#		self.scale=get_viewport().size * scale_inv
+	
+	global_position= (-trans.origin) * scale_inv
+	material.set_shader_parameter(\"global_transform\", get_global_transform())
+
+
+	
+	
+	
+	
+	
+	
+"
+
+[node name="Smoke" type="Node2D"]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Smoke" type="Sprite2D" parent="."]
+material = SubResource( 20 )
+position = Vector2( -678.831, -201.92 )
+scale = Vector2( 2832.2, 1428.36 )
+z_index = 999
+texture = ExtResource( 1 )
+centered = false
+script = SubResource( 21 )

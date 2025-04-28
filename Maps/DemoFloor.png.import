@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://n1js2hn718sd"
+path="res://.godot/imported/DemoFloor.png-14f3e199e7f64b60b4f5858cfbbcb8d6.image"
+
+[deps]
+
+source_file="res://Maps/DemoFloor.png"
+dest_files=["res://.godot/imported/DemoFloor.png-14f3e199e7f64b60b4f5858cfbbcb8d6.image"]
+
+[params]
+

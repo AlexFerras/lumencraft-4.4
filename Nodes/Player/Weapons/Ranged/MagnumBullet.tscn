@@ -1,0 +1,119 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Nodes/Effects/trail.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Effects/trail.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=9]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Player/Weapons/Ranged/PlayerBullet.gd\"
+var physics_frame=0
+func _ready() -> void:
+	Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/gun_revolver_pistol_shot\"), self)
+
+func _physics_process(delta: float) -> void:
+	physics_frame+=1
+	if physics_frame==2:
+		$first_frame_shape.queue_free()
+
+	var ray := Utils.game.map.pixel_map.rayCastQTDistance(global_position,  dir, speed * delta, Player.get_weapon_mask(get_meta(\"data\")))
+	if ray:
+		global_position = ray.hit_position
+		Utils.explode_circle(ray.hit_position, 3, 600, 3, 3, -1)
+		Utils.play_sample(Utils.get_material_hit_sound(ray.hit_position), self)
+		queue_destroy()
+	else:
+		var dist=speed * delta
+		distance_traveled+=dist
+		if distance_traveled>=max_distance:
+			Utils.get_audio_manager(\"bullet_hit_dirt\").play(global_position)
+			destroy(false)
+		else:
+			global_position += dir * dist
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 8, 2 )
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 6, 6 )
+
+[sub_resource type="Curve" id=3]
+_data = [ Vector2( 0, 0.205521 ), 0.0, 0.0858895, 0, 1, Vector2( 1, 0.291411 ), 0.0858895, 0.0, 1, 0 ]
+
+[sub_resource type="Gradient" id=4]
+offsets = PackedFloat32Array( 0, 0.986133, 1 )
+colors = PackedColorArray( 0, 0, 0, 0, 1.24, 0.53, 0, 1, 4.18, 1.19, 0.48, 1 )
+
+[sub_resource type="Gradient" id=5]
+offsets = PackedFloat32Array( 0, 0.178611, 0.841294, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 1, 1, 1, 0.105882, 0.705882, 0.709804, 0.662745, 0.482353, 0.145098, 0.145098, 0.145098, 0.466667 )
+
+[node name="MagnumBullet" type="Area2D"]
+z_index = 700
+z_as_relative = false
+collision_mask = 33
+script = SubResource( 1 )
+speed = 800.0
+max_distance = 250.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -7.26639, -2.98023e-08 )
+shape = SubResource( 2 )
+
+[node name="first_frame_shape" type="CollisionShape2D" parent="."]
+position = Vector2( -7, 0 )
+shape = SubResource( 6 )
+
+[node name="Smoketrail" type="Line2D" parent="."]
+z_index = 700
+z_as_relative = false
+points = PackedVector2Array( 0, -8.64001, 0, 0 )
+width = 5.0
+width_curve = SubResource( 3 )
+gradient = SubResource( 4 )
+texture = ExtResource( 2 )
+texture_mode = 2
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+script = ExtResource( 3 )
+max_random = 0.013
+min_distance = 15
+fadeout_random = Vector2( 0.1, 0.3 )
+
+[node name="ZIndexer" parent="Smoketrail" instance=ExtResource( 4 )]
+z_index = 700
+
+[node name="Smoketrail2" type="Line2D" parent="."]
+z_index = 700
+z_as_relative = false
+points = PackedVector2Array( -7.71467, -3.89019, 0, 0 )
+width = 5.0
+width_curve = SubResource( 3 )
+gradient = SubResource( 5 )
+texture = ExtResource( 2 )
+texture_mode = 2
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+script = ExtResource( 3 )
+gravity = Vector2( -0.017858, -0.00900509 )
+random_gravity = true
+die_width_increase = 0.5
+olding = 4.537
+max_random = 0.06
+min_distance = 20
+fadeout_random = Vector2( 0.641, 2.125 )
+
+[node name="ZIndexer" parent="Smoketrail2" instance=ExtResource( 4 )]
+z_index = 700
+
+[node name="BulletLight" type="Node2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+script = ExtResource( 9 )
+texture = ExtResource( 8 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 4 )]
+z_index = 700

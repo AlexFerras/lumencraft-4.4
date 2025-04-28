@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/Objects/AlienNest/BloodFX3.png" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Node2D
+
+
+func _ready() -> void:
+	get_child(0).emitting = true
+	get_child(0).scale = Vector2.ONE * randf_range(0.5,1.0) * Vector2(randi()%2 * 2 - 1, 1)
+	get_tree().create_timer(1.0).connect(\"timeout\", Callable(self, \"queue_free\"))
+	get_child(0).modulate = Color.from_hsv(1,0,randf_range(0.3, 0.7))
+"
+
+[sub_resource type="CanvasItemMaterial" id=7]
+particles_animation = true
+particles_anim_h_frames = 4
+particles_anim_v_frames = 3
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id=1]
+offsets = PackedFloat32Array( 0, 0.239796, 1 )
+colors = PackedColorArray( 1, 1, 1, 0.498039, 1, 1, 1, 0.498039, 1, 1, 1, 0.117647 )
+
+[sub_resource type="GradientTexture2D" id=2]
+gradient = SubResource( 1 )
+width = 128
+
+[sub_resource type="ParticleProcessMaterial" id=3]
+flag_align_y = true
+flag_disable_z = true
+direction = Vector3( -1, 0, 0 )
+spread = 60.0
+gravity = Vector3( 0, 0, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 200.0
+scale = 0.13
+color_ramp = SubResource( 2 )
+anim_speed = 3.0
+
+[node name="BulletSpark" type="Node2D"]
+script = SubResource( 6 )
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+material = SubResource( 7 )
+position = Vector2( 20, 0 )
+rotation = -1.5708
+emitting = false
+amount = 1
+one_shot = true
+fract_delta = false
+process_material = SubResource( 3 )
+texture = ExtResource( 1 )

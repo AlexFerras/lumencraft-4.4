@@ -1,0 +1,104 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/Tools/Hook.png" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+const SPEED = 300
+
+@onready var line_point: Marker2D = $LinePoint
+
+var player: Player
+var dir: Vector2
+var attached: RigidBody2D
+var attach_offset: Vector2
+var attach_angle: float
+var attach_start_rotation: float
+var target_length: float
+
+func _ready() -> void:
+	dir = Vector2.RIGHT.rotated(rotation)
+	Utils.play_sample(preload(\"res://SFX/Weapons/Hook/468854__christianand__29-disparo-arpon.wav\"), self)
+
+func set_player(p: Player):
+	player = p
+
+func _physics_process(delta: float) -> void:
+	if not player.is_shooting():
+		queue_free()
+		return
+	
+	if attached:
+		if not is_instance_valid(attached):
+			attached = null
+			queue_free()
+			return
+		
+		update()
+		var dist := global_position.distance_to(player.global_position)
+		if dist > target_length:
+			var last_pos := attached.global_position
+			
+			var target := player.global_position + player.global_position.direction_to(global_position) * target_length
+			var move: Vector2 = lerp(global_position, target, 0.1) - global_position
+			attached.apply_impulse(move, global_position - attached.global_position)
+			global_position = attached.global_position + attach_offset.rotated(attached.global_rotation - attach_angle)
+			rotation = attach_start_rotation + (attached.global_rotation - attach_angle)
+			
+			if last_pos.distance_squared_to(attached.global_position) < 100:
+				player.apply_central_impulse(-move * 5)
+		
+		return
+	
+	var ray := Utils.game.map.pixel_map.rayCastQTDistance(global_position, dir, SPEED * delta, Utils.walkable_collision_mask)
+	if ray:
+		on_hit()
+	else:
+		global_position += dir * SPEED * delta
+		if global_position.distance_squared_to(player.global_position) > 10000:
+			queue_free()
+		
+		update()
+
+func on_hit():
+	queue_free()
+
+func _draw() -> void:
+	draw_line(to_local(player.global_position), line_point.position, Color.GOLDENROD, 1)
+
+func body_enter(body: Node2D) -> void:
+	if attached:
+		return
+	
+	if body is RigidBody2D and not body is Player:
+		Utils.play_sample(preload(\"res://SFX/Weapons/Hook/541975__16bitstudios__grappling-hook.wav\"), self)
+		attached = body
+		target_length = global_position.distance_to(player.global_position)
+		attach_offset = (global_position - body.global_position).normalized() * body.radius
+		global_position = body.global_position + attach_offset
+		attach_angle = body.global_rotation
+		attach_start_rotation = rotation
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 7, 6 )
+
+[node name="Hook" type="Area2D"]
+position = Vector2( -0.15731, 0.0393295 )
+script = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -5.34269, 0 )
+shape = SubResource( 2 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( -5.34269, 0 )
+scale = Vector2( 0.25, 0.25 )
+z_index = 30
+texture = ExtResource( 1 )
+
+[node name="LinePoint" type="Marker2D" parent="."]
+position = Vector2( -11.351, 0 )
+
+[connection signal="body_entered" from="." to="." method="body_enter"]

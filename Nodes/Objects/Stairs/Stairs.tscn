@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Objects/Stairs/Stairs.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Objects/Stairs/Stairs.gd" type="Script" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 15, 15 )
+
+[node name="Stairs" type="Area2D" groups=[
+"stairs",
+]]
+z_index = -1
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( 15, 0 )
+texture = ExtResource( 1 )
+hframes = 2
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = -17.6389
+offset_top = -31.3405
+offset_right = 22.3611
+offset_bottom = -17.3405
+text = "Space"
+__meta__ = {
+"_edit_use_anchors_": false
+}

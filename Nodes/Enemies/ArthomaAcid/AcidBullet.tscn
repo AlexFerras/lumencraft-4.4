@@ -1,0 +1,90 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Enemies/ArthomaAcid/AcidBullet.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Enemies/ArthomaAcid/BoubleAnim2.png" type="Texture2D" id=3]
+
+[sub_resource type="CircleShape2D" id=9]
+radius = 1.0
+
+[sub_resource type="CanvasItemMaterial" id=3]
+particles_animation = true
+particles_anim_h_frames = 5
+particles_anim_v_frames = 2
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id=4]
+offsets = PackedFloat32Array( 0, 0.0835267, 0.587007, 1 )
+colors = PackedColorArray( 0.161111, 0.345703, 0.102117, 1, 0.222368, 0.458984, 0.152774, 0.870588, 0.0786625, 0.236328, 0.0786625, 0.439216, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture2D" id=5]
+gradient = SubResource( 4 )
+width = 256
+
+[sub_resource type="Curve" id=6]
+_data = [ Vector2( 0, 0.490909 ), 0.0, 1.4, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=7]
+curve = SubResource( 6 )
+
+[sub_resource type="ParticleProcessMaterial" id=8]
+flag_disable_z = true
+direction = Vector3( -1, 0, 0 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 5.0
+initial_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+angle = 720.0
+angle_random = 1.0
+scale = 0.2
+scale_random = 0.1
+scale_curve = SubResource( 7 )
+color_ramp = SubResource( 5 )
+hue_variation = 0.24
+hue_variation_random = 1.0
+anim_speed = 2.0
+
+[node name="AcidBullet" type="Area2D"]
+z_index = 700
+z_as_relative = false
+collision_layer = 8
+collision_mask = 3074
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 9 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 700
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+material = SubResource( 3 )
+amount = 128
+lifetime = 2.0
+local_coords = false
+draw_order = 1
+process_material = SubResource( 8 )
+texture = ExtResource( 3 )
+
+[node name="Particles2D2" type="CPUParticles2D" parent="."]
+visible = false
+material = SubResource( 3 )
+amount = 128
+lifetime = 2.0
+local_coords = false
+texture = ExtResource( 3 )
+direction = Vector2( -1, 0 )
+spread = 10.0
+gravity = Vector2( 0, 0 )
+initial_velocity_random = 1.0
+angle = 720.0
+angle_random = 1.0
+scale_amount = 0.2
+scale_amount_random = 0.1
+scale_amount_curve = SubResource( 6 )
+color_ramp = SubResource( 4 )
+hue_variation = 0.24
+hue_variation_random = 1.0
+anim_speed = 1.0

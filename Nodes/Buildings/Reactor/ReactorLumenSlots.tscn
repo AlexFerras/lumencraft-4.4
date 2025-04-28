@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/Unique/LumenChamber.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var core: BaseBuilding
+var count := 3
+var powered: int
+
+func _ready() -> void:
+	core = get_parent()
+	assert(core)
+	
+	for i in 3 - count:
+		$Chambers.get_child(i).free()
+	
+	for i in count:
+		if powered & (1 << i):
+			enable_chamber($Chambers.get_child(i))
+	
+	for chamber in $Chambers.get_children():
+		chamber.connect(\"body_entered\", Callable(self, \"chamber_enter\").bind(chamber))
+
+func chamber_enter(body: Node2D, chamber: Node2D):
+	if body.is_in_group(\"lumen_chunks\"):
+		powered |= (1 << chamber.get_index())
+		enable_chamber(chamber)
+		core.chunk_delivered = true
+		body.queue_free()
+
+func enable_chamber(chamber: Node2D):
+	chamber.get_node(\"Sprite2D\").frame = 0
+	chamber.get_node(\"Sprite2D/LumenCristal\").show()
+	chamber.get_node(\"Sprite2D/LightSprite\").show()
+	chamber.get_node(\"CollisionShape2D\").queue_free()
+
+func get_data() -> Dictionary:
+	return {count = count, powered = powered}
+"
+
+[node name="ReactorLumenSlots" type="Node2D" groups=["dont_save"]]
+script = SubResource( 1 )
+
+[node name="Chambers" type="Node2D" parent="."]
+modulate = Color( 0.52549, 0.541176, 0.564706, 1 )
+position = Vector2( 1, 17 )
+
+[node name="LumenChamber" parent="Chambers" instance=ExtResource( 1 )]
+position = Vector2( 35, -17 )
+z_index = 800
+
+[node name="LumenChamber2" parent="Chambers" instance=ExtResource( 1 )]
+position = Vector2( 0, 20 )
+rotation = 1.56519
+z_index = 800
+
+[node name="LumenChamber3" parent="Chambers" instance=ExtResource( 1 )]
+position = Vector2( -37, -17 )
+rotation = -3.12305
+z_index = 800

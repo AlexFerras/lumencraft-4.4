@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Objects/Helper/ItemPlacer.gd\"
+tool
+@export var scene: PackedScene
+@export var amount: int = 1
+
+func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		return
+	for i in amount:
+		items.append(scene)
+"
+
+[node name="EditorPlacer" type="Node2D"]
+script = SubResource( 1 )

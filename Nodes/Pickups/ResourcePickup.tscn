@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+@export var type: int # (int, \"Metal\", \"Lumen\")
+@export var amount: int = 1
+@export var radius: float = 4
+
+func _ready() -> void:
+	for i in amount:
+		Utils.game.map.pickables.spawn_premium_pickable_nice(global_position + Utils.random_point_in_circle(radius), type, Vector2())
+	queue_free()
+"
+
+[node name="ResourcePickup" type="Node2D"]
+script = SubResource( 1 )

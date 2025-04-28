@@ -1,0 +1,626 @@
+[gd_scene load_steps=106 format=2]
+
+[ext_resource path="res://Nodes/Effects/splash_blood_tentacle_lr/splash_blood_tentacle_lr.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Objects/AlienNest/Alien_building_T003_Death_.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Effects/splash_blood_expolosion_lr/splash_blood_expolosion_lr.png" type="Texture2D" id=3]
+[ext_resource path="res://SFX/alien_object2.ogg" type="AudioStream" id=4]
+[ext_resource path="res://Nodes/Objects/AlienNest/Alien_building_T003.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Effects/splash_blood_nest_lr/splash_blood_nest_t002_0000.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Objects/AlienNest/Alien_building_T003shadow.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Objects/Deco/UniversalDeco/UniversalDeco.gd" type="Script" id=9]
+
+[sub_resource type="AtlasTexture" id=16]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 0, 0, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=17]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 650, 0, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=18]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 1300, 0, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=19]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 1950, 0, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=20]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 2600, 0, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=21]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 0, 630, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=22]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 650, 630, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=23]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 1300, 630, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=24]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 1950, 630, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=25]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 2600, 630, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=26]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 0, 1260, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=27]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 650, 1260, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=28]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 1300, 1260, 650, 630 )
+
+[sub_resource type="AtlasTexture" id=29]
+flags = 5
+atlas = ExtResource( 6 )
+region = Rect2( 1950, 1260, 650, 630 )
+
+[sub_resource type="SpriteFrames" id=93]
+animations = [ {
+"frames": [ SubResource( 16 ), SubResource( 17 ), SubResource( 18 ), SubResource( 19 ), SubResource( 20 ), SubResource( 21 ), SubResource( 22 ), SubResource( 23 ), SubResource( 24 ), SubResource( 25 ), SubResource( 26 ), SubResource( 27 ), SubResource( 28 ), SubResource( 29 ) ],
+"loop": true,
+"name": "run",
+"speed": 5.0
+} ]
+
+[sub_resource type="AtlasTexture" id=30]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=31]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 292, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=32]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 584, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=33]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 876, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=34]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1168, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=35]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1460, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=36]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1752, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=37]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 2044, 0, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=38]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 0, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=39]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 292, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=40]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 584, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=41]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 876, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=42]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1168, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=43]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1460, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=44]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1752, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=45]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 2044, 230, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=46]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 0, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=47]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 292, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=48]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 584, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=49]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 876, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=50]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1168, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=51]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1460, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=52]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1752, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=53]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 2044, 460, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=54]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 0, 690, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=55]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 292, 690, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=56]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 584, 690, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=57]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 876, 690, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=58]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1168, 690, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=59]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1460, 690, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=60]
+flags = 5
+atlas = ExtResource( 3 )
+region = Rect2( 1752, 690, 292, 230 )
+
+[sub_resource type="AtlasTexture" id=62]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 0, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=63]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 230, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=64]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 460, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=65]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 690, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=66]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 920, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=67]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1150, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=68]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1380, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=69]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1610, 0, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=94]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 0, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=95]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 230, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=72]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 460, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=73]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 690, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=74]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 920, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=75]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1150, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=76]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1380, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=77]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1610, 238, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=78]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 0, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=79]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 230, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=80]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 460, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=81]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 690, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=82]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 920, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=83]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1150, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=84]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1380, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=85]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1610, 476, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=86]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 0, 714, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=87]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 230, 714, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=88]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 460, 714, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=89]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 690, 714, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=90]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 920, 714, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=91]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1150, 714, 230, 238 )
+
+[sub_resource type="AtlasTexture" id=92]
+flags = 5
+atlas = ExtResource( 7 )
+region = Rect2( 1380, 714, 230, 238 )
+
+[sub_resource type="SpriteFrames" id=96]
+animations = [ {
+"frames": [ SubResource( 30 ), SubResource( 31 ), SubResource( 32 ), SubResource( 33 ), SubResource( 34 ), SubResource( 35 ), SubResource( 36 ), SubResource( 37 ), SubResource( 38 ), SubResource( 39 ), SubResource( 40 ), SubResource( 41 ), SubResource( 42 ), SubResource( 43 ), SubResource( 44 ), SubResource( 45 ), SubResource( 46 ), SubResource( 47 ), SubResource( 48 ), SubResource( 49 ), SubResource( 50 ), SubResource( 51 ), SubResource( 52 ), SubResource( 53 ), SubResource( 54 ), SubResource( 55 ), SubResource( 56 ), SubResource( 57 ), SubResource( 58 ), SubResource( 59 ), SubResource( 60 ) ],
+"loop": false,
+"name": "Explode_Blood",
+"speed": 5.0
+}, {
+"frames": [ SubResource( 62 ), SubResource( 63 ), SubResource( 64 ), SubResource( 65 ), SubResource( 66 ), SubResource( 67 ), SubResource( 68 ), SubResource( 69 ), SubResource( 94 ), SubResource( 95 ), SubResource( 72 ), SubResource( 73 ), SubResource( 74 ), SubResource( 75 ), SubResource( 76 ), SubResource( 77 ), SubResource( 78 ), SubResource( 79 ), SubResource( 80 ), SubResource( 81 ), SubResource( 82 ), SubResource( 83 ), SubResource( 84 ), SubResource( 85 ), SubResource( 86 ), SubResource( 87 ), SubResource( 88 ), SubResource( 89 ), SubResource( 90 ), SubResource( 91 ), SubResource( 92 ) ],
+"loop": false,
+"name": "Hit_001_Blood",
+"speed": 5.0
+} ]
+
+[sub_resource type="AtlasTexture" id=98]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=99]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 280, 0, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=100]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 560, 0, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=101]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 840, 0, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=102]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 0, 488, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=103]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 280, 488, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=104]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 560, 488, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=105]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 840, 488, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=106]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 0, 976, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=107]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 280, 976, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=108]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 560, 976, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=109]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 840, 976, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=110]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 0, 1464, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=111]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 280, 1464, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=112]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 560, 1464, 280, 488 )
+
+[sub_resource type="AtlasTexture" id=113]
+flags = 5
+atlas = ExtResource( 1 )
+region = Rect2( 840, 1464, 280, 488 )
+
+[sub_resource type="SpriteFrames" id=97]
+animations = [ {
+"frames": [ SubResource( 98 ), SubResource( 99 ), SubResource( 100 ), SubResource( 101 ), SubResource( 102 ), SubResource( 103 ), SubResource( 104 ), SubResource( 105 ), SubResource( 106 ), SubResource( 107 ), SubResource( 108 ), SubResource( 109 ), SubResource( 110 ), SubResource( 111 ), SubResource( 112 ), SubResource( 113 ) ],
+"loop": false,
+"name": "New Anim",
+"speed": 5.0
+} ]
+
+[sub_resource type="GDScript" id=115]
+script/source = "extends Node
+
+func execute():
+	Save.count_score(\"monster_nests_destroyed\")
+"
+
+[sub_resource type="RectangleShape2D" id=114]
+extents = Vector2( 257.5, 290 )
+
+[node name="Nest_Building_V003_" type="Node2D"]
+scale = Vector2( 0.2, 0.2 )
+z_index = 500
+z_as_relative = false
+script = ExtResource( 9 )
+max_hp = 100
+
+[node name="Nest_Alien_building2" type="AnimatedSprite2D" parent="."]
+z_index = 500
+frames = SubResource( 93 )
+animation = "run"
+frame = 10
+speed_scale = 5.0
+playing = true
+
+[node name="Shadow_lower_Layer2" type="Sprite2D" parent="."]
+modulate = Color( 1, 1, 1, 0.286275 )
+position = Vector2( -15, 21 )
+scale = Vector2( 4.47631, 4.17271 )
+texture = ExtResource( 8 )
+
+[node name="Shadow_lower_Layer3" type="Sprite2D" parent="."]
+modulate = Color( 1, 1, 1, 0.286275 )
+position = Vector2( 11.6027, -5.80137 )
+scale = Vector2( 4.43217, 4.33673 )
+texture = ExtResource( 8 )
+
+[node name="Detector" type="StaticBody2D" parent="."]
+position = Vector2( 11.6027, -5.80137 )
+scale = Vector2( 4.43217, 4.33672 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Detector"]
+position = Vector2( 4.15352, -6.73629 )
+rotation = -3.22418
+scale = Vector2( 0.843703, 0.958954 )
+polygon = PackedVector2Array( 14.5069, 24.7822, 24.1647, 19.9777, 32.7132, 30.9441, 50.5797, 47.1104, 59.2513, 40.5035, 42.4814, 14.3776, 57.0234, 1.28984, 61.6114, -9.57768, 55.3945, -12.9238, 65.2004, -16.4362, 67.0501, -25.7464, 60.9814, -27.8003, 61.9803, -31.8094, 71.7862, -35.3218, 65.9759, -47.8455, 61.4984, -48.7399, 69.8235, -65.1737, 64.8441, -71.0322, 52.2095, -66.167, 40.0719, -70.2749, 27.2316, -67.7894, 11.505, -65.0388, -16.5073, -67.6883, -45.8146, -68.913, -52.2899, -61.7893, -38.9677, -47.3442, -48.3294, -39.9554, -48.2917, -26.9013, -36.5381, -24.3672, -49.9934, -16.299, -47.6617, -8.67869, -37.7077, -10.8989, -32.4898, -3.54382, -42.8504, 7.85405, -39.3717, 12.7575, -23.6451, 10.0069, -13.8015, 19.5485, -32.0806, 38.2026, -24.1245, 44.0004, -4.25413, 26.5059, 5.25562, 20.4092 )
+
+[node name="OnHit" type="Node2D" parent="."]
+
+[node name="AudioGroup" type="Node" parent="OnHit"]
+__meta__ = {
+"_editor_description_": "gore_hit"
+}
+
+[node name="Blood_onHit" type="AnimatedSprite2D" parent="OnHit"]
+visible = false
+rotation = 3.09988
+scale = Vector2( 2.6613, 2.6613 )
+z_index = 500
+frames = SubResource( 96 )
+animation = "Hit_001_Blood"
+frame = 30
+speed_scale = 4.011
+playing = true
+__meta__ = {
+"_editor_description_": "high_hp"
+}
+
+[node name="Blood_onHit_2" type="AnimatedSprite2D" parent="OnHit"]
+visible = false
+rotation = 13.021
+scale = Vector2( 2.6613, 1.41563 )
+z_index = 500
+frames = SubResource( 97 )
+animation = "New Anim"
+frame = 11
+speed_scale = 4.011
+__meta__ = {
+"_editor_description_": "low_hp"
+}
+
+[node name="OnDead" type="Node2D" parent="."]
+
+[node name="Blood_Explode_Death" type="AnimatedSprite2D" parent="OnDead"]
+visible = false
+rotation = 3.09988
+scale = Vector2( 2.6613, 2.6613 )
+z_index = 500
+frames = SubResource( 96 )
+animation = "Explode_Blood"
+frame = 30
+speed_scale = 4.011
+
+[node name="ShowMe" type="Sprite2D" parent="OnDead"]
+visible = false
+position = Vector2( -40, 70 )
+rotation = 0.282758
+scale = Vector2( 2.22306, 2.3442 )
+texture = ExtResource( 2 )
+
+[node name="Hide" type="Node" parent="OnDead"]
+__meta__ = {
+"_editor_description_": "Nest_Alien_building2"
+}
+
+[node name="Execute" type="Node" parent="OnDead"]
+script = SubResource( 115 )
+
+[node name="KillMe" type="Node2D" parent="OnDead"]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="OnDead/KillMe"]
+position = Vector2( -1.16025, 30.1672 )
+scale = Vector2( 0.2, 0.2 )
+stream = ExtResource( 4 )
+volume_db = 10.0
+pitch_scale = 0.93
+autoplay = true
+max_distance = 350.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="Collider" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collider"]
+position = Vector2( -12.5, 4.99998 )
+shape = SubResource( 114 )

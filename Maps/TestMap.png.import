@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://bu2e433vjpeji"
+path="res://.godot/imported/TestMap.png-a68a0cbbe0291afa8a4c4ba41998d741.image"
+
+[deps]
+
+source_file="res://Maps/TestMap.png"
+dest_files=["res://.godot/imported/TestMap.png-a68a0cbbe0291afa8a4c4ba41998d741.image"]
+
+[params]
+

@@ -1,0 +1,324 @@
+[gd_scene load_steps=40 format=2]
+
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Objects/Chest/RustyChest.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=4]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.gdshader" type="Shader" id=5]
+[ext_resource path="res://Nodes/Pickups/SimplePickup.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Pickups/Resources/Lumen_Icon_01.png" type="Texture2D" id=7]
+[ext_resource path="res://Resources/Terrain/Images/FloorFungus.png" type="Texture2D" id=8]
+[ext_resource path="res://Tools/DummyEnemy.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Resources/Terrain/Images/FloorSnow.png" type="Texture2D" id=10]
+[ext_resource path="res://Nodes/Buildings/Reactor/Reactor.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Resources/Terrain/Images/FloorBiomassHoles.png" type="Texture2D" id=12]
+[ext_resource path="res://Resources/Terrain/TerrainTextures/SnowRuins.tres" type="Resource" id=13]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.tscn" type="PackedScene" id=16]
+[ext_resource path="res://Resources/Terrain/Images/FloorBaseSnow.png" type="Texture2D" id=17]
+[ext_resource path="res://Resources/Terrain/Images/FloorSteel.png" type="Texture2D" id=18]
+[ext_resource path="res://Nodes/Map/CustomObjective.gd" type="Script" id=19]
+[ext_resource path="res://Resources/Terrain/Images/FloorDirt.jpg" type="Texture2D" id=20]
+[ext_resource path="res://Resources/Terrain/Images/FloorGround.png" type="Texture2D" id=21]
+[ext_resource path="res://Nodes/Enemies/MegaSwarm/SpiderSwarm_lvl1.tscn" type="PackedScene" id=22]
+[ext_resource path="res://Nodes/Enemies/Pider/Pider.tscn" type="PackedScene" id=23]
+[ext_resource path="res://Resources/Materials/TerrainMaterials.tres" type="PixelMapMaterialData" id=24]
+[ext_resource path="res://Resources/Terrain/TerrainTextures/SteelPlate.tres" type="Resource" id=25]
+[ext_resource path="res://Resources/Terrain/TerrainTextures/Ruins.tres" type="Resource" id=26]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Biomass.tres" type="Resource" id=27]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Fungus.tres" type="Resource" id=28]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Snow.tres" type="Resource" id=29]
+[ext_resource path="res://Resources/Terrain/FloorTextures/1Steel.tres" type="Resource" id=30]
+[ext_resource path="res://Nodes/Objects/Teleport/Teleport.tscn" type="PackedScene" id=31]
+[ext_resource path="res://Nodes/Buildings/Wall/Wall.tscn" type="PackedScene" id=32]
+
+[sub_resource type="ShaderMaterial" id=20]
+shader = ExtResource( 5 )
+shader_param/resolution1 = 40.0
+shader_param/resolution2 = 60.0
+shader_param/resolution3 = 100.0
+shader_param/resolution4 = 50.0
+shader_param/hsvoffset1 = 0.513
+shader_param/hsvsaturation1 = -0.289
+shader_param/hsvlight1 = -0.093
+shader_param/hsvoffset2 = 0.459
+shader_param/hsvsaturation2 = -0.211
+shader_param/hsvlight2 = -0.134
+shader_param/hsvoffset3 = 0.01
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = -0.05
+shader_param/hsvsaturation4 = -0.01
+shader_param/hsvlight4 = -0.01
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 21 )
+shader_param/texture2 = ExtResource( 20 )
+shader_param/texture3 = ExtResource( 18 )
+shader_param/texture4 = ExtResource( 17 )
+
+[sub_resource type="PixelMapMaterialData" id=4]
+
+[sub_resource type="ShaderMaterial" id=21]
+shader = ExtResource( 5 )
+shader_param/resolution1 = 40.0
+shader_param/resolution2 = 30.0
+shader_param/resolution3 = 100.0
+shader_param/resolution4 = 60.0
+shader_param/hsvoffset1 = 0.513
+shader_param/hsvsaturation1 = -0.289
+shader_param/hsvlight1 = -0.093
+shader_param/hsvoffset2 = -0.229
+shader_param/hsvsaturation2 = -0.007
+shader_param/hsvlight2 = 0.075
+shader_param/hsvoffset3 = 0.113
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = -0.088
+shader_param/hsvoffset4 = 0.0
+shader_param/hsvsaturation4 = 0.0
+shader_param/hsvlight4 = -0.1
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 21 )
+shader_param/texture2 = ExtResource( 12 )
+shader_param/texture3 = ExtResource( 8 )
+shader_param/texture4 = ExtResource( 10 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+
+func _ready() -> void:
+	if not visible:
+		return
+	hide()
+	
+	await get_tree().idle_frame
+	var player := Utils.game.main_player
+	player.max_stacks = 12
+	player.luck = 15
+	Save.clones = 2
+	
+#	for building in get_tree().get_nodes_in_group(\"player_buildings\"):
+#		building.hp = 99999999
+	
+	for tech in Const.Technology:# - 5:
+#		if tech.find(\"regen\") != -1:
+#			continue
+		if \"hide_in_lab\" in Const.Technology[tech]:
+			continue
+#		if randi() % 2 == 0:
+#			continue
+#		Save.unlock_tech(tech)
+	
+	Save.set_unlocked_tech(str(Const.ItemIDs.FLAMETHROWER, \"damage\"), 2)
+	Save.set_unlocked_tech(str(Const.ItemIDs.FLAMETHROWER, \"flame_amount\"), 2)
+	Save.set_unlocked_tech(str(Const.ItemIDs.FLAMETHROWER, \"weapon_range\"), 2)
+	
+	Save.scoreboard.time = 100
+	Save.scoreboard.enemies_slain = 100
+	Save.scoreboard.lumen_collected = 50
+	Save.scoreboard.metal_collected = 999
+	Save.map_completed = true
+	
+	if Utils.game.map.find_child(\"Lab\"):
+		Utils.game.map.find_child(\"Lab\").time_ratio = 0.000001
+	
+#	if Utils.game.map.find_node(\"Farm\"):
+#		Utils.game.map.find_node(\"Farm\").speed = 7
+#		Utils.game.map.find_node(\"Farm\").update_speed()
+	
+#	player.add_item(Const.ItemIDs.LUMEN_CLUMP, 100, null, false, Player.StackPolicy.ANY, true)
+#	player.add_item(Const.ItemIDs.REPAIR_KIT, 20)
+#	player.add_item(Const.ItemIDs.HOOK, 1)
+	player.add_item(Const.ItemIDs.NAPALM, 10)
+	player.add_item(Const.ItemIDs.MAGNUM, 1)
+	player.add_item(Const.ItemIDs.MACHINE_GUN, 1)
+#	player.add_item(Const.ItemIDs.MACHINE_GUN, 1)
+	player.add_item(Const.ItemIDs.AMMO, 9223372036854775807, Const.Ammo.BULLETS, false, Player.StackPolicy.ANY, true)
+	player.add_item(Const.ItemIDs.METAL_SCRAP, 400, null, false, Player.StackPolicy.ANY, true)
+	player.add_item(Const.ItemIDs.LUMEN, 100, null, false, Player.StackPolicy.ANY, true)
+	
+#	for i in 6:
+#		Save.set_unlocked_tech(\"drill_upgrade\", i)
+	
+	
+"
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends Node
+
+func _ready() -> void:
+	return
+	get_parent().objectives = {win = {type = \"score\", amount = 500}, scoring = {table = {shots_fired = -1, damage_taken = 1, deaths = 600}, starting_score = 0, clear_bonus = 25}}
+"
+
+[sub_resource type="GDScript" id=18]
+script/source = "extends Marker2D
+
+func _ready() -> void:
+	var object := EditorObject.new()
+	object.object_type = \"Object\"
+	object.object_name = \"Metal Vein\"
+	object.object_data = {metal_count = 9999, has_miner = true}
+	object.position = position
+	object.queue_free()
+	
+	(EditorObject as Script).call_deferred(\"instance\", object.get_dict(), get_parent(), {})
+	queue_free()
+"
+
+[sub_resource type="GDScript" id=19]
+script/source = "extends Sprite2D
+
+func _ready() -> void:
+	queue_free()
+"
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+__meta__ = {
+"_edit_lock_": true
+}
+wave_file_path = "res://Maps/TestWaves.cfg"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 1 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+z_index = 500
+z_as_relative = false
+material_data = ExtResource( 24 )
+texture_path = "res://Maps/TestMap.png"
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, ExtResource( 26 ), ExtResource( 25 ), null, ExtResource( 13 ) ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 15 )]
+visible = false
+ambient_color = Color( 0.128, 0.126, 0.15, 1 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 20 )
+scale = Vector2( 8, 8 )
+z_index = -4096
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 4 )
+debug_flags = 4
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true
+}
+default_color = Color( 1, 0, 0, 0 )
+textures = [ null, null, ExtResource( 30 ), null ]
+
+[node name="Floor2" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 21 )
+scale = Vector2( 8, 8 )
+z_index = -4096
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 4 )
+debug_flags = 4
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true
+}
+default_color = Color( 0, 0, 0, 0 )
+textures = [ null, ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ) ]
+layer = 2
+
+[node name="InventoryHack" type="Node2D" parent="."]
+script = SubResource( 3 )
+
+[node name="Reactor" parent="." instance=ExtResource( 11 )]
+position = Vector2( 467, 423 )
+__meta__ = {
+"has_power": true,
+"range_expander_radius": 350.0
+}
+start_on = true
+RANGE = 200
+
+[node name="Trash" type="Node" parent="."]
+
+[node name="Teleport" parent="Trash" instance=ExtResource( 31 )]
+position = Vector2( 849, 108 )
+color = 5
+
+[node name="Teleport2" parent="Trash" instance=ExtResource( 31 )]
+position = Vector2( 94, 737 )
+color = 5
+
+[node name="Objectives" type="Timer" parent="Trash"]
+script = ExtResource( 19 )
+
+[node name="ObjectiveHacker" type="Node" parent="Trash/Objectives"]
+script = SubResource( 5 )
+
+[node name="Dummy2" parent="." instance=ExtResource( 9 )]
+position = Vector2( 719, 502 )
+
+[node name="Start" type="Marker2D" parent="."]
+position = Vector2( 326, 524 )
+
+[node name="WaveSpawner" parent="." instance=ExtResource( 16 )]
+position = Vector2( 859, 914 )
+radius = 100.0
+
+[node name="WaveSpawner2" parent="." instance=ExtResource( 16 )]
+position = Vector2( 108, 940 )
+radius = 100.0
+
+[node name="EditorObject" type="Marker2D" parent="."]
+position = Vector2( 170, 813 )
+script = SubResource( 18 )
+
+[node name="Sprite2D" type="Sprite2D" parent="EditorObject"]
+scale = Vector2( 0.169643, 0.169643 )
+texture = ExtResource( 7 )
+script = SubResource( 19 )
+
+[node name="RustyChest" parent="." instance=ExtResource( 3 )]
+position = Vector2( 479.544, 556.343 )
+
+[node name="SimplePickup" parent="RustyChest" instance=ExtResource( 6 )]
+item = "FLAMETHROWER"
+
+[node name="SpiderSwarm_lvl1" parent="." instance=ExtResource( 22 )]
+position = Vector2( 543, 679 )
+how_many = 3
+max_hp = 9999
+max_speed = 30
+
+[node name="EnemyPider" parent="." instance=ExtResource( 23 )]
+position = Vector2( 20, 18 )
+max_hp = 9999
+
+[node name="Prison" type="Node2D" parent="."]
+
+[node name="Wall" parent="Prison" instance=ExtResource( 32 )]
+position = Vector2( 530, 646 )
+rotation = -0.523598
+
+[node name="Wall2" parent="Prison" instance=ExtResource( 32 )]
+position = Vector2( 609, 653 )
+rotation = 0.785397
+
+[node name="Wall3" parent="Prison" instance=ExtResource( 32 )]
+position = Vector2( 517, 715 )
+rotation = 0.785397
+
+[node name="Wall4" parent="Prison" instance=ExtResource( 32 )]
+position = Vector2( 599, 759 )
+rotation = 0.261799
+
+[node name="Wall5" parent="Prison" instance=ExtResource( 32 )]
+position = Vector2( 655, 729 )
+rotation = 1.57079

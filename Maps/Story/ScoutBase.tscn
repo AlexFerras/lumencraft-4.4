@@ -1,0 +1,593 @@
+[gd_scene load_steps=36 format=2]
+
+[ext_resource path="res://Resources/Materials/PixelMapMaterial.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FloorMaterial.tres" type="Material" id=3]
+[ext_resource path="res://Nodes/Buildings/Wall/Gate.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Player/NPC.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Buildings/Wall/Wall.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Objects/Chest/Chest.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Scripts/PlayerDetector.gd" type="Script" id=9]
+[ext_resource path="res://Nodes/Buildings/Tower/Stand.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Resources/Materials/TerrainMaterials.tres" type="PixelMapMaterialData" id=12]
+[ext_resource path="res://Nodes/Buildings/Workshop/Weapon/PistolWorkshop.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Nodes/Buildings/HealthCenter/HealthCenter.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=16]
+[ext_resource path="res://Nodes/Objects/Hole/Hole.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Nodes/Pickups/SimplePickup.tscn" type="PackedScene" id=19]
+[ext_resource path="res://Nodes/Buildings/Pylon/Pylon.tscn" type="PackedScene" id=20]
+[ext_resource path="res://Nodes/Buildings/Pylon/Generator.tscn" type="PackedScene" id=21]
+[ext_resource path="res://Nodes/Buildings/Turret/MachinegunTurret.tscn" type="PackedScene" id=22]
+[ext_resource path="res://Nodes/Buildings/Tower/Tower.tscn" type="PackedScene" id=23]
+[ext_resource path="res://Nodes/Buildings/Turret/SniperTurret.tscn" type="PackedScene" id=24]
+[ext_resource path="res://Nodes/Pickups/Ammo/AmmoPickup.tscn" type="PackedScene" id=25]
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenCrystal.tscn" type="PackedScene" id=26]
+[ext_resource path="res://Nodes/Objects/Mushrooms/Mushroom.tscn" type="PackedScene" id=27]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/sea_flower.tscn" type="PackedScene" id=28]
+[ext_resource path="res://Nodes/Objects/Technical/MapTransition.tscn" type="PackedScene" id=29]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=30]
+
+[sub_resource type="PixelMapMaterialData" id=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends \"res://Scripts/MapEvents.gd\"
+
+@onready var gate = $\"../Base/Walls/Gate\"
+
+var danger_started: bool
+var defended: bool
+
+func _enter_map():
+	npc(\"Gatekeeper\").fake_angle = -2.35619
+	npc(\"Gatekeeper\").hold(Const.ItemIDs.MACHINE_GUN)
+	npc(\"Gatekeeper2\").hold(Const.ItemIDs.MACHINE_GUN)
+	map.wave_data.max_threat = 300
+	map.wave_data.connect(\"wave_defeated\", Callable(self, \"on_base_defended\"))
+
+func reveal_base(player) -> void:
+	Utils.game.map.pixel_map.fog_of_war.clear_circular_area($\"../Base/Events/RevealHere\".global_position, 650, Color(1, 1, 1, 1))
+	if gate.open:
+		npc(\"Gatekeeper\").fake_angle = -2.35619
+		gate.on_interacted(null)
+
+func base_approach(player) -> void:
+	var gatekeeper = npc(\"Gatekeeper\")
+	
+	var cut := Cutscene.new()
+	cut.append_message(\"Halt! Who goes there?\", gatekeeper)
+	cut.append_message(\"Oh God, a living person.\", player)
+	cut.append_message(\"Who are you? Tell or I'll shoot.\", gatekeeper)
+	cut.append_message(\"Wait! I'm from rescue team. We came to get you to the surface.\", player)
+	cut.append_message(\"You come here alone, armed, claiming you come for the rescue.\", gatekeeper)
+	cut.append_message(\"Why should I believe you?\", gatekeeper)
+	cut.append_message(\"There was an accident on the way and I got separated.\", player)
+	cut.append_message(\"Why are you so nervous? Did something happen here?\", player)
+	cut.append_message(\"...\", gatekeeper)
+	cut.append_message(\"Look, if I was going to harm you, I wouldn't come alone.\", player)
+	cut.append_message(\"...\", gatekeeper)
+	cut.append_message(\"Makes sense.\", gatekeeper)
+	
+	var seq := cut.append_tween()
+	seq.append_callback(gate, \"on_interacted\", [player])
+	seq.append_interval(1)
+	seq.append_callback(self, \"look_at_chief\")
+	
+	cut.append_message(\"Come in. The chief is in the building over there.\", gatekeeper)
+	cut.append_tween().append_callback(npc(\"Gatekeeper\"), \"set\", [\"fake_angle\", 0.785403])
+
+func look_at_chief():
+	await get_tree().create_timer(3, false).timeout
+	npc(\"Gatekeeper\").fake_angle = 0.785403
+
+func npc(npname: String):
+	return $\"../NPCs\".get_node(npname)
+
+func chief_talk(player) -> void:
+	var chief = npc(\"Chief\")
+	chief.fake_angle = (player.global_position - chief.global_position).angle()
+	
+	var cut := Cutscene.new()
+	cut.append_message(\"Hey there. We don't have many guests here.\", chief)
+	cut.append_message(\"You are the missing Scout unit?\", player)
+	cut.append_message(\"Correct.\", chief)
+	cut.append_message(\"So these are the only survivors?\", player)
+	cut.append_message(\"No, see, this is the problem. You came from the surface, so you don't know the situation.\", chief)
+	cut.append_message(\"And what's the situation?\", player)
+	cut.append_message(\"... The others...\", chief)
+	cut.append_message(\"PowerCorp betrayed us.\", chief)
+	cut.append_message(\"Scout expedition was a secret operation. Only a handful people knew what was this really about.\", chief)
+	cut.append_message(\"And the truth is, PowerCorp wants the Lumen for themselves.\", chief)
+	cut.append_message(\"Our unit established a secret laboratory deep underground. Most of the Scouts joined in.\", chief)
+	cut.append_message(\"They didn't have any choice. Whoever opposed was killed. Lucky survivors managed to escape and now we are here.\", chief)
+	cut.append_message(\"Wow, this is... That's unfortunate situation.\", player)
+	cut.append_message(\"Indeed. We are trapped here. Way to the surface is swarming with these monsters, which you surely met on the way.\", chief)
+	cut.append_message(\"We have not enough resources to fight through to the exit.\", chief)
+	cut.append_message(\"So you just bunkered in here, waiting for help?\", player)
+	cut.append_message(\"Well, yeah...\", chief)
+	cut.append_message(\"Guess what, the rescue just came. My team is perfectly capable of fighting these beasts, so we can get you out.\", player)
+	cut.append_message(\"Not really. I don't know what you fought on the way here, but that was just tiny bit of their strenght.\", chief)
+	cut.append_message(\"They are a legion.\", chief)
+	cut.append_message(\"Absolute calamity. No wonder why the previous expeditions failed.\", chief)
+	cut.append_message(\"What's worse, PowerCorp managed to capture some of these creatures and keeps them in their lab for experiments.\", chief)
+	cut.append_message(\"It can't be that bad.\", player)
+	cut.append_message(\"If we want to have any chance for survival, we need to prepare.\", chief)
+	cut.append_message(\"Actually, you might be able to help.\", chief)
+	cut.append_tween().append_callback(self, \"quake\")
+	cut.append_message(\"See, there's a-\", chief, true)
+	cut.append_message(\"WHAT THE HECK??\", chief)
+	
+	player.force_rotation = (chief.global_position - player.global_position).angle()
+	
+	await cut.finished
+	
+	Utils.game.ui.wave_countdown = 300
+	chief.goto($\"../Base/Events/GotoHere\".global_position)
+	chief.do_fake_press(\"run\")
+	danger_started = true
+	
+	await chief.destination_reached
+	
+	chief.fake_angle = PI/2
+	chief.do_fake_release(\"run\")
+
+func quake():
+	await get_tree().create_timer(1, false).timeout
+	Utils.game.shake(1.0, 10.0)
+	#Utils.game.shake(30)
+
+func on_battle_dialogue(player) -> void:
+	if not danger_started:
+		return
+	$\"../Base/Events/BattleDetector\".queue_free()
+	
+	var cut := Cutscene.new()
+	cut.append_message(\"What's happening?\", player)
+	cut.append_message(\"A swarm is coming. Hundreds of monsters.\", npc(\"Gatekeeper2\"))
+	cut.append_message(\"What...\", player)
+	cut.append_message(\"We have a couple of minutes until they arrive.\", npc(\"Chief\"))
+	cut.append_message(\"Get ready. Grab weapons and ammo from our supplies.\", npc(\"Chief\"))
+	cut.append_message(\"This is going to be rough.\", npc(\"Chief\"))
+
+func gatekeeper_talked(player) -> void:
+	npc(\"Gatekeeper\").talk(\"The chief is in the building in the back.\")
+
+func smith_talked(player) -> void:
+	npc(\"Smith\").talk(\"If you need weapons or ammo you can use this workshop, but you need to bring materials first.\")
+
+func chief_talked(player) -> void:
+	if defended:
+		npc(\"Chief\").talk(\"Find the reactor. This will help us greatly.\")
+	else:
+		npc(\"Chief\").talk(\"Prepare for battle.\")
+
+func gatekeeper2_talked(player) -> void:
+	if danger_started and not defended:
+		npc(\"Gatekeeper2\").talk(\"Monsters are incoming. Get prepared.\")
+	else:
+		npc(\"Gatekeeper2\").talk(\"All clear here.\")
+
+func on_base_defended():
+	defended = true
+	var chief = npc(\"Chief\")
+	
+	var cut := Cutscene.new()
+	cut.append_message(\"Whew.\", Utils.game.main_player)
+	cut.append_message(\"Now you see their power.\", chief)
+	cut.append_message(\"I admit that getting here was easier.\", Utils.game.main_player)
+	cut.append_message(\"But the road back should also be easy, right?.\", Utils.game.main_player)
+	cut.append_message(\"Maybe you got lucky. Or maybe it's PowerCorp trap and we are all trapped here now.\", chief)
+	cut.append_message(\"You said I can help, so I assume you have a plan.\", Utils.game.main_player)
+	cut.append_message(\"We need to prepare for leaving this place.\", chief)
+	cut.append_message(\"This makeshift base won't do it. We need something better.\", chief)
+	cut.append_message(\"Like?...\", Utils.game.main_player)
+	cut.append_message(\"There is an abandoned reactor in the cave to the south.\", chief)
+	cut.append_message(\"But as you seen, this is where these monsters came from.\", chief)
+	cut.append_message(\"I bet the whole place is overrun by monsters and we can't get to the reactor.\", chief)
+	cut.append_message(\"If we are able to reach it and restore power, we will be able to set up a proper base.\", chief)
+	cut.append_message(\"From there, preparing for anything wouldn't be a problem.\", chief)
+	cut.append_message(\"Leave it to me.\", Utils.game.main_player)
+	cut.append_message(\"Although I should also start looking for my teammates.\", Utils.game.main_player)
+	cut.append_message(\"If they are as capable as you, they will be fine. Reactor is the priority.\", chief)
+
+func _try_exit() -> bool:
+	if not defended:
+		Cutscene.show_message(\"I haven't finished with this place yet.\", Utils.game.main_player)
+		return false
+	return true
+"
+
+[sub_resource type="SeparationRayShape2D" id=5]
+length = 278.205
+
+[sub_resource type="SeparationRayShape2D" id=4]
+length = 425.12
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 26.559, 13.027 )
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 114.077, 3.99693 )
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 16 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 1 )
+z_index = 500
+z_as_relative = false
+material_data = ExtResource( 12 )
+texture_path = "res://Maps/Story/ScoutBase.png"
+debug_flags = 4
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, null, null ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 6 )]
+ambient_color = Color( 0.128, 0.126, 0.15, 1 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 3 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 2 )
+debug_flags = 4
+script = ExtResource( 30 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ null, null, null, null ]
+
+[node name="Start0" type="Node2D" parent="."]
+position = Vector2( 48.0995, 283.028 )
+
+[node name="Start1" type="Node2D" parent="."]
+position = Vector2( 1162.33, 2012.74 )
+
+[node name="DebugStart" type="Node2D" parent="."]
+position = Vector2( 48.0995, 283.028 )
+
+[node name="MapEvents" type="Node" parent="."]
+script = SubResource( 3 )
+
+[node name="Base" type="Node2D" parent="."]
+
+[node name="Walls" type="Node2D" parent="Base"]
+
+[node name="Gate" parent="Base/Walls" instance=ExtResource( 4 )]
+position = Vector2( 535.493, 583.806 )
+rotation = -0.675442
+
+[node name="Gate2" parent="Base/Walls" instance=ExtResource( 4 )]
+position = Vector2( 1418.58, 754.493 )
+rotation = 1.0472
+
+[node name="Wall" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 460.258, 644.14 )
+rotation = -0.675151
+
+[node name="Wall2" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 611.397, 521.781 )
+rotation = -0.675151
+
+[node name="Wall3" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 642.61, 450.852 )
+rotation = -1.57079
+
+[node name="Wall4" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 1371.31, 673.081 )
+rotation = 1.0472
+
+[node name="Wall5" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 1467.29, 835.761 )
+rotation = 1.0472
+
+[node name="Wall8" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 1536.12, 872.2 )
+
+[node name="Gate3" parent="Base/Walls" instance=ExtResource( 4 )]
+position = Vector2( 1182.88, 1522.87 )
+
+[node name="Wall6" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 1000.51, 1558.62 )
+rotation = -0.261799
+
+[node name="Wall9" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 1090.76, 1533.39 )
+rotation = -0.261799
+
+[node name="Wall7" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 1273.51, 1546.39 )
+rotation = 0.523598
+
+[node name="Wall10" parent="Base/Walls" instance=ExtResource( 7 )]
+position = Vector2( 1353.68, 1591.8 )
+rotation = 0.523598
+
+[node name="Stand" parent="Base/Walls" instance=ExtResource( 10 )]
+position = Vector2( 559.483, 672.555 )
+rotation = 0.84046
+
+[node name="Stand3" parent="Base/Walls" instance=ExtResource( 10 )]
+position = Vector2( 1296.57, 1503.18 )
+rotation = 0.510485
+
+[node name="Stand4" parent="Base/Walls" instance=ExtResource( 10 )]
+position = Vector2( 1061.61, 1494.92 )
+rotation = 1.29245
+
+[node name="Stand5" parent="Base/Walls" instance=ExtResource( 10 )]
+position = Vector2( 1529.66, 913.511 )
+
+[node name="Power" type="Node2D" parent="Base"]
+
+[node name="Generator" parent="Base/Power" instance=ExtResource( 21 )]
+position = Vector2( 1051.44, 983.748 )
+stored_power = 6000.0
+
+[node name="Pylon" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1035.17, 973.576 )
+
+[node name="Pylon2" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 946.403, 893.064 )
+
+[node name="Pylon3" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 861.361, 807.206 )
+
+[node name="Pylon4" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 771.427, 724.016 )
+
+[node name="Pylon5" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 666.094, 665.349 )
+
+[node name="Pylon6" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 586.761, 578.016 )
+
+[node name="Pylon7" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1126.09, 924.682 )
+
+[node name="Pylon8" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1098.62, 1073.24 )
+
+[node name="Pylon16" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1212.98, 1108 )
+
+[node name="Pylon9" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1325.43, 806.682 )
+
+[node name="Pylon10" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 951.586, 1061.38 )
+
+[node name="Pylon17" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 829.914, 1038.09 )
+
+[node name="Pylon18" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 710.507, 1031.36 )
+
+[node name="Pylon11" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 962.094, 1182.68 )
+
+[node name="Pylon12" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1000.76, 1292.68 )
+
+[node name="Pylon13" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1058.76, 1392.02 )
+
+[node name="Pylon14" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1135.43, 1485.35 )
+
+[node name="Pylon15" parent="Base/Power" instance=ExtResource( 20 )]
+position = Vector2( 1250.76, 1476.02 )
+
+[node name="Turrets" type="Node2D" parent="Base"]
+
+[node name="MachinegunTurret" parent="Base/Turrets" instance=ExtResource( 22 )]
+position = Vector2( 1340.76, 714.682 )
+rotation = -0.523598
+
+[node name="MachinegunTurret5" parent="Base/Turrets" instance=ExtResource( 22 )]
+position = Vector2( 506.761, 655.349 )
+rotation = -2.35619
+
+[node name="MachinegunTurret6" parent="Base/Turrets" instance=ExtResource( 22 )]
+position = Vector2( 666.094, 552.682 )
+rotation = -2.35619
+
+[node name="MachinegunTurret2" parent="Base/Turrets" instance=ExtResource( 22 )]
+position = Vector2( 1414.76, 857.349 )
+rotation = -0.523598
+
+[node name="MachinegunTurret3" parent="Base/Turrets" instance=ExtResource( 22 )]
+position = Vector2( 1009.22, 1493.43 )
+rotation = 1.309
+
+[node name="MachinegunTurret4" parent="Base/Turrets" instance=ExtResource( 22 )]
+position = Vector2( 1344.76, 1518.01 )
+rotation = 2.09439
+
+[node name="SniperTurret" parent="Base/Turrets" instance=ExtResource( 24 )]
+position = Vector2( 891.427, 1036.68 )
+
+[node name="Lights" type="Node2D" parent="Base"]
+
+[node name="Tower" parent="Base/Lights" instance=ExtResource( 23 )]
+position = Vector2( 664.173, 520.795 )
+rotation = -3.14159
+
+[node name="Tower2" parent="Base/Lights" instance=ExtResource( 23 )]
+position = Vector2( 1289.97, 738.549 )
+rotation = -5.98755
+
+[node name="Tower3" parent="Base/Lights" instance=ExtResource( 23 )]
+position = Vector2( 1260, 1432.76 )
+rotation = -4.18878
+
+[node name="Tower4" parent="Base/Lights" instance=ExtResource( 23 )]
+position = Vector2( 1009.78, 806.972 )
+rotation = -4.97418
+
+[node name="Buildings" type="Node2D" parent="Base"]
+
+[node name="HealthCenter" parent="Base/Buildings" instance=ExtResource( 15 )]
+position = Vector2( 619.164, 1002.7 )
+
+[node name="Loot" type="Node2D" parent="Base"]
+
+[node name="Chest" parent="Base/Loot" instance=ExtResource( 8 )]
+position = Vector2( 1188.37, 1182.23 )
+rotation = 0.785397
+
+[node name="Chest2" parent="Base/Loot" instance=ExtResource( 8 )]
+position = Vector2( 755.223, 1109.16 )
+
+[node name="Chest3" parent="Base/Loot" instance=ExtResource( 8 )]
+position = Vector2( 1266.97, 948.353 )
+rotation = -1.57079
+
+[node name="Chest4" parent="Base/Loot" instance=ExtResource( 8 )]
+position = Vector2( 1368.94, 1578 )
+rotation = -2.61799
+
+[node name="Events" type="Node2D" parent="Base"]
+
+[node name="EnterDetector" type="Area2D" parent="Base/Events"]
+position = Vector2( 416.081, 610.793 )
+rotation = -0.14254
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Base/Events/EnterDetector"]
+rotation = -2.13951
+shape = SubResource( 5 )
+
+[node name="RevealDetector" type="Area2D" parent="Base/Events"]
+position = Vector2( 544.852, 597.879 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Base/Events/RevealDetector"]
+position = Vector2( -95.4578, 80.7688 )
+rotation = -2.09439
+shape = SubResource( 4 )
+
+[node name="RevealHere" type="Marker2D" parent="Base/Events"]
+position = Vector2( 1035.53, 1016 )
+
+[node name="ChiefDetector" type="Area2D" parent="Base/Events"]
+position = Vector2( 1113.73, 1216.8 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Base/Events/ChiefDetector"]
+position = Vector2( 8.32458, 5.29749 )
+rotation = -0.792214
+shape = SubResource( 6 )
+
+[node name="GotoHere" type="Marker2D" parent="Base/Events"]
+position = Vector2( 1113.74, 1480.46 )
+
+[node name="BattleDetector" type="Area2D" parent="Base/Events"]
+script = ExtResource( 9 )
+once = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Base/Events/BattleDetector"]
+polygon = PackedVector2Array( 893.499, 1540.48, 983.195, 1463.11, 1287.32, 1462.27, 1431.67, 1551.69, 1460.54, 1540.76, 1291.24, 1446.02, 980.672, 1445.74, 877.802, 1535.71 )
+
+[node name="NPCs" type="Node2D" parent="."]
+
+[node name="Gatekeeper" parent="NPCs" instance=ExtResource( 5 )]
+position = Vector2( 569.753, 585.229 )
+rotation = 3.92699
+
+[node name="Gatekeeper2" parent="NPCs" instance=ExtResource( 5 )]
+position = Vector2( 1060.29, 1494.95 )
+rotation = 1.309
+
+[node name="Chief" parent="NPCs" instance=ExtResource( 5 )]
+position = Vector2( 1087.21, 1244.49 )
+
+[node name="Smith" parent="NPCs" instance=ExtResource( 5 )]
+position = Vector2( 1355.73, 1151.57 )
+rotation = 2.21984
+
+[node name="WaveSpawner" parent="." instance=ExtResource( 11 )]
+position = Vector2( 1171.13, 1936.41 )
+radius = 100.0
+
+[node name="Outskirts" type="Node2D" parent="."]
+
+[node name="Hole" parent="Outskirts" instance=ExtResource( 18 )]
+position = Vector2( 1395.82, 176.938 )
+
+[node name="Chest" parent="Outskirts" instance=ExtResource( 8 )]
+position = Vector2( 1376.04, 144.095 )
+
+[node name="SimplePickup" parent="Outskirts/Chest" instance=ExtResource( 19 )]
+item = "MEDPACK"
+
+[node name="AmmoPickup" parent="Outskirts/Chest" instance=ExtResource( 25 )]
+amount = 15
+
+[node name="LumenCrystal" parent="Outskirts" instance=ExtResource( 26 )]
+position = Vector2( 1457.97, 294.892 )
+
+[node name="Mushroom" parent="Outskirts" instance=ExtResource( 27 )]
+position = Vector2( 245.663, 1678.6 )
+
+[node name="MapTransition" parent="Outskirts" instance=ExtResource( 29 )]
+position = Vector2( 1051.92, 2038.66 )
+target_map = "DemoEnd"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Outskirts/MapTransition"]
+position = Vector2( 104.077, 3.88037 )
+shape = SubResource( 7 )
+
+[node name="MapTransition2" parent="Outskirts" instance=ExtResource( 29 )]
+position = Vector2( 19.0164, 170.349 )
+rotation = 1.57079
+target_map = "CaveAlone"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Outskirts/MapTransition2"]
+position = Vector2( 104.077, 13.7638 )
+shape = SubResource( 7 )
+
+[node name="Deco" type="Node2D" parent="."]
+
+[node name="sea_flower" parent="Deco" instance=ExtResource( 28 )]
+position = Vector2( 1632.43, 249.335 )
+
+[node name="sea_flower2" parent="Deco" instance=ExtResource( 28 )]
+position = Vector2( 1509.18, 435.8 )
+
+[node name="sea_flower3" parent="Deco" instance=ExtResource( 28 )]
+position = Vector2( 426.904, 1706.36 )
+
+[node name="TODO" type="Node" parent="."]
+__meta__ = {
+"_editor_description_": "Armored box z shotgunem i wyłączona niszczarka na boku"
+}
+
+[node name="WeaponWorkshop" parent="." instance=ExtResource( 13 )]
+position = Vector2( 1294.92, 1110.83 )
+
+[connection signal="player_entered" from="Base/Events/EnterDetector" to="MapEvents" method="base_approach"]
+[connection signal="player_entered" from="Base/Events/RevealDetector" to="MapEvents" method="reveal_base"]
+[connection signal="player_entered" from="Base/Events/ChiefDetector" to="MapEvents" method="chief_talk"]
+[connection signal="player_entered" from="Base/Events/BattleDetector" to="MapEvents" method="on_battle_dialogue"]
+[connection signal="talked" from="NPCs/Gatekeeper" to="MapEvents" method="gatekeeper_talked"]
+[connection signal="talked" from="NPCs/Gatekeeper2" to="MapEvents" method="gatekeeper2_talked"]
+[connection signal="talked" from="NPCs/Chief" to="MapEvents" method="chief_talked"]
+[connection signal="talked" from="NPCs/Smith" to="MapEvents" method="smith_talked"]

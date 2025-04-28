@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/Throwable/DirtGrenade.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Player/Weapons/Throwable/Grenade.gd\"
+
+var mat: int
+var prev_vel: Vector2
+
+func set_data(data):
+	mat = data
+
+func _physics_process(delta: float) -> void:
+	if prev_vel and not is_equal_approx(prev_vel.normalized().dot(linear_velocity.normalized()), 1):
+		_on_Timer_timeout()
+	prev_vel = linear_velocity
+
+func _on_Timer_timeout() -> void:
+	Utils.game.map.pixel_map.update_material_circle(global_position, 10, mat,0)
+	queue_free()
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 6.0
+
+[node name="DirtGrenade" type="PixelMapRigidBody"]
+gravity_scale = 0.0
+radius = 4
+pixel_map_bounce = 0.4
+script = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+autostart = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

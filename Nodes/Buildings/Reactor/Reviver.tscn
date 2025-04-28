@@ -1,0 +1,339 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://Nodes/Buildings/HeroCenter/capsule_animate__00001.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Materials/hsv_shader.tres" type="Material" id=2]
+[ext_resource path="res://Nodes/Buildings/HeroCenter/capsule_animate_small.png" type="Texture2D" id=3]
+[ext_resource path="res://SFX/Building/spawn_clone.wav" type="AudioStream" id=4]
+[ext_resource path="res://SFX/Building/Servo2.wav" type="AudioStream" id=5]
+[ext_resource path="res://Resources/Fonts/Font40.tres" type="FontFile" id=6]
+[ext_resource path="res://Nodes/Buildings/Reactor/ReviverArrow.png" type="Texture2D" id=7]
+
+[sub_resource type="GDScript" id=85]
+script/source = "extends Node2D
+
+@onready var animator := $AnimationPlayer as AnimationPlayer
+@onready var clone := $typ_lezy as Node2D
+@onready var spawn_position := $SpawnPosition
+
+@onready var indicator := $Indicator as Node2D
+@onready var indicator_arrow := $Indicator/Sprite2D as Node2D
+
+var player_queue: Array
+var revived_player: Player
+
+signal revived
+
+func _ready() -> void:
+	set_physics_process(false)
+	check_clone()
+	indicator.set_as_top_level(true)
+
+func _physics_process(delta: float) -> void:
+	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+		return
+	var center := Utils.game.camera.get_camera_screen_center()
+	var screen_size := (Utils.game.resolution_of_visible_rect * 0.5 - Vector2(160, 160)) * Utils.game.camera.zoom
+#	var screen_size := (Const.RESOLUTION * 0.5 - Vector2(160, 160)) * Utils.game.camera.zoom
+	indicator.global_position.x = clamp(global_position.x, center.x - screen_size.x, center.x + screen_size.x)
+	indicator.global_position.y = clamp(global_position.y, center.y - screen_size.y, center.y + screen_size.y)
+	indicator_arrow.rotation = indicator.global_position.direction_to(global_position).angle()
+	indicator_arrow.visible = indicator.global_position.distance_squared_to(global_position) > 300
+	
+	for player in Utils.game.players:
+		if not player in player_queue and is_player_near(player):
+			spawn_player(null, true)
+			set_physics_process(false)
+			indicator.hide()
+			break
+
+func spawn_player(player: Player = null, ignore_distance := false):
+	if not player:
+		player = player_queue.pop_front()
+	player.respawning = true
+	player.death_label.get_parent().hide()
+	
+	player.hide()
+	player.position = Vector2(-100, -100)
+	
+	if revived_player or player.super_dead and not ignore_distance and not is_player_near(player):
+		if revived_player:
+			player.super_dead = true
+		
+		player_queue.push_back(player)
+		set_physics_process(true)
+		indicator.show()
+		return
+	
+	revived_player = player
+	revived_player.global_position = spawn_position.global_position
+	get_tree().create_timer(1, false).connect(\"timeout\", Callable(animator, \"play\").bind(\"spawn_player\"))
+
+func is_player_near(player: Player) -> bool:
+	return player.global_position.distance_squared_to(global_position) <= 5000
+
+func animation_end(anim_name: String) -> void:
+	if anim_name == \"spawn_player\":
+		if is_instance_valid(revived_player):
+			revived_player.show()
+			revived_player.revive()
+			revived_player = null
+		animator.play(\"back\")
+		emit_signal(\"revived\")
+	elif anim_name == \"back\":
+		check_clone()
+	elif anim_name == \"clone_appear\":
+		if not player_queue.is_empty():
+			spawn_player()
+
+func check_clone():
+	if not clone.visible and Save.clones > 0:
+		animator.play(\"clone_appear\")
+"
+
+[sub_resource type="AudioStreamRandomizer" id=79]
+audio_stream = ExtResource( 5 )
+
+[sub_resource type="Animation" id=80]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("capsule:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 30 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("typ_lezy:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("typ_lezy:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="AudioStreamRandomizer" id=78]
+audio_stream = ExtResource( 5 )
+
+[sub_resource type="Animation" id=81]
+resource_name = "back"
+length = 2.0
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath("capsule:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.28, 0.32, 0.36, 0.4, 0.44, 0.48, 0.52, 0.56, 0.6, 0.64, 0.68, 0.72, 0.76, 0.8, 0.84, 0.88, 0.92, 0.96, 1, 1.04, 1.08, 1.12, 1.16, 1.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 29, 28, 27, 26, 25, 24, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30 ]
+}
+tracks/1/type = "audio"
+tracks/1/path = NodePath("AudioStreamPlayer2D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": SubResource( 78 )
+} ],
+"times": PackedFloat32Array( 0 )
+}
+
+[sub_resource type="AudioStreamRandomizer" id=82]
+audio_stream = ExtResource( 4 )
+random_pitch = 1.2
+
+[sub_resource type="Animation" id=83]
+resource_name = "clone_appear"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("typ_lezy:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1.1, 1.3, 1.5, 1.9, 2 ),
+"transitions": PackedFloat32Array( -2, -2, -2, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 11, 11, 11, 1 ), Color( 11, 11, 11, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("capsule:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.8, 1.9 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 1,
+"values": [ 30, 30, 0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("typ_lezy:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/3/type = "audio"
+tracks/3/path = NodePath("AudioStreamPlayer2D")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": SubResource( 82 )
+} ],
+"times": PackedFloat32Array( 0.1 )
+}
+
+[sub_resource type="Animation" id=84]
+resource_name = "spawn_player"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("capsule:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0, 29 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("typ_lezy:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("typ_lezy:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/3/type = "audio"
+tracks/3/path = NodePath("AudioStreamPlayer2D")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": SubResource( 79 )
+} ],
+"times": PackedFloat32Array( 0.1 )
+}
+
+[node name="Reviver" type="Node2D"]
+scale = Vector2( 0.039, 0.039 )
+script = SubResource( 85 )
+
+[node name="capsule" type="Sprite2D" parent="."]
+material = ExtResource( 2 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 3 )
+hframes = 6
+vframes = 9
+frame = 30
+
+[node name="typ_lezy" type="Sprite2D" parent="."]
+visible = false
+material = ExtResource( 2 )
+position = Vector2( 234.098, -1.5 )
+scale = Vector2( 1.5, 1.5 )
+texture = ExtResource( 1 )
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource( 79 )
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 80 )
+anims/back = SubResource( 81 )
+anims/clone_appear = SubResource( 83 )
+anims/spawn_player = SubResource( 84 )
+
+[node name="SpawnPosition" type="Marker2D" parent="."]
+position = Vector2( -256.41, 0 )
+
+[node name="Indicator" type="Node2D" parent="."]
+visible = false
+scale = Vector2( 0.1, 0.1 )
+z_index = 4096
+
+[node name="Sprite2D" type="Sprite2D" parent="Indicator"]
+texture = ExtResource( 7 )
+offset = Vector2( 128, 0 )
+
+[node name="Label" type="Label" parent="Indicator"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -76.0
+offset_right = 257.0
+offset_bottom = 77.0
+theme_override_colors/font_color = Color( 0.721569, 1, 0, 1 )
+theme_override_fonts/font = ExtResource( 6 )
+text = "Revive"
+align = 1
+valign = 1
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="animation_end"]

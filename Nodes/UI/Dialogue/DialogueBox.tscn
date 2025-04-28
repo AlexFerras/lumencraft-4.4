@@ -1,0 +1,103 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Nodes/UI/Dialogue/Ogonek.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Fonts/Font10.tres" type="FontFile" id=2]
+[ext_resource path="res://Nodes/UI/AutoAction/AutoAction.tscn" type="PackedScene" id=3]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+
+@onready var anchor := $Ogonek/Anchor as Node2D
+
+var target: Node2D
+var animator: Tween
+
+func _ready() -> void:
+	$Ogonek.position.y = $PanelContainer.size.y - 1
+
+func set_text(text: String):
+	var label := $PanelContainer/Label as Label
+	label.text = text
+	label.percent_visible = 0
+	
+	animator = create_tween()
+	animator.tween_property(label, \"percent_visible\", 1.0, text.length() * 0.1)
+	animator.connect(\"finished\", Callable(self, \"text_finished\"))
+
+func move_to(node: Node2D):
+	target = node
+	_process(-1)
+
+func _process(delta: float) -> void:
+	if target:
+		global_position = target.get_viewport().canvas_transform * (target.global_position) + (global_position - anchor.global_position)
+	
+	if delta < 0:
+		return
+	
+	if Input.is_action_just_pressed(\"ui_accept\") or Input.is_key_pressed(KEY_PAUSE): ##<- debug
+		if animator:
+			animator.kill()
+			$PanelContainer/Label.percent_visible = 1
+			text_finished()
+		else:
+			queue_free()
+
+func text_finished():
+	$Ogonek/AutoAction.show()
+	animator = null
+"
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0, 0.152941, 0.356863, 1 )
+border_width_left = 2
+border_width_top = 2
+border_color = Color( 0, 0.433333, 1, 1 )
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_size = 2
+shadow_offset = Vector2( 2, 2 )
+
+[node name="DialogueBox" type="Node2D"]
+z_index = -1
+script = SubResource( 3 )
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 185.0
+offset_bottom = 28.0
+theme_override_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="PanelContainer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 177.0
+offset_bottom = 20.0
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 2 )
+autowrap = true
+
+[node name="Ogonek" type="Sprite2D" parent="."]
+position = Vector2( 90, 28 )
+texture = ExtResource( 1 )
+offset = Vector2( -4, 10 )
+
+[node name="Anchor" type="Marker2D" parent="Ogonek"]
+position = Vector2( -36.8343, 39.3622 )
+
+[node name="AutoAction" parent="Ogonek" instance=ExtResource( 3 )]
+visible = false
+offset_left = 53.9977
+offset_top = -12.5051
+offset_right = 83.9977
+offset_bottom = 17.4949
+action_name = "interact"

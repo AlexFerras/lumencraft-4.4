@@ -1,0 +1,149 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/Demolish.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var original_scale := Vector2.ONE
+var angle: float: set = set_angle
+var rotate_to_angle: bool
+var can_build: bool
+var target_building
+
+var bounding_rect
+var ground_rect
+var socket
+
+var buildings_below: Array
+var timer: float
+var building_data: Dictionary
+
+signal cancel
+
+func get_bounds():
+	var s = $Sprite2D.texture.get_size()
+	return Rect2(global_position - s * 0.5, s)
+
+func _ready() -> void:
+	building_data = {scene = filename, cost = {}}
+	set_meta(\"demolish\", true)
+	set_physics_process(false)
+
+func set_angle(a):
+	pass
+
+func set_as_preview():
+	pass
+
+func get_size() -> Vector2:
+	return Vector2()
+
+func on_moved():
+	BuildInterface.unred()
+	
+	var pos: Vector2 = get_viewport().canvas_transform.affine_inverse() * (global_position)
+	buildings_below = get_buildings_at(pos)
+	for building in buildings_below:
+		BuildInterface.make_red(building, true)
+
+func set_can_build(can: bool):
+	pass
+
+func on_placed():
+	for building in get_buildings_at(get_viewport().canvas_transform.affine_inverse() * global_position):
+		if building.is_in_group(\"blueprints\"):
+			building.cancel()
+			queue_free()
+
+func is_multibuild() -> bool:
+	return false
+
+func set_target_building(building):
+	building.set_meta(\"lol\", self)
+
+func get_sprite_mask() -> PackedVector2Array:
+	return PackedVector2Array([Vector2()])
+
+func get_error() -> int:
+	if buildings_below.is_empty():
+		var pos: Vector2 = get_viewport().canvas_transform.affine_inverse() * (global_position)
+		if get_buildings_at(pos, true):
+			return BuildInterface.DEMOLISH_INVALID
+		else:
+			return BuildInterface.DEMOLISH_NONE
+	else:
+		return OK
+
+func _physics_process(delta: float) -> void:
+	timer += delta
+	if timer >= 5:
+		set_physics_process(false)
+		
+		for building in get_buildings_at(global_position):
+			if building is BaseBuilding:
+				building.hp = 0
+				building.refresh_hp(true)
+			elif building.is_in_group(\"blueprints\"):
+				building.cancel()
+			else:
+				## TODO: efekt (mur)
+				building.destroy()
+	else:
+		for building in get_buildings_at(global_position):
+			BuildInterface.make_red(building)
+
+func cancel():
+	BuildInterface.unred()
+
+func get_buildings_at(where: Vector2, allow_invalid := false):
+	var buildings: Array
+	
+	check_tracker(Utils.game.map.common_buildings_tracker, where, buildings, allow_invalid)
+	check_tracker(Utils.game.map.gate_buildings_tracker, where, buildings, allow_invalid)
+	check_tracker(Utils.game.map.power_expander_buildings_tracker, where, buildings, allow_invalid)
+	check_tracker(Utils.game.map.turret_buildings_tracker, where, buildings, allow_invalid)
+	check_tracker(Utils.game.map.mine_buildings_tracker, where, buildings, allow_invalid)
+	check_tracker(Utils.game.map.passive_buildings_tracker, where, buildings, allow_invalid)
+	
+	for node in get_tree().get_nodes_in_group(\"player_structures\"):
+		if not allow_invalid and not node.get_meta(\"built\", false):
+			continue
+		
+		if where.distance_squared_to(node.global_position) > 100:
+			continue
+		
+		buildings.append(node)
+	
+	for node in get_tree().get_nodes_in_group(\"blueprints\"):
+		if node == self:
+			continue
+		
+		if where.distance_squared_to(node.global_position) > 100:
+			continue
+		
+		buildings.append(node)
+	
+	return buildings
+
+func check_tracker(tracker: Nodes2DTrackerMultiLvl, where: Vector2, container: Array, allow_invalid: bool):
+	var nodes = tracker.getTrackingNodes2DInOrientedRect(Rect2(where - Vector2(10, 10), Vector2(20, 20)), 0, true)
+	for node in nodes:
+		if not allow_invalid and (node.owning_player_id == -1 or node.has_meta(\"do_not\")):
+			continue
+		container.append(node)
+"
+
+[node name="Demolish" type="Node2D"]
+z_index = 701
+z_as_relative = false
+script = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 2 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 700
+offset = 1

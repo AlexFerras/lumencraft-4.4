@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Nodes/Map/Generator/Biomes/Biome.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+soft_wall_material = "Ice"
+hard_wall_material = "WavyRock"
+upper_floor_textures = PackedStringArray( "Snow", "Fungus", "Underground4", "" )
+lower_floor_textures = PackedStringArray( "Snow", "Underground2", "Snow", "Underground4" )

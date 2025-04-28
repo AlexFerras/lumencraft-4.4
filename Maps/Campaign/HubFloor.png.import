@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://d83edepc1pr0"
+path="res://.godot/imported/HubFloor.png-a0256a60f9bbe9c425d3e087a4d3a42e.image"
+
+[deps]
+
+source_file="res://Maps/Campaign/HubFloor.png"
+dest_files=["res://.godot/imported/HubFloor.png-a0256a60f9bbe9c425d3e087a4d3a42e.image"]
+
+[params]
+

@@ -1,0 +1,52 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scenes/Game/UI/Minimap.gd" type="Script" id=1]
+
+[sub_resource type="Shader" id=20]
+code = "shader_type canvas_item;
+uniform sampler2D material_colors_texture;
+uniform bool highlight_materials = false;
+uniform float zoom;
+uniform vec2 size;
+uniform vec2 screen_center_position;
+
+bool is_equal_approx(float x, float y) {
+	return abs(x - y) < 0.0001;
+}
+
+void fragment() {
+	vec2 tex_size = vec2(textureSize(TEXTURE, 0));
+	vec2 screen_center_UV = screen_center_position / tex_size;
+	vec2 rect_size_UV = size / tex_size;
+	vec4 source = textureLod(TEXTURE, UV, clamp( (4.0/zoom)+2.0, 0.0, 4.0 ));
+	if (highlight_materials) {
+		COLOR = texelFetch(material_colors_texture, ivec2(int(source.g * 255.0), 0), 0) * clamp(source.a + 0.5, 0.0, 1.0);
+	}else {
+		COLOR = vec4(vec3(0.99, 0.49, 0.09), clamp(source.a + 0.5, 0.0, 1.0));
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 20 )
+shader_param/highlight_materials = false
+shader_param/zoom = null
+shader_param/size = null
+shader_param/screen_center_position = null
+
+[sub_resource type="AtlasTexture" id=3]
+resource_local_to_scene = true
+
+[node name="Minimap" type="TextureRect"]
+material = SubResource( 2 )
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 257.0
+offset_bottom = 257.0
+clip_contents = true
+texture = SubResource( 3 )
+expand = true
+stretch_mode = 6
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

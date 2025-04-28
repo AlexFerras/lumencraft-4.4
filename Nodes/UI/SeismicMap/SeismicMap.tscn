@@ -1,0 +1,76 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/UI/SeismicMap/SeismicMap.gdshader" type="Shader" id=1]
+[ext_resource path="res://Nodes/UI/SeismicMap/SeismicMap.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/UI/SeismicMap/grid.png" type="Texture2D" id=3]
+
+[sub_resource type="CanvasItemMaterial" id=1]
+blend_mode = 1
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = ExtResource( 1 )
+shader_param/resolution = null
+shader_param/resolution_inverse = null
+shader_param/indicator_data = null
+shader_param/propagate = null
+shader_param/diffusion = 0.016
+shader_param/cutoff = 0.048
+
+[sub_resource type="ShaderMaterial" id=3]
+resource_local_to_scene = true
+shader = ExtResource( 1 )
+shader_param/resolution = null
+shader_param/resolution_inverse = null
+shader_param/indicator_data = null
+shader_param/propagate = null
+shader_param/diffusion = 0.016
+shader_param/cutoff = 0.048
+
+[node name="SeismicMap" type="SubViewportContainer"]
+material = SubResource( 1 )
+offset_right = 512.0
+offset_bottom = 512.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+stretch = true
+script = ExtResource( 2 )
+
+[node name="Viewport1" type="SubViewport" parent="."]
+size = Vector2( 512, 512 )
+handle_input_locally = false
+hdr = false
+disable_3d = true
+usage = 0
+render_target_update_mode = 3
+gui_disable_input = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Viewport1"]
+material = SubResource( 2 )
+centered = false
+
+[node name="Viewport2" type="SubViewport" parent="."]
+size = Vector2( 512, 512 )
+handle_input_locally = false
+hdr = false
+disable_3d = true
+usage = 0
+render_target_update_mode = 3
+gui_disable_input = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Viewport2"]
+material = SubResource( 3 )
+centered = false
+
+[node name="Timer" type="Timer" parent="."]
+process_mode = 0
+wait_time = 0.1
+autostart = true
+
+[node name="DebugGrid" type="TextureRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 3 )
+
+[connection signal="timeout" from="Timer" to="." method="tick"]

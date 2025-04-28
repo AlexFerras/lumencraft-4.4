@@ -1,0 +1,61 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Resources/Textures/clouds__00335_00178.png" type="Texture2D" id=1]
+
+[sub_resource type="Gradient" id=93]
+offsets = PackedFloat32Array( 0, 0.191589, 0.275701, 0.525701, 0.698598, 0.768692, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 1, 1, 1, 0.309804, 1, 1, 1, 0.494118, 1, 1, 1, 0.52549, 1, 1, 1, 0.152941, 1, 1, 1, 0.403922, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=94]
+gradient = SubResource( 93 )
+
+[sub_resource type="Curve" id=95]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.115299, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=96]
+curve = SubResource( 95 )
+
+[sub_resource type="Curve" id=97]
+max_value = 0.01
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.00252273 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=98]
+curve = SubResource( 97 )
+
+[sub_resource type="Curve" id=99]
+max_value = 2.0
+_data = [ Vector2( 0, 0.265909 ), 0.0, 0.854168, 0, 0, Vector2( 0.49224, 0.581818 ), 0.820001, 0.820001, 0, 0, Vector2( 1, 1.29091 ), 1.32973, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=100]
+curve = SubResource( 99 )
+
+[sub_resource type="ParticleProcessMaterial" id=101]
+emission_shape = 2
+emission_box_extents = Vector3( 250, 250, 0 )
+flag_disable_z = true
+direction = Vector3( 0, 0, 0 )
+spread = 60.0
+gravity = Vector3( 0, 2, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+orbit_velocity_curve = SubResource( 98 )
+damping_curve = SubResource( 96 )
+angle = 360.0
+angle_random = 1.0
+scale_random = 0.2
+scale_curve = SubResource( 100 )
+color_ramp = SubResource( 94 )
+
+[node name="Smoke_Clouds_Fog2" type="GPUParticles2D"]
+modulate = Color( 0.737255, 0.619608, 0.827451, 1 )
+position = Vector2( 112, 4 )
+rotation = -0.338601
+scale = Vector2( 0.25, 0.25 )
+z_index = 1000
+amount = 85
+lifetime = 75.0
+preprocess = 350.0
+speed_scale = 0.25
+visibility_rect = Rect2( -1000, -100, 5000, 5000 )
+process_material = SubResource( 101 )
+texture = ExtResource( 1 )

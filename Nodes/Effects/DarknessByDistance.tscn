@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Effects/DarknessByDistance.gd" type="Script" id=1]
+[ext_resource path="res://SFX/Environmnent/lava_loop.wav" type="AudioStream" id=2]
+
+[sub_resource type="Gradient" id=1]
+offsets = PackedFloat32Array( 0.00566572, 1 )
+colors = PackedColorArray( 0.1, 0.1, 0.1, 1, 0.5, 0.5, 0.5, 1 )
+
+[sub_resource type="Gradient" id=2]
+offsets = PackedFloat32Array( 0, 0.996058 )
+colors = PackedColorArray( 0, 0, 0, 0, 1, 0.419608, 0.117647, 0 )
+
+[node name="DarknessByDistance" type="Node2D"]
+script = ExtResource( 1 )
+gradient = SubResource( 1 )
+lava_gradient = SubResource( 2 )
+
+[node name="lava_audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+volume_db = -80.0
+autoplay = true
+bus = "Ambient"

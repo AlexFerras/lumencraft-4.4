@@ -1,0 +1,90 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/UI/FogOfWar/FogOfWarFear.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/UI/FogOfWar/ViewTemplateDraw.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FogOfWarHorror.material" type="Material" id=3]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=5]
+
+[sub_resource type="GDScript" id=4]
+resource_name = "ClearColor"
+script/source = "extends ColorRect
+
+func _ready():
+	size = get_parent().size
+	await get_tree().idle_frame
+	await get_tree().idle_frame
+	await get_tree().idle_frame
+	queue_free()
+"
+
+[sub_resource type="GDScript" id=5]
+resource_name = "FearClearColor"
+script/source = "extends ColorRect
+
+func _ready():
+	size = get_parent().size
+	await get_tree().idle_frame
+	await get_tree().idle_frame
+	await get_tree().idle_frame
+#	queue_free()
+	color.a = 6.0/255.0
+"
+
+[sub_resource type="CanvasItemMaterial" id=3]
+blend_mode = 1
+
+[node name="FogOfWarFear" type="Node2D" groups=["fog_of_war"]]
+z_index = 3000
+z_as_relative = false
+script = ExtResource( 1 )
+
+[node name="Fear" type="Sprite2D" parent="."]
+material = ExtResource( 3 )
+scale = Vector2( 8, 8 )
+centered = false
+
+[node name="FogOfWar" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2( 8, 8 )
+centered = false
+
+[node name="ZIndexer" parent="." instance=ExtResource( 5 )]
+z_index = 3000
+
+[node name="VP" type="SubViewport" parent="."]
+size = Vector2( 1024, 1024 )
+handle_input_locally = false
+hdr = false
+usage = 0
+render_target_clear_mode = 2
+render_target_update_mode = 1
+gui_disable_input = true
+
+[node name="clear_color" type="ColorRect" parent="VP"]
+offset_right = 1024.0
+offset_bottom = 1024.0
+color = Color( 0, 0, 0, 1 )
+script = SubResource( 4 )
+
+[node name="clear_fog_draw" type="Node2D" parent="VP"]
+script = ExtResource( 2 )
+
+[node name="VP2" type="SubViewport" parent="."]
+size = Vector2( 1024, 1024 )
+handle_input_locally = false
+hdr = false
+usage = 0
+render_target_clear_mode = 2
+render_target_update_mode = 3
+gui_disable_input = true
+
+[node name="clear_color" type="ColorRect" parent="VP2"]
+offset_right = 1024.0
+offset_bottom = 1024.0
+color = Color( 0, 0, 0, 0.0196078 )
+script = SubResource( 5 )
+
+[node name="Darkness" type="Sprite2D" parent="VP2"]
+modulate = Color( 1, 1, 1, 0.0235294 )
+material = SubResource( 3 )
+scale = Vector2( 0.0625, 0.0625 )

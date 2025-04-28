@@ -1,0 +1,1649 @@
+[gd_scene load_steps=81 format=2]
+
+[ext_resource path="res://Nodes/Enemies/Wednesday/Frog.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.gdshader" type="Shader" id=3]
+[ext_resource path="res://icon.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Enemies/CrystalUrasectus/CrystalUrasectus.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Resources/Terrain/Images/FloorSteel.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Reactor/Reactor.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Effects/EasterEgg.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=9]
+[ext_resource path="res://Nodes/Buildings/Pylon/Pylon.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Objects/Map/RedLight.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Resources/Terrain/Images/FloorSandy.png" type="Texture2D" id=12]
+[ext_resource path="res://Nodes/Objects/Chest/RustyChest.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Nodes/Buildings/Workshop/Weapon/PistolWorkshop.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Nodes/Buildings/Lab/Lab.tscn" type="PackedScene" id=16]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=17]
+[ext_resource path="res://Nodes/Objects/Helper/EditorPlacer.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Resources/Fonts/Font25.tres" type="FontFile" id=19]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=20]
+[ext_resource path="res://Scripts/PlayerDetector.gd" type="Script" id=21]
+[ext_resource path="res://Nodes/Enemies/Pider/Pider.tscn" type="PackedScene" id=22]
+[ext_resource path="res://Nodes/Map/Objects/FakeComputer.png" type="Texture2D" id=23]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=24]
+[ext_resource path="res://Nodes/Map/PixelMapFloor.tscn" type="PackedScene" id=25]
+[ext_resource path="res://Nodes/Objects/Chest/Chest.tscn" type="PackedScene" id=26]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.tscn" type="PackedScene" id=27]
+[ext_resource path="res://Resources/Terrain/Images/FloorBiomassHoles.png" type="Texture2D" id=28]
+[ext_resource path="res://Nodes/Pickups/Ammo/AmmoPickup.tscn" type="PackedScene" id=29]
+[ext_resource path="res://Nodes/Map/MapMarker/MonsterArrow.png" type="Texture2D" id=30]
+[ext_resource path="res://Nodes/Buildings/Wall/Wall.tscn" type="PackedScene" id=31]
+[ext_resource path="res://Nodes/Buildings/Tower/Tower.tscn" type="PackedScene" id=32]
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenCrystal.tscn" type="PackedScene" id=33]
+[ext_resource path="res://Nodes/Buildings/Wall/Gate.tscn" type="PackedScene" id=34]
+[ext_resource path="res://Nodes/Buildings/InteractiveLight/InteractiveLight.tscn" type="PackedScene" id=35]
+[ext_resource path="res://Nodes/Objects/Map/LavaSource.tscn" type="PackedScene" id=36]
+[ext_resource path="res://Nodes/UI/Tutorial/Exclamation.png" type="Texture2D" id=37]
+[ext_resource path="res://Nodes/Buildings/Workshop/ExplosiveWorkshop.tscn" type="PackedScene" id=38]
+[ext_resource path="res://Nodes/Effects/DarknessByDistance.tscn" type="PackedScene" id=39]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex_waved.gdshader" type="Shader" id=40]
+[ext_resource path="res://Nodes/Objects/Mushrooms/Mushroom.tscn" type="PackedScene" id=41]
+[ext_resource path="res://Nodes/Effects/SmokeBigFog.tscn" type="PackedScene" id=42]
+[ext_resource path="res://Scripts/GenericInteractable.gd" type="Script" id=43]
+[ext_resource path="res://Nodes/Buildings/HealthCenter/HealthCenter.tscn" type="PackedScene" id=44]
+[ext_resource path="res://Nodes/Pickups/LumenClumpPickup.tscn" type="PackedScene" id=45]
+[ext_resource path="res://Nodes/Pickups/Resources/lumen_crystal.png" type="Texture2D" id=46]
+[ext_resource path="res://Nodes/Enemies/Arthoma/Arthoma.tscn" type="PackedScene" id=47]
+[ext_resource path="res://Nodes/Pickups/SimplePickup.tscn" type="PackedScene" id=48]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/sea_flower.tscn" type="PackedScene" id=49]
+[ext_resource path="res://Nodes/Objects/Hole/Hole.tscn" type="PackedScene" id=50]
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=51]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=52]
+[ext_resource path="res://Resources/Terrain/FloorTextures/1DankDirt.tres" type="Resource" id=53]
+[ext_resource path="res://Resources/Terrain/Images/FloorGlowingBiomassHoles.png" type="Texture2D" id=54]
+[ext_resource path="res://Resources/Terrain/Images/FloorBlood3.png" type="Texture2D" id=55]
+[ext_resource path="res://Nodes/Map/MapMarker/WaveEnemyMarker.png" type="Texture2D" id=56]
+[ext_resource path="res://Nodes/Buildings/Tower/Stand.tscn" type="PackedScene" id=57]
+[ext_resource path="res://Resources/Terrain/Images/FloorMoss.png" type="Texture2D" id=58]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Underground4.tres" type="Resource" id=59]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Blood.tres" type="Resource" id=60]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Underground1.tres" type="Resource" id=61]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Underground2.tres" type="Resource" id=62]
+[ext_resource path="res://Nodes/Buildings/Storage/NoobStorage.gd" type="Script" id=63]
+[ext_resource path="res://Nodes/Buildings/Storage/Storage.tscn" type="PackedScene" id=64]
+
+[sub_resource type="Shader" id=69]
+code = "shader_type canvas_item;
+
+uniform float contrast = 8.5;
+
+// All components are in the range [0…1], including hue.
+vec3 rgb2hsv(vec3 c)
+{
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+// All components are in the range [0…1], including hue.
+vec3 hsv2rgb(vec3 c)
+{
+	c.r=c.g*contrast;
+	c.g+=0.0;
+	c.b+=0.0;
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+void fragment() {
+	vec4 color =texture(TEXTURE,UV);
+	COLOR.rgb = hsv2rgb(rgb2hsv(vec3(1.0,color.g,1.0)));
+	COLOR.rgb *= color.r;
+//	COLOR.rgb = vec3(COLOR.g*80.0);
+	}"
+
+[sub_resource type="ShaderMaterial" id=70]
+shader = SubResource( 69 )
+shader_param/contrast = 80.0
+
+[sub_resource type="GDScript" id=71]
+script/source = "extends \"res://Scripts/MapEvents.gd\"
+
+func _config_map(config: Dictionary):
+	Save.clones = 10
+"
+
+[sub_resource type="PixelMapMaterialData" id=72]
+resource_local_to_scene = true
+name_table = PackedStringArray( "Dirt", "Clay", "Rocks", "Poor Metal", "Metal", "Rich Metal", "Rock6", "Rock9", "Foam", "Steel", "Fireproof Foam", "Unused", "Concrete", "Unused", "Unused", "Unused", "Unused", "Unnamed", "Unnamed", "Unnamed", "Low building", "Wall", "Upgraded Wall", "Upgraded II Wall", "Tar", "Empty", "Dead Lumen", "Lumen", "Gate", "Water", "Lava", "Unnamed", "Building", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed" )
+durability_table = PackedInt32Array( 1, 5, 100, 1, 3, 9, 6, 9, 1, 8, 1, 1, 80, 2, 2, 1, 1, 2, 1, 1, 255, 2, 4, 6, 1, 1, 25, 1, 254, 1, 1, 1, 9999, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 )
+simulated_materials = PackedInt32Array( 15, 16 )
+reaction_table = PackedInt32Array( 15, 16, 14 )
+
+[sub_resource type="ShaderMaterial" id=75]
+shader = ExtResource( 3 )
+shader_param/resolution1 = 50.0
+shader_param/resolution2 = 50.0
+shader_param/resolution3 = 100.0
+shader_param/resolution4 = 32.0
+shader_param/hsvoffset1 = -1.43
+shader_param/hsvsaturation1 = -0.188
+shader_param/hsvlight1 = -0.035
+shader_param/hsvoffset2 = -1.43
+shader_param/hsvsaturation2 = -0.188
+shader_param/hsvlight2 = -0.035
+shader_param/hsvoffset3 = 0.01
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = -0.891
+shader_param/hsvsaturation4 = -0.741
+shader_param/hsvlight4 = 0.0
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 12 )
+shader_param/texture2 = ExtResource( 12 )
+shader_param/texture3 = ExtResource( 6 )
+shader_param/texture4 = ExtResource( 12 )
+
+[sub_resource type="PixelMapMaterialData" id=1]
+
+[sub_resource type="ShaderMaterial" id=76]
+shader = ExtResource( 40 )
+shader_param/resolution1 = 50.0
+shader_param/resolution2 = 50.0
+shader_param/resolution3 = 40.0
+shader_param/resolution4 = 25.0
+shader_param/multiply1 = 1.0
+shader_param/multiply2 = 5.638
+shader_param/multiply3 = 1.0
+shader_param/multiply4 = 0.636
+shader_param/wavy1 = 1.0
+shader_param/wavy2 = 0.6
+shader_param/wavy3 = 0.0
+shader_param/wavy4 = 0.0
+shader_param/hsvoffset1 = 0.0
+shader_param/hsvsaturation1 = -0.178
+shader_param/hsvlight1 = 0.0
+shader_param/hsvoffset2 = 0.0
+shader_param/hsvsaturation2 = -0.178
+shader_param/hsvlight2 = 0.0
+shader_param/hsvoffset3 = 0.0
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = 0.046
+shader_param/hsvsaturation4 = 1.431
+shader_param/hsvlight4 = -0.202
+shader_param/black_as_empty = false
+shader_param/texture1 = ExtResource( 28 )
+shader_param/texture2 = ExtResource( 54 )
+shader_param/texture3 = ExtResource( 58 )
+shader_param/texture4 = ExtResource( 55 )
+
+[sub_resource type="GDScript" id=8]
+resource_name = "Objectives"
+script/source = "extends Node2D
+
+@onready var grubas = get_node_or_null(\"../LowerArea/Finale/EnemyCrystalUrasectus\")
+
+@export var wait_wave: int
+
+func _ready() -> void:
+	Utils.game.map.wave_manager.connect(\"wave_defeated\", Callable(self, \"on_wave_defeat\"))
+	Utils.connect(\"exploded_terrain\", Callable(self, \"first_drill\").bind(), CONNECT_ONE_SHOT)
+	
+	if grubas:
+		grubas.set_process(false)
+
+func first_wave():
+	Utils.game.ui.set_objective(10, \"Fend off a wave of enemies.\")
+	wait_wave = 1
+
+func on_wave_defeat():
+	if wait_wave == 1:
+		Utils.game.ui.set_objective(20, \"Find a way to the cave south-west (SW).\")
+		var marker = get_node_or_null(\"../LowerArea/DeadEnd/Marker\")
+		if marker:
+			marker.show()
+	elif wait_wave == 2:
+		SteamAPI.unlock_achievement(\"WIN_3\")
+		if Utils.game.map.wave_manager.current_wave < 3 or (Utils.game.map.wave_manager.current_wave == 3 and Utils.game.map.wave_manager.wave_countdown > 0):
+			SteamAPI.unlock_achievement(\"WIN_FAST\")
+		Utils.game.win()
+	wait_wave = 0
+
+func first_drill():
+	Utils.game.ui.set_objective(0, \"Start the reactor.\")
+
+func south_enter(player) -> void:
+	$\"../LowerArea/DeadEnd/Marker\".queue_free()
+	Utils.game.ui.set_objective(60, \"Kill the big monster.\")
+	grubas.set_process(true)
+	grubas.get_node(\"Marker\").show()
+
+func _on_GRUBAS_died() -> void:
+	Utils.game.ui.set_objective(70, \"Fend off a wave of enemies.\")
+	Utils.game.map.wave_manager.skip_waves(1)
+	SteamAPI.unlock_achievement(\"KILL_GRUBAS\")
+	wait_wave = 2
+"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Node2D
+
+func _enter_tree() -> void:
+	if visible:
+		Utils.game.map.connect(\"ready\", Callable(self, \"add_items\").bind(), CONNECT_DEFERRED)
+
+func add_items():
+	var player := Utils.game.main_player
+	player.add_item(Const.ItemIDs.LUMEN, 99)
+	player.add_item(Const.ItemIDs.METAL_SCRAP, 100)
+	player.add_item(Const.ItemIDs.AMMO, 500, Const.Ammo.BULLETS)
+	player.add_item(Const.ItemIDs.AMMO, 10, Const.Ammo.ROCKETS)
+	player.add_item(Const.ItemIDs.FLARE, 20)
+	player.add_item(Const.ItemIDs.PICKAXE, 1, \"DiamondPickaxe\")
+	player.add_item(Const.ItemIDs.MAGNUM, 1)
+	player.add_item(Const.ItemIDs.MACHINE_GUN, 1)
+	player.add_item(Const.ItemIDs.ROCKET_LAUNCHER, 1)
+"
+
+[sub_resource type="GDScript" id=9]
+script/source = "extends Node2D
+
+@onready var pixel_map := Utils.game.map.pixel_map
+
+var dead: bool
+@onready var stored_position = get_parent().position
+
+var timer = 0.0
+func _physics_process(delta):
+	timer += delta
+	get_parent().position = stored_position + Vector2(sin(timer), cos(timer*0.341))*2.0
+
+func check():
+	if dead:
+		return
+	
+	if not pixel_map.is_pixel_solid(global_position):
+		dead = true
+		get_parent().is_static = false
+		get_parent().create_tween().tween_property(get_parent(), \"modulate:a\", 0.0, 1)
+"
+
+[sub_resource type="GDScript" id=16]
+resource_name = "FakeComputer"
+script/source = "extends Sprite2D
+
+@export var reactor: NodePath
+@onready var core = get_node(reactor)
+@onready var workshop = $\"../WeaponWorkshop\"
+@onready var label: Label = $CenterContainer/VBoxContainer/Label
+var timer := 0.0
+
+
+var player_in: bool
+
+func _ready() -> void:
+	Utils.game.map.pixel_map.update_material_mask_rotated(global_position, texture.get_data(), Const.Materials.STOP, Vector3(scale.x, scale.y, global_rotation), 0xFFFFFFFF, 255)
+
+func _on_PlayerDetector_player_entered(player) -> void:
+	player.interactables.append(self)
+
+func _on_PlayerDetector_player_exited(player) -> void:
+	player.interactables.erase(self)
+
+func _physics_process(delta):
+	timer += delta
+	$CenterContainer/VBoxContainer.modulate.a = abs( sin(timer) )
+
+func on_interacted(player) -> void:
+	if player.get_item_count(Const.ItemIDs.LUMEN) < 10:
+		Utils.play_sample(\"res://SFX/Building/InterfaceFail.wav\")
+		Utils.game.ui.set_objective(1, \"Look around and find 10 Lumens to start the reactor.\", true)
+		return
+	else:
+		player.subtract_item(Const.ItemIDs.LUMEN, 10)
+	
+	set_physics_process(false)
+	$CenterContainer/VBoxContainer.modulate.a = 1.0
+	$CenterContainer/VBoxContainer/HBoxContainer.queue_free()
+	
+	Utils.play_sample(\"res://SFX/Building/InterfaceAccept.wav\")
+	player.interactables.clear()
+	player.interactable_icon.call_deferred(\"hide\")
+	player.angular_velocity = 0
+	player.linear_velocity = Vector2()
+	player.set_deferred(\"rotation\", 0)
+	player.torso.set_deferred(\"rotation\", -PI * 0.5)
+	
+	$PlayerDetector.queue_free()
+	$\"../../../Start\".queue_free()
+	$\"!\".queue_free()
+	
+	label.text = \"Starting...\"
+	label.modulate = Color.YELLOW
+	
+	var seq := create_tween()
+	seq.tween_callback(Callable(Utils.game.ui, \"start_cutscene\"))
+	seq.tween_property(Utils.game.camera, \"is_camera_following\", false,0.0)
+	seq.tween_interval(0.5)
+	seq.tween_property(Utils.game.camera, \"target_position\", core.global_position, 0.5).set_trans(Tween.TRANS_SINE)
+	seq.tween_callback(Callable(self, \"start_reactor\"))
+	seq.tween_method(Callable(self, \"reveal_core\"), 100, 300, 2.33333)
+	seq.tween_interval(1)
+	if is_instance_valid(workshop):
+		seq.tween_property(Utils.game.camera, \"target_position\", workshop.global_position, 0.9).set_trans(Tween.TRANS_SINE)
+		seq.tween_method(Callable(self, \"reveal_workshop\"), 50, 200, 1)
+		seq.tween_interval(1)
+	seq.tween_property(Utils.game.camera, \"is_camera_following\", true,0.0)
+	seq.tween_callback(Callable(Utils.game.ui, \"finish_cutscene\"))
+	seq.tween_interval(2)
+	seq.tween_callback(Callable($\"../../../Objectives\", \"first_wave\"))
+
+func reveal_core(size):
+	Utils.game.map.pixel_map.fog_of_war.clear_circular_area(core.global_position,size, Color(1,1,1,0.03))
+
+func reveal_workshop(size):
+	Utils.game.map.pixel_map.fog_of_war.clear_circular_area(workshop.global_position,size, Color(1,1,1,0.06))
+	
+func start_reactor():
+	core.start()
+	$LightSprite.queue_free()
+	$AnimationPlayer.queue_free()
+	
+	await core.get_node(\"AnimationPlayer\").animation_finished
+
+	label.text = \"Running\"
+	label.modulate = Color.GREEN
+
+"
+
+[sub_resource type="RectangleShape2D" id=13]
+extents = Vector2( 163.621, 124.314 )
+
+[sub_resource type="Animation" id=47]
+length = 1.5
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("LightSprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5, 1 ),
+"transitions": PackedFloat32Array( 2, 2, 0.5 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 2, 0, 0, 1 ) ]
+}
+
+[sub_resource type="Animation" id=48]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("LightSprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 1 ) ]
+}
+
+[sub_resource type="RectangleShape2D" id=17]
+extents = Vector2( 141.293, 75.5918 )
+
+[sub_resource type="CircleShape2D" id=64]
+radius = 40.0
+
+[node name="Map" type="Node2D"]
+material = SubResource( 70 )
+z_as_relative = false
+script = ExtResource( 14 )
+wave_file_path = "res://Maps/DemoWaves.cfg"
+
+[node name="MapEvents" type="Node" parent="."]
+script = SubResource( 71 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 17 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+z_index = 500
+z_as_relative = false
+material_data = SubResource( 72 )
+texture_path = "res://Maps/DemoMap.png"
+debug_flags = 4
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, null, null, null, null ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="DarknessByDistance" parent="PixelMap" instance=ExtResource( 39 )]
+max_distance = 450.0
+
+[node name="Smoke" parent="PixelMap" instance=ExtResource( 42 )]
+
+[node name="ZIndexer" parent="PixelMap" instance=ExtResource( 20 )]
+z_index = 500
+
+[node name="PixelMapFloor" parent="PixelMap" instance=ExtResource( 25 )]
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 75 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 1 )
+texture_path = "res://Maps/DemoFloor.png"
+debug_flags = 4
+script = ExtResource( 52 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ ExtResource( 53 ), null, null, null ]
+custom_material = true
+
+[node name="ZIndexer" parent="Floor" instance=ExtResource( 20 )]
+z_index = -1000
+offset = -1000
+
+[node name="Floor2" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 76 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 1 )
+texture_path = "res://Maps/DemoFloor2.png"
+debug_flags = 4
+script = ExtResource( 52 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ ExtResource( 61 ), ExtResource( 62 ), ExtResource( 59 ), ExtResource( 60 ) ]
+custom_material = true
+
+[node name="ZIndexer" parent="Floor2" instance=ExtResource( 20 )]
+z_index = -1000
+offset = -1000
+
+[node name="Objectives" type="Node2D" parent="."]
+script = SubResource( 8 )
+
+[node name="SouthDetector" type="Area2D" parent="Objectives"]
+position = Vector2( -15.7169, 2453.69 )
+script = ExtResource( 21 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Objectives/SouthDetector"]
+visible = false
+polygon = PackedVector2Array( 1806.03, 389.647, 2676.55, 569.444, 2138.66, 961.501, 1503.87, 650.852 )
+
+[node name="LavaSource" parent="." instance=ExtResource( 36 )]
+position = Vector2( 3871.2, 2058.54 )
+fluid_radius = 3000.0
+fluid_dmg_materials_mask = 402653183
+fluid_dmg_durability_threshold = 4
+fluid_dmg = 4
+fluid_is_simulated = true
+source_id = 1
+
+[node name="LavaSource2" parent="." instance=ExtResource( 36 )]
+position = Vector2( 1035.31, 2676.73 )
+fluid_radius = 300.0
+fluid_dmg_materials_mask = 402653183
+fluid_is_simulated = true
+source_id = 2
+
+[node name="LavaSource3" parent="." instance=ExtResource( 36 )]
+position = Vector2( 1961.1, 2511.52 )
+fluid_radius = 160.0
+fluid_flow_speed = 20.0
+fluid_dmg_materials_mask = 402653183
+fluid_dmg_durability_threshold = 3
+fluid_dmg = 3
+fluid_is_simulated = true
+source_id = 3
+
+[node name="EasterEgg" type="Sprite2D" parent="."]
+position = Vector2( 3256.31, 1741.97 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 8 )
+
+[node name="InventoryHack" type="Node2D" parent="."]
+visible = false
+script = SubResource( 2 )
+
+[node name="Core" parent="." instance=ExtResource( 7 )]
+position = Vector2( 3019.58, 2649.82 )
+RANGE = 200
+
+[node name="Start" type="Marker2D" parent="."]
+position = Vector2( 3044.72, 2922.66 )
+
+[node name="StartArea" type="Node2D" parent="."]
+
+[node name="SmallCave" type="Node2D" parent="StartArea"]
+
+[node name="LightSprite" type="Node2D" parent="StartArea/SmallCave"]
+modulate = Color( 1, 0.45, 0.45, 1 )
+position = Vector2( 3041.37, 2837.6 )
+scale = Vector2( 0.54, 0.54 )
+script = ExtResource( 9 )
+texture = ExtResource( 24 )
+drop_shadow = true
+is_static = true
+
+[node name="FakeLight" type="Node2D" parent="StartArea/SmallCave/LightSprite"]
+position = Vector2( -17.749, -14.1621 )
+script = SubResource( 9 )
+
+[node name="Sprite2D" type="Sprite2D" parent="StartArea/SmallCave/LightSprite/FakeLight"]
+visible = false
+z_index = 3
+texture = ExtResource( 4 )
+
+[node name="Timer" type="Timer" parent="StartArea/SmallCave/LightSprite"]
+wait_time = 0.25
+autostart = true
+
+[node name="LumenCrystal" parent="StartArea/SmallCave" instance=ExtResource( 33 )]
+position = Vector2( 3087.72, 2755.52 )
+scale = Vector2( 0.4, 0.4 )
+pixelmap_scale_mul = 0.94
+
+[node name="RustyChest" parent="StartArea/SmallCave" instance=ExtResource( 13 )]
+position = Vector2( 2826.35, 2828.99 )
+
+[node name="SimplePickup" parent="StartArea/SmallCave/RustyChest" instance=ExtResource( 48 )]
+amount = 10
+
+[node name="SimplePickup2" parent="StartArea/SmallCave/RustyChest" instance=ExtResource( 48 )]
+item = "MEDPACK"
+
+[node name="Base" type="Node2D" parent="StartArea"]
+
+[node name="Lab" parent="StartArea/Base" instance=ExtResource( 16 )]
+position = Vector2( 3011.73, 2416.6 )
+
+[node name="FakeComputer" type="Sprite2D" parent="StartArea/Base"]
+position = Vector2( 3022.14, 2723.08 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 23 )
+script = SubResource( 16 )
+reactor = NodePath("../../../Core")
+
+[node name="CenterContainer" type="CenterContainer" parent="StartArea/Base/FakeComputer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -324.129
+offset_top = -197.158
+offset_right = -26.1289
+offset_bottom = -2.1582
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="StartArea/Base/FakeComputer/CenterContainer"]
+offset_left = 4.0
+offset_top = 60.0
+offset_right = 294.0
+offset_bottom = 134.0
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="StartArea/Base/FakeComputer/CenterContainer/VBoxContainer"]
+modulate = Color( 1, 0, 0, 1 )
+offset_right = 290.0
+offset_bottom = 29.0
+theme_override_fonts/font = ExtResource( 19 )
+text = "Offline"
+align = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="StartArea/Base/FakeComputer/CenterContainer/VBoxContainer"]
+offset_top = 45.0
+offset_right = 290.0
+offset_bottom = 74.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="StartArea/Base/FakeComputer/CenterContainer/VBoxContainer/HBoxContainer"]
+modulate = Color( 1, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 29.0
+theme_override_fonts/font = ExtResource( 19 )
+text = "10x"
+
+[node name="TextureRect" type="TextureRect" parent="StartArea/Base/FakeComputer/CenterContainer/VBoxContainer/HBoxContainer"]
+offset_left = 70.0
+offset_right = 110.0
+offset_bottom = 29.0
+custom_minimum_size = Vector2( 40, 0 )
+texture = ExtResource( 46 )
+expand = true
+stretch_mode = 6
+
+[node name="Label2" type="Label" parent="StartArea/Base/FakeComputer/CenterContainer/VBoxContainer/HBoxContainer"]
+modulate = Color( 1, 0, 0, 1 )
+offset_left = 114.0
+offset_right = 290.0
+offset_bottom = 29.0
+theme_override_fonts/font = ExtResource( 19 )
+text = "required"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="StartArea/Base/FakeComputer"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StartArea/Base/FakeComputer/StaticBody2D"]
+shape = SubResource( 13 )
+
+[node name="LightSprite" type="Node2D" parent="StartArea/Base/FakeComputer"]
+modulate = Color( 1, 0, 0, 1 )
+position = Vector2( 2.80469, 15.9258 )
+scale = Vector2( 0.2, 0.3 )
+script = ExtResource( 9 )
+texture = ExtResource( 24 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="StartArea/Base/FakeComputer"]
+autoplay = "Mig"
+anims/Mig = SubResource( 47 )
+anims/RESET = SubResource( 48 )
+
+[node name="PlayerDetector" type="Area2D" parent="StartArea/Base/FakeComputer"]
+position = Vector2( 0, 213.071 )
+script = ExtResource( 43 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StartArea/Base/FakeComputer/PlayerDetector"]
+shape = SubResource( 17 )
+
+[node name="!" type="Sprite2D" parent="StartArea/Base/FakeComputer"]
+modulate = Color( 2, 2, 0, 1 )
+position = Vector2( 0, -166.199 )
+scale = Vector2( 2, 2 )
+z_index = 1000
+texture = ExtResource( 37 )
+
+[node name="Chest" parent="StartArea/Base" instance=ExtResource( 26 )]
+position = Vector2( 2891.39, 2681.17 )
+
+[node name="SimplePickup" parent="StartArea/Base/Chest" instance=ExtResource( 48 )]
+amount = 30
+
+[node name="Pylons" type="Node2D" parent="StartArea/Base"]
+
+[node name="Pylon" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2730.91, 2635.14 )
+
+[node name="Pylon3" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2824.29, 2647.01 )
+
+[node name="Pylon2" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2653.05, 2687.64 )
+
+[node name="Pylon4" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2602.86, 2768.38 )
+
+[node name="Pylon6" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2723.16, 2440.18 )
+
+[node name="Pylon11" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2818.03, 2458.44 )
+
+[node name="Pylon12" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2904.44, 2492.23 )
+
+[node name="Pylon8" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2631.1, 2405.81 )
+
+[node name="Pylon7" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2728.56, 2345.54 )
+
+[node name="Pylon9" parent="StartArea/Base/Pylons" instance=ExtResource( 10 )]
+position = Vector2( 2939.25, 2403.66 )
+
+[node name="Tower" parent="StartArea/Base" instance=ExtResource( 32 )]
+position = Vector2( 2583, 2431.79 )
+rotation = -2.00806
+
+[node name="Tower3" parent="StartArea/Base" instance=ExtResource( 32 )]
+position = Vector2( 2558.24, 2848.92 )
+rotation = -4.20069
+
+[node name="Walls" type="Node2D" parent="StartArea/Base"]
+position = Vector2( 0, -1 )
+
+[node name="Destroyable_wall" parent="StartArea/Base/Walls" instance=ExtResource( 31 )]
+position = Vector2( 2737.74, 2313.9 )
+rotation = -0.124173
+
+[node name="Destroyable_wall7" parent="StartArea/Base/Walls" instance=ExtResource( 31 )]
+position = Vector2( 2554.92, 2368.94 )
+rotation = -0.474035
+
+[node name="Gate" parent="StartArea/Base/Walls" instance=ExtResource( 34 )]
+position = Vector2( 2642.6, 2334.57 )
+rotation = -0.261799
+
+[node name="Interactive lights" type="Node2D" parent="StartArea/Base"]
+
+[node name="GenericInteractable" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2988.57, 2740.83 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable7" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 3039.24, 2806.91 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+duration = 1.0
+pattern = [ true, false, false ]
+
+[node name="GenericInteractable26" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 3034.67, 2785.28 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.1
+duration = 1.0
+pattern = [ true, false, false ]
+
+[node name="GenericInteractable27" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 3027.33, 2761.47 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.2
+duration = 1.0
+pattern = [ true, false, false ]
+
+[node name="GenericInteractable17" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2774.71, 2653.82 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.7
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable18" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2800.68, 2671.27 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.6
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable3" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2955.77, 2732.27 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.1
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable4" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2930.17, 2726.98 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.2
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable5" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2893.74, 2711.88 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.3
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable6" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2862.39, 2699.81 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.4
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable19" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2716.73, 2532.73 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable20" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2700.62, 2498.99 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.1
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable21" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2687.98, 2461.15 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.2
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable24" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2673.42, 2426.22 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.3
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable25" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2663.36, 2396.34 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.4
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable28" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2651.81, 2364.15 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.5
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable2" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2828.6, 2685.69 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.5
+duration = 1.0
+pattern = [ true, false, false, false, false, false, false, false ]
+
+[node name="GenericInteractable10" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2670.75, 2711.94 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable11" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2651.85, 2740.39 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.1
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable12" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2634.23, 2770.35 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.2
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable13" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2618.21, 2798.49 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.3
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable22" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2602.24, 2826.21 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.4
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="GenericInteractable23" parent="StartArea/Base/Interactive lights" instance=ExtResource( 35 )]
+position = Vector2( 2585.58, 2853.27 )
+color = Color( 0.329412, 1, 0.639216, 1 )
+offset = 0.5
+duration = 1.0
+pattern = [ true, false, false, false, false, false ]
+
+[node name="LumenCrystal" parent="StartArea/Base" instance=ExtResource( 33 )]
+position = Vector2( 3135.36, 2742.14 )
+rotation = -0.898394
+scale = Vector2( 0.5, 0.5 )
+
+[node name="LumenCrystal2" parent="StartArea/Base" instance=ExtResource( 33 )]
+position = Vector2( 2491.3, 2886.64 )
+rotation = -3.34405
+scale = Vector2( 0.6, 0.6 )
+
+[node name="LumenCrystal3" parent="StartArea/Base" instance=ExtResource( 33 )]
+position = Vector2( 2839.73, 2097.24 )
+rotation = -1.309
+scale = Vector2( 0.484112, 0.484112 )
+pixelmap_scale_mul = 0.94
+
+[node name="Stand" parent="StartArea/Base" instance=ExtResource( 57 )]
+position = Vector2( 2584.08, 2392.25 )
+
+[node name="Stand2" parent="StartArea/Base" instance=ExtResource( 57 )]
+position = Vector2( 2751.51, 2349.06 )
+
+[node name="ExplosiveWorkshop" parent="StartArea/Base" instance=ExtResource( 38 )]
+position = Vector2( 2654.89, 2603.49 )
+
+[node name="HealthCenter" parent="StartArea/Base" instance=ExtResource( 44 )]
+position = Vector2( 2854.54, 2409.96 )
+
+[node name="WeaponWorkshop" parent="StartArea/Base" instance=ExtResource( 15 )]
+position = Vector2( 2852, 2613 )
+
+[node name="Secret" type="Node2D" parent="StartArea"]
+
+[node name="Enemy_Arthoma" parent="StartArea/Secret" instance=ExtResource( 47 )]
+position = Vector2( 2984.55, 2045.61 )
+
+[node name="Enemy_Arthoma2" parent="StartArea/Secret" instance=ExtResource( 47 )]
+position = Vector2( 3055.07, 2251.9 )
+
+[node name="Enemy_Arthoma3" parent="StartArea/Secret" instance=ExtResource( 47 )]
+position = Vector2( 2958.7, 2030.2 )
+
+[node name="RustyChest" parent="StartArea/Secret" instance=ExtResource( 13 )]
+position = Vector2( 3024.98, 2044.9 )
+
+[node name="AmmoPickup" parent="StartArea/Secret/RustyChest" instance=ExtResource( 29 )]
+amount = 30
+
+[node name="SimplePickup" parent="StartArea/Secret/RustyChest" instance=ExtResource( 48 )]
+amount = 15
+
+[node name="RustyChest2" parent="StartArea/Secret" instance=ExtResource( 13 )]
+position = Vector2( 2826.6, 1624.73 )
+rotation = 2.35619
+
+[node name="SimplePickup" parent="StartArea/Secret/RustyChest2" instance=ExtResource( 48 )]
+item = "REPAIR_KIT"
+amount = 20
+
+[node name="Chest" parent="StartArea/Secret" instance=ExtResource( 26 )]
+position = Vector2( 3039.37, 2015.59 )
+
+[node name="AmmoPickup" parent="StartArea/Secret/Chest" instance=ExtResource( 29 )]
+amount = 3
+ammo_type = 1
+
+[node name="Enemy_Smart" parent="StartArea/Secret" instance=ExtResource( 22 )]
+position = Vector2( 2995.49, 2014.69 )
+
+[node name="UpperArea" type="Node2D" parent="."]
+
+[node name="LumenVein" type="Node2D" parent="UpperArea"]
+position = Vector2( 0, -0.561768 )
+
+[node name="LumenCrystal" parent="UpperArea/LumenVein" instance=ExtResource( 33 )]
+position = Vector2( 2141, 2653.56 )
+pixelmap_scale_mul = 0.94
+
+[node name="LumenCrystal2" parent="UpperArea/LumenVein" instance=ExtResource( 33 )]
+position = Vector2( 1774, 2190.56 )
+rotation = 0.785397
+scale = Vector2( 0.6, 0.6 )
+
+[node name="RuinedFacility" type="Node2D" parent="UpperArea"]
+
+[node name="Chests" type="Node2D" parent="UpperArea/RuinedFacility"]
+
+[node name="RustyChest" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1724.29, 1990.65 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest" instance=ExtResource( 29 )]
+collision_layer = 3
+amount = 20
+
+[node name="RustyChest6" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1821.79, 1776.83 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest6" instance=ExtResource( 29 )]
+collision_layer = 3
+amount = 5
+ammo_type = 1
+
+[node name="RustyChest2" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1684.79, 1990.65 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest2" instance=ExtResource( 48 )]
+item = "REPAIR_KIT"
+amount = 15
+
+[node name="SimplePickup2" parent="UpperArea/RuinedFacility/Chests/RustyChest2" instance=ExtResource( 48 )]
+amount = 15
+
+[node name="RustyChest3" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1593.78, 1921.19 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest3" instance=ExtResource( 48 )]
+amount = 20
+
+[node name="RustyChest5" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1622.26, 1921.19 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest5" instance=ExtResource( 29 )]
+collision_layer = 3
+amount = 30
+
+[node name="RustyChest7" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1933.15, 2021.65 )
+
+[node name="AmmoPickup" parent="UpperArea/RuinedFacility/Chests/RustyChest7" instance=ExtResource( 29 )]
+collision_layer = 3
+amount = 40
+
+[node name="RustyChest4" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1817.82, 1854.75 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest4" instance=ExtResource( 48 )]
+amount = 20
+
+[node name="RustyChest8" parent="UpperArea/RuinedFacility/Chests" instance=ExtResource( 13 )]
+position = Vector2( 1966.36, 2024.24 )
+
+[node name="SimplePickup" parent="UpperArea/RuinedFacility/Chests/RustyChest8" instance=ExtResource( 48 )]
+amount = 25
+
+[node name="Lights" type="Node2D" parent="UpperArea/RuinedFacility"]
+
+[node name="RedLamp" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 11 )]
+position = Vector2( 1827.81, 1814.99 )
+rotation = 3.14159
+
+[node name="RedLamp2" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 11 )]
+position = Vector2( 1920.03, 2009.89 )
+rotation = 6.28318
+
+[node name="RedLamp3" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 11 )]
+position = Vector2( 1904.8, 1693.82 )
+rotation = 7.85397
+
+[node name="RedLamp4" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 11 )]
+position = Vector2( 1780.11, 1693.82 )
+rotation = 7.85397
+
+[node name="RedLamp5" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 11 )]
+position = Vector2( 1658.72, 1693.82 )
+rotation = 7.85397
+
+[node name="RedLamp6" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 11 )]
+position = Vector2( 1582.96, 1946.91 )
+rotation = 6.28318
+
+[node name="RedLamp7" parent="UpperArea/RuinedFacility/Lights" instance=ExtResource( 11 )]
+position = Vector2( 1735.41, 1946.49 )
+rotation = 9.42476
+
+[node name="Enemies" type="Node2D" parent="UpperArea"]
+
+[node name="Smart" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 2358.65, 2129.21 )
+
+[node name="Smart2" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 2393.51, 2214.48 )
+
+[node name="Smart3" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 2018.74, 2069.15 )
+
+[node name="Smart4" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 2020.56, 2159.64 )
+
+[node name="Smart9" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1615.65, 1736.31 )
+
+[node name="Smart10" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1671.62, 1813.59 )
+
+[node name="Smart11" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1689.1, 1944.37 )
+
+[node name="Smart14" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1752.96, 1843.7 )
+
+[node name="Smart15" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1606.43, 1867.84 )
+
+[node name="Enemy_Arthoma" parent="UpperArea/Enemies" instance=ExtResource( 47 )]
+position = Vector2( 1623.22, 1976.95 )
+
+[node name="Enemy_Arthoma2" parent="UpperArea/Enemies" instance=ExtResource( 47 )]
+position = Vector2( 1689.16, 1888.69 )
+
+[node name="Enemy_Arthoma3" parent="UpperArea/Enemies" instance=ExtResource( 47 )]
+position = Vector2( 1788.58, 1786.52 )
+
+[node name="Smart16" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1649.56, 1953.67 )
+
+[node name="Smart17" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1704.3, 1852.66 )
+
+[node name="Smart18" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1640.03, 1874.56 )
+
+[node name="Smart19" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1664.06, 1771.99 )
+
+[node name="Smart20" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1673.08, 1845.85 )
+
+[node name="Smart21" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1611.1, 1804.88 )
+
+[node name="Smart22" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1710.31, 1796.38 )
+
+[node name="Smart24" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1690.31, 1759.08 )
+
+[node name="Smart25" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1682.74, 1717.48 )
+
+[node name="Smart26" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1722.32, 1727.63 )
+
+[node name="Smart23" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1632.46, 1832.96 )
+
+[node name="Smart5" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1881.49, 2323.13 )
+
+[node name="Smart6" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 1996.5, 2417.02 )
+
+[node name="Smart7" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 2132.82, 2479.27 )
+
+[node name="Smart8" parent="UpperArea/Enemies" instance=ExtResource( 22 )]
+position = Vector2( 2241.23, 2499.37 )
+
+[node name="Enemy_Arthoma4" parent="UpperArea/Enemies" instance=ExtResource( 47 )]
+position = Vector2( 2217.88, 2643.52 )
+
+[node name="Enemy_Arthoma5" parent="UpperArea/Enemies" instance=ExtResource( 47 )]
+position = Vector2( 1871.52, 2453.75 )
+
+[node name="WaveSpawner" parent="UpperArea" instance=ExtResource( 27 )]
+position = Vector2( 2300.52, 1992.81 )
+radius = 70.0
+
+[node name="Chest" parent="UpperArea" instance=ExtResource( 26 )]
+position = Vector2( 2491.2, 1819 )
+rotation = -1.57079
+
+[node name="SimplePickup" parent="UpperArea/Chest" instance=ExtResource( 48 )]
+item = "SHOTGUN"
+
+[node name="LowerArea" type="Node2D" parent="."]
+
+[node name="DeadEnd" type="Node2D" parent="LowerArea"]
+
+[node name="Smart" parent="LowerArea/DeadEnd" instance=ExtResource( 22 )]
+position = Vector2( 2625.41, 3296.98 )
+
+[node name="Smart2" parent="LowerArea/DeadEnd" instance=ExtResource( 22 )]
+position = Vector2( 2695.39, 3285.9 )
+
+[node name="Smart3" parent="LowerArea/DeadEnd" instance=ExtResource( 22 )]
+position = Vector2( 2700.42, 3203.46 )
+
+[node name="Smart4" parent="LowerArea/DeadEnd" instance=ExtResource( 22 )]
+position = Vector2( 2531.71, 3125.82 )
+
+[node name="Smart5" parent="LowerArea/DeadEnd" instance=ExtResource( 22 )]
+position = Vector2( 2477.75, 3160.18 )
+
+[node name="Smart6" parent="LowerArea/DeadEnd" instance=ExtResource( 22 )]
+position = Vector2( 2557.09, 3200.55 )
+
+[node name="Smart7" parent="LowerArea/DeadEnd" instance=ExtResource( 22 )]
+position = Vector2( 2623.65, 3204.64 )
+
+[node name="Enemy_Arthoma" parent="LowerArea/DeadEnd" instance=ExtResource( 47 )]
+position = Vector2( 2656.73, 3270.22 )
+
+[node name="Enemy_Arthoma2" parent="LowerArea/DeadEnd" instance=ExtResource( 47 )]
+position = Vector2( 2091.01, 3299.92 )
+
+[node name="Marker" parent="LowerArea/DeadEnd" instance=ExtResource( 51 )]
+visible = false
+position = Vector2( 2474.8, 3057.42 )
+arrow = ExtResource( 30 )
+max_radius = 10000.0
+
+[node name="Finale" type="Node2D" parent="LowerArea"]
+
+[node name="Smart" parent="LowerArea/Finale" instance=ExtResource( 22 )]
+position = Vector2( 1994.91, 3308.66 )
+
+[node name="Smart2" parent="LowerArea/Finale" instance=ExtResource( 22 )]
+position = Vector2( 2051.9, 3345.45 )
+
+[node name="Smart3" parent="LowerArea/Finale" instance=ExtResource( 22 )]
+position = Vector2( 2068.73, 3241.84 )
+
+[node name="Smart6" parent="LowerArea/Finale" instance=ExtResource( 22 )]
+position = Vector2( 1991.3, 3243.35 )
+
+[node name="Smart7" parent="LowerArea/Finale" instance=ExtResource( 22 )]
+position = Vector2( 2039.16, 3290.15 )
+
+[node name="Chest" parent="LowerArea/Finale" instance=ExtResource( 26 )]
+position = Vector2( 2801.3, 3200.41 )
+
+[node name="SimplePickup2" parent="LowerArea/Finale/Chest" instance=ExtResource( 48 )]
+item = "MEDPACK"
+amount = 2
+
+[node name="AmmoPickup" parent="LowerArea/Finale/Chest" instance=ExtResource( 29 )]
+amount = 4
+ammo_type = 1
+
+[node name="SimplePickup" parent="LowerArea/Finale/Chest" instance=ExtResource( 48 )]
+item = "LUMEN"
+amount = 10
+
+[node name="EnemyCrystalUrasectus" parent="LowerArea/Finale" instance=ExtResource( 5 )]
+modulate = Color( 1, 0.7, 0.7, 1 )
+position = Vector2( 1875, 3079 )
+override_stats = {
+"hp": 1000,
+"speed": 80
+}
+
+[node name="Marker" parent="LowerArea/Finale/EnemyCrystalUrasectus" instance=ExtResource( 51 )]
+visible = false
+texture = ExtResource( 56 )
+arrow = ExtResource( 30 )
+max_radius = 10000.0
+
+[node name="Mushrooms" type="Node2D" parent="."]
+
+[node name="Mushroom" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2558.24, 2193.26 )
+rotation = 2.3201
+scale = Vector2( 0.486615, 0.486615 )
+
+[node name="Mushroom2" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2732.79, 2157.3 )
+rotation = 5.19401
+scale = Vector2( 0.404611, 0.404611 )
+
+[node name="Mushroom39" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 3083, 2217.91 )
+rotation = 5.19401
+scale = Vector2( 0.404611, 0.404611 )
+
+[node name="Mushroom3" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2787.23, 2229.97 )
+rotation = 2.8231
+scale = Vector2( 0.282552, 0.282552 )
+
+[node name="Mushroom4" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2417.64, 2231.22 )
+rotation = 5.82091
+scale = Vector2( 0.394342, 0.394342 )
+
+[node name="Mushroom5" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2426.4, 2055.9 )
+rotation = 1.88938
+scale = Vector2( 0.474867, 0.474867 )
+
+[node name="Mushroom6" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2245.85, 2043.17 )
+rotation = 2.35188
+scale = Vector2( 0.302431, 0.302431 )
+
+[node name="Mushroom7" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2155.34, 1839.52 )
+rotation = 1.54336
+scale = Vector2( 0.48382, 0.48382 )
+
+[node name="Mushroom8" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1991.76, 1742.41 )
+rotation = 3.41902
+scale = Vector2( 0.464974, 0.464974 )
+
+[node name="Mushroom9" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1922.47, 1756.08 )
+rotation = 2.93596
+scale = Vector2( 0.23767, 0.23767 )
+
+[node name="Mushroom10" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1983.75, 1970.57 )
+rotation = 0.439564
+scale = Vector2( 0.516259, 0.516259 )
+
+[node name="Mushroom11" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2081.33, 2031.85 )
+rotation = 5.2671
+scale = Vector2( 0.4443, 0.4443 )
+
+[node name="Mushroom12" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2026.65, 2115.76 )
+rotation = 2.51361
+scale = Vector2( 0.450287, 0.450287 )
+
+[node name="Mushroom13" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2143.55, 2134.62 )
+rotation = 2.70869
+scale = Vector2( 0.516098, 0.516098 )
+
+[node name="Mushroom14" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2124.76, 2618.33 )
+rotation = 2.11129
+scale = Vector2( 0.542891, 0.542891 )
+
+[node name="Mushroom15" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2171.21, 2630.82 )
+rotation = 1.51188
+scale = Vector2( 0.4502, 0.4502 )
+
+[node name="Mushroom16" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2239.63, 2602.85 )
+rotation = 1.45503
+scale = Vector2( 0.444664, 0.444664 )
+
+[node name="Mushroom17" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2111.27, 2454.52 )
+rotation = 0.570478
+scale = Vector2( 0.251117, 0.251117 )
+
+[node name="Mushroom18" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1995.41, 2399.08 )
+rotation = 0.713203
+scale = Vector2( 0.365047, 0.365047 )
+
+[node name="Mushroom19" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1820.72, 2411.45 )
+rotation = 2.11286
+scale = Vector2( 0.214823, 0.214823 )
+
+[node name="Mushroom20" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1800.1, 2150.62 )
+rotation = 4.19113
+scale = Vector2( 0.511097, 0.511097 )
+
+[node name="Mushroom21" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1822.3, 2151.41 )
+rotation = 0.0621175
+scale = Vector2( 0.221946, 0.221946 )
+
+[node name="Mushroom22" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1838.16, 2160.13 )
+rotation = 2.97113
+scale = Vector2( 0.25877, 0.25877 )
+
+[node name="Mushroom23" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1837.37, 2179.16 )
+rotation = 2.94975
+scale = Vector2( 0.491063, 0.491063 )
+
+[node name="Mushroom24" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 3224.15, 2435.59 )
+rotation = 1.12297
+scale = Vector2( 0.346783, 0.346783 )
+
+[node name="Mushroom25" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 3217.53, 2553.51 )
+rotation = 5.00193
+scale = Vector2( 0.424464, 0.424464 )
+
+[node name="Mushroom26" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2763.67, 2723.26 )
+rotation = 1.36791
+scale = Vector2( 0.541108, 0.541108 )
+
+[node name="Mushroom27" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2513.95, 2803.17 )
+rotation = 0.815322
+scale = Vector2( 0.390568, 0.390568 )
+
+[node name="Mushroom28" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2606.84, 3141.79 )
+rotation = 2.84881
+scale = Vector2( 0.297946, 0.297946 )
+
+[node name="Mushroom29" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2725.71, 3262.65 )
+rotation = 6.26868
+scale = Vector2( 0.471687, 0.471687 )
+
+[node name="Mushroom30" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2596.86, 3267.64 )
+rotation = 0.774816
+scale = Vector2( 0.309131, 0.309131 )
+
+[node name="Mushroom31" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2545.91, 3245.67 )
+rotation = 5.43574
+scale = Vector2( 0.465784, 0.465784 )
+
+[node name="Mushroom32" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2296.2, 3069.87 )
+rotation = 3.96281
+scale = Vector2( 0.466682, 0.466682 )
+
+[node name="Mushroom33" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2346.14, 3252.66 )
+rotation = 2.94796
+scale = Vector2( 0.4043, 0.4043 )
+
+[node name="Mushroom34" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2161.35, 3334.57 )
+rotation = 0.334428
+scale = Vector2( 0.417165, 0.417165 )
+
+[node name="Mushroom35" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 2179.33, 3198.72 )
+rotation = 4.96102
+scale = Vector2( 0.227992, 0.227992 )
+
+[node name="Mushroom36" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1985.55, 3116.81 )
+rotation = 4.70617
+scale = Vector2( 0.53952, 0.53952 )
+
+[node name="Mushroom37" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1900.64, 3229.69 )
+rotation = 1.16407
+scale = Vector2( 0.354185, 0.354185 )
+
+[node name="Mushroom38" parent="Mushrooms" instance=ExtResource( 41 )]
+position = Vector2( 1929.61, 3018.92 )
+rotation = 0.545333
+scale = Vector2( 0.596058, 0.596058 )
+
+[node name="SeaFlowers" type="Node2D" parent="."]
+
+[node name="sea_flower" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 3035.35, 2125.69 )
+
+[node name="sea_flower10" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 3277, 2593 )
+
+[node name="sea_flower2" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2465.49, 2168.14 )
+
+[node name="sea_flower3" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2202.79, 1798.06 )
+
+[node name="sea_flower4" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 1925.6, 1989.84 )
+
+[node name="sea_flower5" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2054.7, 1699.17 )
+rotation = -2.02458
+
+[node name="sea_flower6" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 1817.66, 2362.75 )
+rotation = -2.02458
+
+[node name="sea_flower7" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2262.82, 2467.8 )
+rotation = -2.02458
+
+[node name="sea_flower8" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2098.7, 2720.7 )
+rotation = -2.02458
+
+[node name="sea_flower9" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 1588.62, 1704.77 )
+rotation = -2.02458
+
+[node name="sea_flower11" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2858.48, 2787.01 )
+rotation = -0.678933
+
+[node name="sea_flower12" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2516.46, 2734.54 )
+rotation = -0.678933
+
+[node name="sea_flower13" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2562.77, 2940.89 )
+rotation = -4.94626
+
+[node name="sea_flower14" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2571.44, 3031.55 )
+rotation = -4.94626
+
+[node name="sea_flower15" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2252.77, 3307.55 )
+rotation = -6.28319
+
+[node name="sea_flower16" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 1961.65, 3323.03 )
+rotation = -6.28319
+
+[node name="sea_flower17" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2063.53, 3200.54 )
+rotation = -1.27933
+
+[node name="sea_flower18" parent="SeaFlowers" instance=ExtResource( 49 )]
+position = Vector2( 2290.06, 3098.45 )
+rotation = -1.27933
+
+[node name="Holes" type="Node2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Hole" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2289.83, 2228.81 )
+total_monsters = 4
+max_monsters_at_once = 4
+spawn_batch = 4
+
+[node name="Hole2" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2520.94, 2113.44 )
+total_monsters = 2
+max_monsters_at_once = 2
+spawn_batch = 2
+
+[node name="Hole3" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2427.44, 2018.86 )
+total_monsters = 4
+max_monsters_at_once = 3
+
+[node name="Hole4" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2830.72, 2145.66 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 1
+spawn_interval = 2.0
+
+[node name="Hole5" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 3043.81, 2034.88 )
+total_monsters = 7
+max_monsters_at_once = 3
+spawn_batch = 2
+spawn_interval = 2.0
+
+[node name="Hole6" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2422.63, 2944.97 )
+total_monsters = 4
+max_monsters_at_once = 4
+spawn_batch = 2
+
+[node name="Hole7" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2606.83, 2273.57 )
+total_monsters = 3
+max_monsters_at_once = 2
+spawn_batch = 1
+spawn_interval = 5.0
+
+[node name="Hole8" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2893.05, 1649.12 )
+total_monsters = 100
+max_monsters_at_once = 50
+spawn_batch = 4
+spawn_interval = 2.0
+
+[node name="CollisionShape2D" parent="Holes/Hole8/Area2D" index="0"]
+shape = SubResource( 64 )
+
+[node name="Hole9" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2108.61, 2681.81 )
+total_monsters = 50
+max_monsters_at_once = 12
+spawn_batch = 4
+
+[node name="Hole10" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 1938, 2372.45 )
+total_monsters = 12
+
+[node name="Hole11" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 3490.8, 2026.46 )
+total_monsters = 20
+max_monsters_at_once = 10
+spawn_batch = 2
+spawn_interval = 0.5
+
+[node name="Hole12" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2286.78, 2317.46 )
+total_monsters = 6
+max_monsters_at_once = 3
+
+[node name="Hole13" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 1808.52, 2207 )
+total_monsters = 20
+max_monsters_at_once = 7
+spawn_batch = 4
+spawn_interval = 2.0
+
+[node name="Hole14" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 1990.57, 1899.03 )
+max_monsters_at_once = 4
+spawn_batch = 1
+
+[node name="Hole15" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2048.63, 1738.18 )
+max_monsters_at_once = 4
+
+[node name="Hole16" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2077, 2273.12 )
+
+[node name="Hole17" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 2053.3, 2359.88 )
+total_monsters = 8
+max_monsters_at_once = 4
+spawn_batch = 2
+
+[node name="Hole18" parent="Holes" instance=ExtResource( 50 )]
+position = Vector2( 1911.14, 3035.98 )
+total_monsters = 100
+max_monsters_at_once = 50
+spawn_interval = 3.0
+
+[node name="LumenClumpPlacer" parent="." instance=ExtResource( 18 )]
+position = Vector2( 2018.83, 2333.93 )
+z_index = 4096
+radius = 1500.0
+scene = ExtResource( 45 )
+amount = 100
+
+[node name="Frog" parent="." instance=ExtResource( 1 )]
+position = Vector2( 601.078, 929.854 )
+
+[node name="NoobStorage" parent="." instance=ExtResource( 64 )]
+position = Vector2( 3142, 2644 )
+script = ExtResource( 63 )
+difficulted = false
+
+[connection signal="player_entered" from="Objectives/SouthDetector" to="Objectives" method="south_enter"]
+[connection signal="timeout" from="StartArea/SmallCave/LightSprite/Timer" to="StartArea/SmallCave/LightSprite/FakeLight" method="check"]
+[connection signal="interacted" from="StartArea/Base/FakeComputer/PlayerDetector" to="StartArea/Base/FakeComputer" method="on_interacted"]
+[connection signal="died" from="LowerArea/Finale/EnemyCrystalUrasectus" to="Objectives" method="_on_GRUBAS_died"]
+
+[editable path="Holes/Hole8"]

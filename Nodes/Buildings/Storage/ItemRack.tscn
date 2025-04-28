@@ -1,0 +1,271 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://Scenes/Editor/ShapeSquare.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Storage/ItemRack.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Storage/RackHighlight.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Map/Objects/FakeComputer.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerInteractable.gd" type="Script" id=6]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=7]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends BaseBuilding
+
+@onready var texture_progress: TextureProgressBar = $TextureProgressBar
+@onready var computer: Node2D = $Computer
+@onready var icon: TextureRect = $Icon
+
+var stored_item: Dictionary
+var launched: Pickup
+
+func _ready() -> void:
+	collision_mask |= Const.PICKUP_COLLISION_LAYER
+	
+	if stored_item.is_empty():
+		update_progress()
+	else:
+		update_item()
+
+func set_disabled(disabled: bool, force := false):
+	super.set_disabled(disabled, force)
+	computer.set_disabled(disabled or stored_item.is_empty())
+	texture_progress.visible = not disabled and not stored_item.is_empty()
+
+func body_enter(body: Node) -> void:
+	if not body is Pickup or body == launched or not is_running:
+		return
+	
+	if stored_item.is_empty():
+		stored_item = {id = body.id, data = body.data, amount = body.amount}
+		body.queue_free()
+		update_item()
+	elif body.id == stored_item.id and body.data == stored_item.data:
+		var overflow = get_max() - (stored_item.amount + body.amount)
+		if overflow < 0:
+			body.amount -= get_max() - stored_item.amount
+			stored_item.amount = get_max()
+		else:
+			stored_item.amount += body.amount
+			body.queue_free()
+		update_progress()
+
+func get_max() -> int:
+	return Utils.get_stack_size(stored_item.id, stored_item.data) * 3
+
+func update_progress():
+	if stored_item.is_empty():
+		texture_progress.hide()
+		computer.set_disabled(true)
+	else:
+		texture_progress.visible = is_running
+		texture_progress.ratio = float(stored_item.amount) / get_max()
+		computer.set_disabled(not is_running)
+
+func drop_item():
+	drop(1)
+	Utils.notify_object_event(self, \"item_retrieved\")
+
+func drop_stack():
+	drop(min(stored_item.amount, Utils.get_stack_size(stored_item.id, stored_item.data)))
+	Utils.notify_object_event(self, \"item_retrieved\")
+
+func drop(count: int):
+	if stored_item.is_empty():
+		return
+	
+	stored_item.amount -= count
+	computer.reload()
+	
+	var to_launch := stored_item.duplicate()
+	to_launch.amount = count
+	if destroyed:
+		launched = Pickup.launch(to_launch, global_position, Vector2.RIGHT.rotated(randf() * TAU))
+	else:
+		launched = Pickup.launch(to_launch, global_position + Vector2.RIGHT * 12, Vector2.RIGHT)
+	
+	if stored_item.amount == 0:
+		stored_item = {}
+		icon.texture = null
+		icon.hide()
+	
+	update_progress()
+
+func update_item():
+	icon.show()
+	icon.texture = Utils.get_item_icon(stored_item.id, stored_item.data)
+	update_progress()
+
+func _get_save_data() -> Dictionary:
+	var data := super._get_save_data()
+	data.item = stored_item
+	return data
+
+func _set_save_data(data: Dictionary):
+	super._set_save_data(data)
+	stored_item = data.item
+
+func destroy(explode := true):
+	super.destroy(explode)
+	
+	for i in 3:
+		if stored_item.is_empty():
+			break
+		else:
+			drop_stack()
+
+func is_condition_met(condition: String, data) -> bool:
+	if condition == \"item_stored\":
+		if stored_item.is_empty():
+			return false
+		
+		return not data or (stored_item.id == data.item.id and stored_item.data == data.item.get(\"data\"))
+	
+	return super.is_condition_met(condition, data)
+
+func execute_action(action: String, data: Dictionary):
+	if action == \"drop_item\":
+		drop_item()
+	elif action == \"drop_stack\":
+		drop_stack()
+	else:
+		super.execute_action(action, data)
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 12, 12 )
+
+[sub_resource type="RectangleShape2D" id=3]
+
+[sub_resource type="Gradient" id=6]
+offsets = PackedFloat32Array( 0 )
+colors = PackedColorArray( 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=7]
+gradient = SubResource( 6 )
+width = 100
+height = 4
+
+[sub_resource type="Gradient" id=5]
+offsets = PackedFloat32Array( 0, 0.538462, 1 )
+colors = PackedColorArray( 0.419608, 1, 0, 1, 0.812, 1, 0.76, 1, 0.419608, 1, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=4]
+gradient = SubResource( 5 )
+width = 100
+height = 4
+fill_to = Vector2( 0, 1 )
+
+[sub_resource type="GDScript" id=47]
+resource_name = "RackComputer"
+script/source = "extends \"res://Nodes/Buildings/Common/Computer/GenericComputer.gd\"
+
+func _setup():
+	if not active or owner.stored_item.is_empty():
+		return
+	
+	screen.set_icon(Utils.get_item_icon(owner.stored_item.id, owner.stored_item.data))
+	screen.set_title(tr(\"Stored: %s x %s\") % [tr(Utils.get_item_name(owner.stored_item)), owner.stored_item.amount])
+	screen.set_interact_action(\"Retrieve Single\")
+	screen.set_long_action(\"Retrieve Stack\")
+
+func _make():
+	Utils.play_sample(preload(\"res://Nodes/Buildings/Storage/bottle_pop.wav\"), self)
+	owner.drop_item()
+
+func _long_make():
+	Utils.play_sample(preload(\"res://Nodes/Buildings/Storage/bottle_pop.wav\"), self)
+	owner.drop_stack()
+"
+
+[sub_resource type="RectangleShape2D" id=48]
+extents = Vector2( 16, 16 )
+
+[node name="ItemRack" type="Area2D"]
+script = SubResource( 1 )
+radius = 9.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 3 )
+
+[node name="TerrainMask" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2( 0.153846, 0.153846 )
+texture = ExtResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.0339474, 0.0339474 )
+texture = ExtResource( 2 )
+
+[node name="Computer2" type="Sprite2D" parent="."]
+position = Vector2( -0.275919, 9.16926 )
+scale = Vector2( 0.0493471, 0.0187382 )
+texture = ExtResource( 4 )
+
+[node name="Icon" type="TextureRect" parent="."]
+visible = false
+offset_left = -7.0
+offset_top = -6.0
+offset_right = 7.0
+offset_bottom = 7.0
+expand = true
+stretch_mode = 6
+
+[node name="darker_bg" type="Sprite2D" parent="Icon"]
+modulate = Color( 0, 0, 0, 0.764706 )
+show_behind_parent = true
+position = Vector2( 6.95273, 5.95947 )
+rotation = 1.5708
+scale = Vector2( 0.0937222, 0.0937222 )
+texture = ExtResource( 7 )
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+visible = false
+offset_left = -7.40338
+offset_top = 8.66806
+offset_right = 92.5966
+offset_bottom = 12.6681
+scale = Vector2( 0.14, 0.5 )
+step = 0.01
+value = 50.0
+texture_under = SubResource( 7 )
+texture_progress = SubResource( 4 )
+
+[node name="Computer" type="Node2D" parent="."]
+script = SubResource( 47 )
+highlight_green = ExtResource( 3 )
+target_screen = NodePath("../ComputerScreen")
+
+[node name="PlayerDetector" type="Area2D" parent="Computer"]
+script = ExtResource( 6 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Computer/PlayerDetector"]
+visible = false
+shape = SubResource( 48 )
+
+[node name="Sprite2D" type="Sprite2D" parent="Computer"]
+z_index = -201
+z_as_relative = false
+
+[node name="Highlight" type="Sprite2D" parent="Computer/Sprite2D"]
+visible = false
+scale = Vector2( 0.5, 0.5 )
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 5 )]
+vertical_controls = true
+
+[node name="PreferredSize" type="ReferenceRect" parent="ComputerScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -270.0
+offset_right = 450.0
+offset_bottom = 270.0
+
+[connection signal="body_entered" from="." to="." method="body_enter"]

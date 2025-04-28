@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Nodes/Enemies/MegaSwarm/FlyingSwarm_lvl1.tscn" type="PackedScene" id=1]
+
+[node name="FlyingSwarm_lvl1B" instance=ExtResource( 1 )]
+unit_radius = 5
+attack_range = 7
+attack_delay = 1.25
+terrain_attack_radius = 10
+terrain_attack_damage = 64
+other_attack_radius = 5
+
+[node name="walk" parent="." index="0"]
+modulate = Color( 1.47059, 1.43137, 0.419608, 1 )
+scale = Vector2( 0.09, 0.09 )

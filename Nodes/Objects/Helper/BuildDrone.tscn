@@ -1,0 +1,303 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Nodes/Objects/Helper/drone2_body.png" type="Texture2D" id=1]
+[ext_resource path="res://SFX/Building/helicopter_blades_spinning_loop_01.wav" type="AudioStream" id=2]
+[ext_resource path="res://Nodes/Objects/Helper/drone2_rotor4.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Objects/Helper/drone2_body_shadow.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Lights/LightSprite.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Lights/Textures/Flashlight3.png" type="Texture2D" id=8]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+@onready var audio := $AudioStreamPlayer2D as AudioStreamPlayer2D
+@onready var animator := $Sprite2D/AnimationPlayer as AnimationPlayer
+@onready var sprite := $Sprite2D as Sprite2D
+@onready var sprite2 := $Sprite2 as Sprite2D
+
+var building: Node2D
+var blueprint: Node2D
+
+var finished: bool
+var prev_pos: Vector2
+var build_swarm: Node2D
+var mover: Tween
+
+var wind_direction := Vector2.ZERO
+var wind_direction_target := Vector2.ZERO
+var wind_strength := 0.0
+var wind_strength_target := 0.0
+var iterator := 0
+
+var init_scale := Vector2.ONE * 0.2
+var give_back: Dictionary
+
+var target_storage: BaseBuilding
+
+func _ready() -> void:
+	modulate.a = 0.0
+	scale = init_scale
+	move_to(building.position - global_position.direction_to(building.position).rotated(randf_range(-0.35, 0.35) * PI) * randf_range(20.0, 40.0))
+	
+	blueprint.set_target_building(building)
+	blueprint.connect(\"cancel\", Callable(self, \"cancel\"))
+
+func move_to(target: Vector2):
+	var distance := global_position.distance_to(target)
+
+	mover = create_tween()
+	mover.tween_property(self, \"modulate:a\", 1.0, 1.0)
+	mover.parallel().tween_property(self, \"scale\", Vector2.ONE, 1.0).set_trans(Tween.TRANS_SINE)
+	mover.tween_property(self, \"position\", target, distance * 0.015).set_trans(Tween.TRANS_SINE)
+
+func go_back_to(home):
+	var pos = home.global_position
+	var distance := global_position.distance_to(pos)
+	mover = create_tween()
+	mover.tween_property(self, \"position\", pos, distance * 0.015).set_trans(Tween.TRANS_SINE)
+	mover.tween_callback(Callable(self, \"store_remaining_give_back\"))
+	mover.tween_property(self, \"modulate:a\", 0.0, 1.0)
+	mover.parallel().tween_property(self, \"scale\", init_scale, 1.0).set_trans(Tween.TRANS_SINE)
+	if home.has_method(\"open_door\"):
+		mover.parallel().tween_callback(Callable(home, \"open_door\"))
+	
+	if home is BaseBuilding and home.building_data.name == \"Storage Container\":
+		target_storage = home
+
+func _physics_process(delta: float) -> void:
+	var real_give_back := give_back.duplicate()
+	if not give_back.is_empty():
+		if is_instance_valid(target_storage):
+			var space = target_storage.get_free_storage()
+			
+			for item in real_give_back:
+				if space == 0:
+					break
+				
+				var sub = min(real_give_back[item], space)
+				real_give_back[item] -= sub
+				space -= sub
+		
+	if not real_give_back.is_empty():
+		if not Utils.game.map.pixel_map.is_pixel_solid(global_position, Utils.walkable_collision_mask):
+			var item: int = give_back.keys().front()
+			var amount: int = real_give_back[item]
+			
+			var give = min(6, amount)
+			Pickup.launch({id = item, amount = give}, global_position, Utils.random_point_in_circle(130), false)
+			
+			give_back[item] -= give
+			if give_back[item] <= 0:
+				give_back.erase(item)
+	
+	if build_swarm:
+		rotation = lerp_angle(rotation, position.direction_to(building.position).angle(), 0.05)
+		iterator %= (randi() % 60 + 1)
+		if iterator == 0:
+			wind_direction_target = Vector2.RIGHT.rotated(randf() * TAU)
+			wind_strength_target = randf_range(1.5, 5.0)
+		iterator += 1
+		wind_direction = lerp(wind_direction, wind_direction_target * wind_strength_target, 0.05)
+		wind_strength  = lerp(wind_strength, wind_strength_target, 0.1)
+		sprite.position = lerp(sprite.position, wind_direction, 0.01)
+		sprite2.position = sprite.position * 1.4
+		return
+	
+	if mover and mover.is_running():
+		rotation = lerp_angle(rotation, prev_pos.direction_to(position).angle(), 0.05)
+#		audio.pitch_scale = lerp(audio.pitch_scale, clamp((prev_pos - position).length_squared()*0.5, 2, 3), 0.1)
+		audio.pitch_scale = min((prev_pos - position).length_squared() * 0.5 + 2.0, 3)
+		animator.playback_speed = audio.pitch_scale * 20.0 - 16.0
+		wind_strength_target = (position - prev_pos).length() * 0.01
+		sprite.scale.x = lerp(sprite.scale.x, 0.05 - min(wind_strength_target, 0.01), 0.1)
+		sprite2.scale.x = sprite.scale.x 
+		sprite.position = lerp(sprite.position, Vector2.ZERO, 0.1)
+		sprite2.position.y = lerp(sprite2.position.y, 0.0, 0.1)
+		sprite2.position.x = lerp(sprite2.position.x, - min(wind_strength_target * 500.0, 1.0), 0.1)
+		prev_pos = position
+
+	else:
+		if finished:
+			set_physics_process(false)
+			audio.playing = false
+			
+			var seq := create_tween()
+			seq.tween_property(self, \"modulate:a\", 0.0, 0.5)
+			seq.tween_callback(Callable(self, \"queue_free\"))
+		else:
+			Utils.play_sample(\"res://SFX/Building/SwarmSend.wav\", self)
+			rotation = lerp_angle(rotation, position.direction_to(building.position).angle(), 0.01)
+			
+			build_swarm = preload(\"res://Nodes/Objects/Helper/BuildSwarm.tscn\").instantiate() as Node2D
+			build_swarm.target = building
+			build_swarm.blueprint = blueprint
+			build_swarm.position = position
+			build_swarm.drone = self
+			Utils.game.map.add_child(build_swarm)
+			
+#			audio.playing = false
+#			audio.pitch_scale = lerp(audio.pitch_scale, 1.0, 0.05)
+			await build_swarm.tree_exited
+			if not is_inside_tree():
+				return
+#			audio.pitch_scale = lerp(audio.pitch_scale, 3.0, 0.05)
+#			audio.playing = true
+			
+			build_swarm = null
+			
+			finished = true
+			var closest_home = Utils.game.get_closest_drone_home(global_position)
+			go_back_to(closest_home)
+			if blueprint:
+				blueprint.queue_free()
+				blueprint = null
+
+func cancel():
+#	give_back = blueprint.building_data.cost.duplicate()
+	
+	finished = true
+	var closest_home = Utils.game.get_closest_drone_home(global_position)
+	go_back_to(closest_home)
+	building.queue_free()
+	if is_instance_valid(blueprint):
+		blueprint.queue_free()
+	blueprint = null
+	
+	if build_swarm:
+		build_swarm.queue_free()
+
+func store_remaining_give_back():
+	if is_instance_valid(target_storage):
+		target_storage.store_metal(give_back.get(Const.ItemIDs.METAL_SCRAP, 0))
+		target_storage.store_lumen(give_back.get(Const.ItemIDs.LUMEN, 0))
+"
+
+[sub_resource type="Animation" id=3]
+resource_name = "Idle"
+length = 5.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Rotor:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 360.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Rotor2:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 125.0, 485.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Rotor3:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 425.0, 65.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Rotor4:rotation_degrees")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 596.0, 236.0 ]
+}
+
+[node name="BuildDrone" type="Node2D" groups=["build_drone", "dont_save"]]
+z_index = 1000
+z_as_relative = false
+script = SubResource( 1 )
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+modulate = Color( 1.5, 1.5, 1.5, 1 )
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+self_modulate = Color( 3, 3, 3, 1 )
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 1 )
+
+[node name="LightSprite" parent="Sprite2D" instance=ExtResource( 7 )]
+modulate = Color( 0, 0.811765, 1, 1 )
+position = Vector2( 100, 0 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 8 )
+offset = Vector2( 500, 0 )
+follow_rotation = true
+
+[node name="Shadow" type="Sprite2D" parent="Sprite2D"]
+modulate = Color( 0.501961, 0.501961, 0.501961, 1 )
+show_behind_parent = true
+position = Vector2( 23, 0 )
+scale = Vector2( 1.2, 1.2 )
+z_index = -1
+texture = ExtResource( 4 )
+
+[node name="Rotor" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+position = Vector2( -155.931, -107.668 )
+scale = Vector2( 0.9, 0.9 )
+texture = ExtResource( 3 )
+offset = Vector2( -0.5, 0 )
+
+[node name="Rotor2" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+position = Vector2( 121.5, -163.5 )
+rotation = 2.18166
+texture = ExtResource( 3 )
+
+[node name="Rotor3" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+position = Vector2( 123.931, 162.616 )
+rotation = 7.41765
+texture = ExtResource( 3 )
+offset = Vector2( -0.5, 0 )
+
+[node name="Rotor4" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+position = Vector2( -155.46, 111.105 )
+rotation = 10.4022
+scale = Vector2( 0.9, 0.9 )
+texture = ExtResource( 3 )
+offset = Vector2( -0.5, 0 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
+autoplay = "Idle"
+playback_speed = 4.0
+anims/Idle = SubResource( 3 )
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 2 )
+volume_db = -10.0
+pitch_scale = 3.0
+autoplay = true
+max_distance = 1000.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="ZIndexer" parent="." instance=ExtResource( 5 )]
+z_index = 1000

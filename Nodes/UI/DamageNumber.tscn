@@ -1,0 +1,90 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Fonts/Funt32Outline2.tres" type="FontFile" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var  seq:Tween 
+
+func setup(source: Node2D, number: int, color := Color.ORANGE):
+#	Utils.game.map.add_child(self)
+#	global_position = source.global_position + Vector2.RIGHT * rand_range(-8, 8) # up
+	global_position = source.global_position# + Vector2(randf_range(-8, 8), randf_range(-8, 8)) # real up
+	$Label.text = str(number)
+	$Label.add_theme_color_override(\"font_color\", color)
+	anim()
+
+func crit(source: Node2D, number: int, color := Color.RED):
+#	Utils.game.map.add_child(self)
+	global_position = source.global_position# + Vector2(randf_range(-8, 8), randf_range(-8, 8)) # real up
+	$Label.text = str(\"!\",number,\"!\")
+	$Label.add_theme_color_override(\"font_color\", color)
+	anim()
+
+func miss(source: Node2D):
+#	Utils.game.map.add_child(self)
+	global_position = source.global_position
+	$Label.text = \"Miss\"
+	$Label.add_theme_color_override(\"font_color\", Color.DARK_GRAY)
+	anim()
+
+func immune(source: Node2D):
+#	Utils.game.map.add_child(self)
+	global_position = source.global_position
+	$Label.text = \"0!\"
+	$Label.add_theme_color_override(\"font_color\", Color.WHITE)
+#	scale *= 1.1
+	anim()
+
+func custom(source: Node2D, text: String, color: Color, speed := 1.0):
+#	Utils.game.map.add_child(self)
+	global_position = source.global_position
+	$Label.text = text
+	$Label.add_theme_color_override(\"font_color\", color)
+	anim(speed)
+
+func anim(speed := 1.0):
+	if is_instance_valid(seq) and seq.is_running():
+		seq.kill()
+	modulate.a = 1.0
+	show()
+	seq = create_tween()
+	seq.set_speed_scale(speed)
+#	seq.append_advance(self, \"position:y\", -15, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT) # up
+	seq.tween_property(self, \"position\", Vector2.RIGHT.rotated(randf() * TAU) * 10, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT).as_relative() #random
+#	seq.append(self, \"scale\", Vector2.ONE * 1.2, 0.2) # real up
+	seq.tween_property(self, \"modulate:a\", 0.0, 0.2)
+	seq.tween_callback(Callable(self, \"hide\"))
+#	seq.tween_callback(self, \"queue_free\")
+
+func _ready() -> void:
+	hide()
+#	if not Save.config.show_damage_numbers:
+#		hide()
+#		queue_free()
+"
+
+[node name="DamageNumber" type="Node2D" groups=["dont_save"]]
+scale = Vector2( 0.25, 0.25 )
+z_index = 3001
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -86.0
+offset_top = -7.0
+offset_right = 86.0
+offset_bottom = 7.0
+theme_override_colors/font_color = Color( 1, 0, 0, 1 )
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "123456789"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

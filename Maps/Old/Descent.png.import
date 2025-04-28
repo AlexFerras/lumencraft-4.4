@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://c8kvipgixqbi6"
+path="res://.godot/imported/Descent.png-df27affdc6b5398bfde02c79bf5a4a66.image"
+
+[deps]
+
+source_file="res://Maps/Old/Descent.png"
+dest_files=["res://.godot/imported/Descent.png-df27affdc6b5398bfde02c79bf5a4a66.image"]
+
+[params]
+

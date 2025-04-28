@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Wall/Level1.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Wall/preview_icon.png" type="Texture2D" id=5]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Buildings/Icons/GenericPreview.gd\"
+
+var _is_wall_ = true
+
+func custom_check(pos: Vector2, size: Vector2, rot: float) -> int:
+	if Utils.game.map.pixel_map.is_pixel_solid(pos, Utils.turret_bullet_collision_mask):
+		return BuildInterface.ERROR_TERRAIN
+	return OK
+"
+
+[node name="Sprite2D" type="Sprite2D"]
+scale = Vector2( 0.104335, 0.104335 )
+texture = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 3 )
+scale = Vector2( 977.328, 221.682 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+scale = Vector2( 1.10474, 1.10474 )
+texture = ExtResource( 5 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 2.04541, 2.04541 )
+texture = ExtResource( 4 )

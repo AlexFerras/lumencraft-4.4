@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Buildings/InteractiveLight/LightCaps2.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/TexturedCircle3_256.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.tscn" type="PackedScene" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+@export var color := Color.GREEN
+@export var offset: float
+@export var duration: float
+@export var pattern: Array # (Array, bool)
+
+@onready var light := $LightSprite as LightSprite
+
+var tick_index := 0
+var disabled: bool
+
+func _ready():
+	light.modulate = color
+	light.modulate.a = 0
+	$Sprite2D.frame = randi() % 4
+	get_tree().create_timer(offset, false).connect(\"timeout\", Callable(self, \"start\"))
+
+func start():
+	var tween := create_tween().set_loops()
+	for b in pattern:
+		tween.tween_property(light, \"is_static\", false, 0)
+		
+		if b:
+			tween.tween_property(light, \"modulate:a\", 2.0, duration * 0.1)
+			tween.tween_property(light, \"modulate:a\", 1.0, duration * 0.1)
+		else:
+			tween.tween_property(light, \"modulate:a\", 0.0, duration * 0.2)
+		
+		tween.tween_property(light, \"is_static\", true, 0)
+		tween.tween_interval(duration * 0.8)
+"
+
+[node name="InteractiveLight" type="Node2D"]
+script = SubResource( 1 )
+color = Color( 0.7, 1, 0.2, 1 )
+
+[node name="LightSprite" parent="." instance=ExtResource( 3 )]
+scale = Vector2( 0.0928571, 0.0928571 )
+texture = ExtResource( 2 )
+drop_shadow = false
+is_static = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.025, 0.025 )
+texture = ExtResource( 1 )
+hframes = 4

@@ -1,0 +1,124 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Objects/Explosive/ExplosiveBarrel.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends PixelMapRigidBody
+var lava_check_random= 2.0
+var next_lava_check=randf_range(0.5,lava_check_random)
+
+var exploding: bool
+@export var damage=-1
+
+func _ready() -> void:
+	
+	add_to_group(\"repair_kit_pickable\")
+	$Detector.collision_layer = Const.ENEMY_COLLISION_LAYER
+	$Detector.collision_mask = 0
+	set_meta(\"object_type\", \"Explosive Barrel\")
+
+func on_enter(area: Area2D) -> void:
+	if exploding:
+		return
+	
+	if area.is_in_group(\"player_projectile\"):
+		Utils.on_hit(area)
+		if !area.get_meta(\"data\").has(\"falloff\"):
+			exploding = true
+			explode()
+		
+		if not exploding:
+			exploding = true
+			var sprite = $Sprite2D
+			
+			var seq := create_tween()
+
+			seq.tween_property(sprite, \"modulate\", Color(6,2,1,0), randf_range(0.2,1.0)).set_trans(Tween.TRANS_EXPO).as_relative()
+		#	seq.parallel().append(sprite, \"scale\", sprite.scale + Vector2.ONE * 0.02, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			#seq.append(sprite, \"modulate\", Color.white, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		#	seq.parallel().append(sprite, \"scale\", sprite.scale, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+			seq.tween_callback(Callable(self, \"explode\"))
+
+func explode():
+	var explosion := Const.EXPLOSION.instantiate() as Node2D
+	if damage>=0:
+		explosion.dmg=damage
+	explosion.scale = Vector2.ONE * 0.65
+	explosion.position = position
+	get_parent().call_deferred(\"add_child\", explosion)
+	queue_free()
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	next_lava_check-=state.step
+	if next_lava_check<0:
+		next_lava_check=randf_range(0.5,lava_check_random)
+		if 	Utils.game.map.pixel_map.get_pixel_at(global_position).g8 == Const.Materials.LAVA:
+			call_deferred(\"explode\")
+	
+	pixel_map_physics(state,Utils.walkable_collision_mask)
+
+func get_sprite_scale() -> Vector2:
+	var texture: Texture2D = $Sprite2D.texture
+	return Vector2.ONE * min(10.0 / max(texture.get_width(), texture.get_height()), 1)
+
+func get_sprite_texture() -> Texture2D:
+	return $Sprite2D.texture
+
+func execute_action(action: String, data: Dictionary):
+	explode()
+"
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 5.88503
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 5.30517
+
+[sub_resource type="GDScript" id=4]
+script/source = "tool
+extends Node2D
+
+func _draw() -> void:
+	if Engine.is_editor_hint():
+		draw_arc(Vector2(), 150 * 0.65 * 0.9, 0, TAU, 32, Color.ORANGE)
+"
+
+[node name="ExplosiveBarrel" type="PixelMapRigidBody"]
+z_index = 150
+z_as_relative = false
+linear_damp = 5.0
+angular_damp = 5.0
+radius = 5
+script = SubResource( 1 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+position = Vector2( 0.120667, -0.0464478 )
+shape = SubResource( 5 )
+
+[node name="Detector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detector"]
+visible = false
+shape = SubResource( 3 )
+
+[node name="shadow2" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 0, 0.752941 )
+scale = Vector2( 0.072, 0.072 )
+z_index = -2
+texture = ExtResource( 3 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.048, 0.048 )
+texture = ExtResource( 2 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 150
+
+[node name="RangeDrawer" type="Node2D" parent="."]
+script = SubResource( 4 )
+
+[connection signal="area_entered" from="Detector" to="." method="on_enter"]

@@ -1,0 +1,96 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Unique/LumenChamber.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Unique/Lumen_Cristal_.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.tscn" type="PackedScene" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 38.0526
+
+[sub_resource type="Shader" id=2]
+code = "shader_type canvas_item;
+uniform    float speed = 0.58;
+uniform    float interval = 5.0;
+uniform float linewidth = 0.58;
+uniform float grad = 3.0;
+uniform float time_offset = 3.0;
+uniform vec4 col1:source_color = vec4(0.5,0.5,1.0,0.0) ;
+uniform sampler2D noise;
+uniform float noise_scale = 2.0;
+
+void fragment()
+{
+    
+    COLOR= texture(TEXTURE,UV) *COLOR*MODULATE;
+    float noise_tex = texture(noise, vec2(SCREEN_UV.x*noise_scale*sin(TIME*0.1), SCREEN_UV.y*noise_scale*sin(TIME*0.1))).r;
+    // Plot line...
+    vec2 linepos = UV+noise_tex;
+    linepos.y=-linepos.y;
+    linepos.x = linepos.x - mod(TIME*speed+noise_tex+MODULATE.r*11111.0,interval)+interval*0.5;
+   // linepos.x = linepos.x - mod(1.0*speed,2.0)+0.5;
+
+    float y = linepos.x*grad;
+    float s = smoothstep( y-linewidth, y, linepos.y) - smoothstep( y, y+linewidth, linepos.y); 
+    //s*=s;
+    // Merge texture + Glint
+    vec4 additional_glow = s*col1;
+
+    COLOR.rgb*= vec3(1.2)+additional_glow.rgb;
+	COLOR.a *= 1.0-additional_glow.r*0.9;
+    //COLOR=min(COLOR,vec4(1.9));
+
+    //COLOR= vec4(additional_glow.rgb,1.0);
+}"
+
+[sub_resource type="FastNoiseLite" id=17]
+period = 8.5
+persistence = 0.0
+lacunarity = 0.1
+
+[sub_resource type="NoiseTexture" id=16]
+width = 128
+height = 128
+seamless = true
+bump_strength = 13.5
+noise = SubResource( 17 )
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+shader_param/speed = 1.5
+shader_param/interval = 10.0
+shader_param/linewidth = 0.58
+shader_param/grad = 1.17
+shader_param/time_offset = 3.0
+shader_param/col1 = Color( 1, 3, 1, 0 )
+shader_param/noise_scale = 2.2
+shader_param/noise = SubResource( 16 )
+
+[node name="LumenChamber" type="Area2D"]
+scale = Vector2( 0.750236, 0.750236 )
+z_index = 1000
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.360294, 0.360294 )
+texture = ExtResource( 1 )
+hframes = 2
+frame = 1
+
+[node name="LumenCristal" type="Sprite2D" parent="Sprite2D"]
+visible = false
+modulate = Color( 1.5, 1.5, 1.5, 1 )
+self_modulate = Color( 0.66, 0.66, 0.66, 1 )
+material = SubResource( 3 )
+position = Vector2( 27, 0 )
+scale = Vector2( 0.31, 0.31 )
+texture = ExtResource( 2 )
+
+[node name="LightSprite" parent="Sprite2D" instance=ExtResource( 3 )]
+visible = false
+modulate = Color( 1.74, 0.36, 0.8, 1 )
+position = Vector2( 27, 0 )
+scale = Vector2( 0.3, 0.3 )
+drop_shadow = false
+is_static = true

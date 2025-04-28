@@ -1,0 +1,63 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/Socket.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Icons/GenericPreview.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Buildings/Petshop/PetShopPhoto_icon.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Lab/tech_icons/repair_tool_upgrade.png" type="Texture2D" id=7]
+
+[node name="Sprite2D" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 6 )
+script = ExtResource( 3 )
+
+[node name="Socket" type="Sprite2D" parent="."]
+position = Vector2( -124, 12 )
+texture = ExtResource( 2 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+material = ExtResource( 1 )
+position = Vector2( 0, -40 )
+scale = Vector2( 337.76, 128 )
+z_index = -1
+
+[node name="BoundingRect2" type="Sprite2D" parent="BoundingRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 1 )
+position = Vector2( 0.00592136, 0.265625 )
+scale = Vector2( 0.864519, 2.03125 )
+z_index = -1
+texture = ExtResource( 5 )
+
+[node name="GroundRect" type="Sprite2D" parent="."]
+visible = false
+material = ExtResource( 1 )
+use_parent_material = true
+position = Vector2( -25.25, 33.75 )
+scale = Vector2( 386.5, 275.5 )
+z_index = -1
+
+[node name="GroundRect2" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 1 )
+use_parent_material = true
+position = Vector2( 0.0705045, -0.0390273 )
+scale = Vector2( 0.755498, 1.13976 )
+z_index = -1
+texture = ExtResource( 5 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+position = Vector2( 24, -12 )
+scale = Vector2( 1.32015, 1.32015 )
+texture = ExtResource( 7 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.9, 0.9 )
+texture = ExtResource( 4 )

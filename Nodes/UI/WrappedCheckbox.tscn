@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends HBoxContainer
+
+@onready var checbkox := $CheckBox
+@onready var label := $Label
+
+var pressed: bool: get = get_pressed, set = set_pressed
+var text: String: set = set_text
+
+signal toggled(button_pressed)
+
+func set_pressed(p: bool):
+	checbkox.button_pressed = p
+
+func get_pressed() -> bool:
+	return checbkox.pressed
+
+func label_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			self.button_pressed = not self.pressed
+
+func set_text(t: String):
+	text = t
+	label.text = t
+
+func checkbox_toggled(button_pressed: bool) -> void:
+	emit_signal(\"toggled\", button_pressed)
+"
+
+[node name="WrappedCheckbox" type="HBoxContainer"]
+offset_right = 113.0
+offset_bottom = 24.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckBox" type="CheckBox" parent="."]
+offset_right = 24.0
+offset_bottom = 24.0
+
+[node name="Label" type="Label" parent="."]
+offset_left = 28.0
+offset_top = 5.0
+offset_right = 113.0
+offset_bottom = 19.0
+mouse_filter = 0
+size_flags_horizontal = 3
+text = "Test"
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="toggled" from="CheckBox" to="." method="checkbox_toggled"]
+[connection signal="gui_input" from="Label" to="." method="label_input"]

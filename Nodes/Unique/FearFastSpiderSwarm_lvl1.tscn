@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/Enemies/MegaSwarm/FastSpiderSwarm_lvl1.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends SwarmSpider
+
+func _init() -> void:
+	swarm_data = Const.Enemies[\"Fast Spider Swarm\"]
+
+func _get_save_data() -> Dictionary:
+	return {}
+
+func _set_save_data(data: Dictionary):
+	auto_remove = true
+	if getNumOfLivingUnits() == 0:
+		queue_free()
+"
+
+[node name="FastSpiderSwarm_lvl1" instance=ExtResource( 1 )]
+script = SubResource( 1 )

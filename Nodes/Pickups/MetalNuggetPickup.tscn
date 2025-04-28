@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Resources/Materials/PickableShine.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Pickups/Pickup.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Pickups/MetalClump.png" type="Texture2D" id=5]
+
+[node name="MetalNugget" type="PixelMapRigidBody"]
+z_index = 50
+z_as_relative = false
+linear_damp = 3.0
+radius = 4
+script = ExtResource( 2 )
+item = "METAL_NUGGET"
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( -0.128662, 0.174561 )
+scale = Vector2( 1.15, 1.15 )
+polygon = PackedVector2Array( -0.970423, -6.16074, 1.03018, -4.98089, 3.28727, -4.8783, 3.69765, -3.59586, 5.95475, -3.74975, 5.18528, -1.54396, 6.51902, 0.918325, 5.44177, 2.35466, 5.33917, 3.07282, 2.97949, 3.02152, 1.18407, 5.48381, -1.02172, 4.66305, -2.45805, 5.5351, -2.91973, 3.32931, -4.04828, 3.43191, -5.17682, 1.38, -4.50995, -1.39006, -4.45866, -3.13418, -3.07362, -5.69906 )
+
+[node name="shadow" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( -0.117985, 0 )
+scale = Vector2( 0.08, 0.08 )
+texture = ExtResource( 4 )
+
+[node name="InnySprite2" type="Sprite2D" parent="."]
+modulate = Color( 2, 2, 2, 1 )
+material = ExtResource( 1 )
+scale = Vector2( 0.08, 0.08 )
+texture = ExtResource( 5 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 3 )]
+z_index = 50

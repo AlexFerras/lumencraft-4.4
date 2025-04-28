@@ -1,0 +1,73 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Resources/Fonts/Font20.tres" type="FontFile" id=1]
+[ext_resource path="res://Nodes/Buildings/Lab/ResearchProgress.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends CenterContainer
+
+@onready var progress := $VBoxContainer/PanelContainer/TextureProgressBar
+
+var lab: BaseBuilding
+var tech: String
+
+func _ready() -> void:
+	if tech == \"roll\":
+		$VBoxContainer/Label.text = \"Discovering new technologies...\"
+	else:
+		$VBoxContainer/Label.text = tr($VBoxContainer/Label.text) % tr(Const.Technology[tech].name)
+
+func set_lab(l: BaseBuilding):
+	lab = l
+	progress.max_value = lab.research_time
+	progress.value = lab.research_progress
+
+func _process(delta: float) -> void:
+	progress.value = lab.research_progress
+"
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 0.752941 )
+
+[node name="ResearchProgress" type="CenterContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = SubResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_right = 404.0
+offset_bottom = 165.0
+
+[node name="Control" type="Control" parent="VBoxContainer"]
+offset_right = 404.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2( 0, 90 )
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+modulate = Color( 1, 1, 1, 0.752941 )
+offset_top = 94.0
+offset_right = 404.0
+offset_bottom = 117.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Researching %s..."
+align = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+offset_top = 121.0
+offset_right = 404.0
+offset_bottom = 165.0
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource( 1 )
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="VBoxContainer/PanelContainer"]
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 402.0
+offset_bottom = 42.0
+step = 0.001
+texture_progress = ExtResource( 2 )

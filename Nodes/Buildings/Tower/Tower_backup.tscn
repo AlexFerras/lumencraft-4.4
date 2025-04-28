@@ -1,0 +1,355 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Nodes/Buildings/Common/HealthBar.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Buildings/Tower/lampa_halo_small3.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Buildings/Tower/lampa.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Tower/lampa_shadow.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Buildings/Tower/Lamp_light_main.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Buildings/Tower/lampa_glow.png" type="Texture2D" id=9]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends BaseBuilding
+
+@export var start_timer = 5.0
+
+func build():
+	super.build()
+
+func update_angle():
+	rotation = angle
+
+func set_preview_enabled(enabled: bool):
+	$LightPreview.visible = enabled
+
+func set_disabled(disabled: bool, force := false):
+	if disabled:
+		$AnimationPlayer.play(\"PowerOFF\")
+#	elif is_running or force:
+#		$AnimationPlayer.play(\"PowerON\")
+	else:
+		$AnimationPlayer.play(\"PowerON\")
+	if force:
+		$AnimationPlayer.advance(99999)
+	
+	super.set_disabled(disabled, force)
+
+
+			
+func apply_mask(type):
+	if type==Const.Materials.STOP:
+		type=Const.Materials.LOW_BUILDING
+	super.apply_mask(type)
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 10, 12 )
+
+[sub_resource type="Animation" id=5]
+resource_name = "PowerOFF"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/LampaGlow:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 2, 3 ),
+"transitions": PackedFloat32Array( 2, 2 ),
+"update": 3,
+"values": [ Color( 1, 0.796078, 0, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LightSprite:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 2 ),
+"update": 3,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LightSprite2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 2 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("LightSprite2:is_static")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ false, true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("LightSprite:is_static")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite2D/LampaHalo:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 2, 3 ),
+"transitions": PackedFloat32Array( 2, 2 ),
+"update": 3,
+"values": [ Color( 1, 1, 1, 0.490196 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "PowerON"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/LampaGlow:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.4, 1, 3 ),
+"transitions": PackedFloat32Array( 2, 2, 2 ),
+"update": 3,
+"values": [ Color( 1, 0.796078, 0, 1 ), Color( 3, 1.23922, 0.478431, 1 ), Color( 3, 3, 3, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LightSprite:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 1, 2.4, 3 ),
+"transitions": PackedFloat32Array( 2, 2, 2 ),
+"update": 3,
+"values": [ Color( 0.5, 0.5, 0.5, 1 ), Color( 2, 2, 2, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LightSprite2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 3 ),
+"transitions": PackedFloat32Array( 2 ),
+"update": 0,
+"values": [ Color( 1.4, 1.31, 1.2, 1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("LightSprite2:is_static")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ false, true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("LightSprite:is_static")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite2D/LampaHalo:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0.4, 1, 3 ),
+"transitions": PackedFloat32Array( 2, 2, 2 ),
+"update": 3,
+"values": [ Color( 1, 0.796078, 0, 0.490196 ), Color( 3, 1.23922, 0.478431, 0.490196 ), Color( 1, 1, 1, 0.49 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/LampaGlow:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LightSprite:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LightSprite2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("LightSprite2:is_static")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("LightSprite:is_static")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite2D/LampaHalo:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+
+[node name="Tower" type="Area2D" groups=["Light3D"]]
+z_index = 600
+z_as_relative = false
+script = SubResource( 2 )
+radius = 10.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 4.76837e-07, 2.38419e-07 )
+shape = SubResource( 1 )
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2( -1.5, 0 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 7 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 6 )
+
+[node name="LampaGlow" type="Sprite2D" parent="Sprite2D"]
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 141, 0 )
+texture = ExtResource( 9 )
+
+[node name="LampaHalo" type="Sprite2D" parent="Sprite2D"]
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 300, 0 )
+scale = Vector2( 1.05, 1.05 )
+texture = ExtResource( 5 )
+
+[node name="LightSprite" type="Node2D" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 2 )
+texture = ExtResource( 8 )
+offset = Vector2( 210, 0 )
+follow_rotation = true
+is_static = true
+
+[node name="LightSprite2" type="Node2D" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 14, 0 )
+scale = Vector2( 0.05, 0.05 )
+script = ExtResource( 2 )
+texture = ExtResource( 5 )
+follow_rotation = true
+is_static = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/PowerOFF = SubResource( 5 )
+anims/PowerON = SubResource( 3 )
+anims/RESET = SubResource( 4 )
+
+[node name="LavaChecks" type="Node2D" parent="."]
+script = ExtResource( 1 )
+
+[node name="Marker2D" type="Marker2D" parent="LavaChecks"]
+position = Vector2( 10, -10 )
+
+[node name="Position2D2" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -10, -10 )
+
+[node name="Position2D3" type="Marker2D" parent="LavaChecks"]
+position = Vector2( 10, 10 )
+
+[node name="Position2D4" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -10, 10 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 3 )]
+z_index = 600
+
+[node name="HealthBar" parent="." instance=ExtResource( 4 )]
+scale = Vector2( 0.6, 1 )
+
+[node name="HealthBar" parent="HealthBar" index="0"]
+offset_top = 10.0
+offset_bottom = 11.0
+
+[editable path="HealthBar"]

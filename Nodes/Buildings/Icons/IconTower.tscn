@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Tower/lampaIcon.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Tower/Lamp_light_main.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=5]
+[ext_resource path="res://Nodes/Buildings/Tower/preview_icon.png" type="Texture2D" id=6]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Buildings/Icons/GenericPreview.gd\"
+
+func set_as_preview():
+	super.set_as_preview()
+	$LightPreview.show()
+
+func on_placed():
+	$LightPreview.hide()
+"
+
+[node name="Sprite2D" type="Sprite2D"]
+scale = Vector2( 0.063, 0.063 )
+texture = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 5 )
+position = Vector2( 0.0452461, 0.353414 )
+scale = Vector2( 399.225, 477.833 )
+z_index = -1
+texture = ExtResource( 4 )
+
+[node name="LightPreview" type="Sprite2D" parent="."]
+modulate = Color( 1, 0.963833, 0.69, 0.12549 )
+position = Vector2( 1050, 0 )
+scale = Vector2( 5, 5 )
+texture = ExtResource( 3 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+position = Vector2( 24, -12 )
+scale = Vector2( 2.8366, 2.8366 )
+texture = ExtResource( 6 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.436504, 0.816271 )
+texture = ExtResource( 2 )

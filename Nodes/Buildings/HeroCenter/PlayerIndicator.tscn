@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Nodes/UI/PlayerUI/Indicators.png" type="Texture2D" id=1]
+
+[node name="ScreenPlayerIndicator" type="Control"]
+offset_right = 462.0
+offset_bottom = 321.0
+
+[node name="Control" type="Control" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+custom_minimum_size = Vector2( 40, 40 )
+
+[node name="Sprite2D" type="Sprite2D" parent="Control"]
+unique_name_in_owner = true
+position = Vector2( 20, 20 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 1 )
+hframes = 5

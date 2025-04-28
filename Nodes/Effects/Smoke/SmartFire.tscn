@@ -1,0 +1,75 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Effects/Smoke/smoke.gdshader" type="Shader" id=1]
+[ext_resource path="res://Resources/Textures/fire_particle.png" type="Texture2D" id=2]
+
+[sub_resource type="CanvasItemMaterial" id=9]
+blend_mode = 1
+
+[sub_resource type="Gradient" id=3]
+offsets = PackedFloat32Array( 0, 0.0292943, 0.231691, 0.778961 )
+colors = PackedColorArray( 1, 0.768627, 0.639216, 0, 1, 0.752941, 0.686275, 0.858824, 1, 0.843137, 0.376471, 0.772549, 1, 0.34902, 0, 0 )
+
+[sub_resource type="GradientTexture2D" id=5]
+gradient = SubResource( 3 )
+
+[sub_resource type="Curve" id=2]
+_data = [ Vector2( 0, 0.365031 ), 0.0, 0.886364, 0, 0, Vector2( 1, 0.3 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=6]
+curve = SubResource( 2 )
+
+[sub_resource type="ShaderMaterial" id=8]
+resource_local_to_scene = true
+shader = ExtResource( 1 )
+shader_param/direction = Vector3( 0, -1, 0 )
+shader_param/spread = 360.0
+shader_param/flatness = 0.0
+shader_param/initial_linear_velocity = 10.0
+shader_param/initial_angle = 360.0
+shader_param/angular_velocity = 20.0
+shader_param/orbit_velocity = 0.0
+shader_param/linear_accel = 0.0
+shader_param/radial_accel = 0.0
+shader_param/tangent_accel = 0.0
+shader_param/damping = 1.0
+shader_param/scale = 0.3
+shader_param/hue_variation = 0.0
+shader_param/anim_speed = 1.0
+shader_param/anim_offset = 0.0
+shader_param/initial_linear_velocity_random = 0.0
+shader_param/initial_angle_random = 1.0
+shader_param/angular_velocity_random = 0.3
+shader_param/orbit_velocity_random = 0.0
+shader_param/linear_accel_random = 0.0
+shader_param/radial_accel_random = 0.0
+shader_param/tangent_accel_random = 0.0
+shader_param/damping_random = 0.0
+shader_param/scale_random = 0.0
+shader_param/hue_variation_random = 0.0
+shader_param/anim_speed_random = 0.0
+shader_param/anim_offset_random = 0.0
+shader_param/lifetime_randomness = 0.0
+shader_param/color_value = Color( 4.01176, 4.01176, 4.01176, 0.482353 )
+shader_param/trail_divisor = 1
+shader_param/gravity = Vector3( 0, -1e-06, 0 )
+shader_param/emission_texture_point_count = null
+shader_param/spawn = 0
+shader_param/spawn2 = 0
+shader_param/spawn_velocity = Vector2( 0, 0 )
+shader_param/fake_lifetime = 2.0
+shader_param/color_ramp = SubResource( 5 )
+shader_param/scale_texture = SubResource( 6 )
+
+[node name="SmartFire" type="GPUParticles2D"]
+material = SubResource( 9 )
+z_index = -4
+amount = 10000
+lifetime = 1e+07
+explosiveness = 1.0
+fixed_fps = 60
+fract_delta = false
+visibility_rect = Rect2( -10000, -10000, 20000, 20000 )
+local_coords = false
+process_material = SubResource( 8 )
+texture = ExtResource( 2 )

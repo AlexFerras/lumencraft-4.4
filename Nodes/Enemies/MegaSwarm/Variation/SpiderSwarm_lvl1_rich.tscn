@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Nodes/Enemies/MegaSwarm/SpiderSwarm_lvl1.tscn" type="PackedScene" id=1]
+
+[node name="SpiderSwarm_lvl1_rich" instance=ExtResource( 1 )]
+modulate = Color( 1.36078, 0.298039, 2.83922, 1 )
+separation_force_multiplier = 0.5
+cohesion_force_multiplier = 0.5
+wander_force_multiplier = 0.1
+probability_spawn_resource = 1
+how_many = 20
+max_hp = 4
+spawn_radius = 5.0
+triggered = false
+max_speed = 50
+prioritize_player = true
+just_wander = true
+attacks_terrain = false

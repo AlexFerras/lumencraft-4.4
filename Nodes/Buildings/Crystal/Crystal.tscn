@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Buildings/Crystal/Crystal.png" type="Texture2D" id=4]
+
+[sub_resource type="CircleShape2D" id=7]
+
+[node name="Crystal" type="StaticBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 7 )
+
+[node name="FlashLight" type="Node2D" parent="."]
+modulate = Color( 1, 0.95, 0.69, 1 )
+script = ExtResource( 1 )
+texture = ExtResource( 3 )
+drop_shadow = true
+follow_rotation = true
+is_static = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.09, 0.09 )
+texture = ExtResource( 4 )

@@ -1,0 +1,85 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Objects/Deco/Tree/Tree.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Objects/Deco/Tree/Stump.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=3]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+uniform vec2 playerpos;
+uniform mat4 global_transform;
+varying vec2 global_position;
+
+void vertex() {
+	mat4 glo = global_transform;
+	mat2 ddd = mat2(glo);
+	global_position = (EXTRA_MATRIX * glo * vec4(VERTEX, 0.0, 1.0)).xy;
+}
+
+void fragment() {
+	COLOR = texture(TEXTURE, UV + sin(TIME * 1.0 + UV * 6.0) * 0.003);
+	COLOR.a = COLOR.a * clamp(pow(distance(global_position,playerpos) / 90.0, 1.5), 0.7, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/playerpos = Vector2( 297.683, 2095.15 )
+shader_param/global_transform = Transform2D( 0.5, 0, 0, 0.5, 43.2725, 1672.41 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Sprite2D
+
+var hp: int = 10
+
+func _ready():
+	material.set_shader_parameter(\"global_transform\", get_global_transform())
+
+func _process(delta):
+	material.set_shader_parameter(\"playerpos\", Utils.game.main_player.global_position) #TODO: global uniform; multiplayer
+
+func on_enter(area: Area2D) -> void:
+	if area.is_in_group(\"player_projectile\"):
+		if area.has_method(\"on_hit\"):
+			area.on_hit()
+		else:
+			area.queue_free()
+		
+		hp -= 1
+		
+		if hp == 0:
+			queue_free()
+"
+
+[sub_resource type="CircleShape2D" id=8]
+radius = 20.0
+
+[node name="Tree" type="Sprite2D"]
+self_modulate = Color( 0.305882, 0.294118, 0.294118, 1 )
+material = SubResource( 2 )
+scale = Vector2( 0.5, 0.5 )
+z_index = 700
+z_as_relative = false
+texture = ExtResource( 1 )
+script = SubResource( 3 )
+
+[node name="Tree" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tree"]
+shape = SubResource( 8 )
+
+[node name="Detector" type="Area2D" parent="Tree"]
+collision_layer = 32
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Tree/Detector"]
+shape = SubResource( 8 )
+
+[node name="Stump" type="Sprite2D" parent="."]
+show_behind_parent = true
+texture = ExtResource( 2 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 3 )]
+z_index = 700
+
+[connection signal="area_entered" from="Tree/Detector" to="." method="on_enter"]

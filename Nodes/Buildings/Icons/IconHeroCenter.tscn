@@ -1,0 +1,47 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Buildings/HeroCenter/BuildIcon.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/Socket.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Editor/Icons/Player.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Icons/GenericPreview.gd" type="Script" id=6]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=7]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=8]
+
+[node name="Icon" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+script = ExtResource( 6 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 8 )
+position = Vector2( 2.49999, 2 )
+scale = Vector2( 246.962, 257.152 )
+z_index = -1
+texture = ExtResource( 7 )
+
+[node name="Socket" type="Sprite2D" parent="."]
+texture = ExtResource( 2 )
+
+[node name="GroundRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 8 )
+use_parent_material = true
+position = Vector2( 2.19001, 2.75002 )
+scale = Vector2( 243.38, 345.5 )
+z_index = -1
+texture = ExtResource( 7 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+scale = Vector2( 0.146179, 0.146179 )
+texture = ExtResource( 4 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 5.12539, 5.12539 )
+texture = ExtResource( 3 )

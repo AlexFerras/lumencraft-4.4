@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends PlayerDetector
+
+func checkpoint_player(player) -> void:
+	Utils.game.map.add_dmg_number().custom(player, \"Checkpoint activated!\", Color.YELLOW, 0.25)
+	Utils.game.respawn_point = self
+	Save.autosave()
+"
+
+[node name="CheckPoint" type="Area2D"]
+script = SubResource( 1 )
+
+[connection signal="player_entered" from="." to="." method="checkpoint_player"]

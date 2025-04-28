@@ -1,0 +1,136 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/FlameEffect.tscn" type="PackedScene" id=1]
+[ext_resource path="res://SFX/Weapons/Flamethrower2.wav" type="AudioStream" id=2]
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/Flamethrower_0.5.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+@onready var shoot_point := $Sprite2D/ShootPoint as Node2D
+@onready var flame_effect := $\"%FlameEffect\"
+@onready var audio := $AudioStreamPlayer2D
+
+@export var flames_speed := 60
+
+
+var is_shooting := false
+var is_shooting_time := 0.0
+var direction := Vector2.RIGHT
+
+var audio_level := 0.0
+var power_level: int
+var range_level: int
+var terrain_destroy: int
+
+var player: Player
+var prev_global: Transform2D
+
+func _ready():
+	var weapon_data: Dictionary = Const.Items[Const.ItemIDs.FLAMETHROWER]
+	power_level = player.get_upgraded(weapon_data, \"flame_amount\")
+	range_level = player.get_upgraded(weapon_data, \"weapon_range\")
+	flame_effect.set_flame_range(range_level)
+	flame_effect.set_flame_power(power_level)
+	
+#	var data = Player.init_weapon(self, $Sprite/AttackArea2D, Const.ItemIDs.FLAMETHROWER)
+#	Utils.merge_dicts(data, {keep = true})
+	
+	audio.playing = true
+	audio.volume_db = linear_to_db(0.0)
+	
+	Save.connect(\"unclocked_tech_number\", Callable(self, \"on_tech\"))
+
+func on_tech(tech: String, number: int):
+	if tech.begins_with(str(Const.ItemIDs.FLAMETHROWER)):
+		queue_free()
+		var item = player.get_current_item()
+		player.set_held_item({})
+		player.set_held_item(item)
+
+func shoot():
+	if flame_effect:
+		flame_effect.shoot(player)
+	is_shooting = true
+
+func deshoot():
+	if flame_effect:
+		flame_effect.stop()
+	is_shooting = false
+
+func set_player(player_new):
+	 player = player_new
+
+func _physics_process(delta):
+	prev_global = flame_effect.global_transform
+	
+	if is_shooting:
+		audio_level = 1.0
+#		audio.pitch_scale = rand_range(0.15,0.45)
+	else:
+		audio_level = max(audio_level - delta*5.0, 0.0)
+	audio.volume_db = linear_to_db(audio_level)
+	
+	is_shooting_time = min(is_shooting_time+delta, 1.0)
+	if is_shooting and is_shooting_time > 0.2:
+		is_shooting_time = 0.0
+		player.subtract_item(Const.ItemIDs.NAPALM)
+		var bullet := preload(\"res://Nodes/Player/Weapons/Ranged/FlamethrowerBullet.tscn\").instantiate()
+		bullet.set_player(player) ## TODO: ta linijka robi, że ogień przelatuje nad murem, ale trzeba najpierw naprawić particle
+		flame_effect.flame_core.process_material.set_shader_parameter(\"on_stand\",player.on_stand)
+		flame_effect.flame_smoke.process_material.set_shader_parameter(\"on_stand\",player.on_stand)
+		bullet.position = global_position
+		bullet.weapon_id = Const.ItemIDs.FLAMETHROWER
+		bullet.rotation = flame_effect.global_rotation# + randf_range(-power_level * 0.1, power_level * 0.1)
+		
+		
+		#var global_gun_dir = Vector2.RIGHT.rotated(flame_effect.global_rotation)
+		#var resultant = (global_gun_dir * 60 + player.linear_velocity).rotated(-global_rotation)
+		bullet.speed =  60
+		bullet.life_time += range_level * 0.4
+		bullet.power = power_level - 1
+		Utils.game.map.add_child(bullet)
+
+func _exit_tree() -> void:
+	flame_effect.get_parent().remove_child(flame_effect)
+	Utils.game.map.add_child(flame_effect)
+	flame_effect.global_transform = prev_global
+	flame_effect.kill()
+
+#	var raycast := Utils.game.map.pixel_map.rayCastQTDistance(shapes_positions[0], shapes_velocity[0].normalized(), shapes_velocity[0].length() * 0.5)
+#	if raycast:
+##		Utils.explode_circle_no_debris(raycast.hit_position + Utils.random_point_in_circle(10), 1, 255, 10, 10, Utils.player_bullet_collision_mask, true, 0.1)
+#		Utils.explode_circle_no_debris(raycast.hit_position, 4, 255, 10, 10, Utils.player_bullet_collision_mask, true, 0.1)
+#		
+
+#
+#	for p in range( max_points ):
+#		var direction = (to_local( previous_points[p] ) - base_points[p])
+#		var ratio = p / max_points
+#		points[p] = base_points[p] + direction * ratio * point_lag + Vector2(rand_range(-1, 1), rand_range(-1, 1)) * ratio * 10
+#		previous_points[p] = to_global( points[p] )
+"
+
+[node name="FlamerGun" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( -2, 0 )
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 3 )
+offset = Vector2( 0, 60 )
+
+[node name="ShootPoint" type="Node2D" parent="Sprite2D"]
+position = Vector2( 190, -20 )
+
+[node name="FlameEffect" parent="Sprite2D/ShootPoint" instance=ExtResource( 1 )]
+unique_name_in_owner = true
+position = Vector2( 200, -4 )
+z_index = -1
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 2 )
+pitch_scale = 0.7
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"

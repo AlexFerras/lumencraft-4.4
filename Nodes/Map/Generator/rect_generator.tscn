@@ -1,0 +1,430 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/Map/Generator/WhiteBlob.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Textures/1px_really_white.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Map/Generator/rect_generator.gd" type="Script" id=3]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+
+uniform vec2 scale =vec2(100.0,100.0);
+uniform vec2 position =vec2(0.0,0.0);
+uniform int seed : hint_range(-10000,10000)=1234;
+uniform int noise_type : hint_range(0,3)=0;
+uniform int circle_type : hint_range(0,1)=0;
+uniform float circle_add=0.0;
+uniform float additional_circle_add=0.0;
+uniform float circle_mul=1.0;
+uniform float init_add=0.0;
+uniform float noise_tile=3.0;
+uniform float noise_mul=1.0;
+uniform float tunnel_roughness=0.5;
+
+uniform float cutoff=0.3;
+
+
+uniform int NUM_OCTAVES: hint_range(1,8)= 4 ;
+uniform float test1=1.0;
+uniform float test2=1.0;
+uniform float test3=1.0;
+uniform float test4=1.0;
+uniform float test5=1.0;
+uniform float godotcon=0.5;
+uniform float testowo2=0.5;
+uniform sampler2D map :hint_default_black;
+uniform int material_mask=-1;
+
+
+
+float random (in vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+
+}
+float random2 (in vec2 p) {
+    return fract(sin(dot(p.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
+float fbm ( in vec2 _st, int fractal_octaves) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float fbmf(vec2 p,int notoctaves)
+{
+	mat2 m2 = mat2(vec2(0.8,-0.6),vec2(0.6,0.8));
+    float f = 0.0;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
+}
+float turb(in vec2 _st, int fractal_octaves)
+{
+	float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(vec2(cos(0.5), sin(0.5)),vec2(-sin(0.5), cos(0.50)));
+    for (int i = 0; i < fractal_octaves; ++i) {
+        v += a * abs(snoise(_st));
+        _st = rot * _st * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+float ridge(in vec2 st, int fractal_octaves)
+{
+
+    return 1.0-turb(st,fractal_octaves);
+}
+
+float circle(in vec2 st, float expand)
+{
+	float r = min(distance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float cDistance(vec2 a, vec2 b)
+{
+	vec2 d = a - b;
+	d = abs(d);
+	return max(d.x, d.y);
+}
+
+float rect_circle(in vec2 st, float expand)
+{
+	float r = min(cDistance(vec2(0.0), st),1.0);
+	return mix(1.0, 0.0, (r - expand) / (1.0 - expand));
+}
+
+float island(vec2 st,vec2 offset)
+{
+	float col=circle((st),0.0);
+	col*=fbm(st*3.0-offset,4);
+	col=step(0.3,col);
+	return col;
+}
+
+float multiple_islands(vec2 UV_TEX,vec2 tex_size,int count, int add_seed)
+{
+	float is_res=0.0;
+ 	for( int i =0;i<count;++i)
+	{
+		vec2 ran_pos=vec2(0.0);
+		ran_pos.x=random(vec2(float((i+1+seed+add_seed))));
+		ran_pos.y=random(vec2(float((i+1+seed+add_seed)+1)));
+		ran_pos*=tex_size;
+		float ran_scale=random(ran_pos+vec2(float(i+seed+add_seed+5)));
+		is_res+=island((UV_TEX-ran_pos)*0.01/(1.0+ran_scale*4.0),vec2(random(ran_pos)*3521.0))*1.2;
+	}
+	return min(1.0,is_res);
+}
+
+float random_places(vec2 UV_TEX,float density,int add_seed)
+{
+	
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	float co=fbm(pixel_UV*density,4);
+	float maxi = 0.0;
+	float R=8.0;
+	// there are more efficient algorithms than this
+	for (float yn = -R; yn <= R ; yn+=1.0) {
+		for (float xn = -R; xn <= R ; xn+=1.0) {
+			float val = fbm(pixel_UV*density+vec2(xn,yn)*0.001*density,4);
+			if (val > maxi) { maxi = val; }
+		}
+	}
+	if (co == maxi) 
+		return 1.0;
+	else
+		return 0.0;
+}
+
+float paths(vec2 UV_TEX,int add_seed)
+{
+	vec2 pixel_UV=UV_TEX+vec2(float((seed+add_seed)/1000),float((seed+add_seed) %1000));
+	return (abs(pow(fbm(fbm(pixel_UV*100.0,4)*0.15+pixel_UV*20.0+186.0,2),1.00)-test1)<0.001)?1.0:0.0;
+}
+
+float enlarged_paths(vec2 UV_TEX,vec2 tps,int add_seed)
+{
+	
+	bool not_important=true;
+	float range=15.0;
+	float count=0.0;
+	for(float i=-range;i<range;i+=1.0)
+		for(float j=-range;j<range;j+=1.0)
+		{
+			float col=paths(UV_TEX+vec2(i,j)*tps, add_seed);
+			//vec3 col=texture(TEXTURE,UV+vec2(i,j)*TEXTURE_PIXEL_SIZE).rgb;
+			if(length(vec2(i,j))<range &&col>0.5)
+				count+=1.0;
+		}
+	if(not_important && count>1.0)
+		return 1.0;
+	else
+		return 0.0;
+}
+
+
+float island2(vec2 st,vec2 uv05)
+{
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((uv05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((uv05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col*=fbm(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col*=fbmf(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col*=turb(st,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col*=ridge(st,NUM_OCTAVES)*noise_mul;
+	col+=circle((uv05*2.0),0.0)*additional_circle_add;
+	return step(cutoff,col);
+}
+
+float my_tunel(vec2 UV_seed_tiled_scaled, vec2 UV_scaled)
+{
+	float is_tunnel=turb(UV_seed_tiled_scaled+
+	
+	(	vec2(fbm(UV_scaled*test2,NUM_OCTAVES),
+		-fbm((UV_scaled*test2+vec2(-17.0,61.0)),NUM_OCTAVES))
+	+	vec2(fbm((UV_scaled*test2+vec2(-7.0,51.0)),NUM_OCTAVES),
+		fbm((UV_scaled*test2+vec2(-117.0,11.0)),NUM_OCTAVES))	)
+
+	*tunnel_roughness,1);
+	is_tunnel=pow(is_tunnel/**fbm(UV*4.0+2.0,1)*1.0*/,0.5);
+	is_tunnel=float(is_tunnel>test3 && is_tunnel<test4);
+	float final_mask=step((is_tunnel),cutoff);
+	
+	return final_mask;
+	
+}
+
+
+float my_tunel_args(vec2 UV_seed_tiled_scaled, vec2 UV_scaled,float t2,float t3,float t4)
+{
+	
+	
+
+	//is_tunnel=turb((UV)*sca*noise_tile+seedf+fbm(UV05*sca,NUM_OCTAVES)*tunnel_roughness,1);
+	
+	float is_tunnel=turb(UV_seed_tiled_scaled+
+	
+	(	vec2(fbm(UV_scaled*t2,NUM_OCTAVES),
+		-fbm((UV_scaled*t2+vec2(-17.0,61.0)),NUM_OCTAVES))
+	+	vec2(fbm((UV_scaled*t2+vec2(-7.0,51.0)),NUM_OCTAVES),
+		fbm((UV_scaled*t2+vec2(-117.0,11.0)),NUM_OCTAVES))	)
+
+	*tunnel_roughness,1);
+	is_tunnel=pow(is_tunnel/**fbm(UV*4.0+2.0,1)*1.0*/,0.5);
+	is_tunnel=float(is_tunnel>t3 && is_tunnel<t4);
+	float final_mask=step((is_tunnel),cutoff);
+	
+	return final_mask;
+	
+}
+
+
+	
+void fragment()
+{
+	vec2 UV_TEX=UV/TEXTURE_PIXEL_SIZE;
+	vec2 tex_size=vec2(textureSize(TEXTURE,0));
+	vec2 pixel_UV=UV_TEX+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV_s=UV+vec2(float((seed)/1000),float((seed) %1000));
+	vec2 UV05=UV-0.5;
+	float seedf=float(seed);
+	vec2 UV_seed=UV+seedf*0.1;
+	vec2 sca=scale*0.01;
+	vec2 UV_scaled=UV*sca;
+	vec2 UV_seed_tiled_scaled=(UV*noise_tile*sca+seedf*0.1);
+	vec2 UV_seed_scaled=UV_seed*sca;
+	float ratio=scale.x/scale.y;
+
+	COLOR=vec4(0.0);
+	vec2 map_size=vec2(textureSize(map,0));
+	
+	vec4 map_smp=texelFetch(map,ivec2(vec2(UV.x,UV.y)*scale+vec2(position.x,position.y)),0);
+	int cur_res=int((map_smp.g*255.0+0.5));
+	if(map_smp.x>0.01 || map_smp.y>0.01|| map_smp.z>0.01)
+	{
+		if((1<<cur_res & material_mask)==0)
+			discard;
+	}
+	
+	COLOR=vec4(0.0);
+	float col=0.0;
+	if (circle_type==0)
+		col=clamp(rect_circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+	if (circle_type==1)
+		col=clamp(circle((UV05*2.0),circle_add)*circle_mul+init_add,0.0,1.0);
+		
+		
+	if (noise_type==0)
+		col+=fbm((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==1)
+		col+=fbmf((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==2)
+		col+=turb((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	if (noise_type==3)
+		col+=ridge((UV05)*noise_tile*sca-seedf,NUM_OCTAVES)*noise_mul;
+	col+=circle((UV05*2.0),0.0)*additional_circle_add;
+	col=step(cutoff,col);
+	
+	float final_mask=col;
+
+	COLOR=vec4(vec3(final_mask),final_mask);
+	COLOR=clamp(COLOR,vec4(0.0),vec4(1.0));
+
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/scale = Vector2( 270, 193 )
+shader_param/position = Vector2( 946, 726 )
+shader_param/seed = 0
+shader_param/noise_type = 0
+shader_param/circle_type = 1
+shader_param/circle_add = 0.5049
+shader_param/additional_circle_add = 0.1452
+shader_param/circle_mul = 0.047
+shader_param/init_add = 0.0825
+shader_param/noise_tile = 2.0
+shader_param/noise_mul = 0.2489
+shader_param/tunnel_roughness = 0.1769
+shader_param/cutoff = 0.2969
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo2 = 0.5
+shader_param/material_mask = 4294967295
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 1 )
+shader_param/scale = Vector2( 270, 193 )
+shader_param/position = Vector2( 946, 726 )
+shader_param/seed = 0
+shader_param/noise_type = 0
+shader_param/circle_type = 1
+shader_param/circle_add = 0.5049
+shader_param/additional_circle_add = 0.1452
+shader_param/circle_mul = 0.047
+shader_param/init_add = 0.0825
+shader_param/noise_tile = 2.0
+shader_param/noise_mul = 0.2489
+shader_param/tunnel_roughness = 0.1769
+shader_param/cutoff = 0.3258
+shader_param/NUM_OCTAVES = 4
+shader_param/test1 = 1.0
+shader_param/test2 = 1.0
+shader_param/test3 = 1.0
+shader_param/test4 = 1.0
+shader_param/test5 = 1.0
+shader_param/godotcon = 0.5
+shader_param/testowo2 = 0.5
+shader_param/material_mask = 4294967291
+
+[node name="rect" type="Sprite2D"]
+self_modulate = Color( 0.392157, 0.584314, 0.929412, 0.5 )
+position = Vector2( 946, 726 )
+scale = Vector2( 270, 193 )
+texture = ExtResource( 2 )
+centered = false
+script = ExtResource( 3 )
+
+[node name="resource_blob_medium_outline" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+texture = ExtResource( 2 )
+centered = false
+script = ExtResource( 1 )
+material_type = 26
+mask = 4294967295
+
+[node name="resource_blob_medium_inside" type="Sprite2D" parent="."]
+modulate = Color( 0.384314, 0.180392, 0.0980392, 1 )
+material = SubResource( 3 )
+texture = ExtResource( 2 )
+centered = false
+script = ExtResource( 1 )
+material_type = 3
+mask = 4294967291
+use_same_seed = true

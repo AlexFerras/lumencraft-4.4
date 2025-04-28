@@ -1,0 +1,54 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Turret/BombTurretPhoto.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Icons/TurretPreview.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Buildings/Lab/tech_icons/damage.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=6]
+[ext_resource path="res://Nodes/Buildings/Turret/IconTurret.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=8]
+
+[node name="Sprite2D" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+script = ExtResource( 3 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 6 )
+position = Vector2( 9.53674e-07, -1.19209e-06 )
+scale = Vector2( 112, 80 )
+z_index = -1
+texture = ExtResource( 5 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+self_modulate = Color( 2, 1, 0, 1 )
+scale = Vector2( 0.725942, 0.725942 )
+texture = ExtResource( 7 )
+
+[node name="Sprite2D" type="Sprite2D" parent="Unused"]
+modulate = Color( 0.658824, 0.329412, 0, 1 )
+position = Vector2( -0.336397, 2.69114 )
+rotation = -0.261799
+scale = Vector2( 0.809486, 0.809486 )
+texture = ExtResource( 4 )
+
+[node name="TODO" type="Node" parent="Unused/Sprite2D"]
+__meta__ = {
+"_editor_description_": "Inna ikona"
+}
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.700052, 0.811286 )
+texture = ExtResource( 2 )
+
+[node name="attack_range_visual" parent="." instance=ExtResource( 8 )]
+visible = false
+modulate = Color( 0.501961, 1, 1, 1 )
+max_radius = 99999.0
+circle_radius = 150.0

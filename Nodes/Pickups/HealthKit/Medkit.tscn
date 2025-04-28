@@ -1,0 +1,173 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Pickups/HealthKit/Medkit.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Pickups/HealthKit/MedkitEmissive.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Effects/Heal.png" type="Texture2D" id=4]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends PlayerDetector
+
+var velocity: Vector2
+
+var radius := 8.0
+var collected: bool
+
+func _init() -> void:
+	set_collision_layer_value(1, true)
+
+func _ready() -> void:
+	Utils.add_to_tracker(self, Utils.game.map.pickup_tracker, radius)
+
+func collect(player: Player):
+	if collected:
+		return
+	
+	if player.hp >= player.get_max_hp():
+		velocity = player.global_position.direction_to(global_position) * 50
+		set_physics_process(true)
+		return
+	
+	Utils.play_sample(\"res://SFX/Player/HealthPickup.wav\")
+	player.heal(10)
+	collected = true
+	
+	var particles := $GPUParticles2D as Node2D
+	remove_child(particles)
+	Utils.game.map.add_child(particles)
+	particles.global_position = global_position
+	particles.start()
+	
+	queue_free()
+
+func _physics_process(delta: float) -> void:
+	if velocity.length_squared() <= 1:
+		set_physics_process(false)
+		return
+	
+	var r = Utils.game.map.physics.custom_physics_step(global_position, velocity, radius, 0.5,Utils.walkable_collision_mask)
+	global_position = r.position
+	velocity = r.size
+	position += velocity * delta
+	velocity *= 0.95
+"
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 5.0
+
+[sub_resource type="CanvasItemMaterial" id=9]
+blend_mode = 1
+
+[sub_resource type="Animation" id=10]
+resource_name = "Flash"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 2, 0.5 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.501961 ) ]
+}
+
+[sub_resource type="Animation" id=11]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Gradient" id=3]
+offsets = PackedFloat32Array( 0.544568, 1 )
+colors = PackedColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=4]
+gradient = SubResource( 3 )
+
+[sub_resource type="Curve" id=5]
+_data = [ Vector2( 0, 0 ), 0.0, 3.63004, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=6]
+curve = SubResource( 5 )
+
+[sub_resource type="ParticleProcessMaterial" id=7]
+emission_shape = 1
+emission_sphere_radius = 5.0
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 10.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 20.0
+scale = 0.15
+scale_random = 0.1
+scale_curve = SubResource( 6 )
+color_ramp = SubResource( 4 )
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends GPUParticles2D
+
+func _ready() -> void:
+	set_physics_process(false)
+
+func start():
+	emitting = true
+	set_physics_process(true)
+
+func _physics_process(delta: float) -> void:
+	if not emitting:
+		queue_free()
+"
+
+[node name="MedKit" type="Area2D"]
+script = SubResource( 2 )
+once = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 2 )
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+material = SubResource( 9 )
+position = Vector2( 0.074, -0.03 )
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 3 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2"]
+autoplay = "Flash"
+playback_speed = 2.0
+anims/Flash = SubResource( 10 )
+anims/RESET = SubResource( 11 )
+
+[node name="LightSprite" type="Node2D" parent="."]
+scale = Vector2( 0.05, 0.05 )
+script = ExtResource( 1 )
+texture = ExtResource( 3 )
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 16
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 7 )
+texture = ExtResource( 4 )
+script = SubResource( 8 )
+
+[connection signal="player_entered" from="." to="." method="collect"]

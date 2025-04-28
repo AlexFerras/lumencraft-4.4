@@ -1,0 +1,358 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://Nodes/Objects/OreVein/Minerals_002.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Materials/Hologram.tres" type="Material" id=2]
+[ext_resource path="res://Nodes/Objects/OreVein/Vein.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerInteractable.gd" type="Script" id=5]
+[ext_resource path="res://Nodes/Objects/OreVein/Minerals_002top.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Objects/OreVein/Minerals_002top_highlight.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Objects/OreVein/Minerals_002top_highlight_disabled.png" type="Texture2D" id=9]
+[ext_resource path="res://Resources/Textures/glare.png" type="Texture2D" id=10]
+
+[sub_resource type="GDScript" id=7]
+resource_name = "VeinComputer"
+script/source = "extends \"res://Nodes/Buildings/Common/Computer/GenericComputer.gd\"
+
+@onready var vein = get_parent()
+
+func _setup():
+	if vein.miner and !is_instance_valid(vein.miner):
+		vein.on_miner_destroyed()
+	
+	if not active:
+		return
+	
+	if vein.miner:
+		screen.set_title(tr(\"Remaining Metal: %s\") % get_metal_count())
+		if vein.miner.is_running:
+			if _can_use_long():
+				screen.set_description(\"Mining in progress. Use Lumen to overclock.\")
+				screen.set_long_action(\"Overclock\")
+			else:
+				screen.set_description(\"Mining in progress.\")
+		else:
+			screen.set_description(\"No power.\")
+	else:
+		screen.set_title(\"Place a Miner\")
+		screen.set_description(tr(\"Gives constant income of metal. Needs to be in range of power source. Metal left: %s.\") % get_metal_count())
+		var cost: Dictionary = Const.Buildings[\"Miner\"].cost
+		for id in cost:
+			screen.add_cost(id, cost[id])
+		screen.set_interact_action(\"Build\")
+
+func _make():
+	vein.create_miner()
+	vein.miner.owning_player_id = Utils.game.main_player.player_id
+	
+	var preview = preload(\"res://Nodes/Buildings/Icons/IconMiner.tscn\").instantiate()
+	preview.building_data = Const.Buildings[\"Miner\"]
+	preview.modulate.a = 0.5
+	preview.position = vein.global_position
+	Utils.game.map.add_child(preview)
+	
+	Utils.game.place_building(vein.miner, preview)
+	get_parent().emit_signal(\"miner_placed\")
+
+func _long_make():
+	if vein.miner:
+		vein.miner.set_overclock(true)
+		if not vein.miner.is_connected(\"overclock_tick\", Callable(self, \"on_overclock_tick\")):
+			vein.miner.connect(\"overclock_tick\", Callable(self, \"on_overclock_tick\"))
+
+func _release_long_make():
+	if vein.miner:
+		vein.miner.set_overclock(false)
+
+func _fail():
+	if find_power():
+		return
+	
+	BaseBuilding.show_no_power(self)
+
+func _can_use_long() -> bool:
+	return vein.miner != null and screen.current_player and screen.current_player.get_item_count(Const.ItemIDs.LUMEN, null, false) > 0
+
+func _can_use() -> bool:
+	if vein.miner:
+		return false
+	
+	return find_power()
+
+func on_overclock_tick():
+	assert(screen.current_player)
+	screen.current_player.subtract_item(Const.ItemIDs.LUMEN)
+	if not _can_use_long():
+		vein.miner.set_overclock(false)
+		reload()
+
+func find_power() -> bool:
+	for building in get_tree().get_nodes_in_group(\"range_expander\"):
+		var rad: float = building.get_meta(\"range_expander_radius\")
+		if global_position.distance_to(building.get_power_position()) - 6.32456 <= rad:
+			return true
+	
+	for expander in Utils.get_tree().get_nodes_in_group(\"temporary_expander\"):
+		if not expander.has_meta(\"range_expander_radius\"):
+			continue
+		
+		var rad: float = expander.get_meta(\"range_expander_radius\")
+		if global_position.distance_to(expander.global_position)  - 6.32456 <= rad:
+			return true
+	
+	return false
+
+func get_metal_count():
+	if vein.count > 1000000:
+		return \"Endless\"
+	else:
+		return vein.count
+"
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 313.75, 381.25 )
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+uniform    float speed = 0.58;
+uniform    float interval = 5.0;
+uniform float linewidth = 0.58;
+uniform float grad = 3.0;
+uniform float time_offset = 3.0;
+uniform vec4 col1:source_color = vec4(0.5,0.5,1.0,0.0) ;
+
+
+void fragment()
+{
+    
+    COLOR= texture(TEXTURE,UV) * MODULATE;
+    
+    // Plot line...
+    vec2 linepos = UV;
+    linepos.y=-linepos.y;
+    linepos.x = linepos.x - mod(TIME*speed+time_offset+MODULATE.r*11111.0,interval)+interval*0.5;
+   // linepos.x = linepos.x - mod(1.0*speed,2.0)+0.5;
+
+    float y = linepos.x*grad;
+    float s = smoothstep( y-linewidth, y, linepos.y) - smoothstep( y, y+linewidth, linepos.y); 
+    //s*=s;
+    // Merge texture + Glint
+    vec4 additional_glow = s*col1;
+
+    COLOR*= vec4(1.0)+vec4(additional_glow.rgb,0.0);
+    //COLOR=min(COLOR,vec4(1.9));
+
+    //COLOR= vec4(additional_glow.rgb,1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=8]
+shader = SubResource( 1 )
+shader_param/speed = 2.0
+shader_param/interval = 10.0
+shader_param/linewidth = 0.3
+shader_param/grad = 1.0
+shader_param/time_offset = 3.0
+shader_param/col1 = Color( 2, 2, 4, 0 )
+
+[sub_resource type="CircleShape2D" id=12]
+radius = 50.0
+
+[sub_resource type="CanvasItemMaterial" id=9]
+blend_mode = 1
+
+[sub_resource type="Animation" id=10]
+resource_name = "New Anim"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 360.0 ]
+}
+
+[sub_resource type="Animation" id=11]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[node name="MetalVein" type="Node2D"]
+z_index = -500
+z_as_relative = false
+script = ExtResource( 3 )
+
+[node name="Detector" type="Area2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Detector"]
+z_index = 136
+polygon = PackedVector2Array( -41.5241, -280.913, 8.2851, -262.673, 17.4051, -226.193, 97.3806, -212.162, 93.8729, -174.98, 145.787, -155.337, 175.251, -142.008, 200.507, -96.4078, 188.581, -9.41704, 225.061, 75.4692, 194.193, 139.309, 126.144, 154.743, 135.965, 195.432, 93.8729, 245.242, 64.4082, 232.614, 15.3005, 283.125, -30.2995, 272.602, -59.0626, 232.614, -47.1365, 196.835, -110.275, 145.623, -80.1088, 124.577, -141.844, 48.8107, -139.038, 23.5554, -155.875, 8.82305, -158.681, -62.0323, -125.007, -97.1093, -136.933, -132.186, -129.918, -199.534, -99.7518, -203.743, -79.4072, -268.986 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 8 )]
+z_index = -500
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 1 )
+
+[node name="VeinComputer" type="Node2D" parent="."]
+z_index = 600
+z_as_relative = false
+script = SubResource( 7 )
+highlight_green = ExtResource( 7 )
+highlight_red = ExtResource( 9 )
+target_screen = NodePath("../ComputerScreen")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="VeinComputer"]
+scale = Vector2( 0.1, 0.1 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="VeinComputer/StaticBody2D"]
+visible = false
+z_index = 136
+polygon = PackedVector2Array( -41.5241, -280.913, 8.2851, -262.673, 17.4051, -226.193, 97.3806, -212.162, 93.8729, -174.98, 145.787, -155.337, 175.251, -142.008, 200.507, -96.4078, 188.581, -9.41704, 225.061, 75.4692, 194.193, 139.309, 126.144, 154.743, 135.965, 195.432, 93.8729, 245.242, 64.4082, 232.614, 15.3005, 283.125, -30.2995, 272.602, -59.0626, 232.614, -47.1365, 196.835, -110.275, 145.623, -80.1088, 124.577, -141.844, 48.8107, -139.038, 23.5554, -155.875, 8.82305, -158.681, -62.0323, -125.007, -97.1093, -136.933, -132.186, -129.918, -199.534, -99.7518, -203.743, -79.4072, -268.986 )
+
+[node name="PlayerDetector" type="Area2D" parent="VeinComputer"]
+scale = Vector2( 0.1, 0.1 )
+script = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VeinComputer/PlayerDetector"]
+visible = false
+position = Vector2( 16.25, -3.74997 )
+scale = Vector2( 0.999999, 0.999999 )
+z_index = 180
+shape = SubResource( 6 )
+
+[node name="Sprite2D" type="Sprite2D" parent="VeinComputer"]
+material = SubResource( 8 )
+scale = Vector2( 0.125, 0.125 )
+z_index = -600
+texture = ExtResource( 6 )
+
+[node name="Highlight" type="Sprite2D" parent="VeinComputer/Sprite2D"]
+visible = false
+modulate = Color( 1, 1, 1, 0.431373 )
+scale = Vector2( 10, 10 )
+z_index = -2
+texture = ExtResource( 7 )
+
+[node name="Icon" type="Sprite2D" parent="VeinComputer"]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = ExtResource( 2 )
+position = Vector2( 0, 2.5 )
+
+[node name="SecondaryIcon" type="Sprite2D" parent="VeinComputer"]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = ExtResource( 2 )
+position = Vector2( 9.5, 5.5 )
+scale = Vector2( 0.15, 0.15 )
+
+[node name="ZIndexer" parent="VeinComputer" instance=ExtResource( 8 )]
+z_index = 600
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 4 )]
+
+[node name="PreferredSize" type="ReferenceRect" parent="ComputerScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -500.0
+offset_right = 512.0
+
+[node name="giver" type="Marker2D" parent="."]
+position = Vector2( 20.7876, -2.07876 )
+
+[node name="giver2" type="Marker2D" parent="giver"]
+position = Vector2( -1.93027, -11.7302 )
+rotation = -0.68878
+
+[node name="giver3" type="Marker2D" parent="giver"]
+position = Vector2( -12.621, -20.7876 )
+rotation = -1.2953
+
+[node name="giver4" type="Marker2D" parent="giver"]
+position = Vector2( -21.9755, -26.133 )
+rotation = -1.50071
+
+[node name="giver5" type="Marker2D" parent="giver"]
+position = Vector2( -32.2208, -20.4907 )
+rotation = -2.37284
+
+[node name="giver6" type="Marker2D" parent="giver"]
+position = Vector2( -36.0814, -8.7605 )
+rotation = -2.77262
+
+[node name="giver7" type="Marker2D" parent="giver"]
+position = Vector2( -38.3086, 0.890907 )
+rotation = -3.04997
+
+[node name="giver8" type="Marker2D" parent="giver"]
+position = Vector2( -35.1905, 10.6908 )
+rotation = 3.12061
+
+[node name="giver9" type="Marker2D" parent="giver"]
+position = Vector2( -30.5875, 20.7876 )
+rotation = 2.81962
+
+[node name="giver10" type="Marker2D" parent="giver"]
+position = Vector2( -24.9452, 30.736 )
+rotation = 1.90696
+
+[node name="giver11" type="Marker2D" parent="giver"]
+position = Vector2( -14.1059, 28.6573 )
+rotation = 1.22789
+
+[node name="giver12" type="Marker2D" parent="giver"]
+position = Vector2( -4.89993, 19.7483 )
+rotation = 0.871478
+
+[node name="giver13" type="Marker2D" parent="giver"]
+position = Vector2( 1.63332, 11.8787 )
+rotation = 0.508736
+
+[node name="glare" type="Area2D" parent="."]
+position = Vector2( -12.4628, 5.21491 )
+rotation = -1.83275
+scale = Vector2( 0.1, 0.1 )
+z_index = 499
+z_as_relative = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="glare"]
+shape = SubResource( 12 )
+
+[node name="Sprite2D" type="Sprite2D" parent="glare"]
+modulate = Color( 1, 1, 1, 0.768627 )
+material = SubResource( 9 )
+z_index = 499
+z_as_relative = false
+texture = ExtResource( 10 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="glare/Sprite2D"]
+autoplay = "New Anim"
+playback_speed = 0.1
+"anims/New Anim" = SubResource( 10 )
+anims/RESET = SubResource( 11 )
+
+[node name="ZIndexer" parent="glare/Sprite2D" instance=ExtResource( 8 )]
+z_index = 500
+offset = -1
+
+[connection signal="area_entered" from="Detector" to="." method="_on_Detector_area_entered"]
+[connection signal="area_entered" from="glare" to="." method="_on_glare_hit"]

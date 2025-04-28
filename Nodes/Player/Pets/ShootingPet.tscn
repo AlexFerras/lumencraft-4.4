@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Player/Pets/ShootingPet.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Player/Pets/Pet.gd\"
+
+const ATTACK_RANGE = 100
+
+var prev_position: Vector2
+var target_position: Vector2
+var target_enemy: Node2D
+var static_time: float
+
+func _ready() -> void:
+	new_target()
+
+func _physics_process(delta: float) -> void:
+	if global_position != prev_position:
+		static_time = 0
+		$Sprite2D.rotation = (global_position - prev_position).angle()
+	else:
+		static_time += delta
+	prev_position = global_position
+
+func _idle(delta: float):
+	global_position = global_position.move_toward(target_position, 100 * delta)
+	if static_time >= 3 and randi() % 30 == 0:
+		new_target()
+	
+	target_enemy = Utils.game.map.enemy_tracker.getClosestTrackingNode2DInCircle(player.global_position, ATTACK_RANGE, true)
+	if target_enemy:
+		state = ATTACK
+		new_target()
+
+func _attack(delta: float):
+	if not is_instance_valid(target_enemy) or player.global_position.distance_squared_to(target_enemy.global_position) > ATTACK_RANGE * ATTACK_RANGE:
+		target_enemy = null
+		new_target()
+		state = IDLE
+		return
+	
+	global_position = global_position.move_toward(target_position, 100 * delta)
+	if target_position.distance_squared_to(target_enemy.global_position) > 2500:
+		new_target()
+	
+	if static_time >= 1:
+		static_time = 0
+		
+		var bullet := preload(\"res://Nodes/Player/Pets/ShootingPetBlaster.tscn\").instantiate() as Node2D
+		bullet.position = global_position
+		bullet.rotation = global_position.direction_to(target_enemy.global_position).angle()
+		Utils.game.map.add_child(bullet)
+
+func new_target():
+	target_position = Vector2()
+	var target: Node2D = player
+	if target_enemy:
+		target = target_enemy
+	
+	for i in 1000:
+		if target_position == Vector2() or Utils.game.map.pixel_map.is_pixel_solid(target_position):
+			target_position = target.global_position + Utils.random_point_in_circle(50, 25)
+"
+
+[node name="ShootingPet" type="Node2D"]
+z_index = 600
+z_as_relative = false
+script = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 2 )]
+z_index = 600

@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Nodes/Pickups/Pickup.gd" type="Script" id=3]
+[ext_resource path="res://Resources/Materials/PickableShine.tres" type="Material" id=4]
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenClump.png" type="Texture2D" id=5]
+
+[node name="LumenClump" type="PixelMapRigidBody"]
+z_index = 50
+z_as_relative = false
+linear_damp = 3.0
+radius = 4
+script = ExtResource( 3 )
+item = "LUMEN_CLUMP"
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( -0.128662, 0.174561 )
+scale = Vector2( 1.15, 1.15 )
+polygon = PackedVector2Array( -0.676378, -4.76541, 0.712597, -4.7158, 2.10157, -6.10478, 3.29212, -4.46777, 5.4748, -4.07092, 5.17716, -2.23549, 5.92126, -0.00320861, 3.34173, 3.71726, 4.1467, 5.09303, 3.0937, 5.65191, 1.95275, 4.65978, 0.66299, 5.35427, -0.37874, 4.36214, -2.16457, 5.20545, -4.99212, 0.592067, -6.13307, -0.300847, -4.84331, -3.27722, -4.55878, -5.03918, -3.00787, -4.41817 )
+
+[node name="shadow" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+scale = Vector2( 0.08, 0.08 )
+texture = ExtResource( 1 )
+
+[node name="InnySprite" type="Sprite2D" parent="."]
+modulate = Color( 2, 2, 2, 1 )
+material = ExtResource( 4 )
+scale = Vector2( 0.04, 0.04 )
+texture = ExtResource( 5 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 2 )]
+z_index = 50

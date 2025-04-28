@@ -1,0 +1,142 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/explosive_workshop_photo.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Icons/GenericPreview.gd" type="Script" id=3]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=4]
+[ext_resource path="res://Nodes/Buildings/Common/Socket.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Lab/tech_icons/damage.png" type="Texture2D" id=7]
+
+[node name="Icon" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+script = ExtResource( 3 )
+
+[node name="Socket" type="Sprite2D" parent="."]
+position = Vector2( 54.5915, -24.8143 )
+texture = ExtResource( 5 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+position = Vector2( 3.23012, 20 )
+scale = Vector2( 398.085, 160 )
+z_index = -1
+
+[node name="BoundingRect2" type="Sprite2D" parent="BoundingRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+position = Vector2( -0.00787848, 0 )
+scale = Vector2( 0.984243, 1 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="BoundingRect4" type="Sprite2D" parent="BoundingRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+position = Vector2( -0.157633, -0.7375 )
+scale = Vector2( 0.419615, 0.475 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="BoundingRect5" type="Sprite2D" parent="BoundingRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+position = Vector2( 0.253738, -0.85 )
+scale = Vector2( 0.400722, 0.7 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="BoundingRect3" type="Sprite2D" parent="BoundingRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+position = Vector2( -0.0119356, 0.825 )
+scale = Vector2( 0.389471, 0.65 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="GroundRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+use_parent_material = true
+position = Vector2( 22.4456, -8.46751 )
+scale = Vector2( 436.369, 423.089 )
+z_index = -1
+
+[node name="GroundRect3" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+use_parent_material = true
+position = Vector2( -0.051138, -0.0650749 )
+scale = Vector2( 0.897724, 0.642891 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="GroundRect2" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+use_parent_material = true
+position = Vector2( -0.0560205, 0.379276 )
+scale = Vector2( 0.357496, 0.245811 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="GroundRect7" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+use_parent_material = true
+position = Vector2( 0.260226, 0.303642 )
+scale = Vector2( 0.274997, 0.0945428 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="GroundRect6" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+use_parent_material = true
+position = Vector2( 0.260226, 0.303642 )
+scale = Vector2( 0.274997, 0.0945427 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="GroundRect4" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+use_parent_material = true
+position = Vector2( 0.0906444, -0.466882 )
+scale = Vector2( 0.174165, 0.160723 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="GroundRect5" type="Sprite2D" parent="GroundRect"]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 4 )
+use_parent_material = true
+position = Vector2( 0.47564, 0.001105 )
+scale = Vector2( 0.155831, 0.160723 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="TerrainDetectionEdge" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array( -196, 100, -80, 100, -80, 204, 76, 204, 76, 140, 196, 140, 196, 24, 264, 24, 264, -44, 196, -44, 196, -172, 100, -172, 100, -240, 24, -240, 24, -172, -196, -172, -196, 100 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+position = Vector2( 24, -12 )
+rotation = -1.5708
+scale = Vector2( 1.73525, 1.73525 )
+texture = ExtResource( 7 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+scale = Vector2( 0.9, 0.9 )
+texture = ExtResource( 6 )
+
+[node name="TODO" type="Node" parent="Unused"]
+__meta__ = {
+"_editor_description_": "Inna ikona"
+}

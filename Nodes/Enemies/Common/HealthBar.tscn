@@ -1,0 +1,87 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+
+[sub_resource type="Shader" id=6]
+code = "shader_type canvas_item;
+
+void fragment() {
+	MODULATE;
+	COLOR = texture(TEXTURE, UV);
+}"
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 6 )
+
+[sub_resource type="Gradient" id=1]
+offsets = PackedFloat32Array( 0 )
+colors = PackedColorArray( 0.0861062, 0, 0.286275, 1 )
+
+[sub_resource type="GradientTexture2D" id=2]
+gradient = SubResource( 1 )
+width = 6
+
+[sub_resource type="Gradient" id=3]
+offsets = PackedFloat32Array( 0 )
+colors = PackedColorArray( 1, 0.199219, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=4]
+gradient = SubResource( 3 )
+width = 6
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends TextureProgressBar
+
+@onready var enemy := get_parent().get_parent()
+
+func _ready() -> void:
+	value = max_value
+	update_config()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSFORM_CHANGED:
+		get_parent().global_rotation = 0
+
+func update_value():
+	value = max_value * (float(enemy.hp) / enemy.max_hp)
+	refresh()
+
+func decrease_value(v: int):
+	value -= v
+	refresh()
+
+func refresh():
+	set_notify_transform(get_parent().visible)
+	if not get_parent().visible:
+		return
+	
+	visible = value < max_value
+	if value == 0:
+		queue_free()
+
+func update_config():
+	get_parent().visible = Save.config.show_enemy_health
+	refresh()
+"
+
+[node name="HealthBarRoot" type="Node2D" groups=["dont_save"]]
+z_index = 811
+z_as_relative = false
+
+[node name="HealthBar" type="TextureProgressBar" parent="." groups=["config_observers"]]
+material = SubResource( 7 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -3.16571
+offset_top = -6.08459
+offset_right = 2.83429
+offset_bottom = -5.08459
+texture_under = SubResource( 2 )
+texture_progress = SubResource( 4 )
+script = SubResource( 5 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 800
+offset = 11

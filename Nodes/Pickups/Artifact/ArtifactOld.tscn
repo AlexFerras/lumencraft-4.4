@@ -1,0 +1,106 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Pickups/Artifact/Artifact.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Pickups/Artifact/ArtifactIcon.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "tool
+extends Pickup
+
+@export var type: int: set = set_type
+
+@onready var hologram := $Sprite2 as Sprite2D
+@onready var marker := $Marker as Node2D
+
+func _init() -> void:
+	id = Constants.ItemIDs.ARTIFACT
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_physics_process(false)
+		return
+	
+	$Sprite1.frame = type
+	hologram.frame = type
+	buried = Utils.game.map.pixel_map.is_pixel_solid(global_position, Utils.walkable_collision_mask)
+	data = type
+	Utils.game.map.pixel_map.connect(\"pixels_modifed\", Callable(self, \"update_sprite2\"))
+	refresh_buffs()
+
+func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		return
+	update_sprite2()
+
+func update_sprite2():
+	if not is_inside_tree() or not Utils.game.map.pixel_map:
+		return
+	
+	if buried and not Utils.game.map.pixel_map.is_pixel_solid(global_position, Utils.walkable_collision_mask):
+		Utils.game.map.pixel_map.disconnect(\"pixels_modifed\", Callable(self, \"update_sprite2\"))
+		hologram.queue_free()
+		buried = false
+		refresh_buffs()
+
+func refresh_buffs():
+	if buried:
+#		hologram.visible = Const.Buffs.ARTIFACT_DETECTOR in Utils.game.map.buffs
+		marker.visible = hologram.visible
+	else:
+		marker.visible = true
+
+func set_type(t: int):
+	type = t
+	
+	if Engine.is_editor_hint() and not is_inside_tree():
+		await self.ready
+	
+	$Sprite1.frame = type
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 4.0
+
+[sub_resource type="Shader" id=3]
+code = "shader_type canvas_item;
+
+void fragment() {
+	vec4 color = texture(TEXTURE, UV);
+	
+	float v = max(max(color.r, color.g), color.b);
+	color.r = 0.0;
+	color.g = v;
+	color.b = 0.0;
+	color.a = min(ceil(mod(TIME, 1.0) - 0.1), color.a * abs(sin(TIME * 10.0) + 0.5));
+	
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+
+[node name="Artifact" type="Area2D" groups=["artifacts"]]
+script = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[node name="Marker" parent="." instance=ExtResource( 1 )]
+texture = ExtResource( 3 )
+arrow = ExtResource( 3 )
+max_radius = 100.0
+rotate_arrow = false
+
+[node name="Sprite1" type="Sprite2D" parent="."]
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+hframes = 14
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 4 )
+scale = Vector2( 0.5, 0.5 )
+z_index = 10
+texture = ExtResource( 2 )
+hframes = 14

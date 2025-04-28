@@ -1,0 +1,675 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Insert_001.png" type="Texture2D" id=1]
+[ext_resource path="res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo.wav" type="AudioStream" id=2]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Insert_001_emissive.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Body_General.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Body_Emissive.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Buildings/Reactor/Smoke.png" type="Texture2D" id=6]
+[ext_resource path="res://Resources/Textures/spark_particle.png" type="Texture2D" id=7]
+[ext_resource path="res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo_drilling.wav" type="AudioStream" id=8]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+const idle_sound := preload(\"res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo.wav\")
+const working_sound := preload(\"res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo_drilling.wav\")
+
+const AUTO_DRILL_CLICKS = 3
+
+@onready var ray_center := $Drill_body/Drill_head/ray_center as Marker2D
+@onready var ray_tip := $Drill_body/Drill_head/ray_tip as Marker2D
+@onready var ray_pushback := $Drill_body/Drill_head/ray_pushback as Marker2D
+@onready var ray_left := $Drill_body/Drill_head/ray_left as Marker2D
+@onready var ray_right:= $Drill_body/Drill_head/ray_right as Marker2D
+
+@onready var animator := $AnimationPlayer as AnimationPlayer
+@onready var laser_animator := $AnimationPlayer2 as AnimationPlayer
+@onready var drill_sound_idle := $AudioStreamPlayer as AudioStreamPlayer
+@onready var drill_sound_working := $AudioStreamPlayer2 as AudioStreamPlayer
+@onready var emissive := $Drill_body/Drill_head/Drill_emissive as Sprite2D
+@onready var drill_body := $Drill_body/ as Sprite2D
+@onready var base_upgrade := $Drill_body/Drill_body_upgrade as Sprite2D
+@onready var attack_collider := $Area2D/CollisionShape2D as CollisionShape2D
+@onready var smoke := $Drill_body/Drill_head/Smoke as CPUParticles2D
+@onready var sparks := $Drill_body/Drill_head/Sparks as GPUParticles2D
+@onready var laser1 := $Drill_body/LaserSight as Line2D
+@onready var laser2 := $Drill_body/LaserSight2 as Line2D
+@onready var laser3 := $Drill_body/LaserSight3 as Line2D
+
+var base_color:Color
+@onready var last_tip_position=sparks.global_position
+var heat := 0.0
+var spin_speed := 0.1
+var timer := 0.0
+
+var upgraded: bool
+var playing_hit_sound :bool = false
+var has_contact: float
+
+signal attacked
+
+var upgrade_radius_miltipler := 0.25
+var base_radius := 10
+var upgrade_dmg_multipler := 1.75
+var base_dmg := 3
+var upgrade_durability_cap_multipler := 1.5
+var base_durability_cap := 2
+var upgrade_penetration_radius_add_multipler = 0.5
+var base_penetration_radius_add = 11
+
+var auto_drill: int
+var double_tap: int
+var drilling_power: int
+
+var player: Player
+
+var seismic=0
+
+func set_player(p: Player):
+	player = p
+
+func _ready() -> void:
+	emissive.modulate.b = 0
+	heat=player.get_current_item().get(\"heat\",0.0)
+	drill_sound_idle.pitch_scale=0.001
+	drill_sound_working.pitch_scale=drill_sound_idle.pitch_scale
+	drilling_power = Save.get_unclocked_tech(str(Const.ItemIDs.DRILL, \"drilling_power\"))
+	Utils.init_player_projectile(self, $Area2D, {damage = 1, keep = true, bulldozer = true, weak = true})
+	$Area2D.collision_mask |= Const.BUILDING_COLLISION_LAYER
+	Save.connect(\"unclocked_tech_number\", Callable(self, \"on_drill_upgraded\"))
+	set_drill_style()
+
+func on_drill_upgraded(tech_name: String, level: int):
+	if tech_name.ends_with(\"drilling_power\"):
+		set_drill_style()
+		drilling_power = level
+
+func laser_randomize():
+	laser1.visible = not bool(randi()%3)
+	laser2.visible = not bool(randi()%3)
+	laser3.visible = not bool(randi()%3)
+
+func _physics_process(delta):
+	if player.dead:
+		return
+	
+	if auto_drill < AUTO_DRILL_CLICKS:
+		if player.is_just_shooting():
+			if Time.get_ticks_msec() - double_tap < 500:
+				auto_drill += 1
+				double_tap = Time.get_ticks_msec()
+			else:
+				auto_drill = 1
+				double_tap = Time.get_ticks_msec()
+	else:
+		if player.is_just_shooting():
+			auto_drill = 0
+	
+#	if animator.is_playing():
+	var delta_tip_move=last_tip_position.distance_to(sparks.global_position)
+	heat=max(0.0,heat)
+	sparks.modulate.a=clamp(heat/15.0,0.01,1.0)
+	sparks.emitting=false
+	if (player.is_shooting() or auto_drill == AUTO_DRILL_CLICKS) and not player.build_menu:
+		var ray := Utils.game.map.pixel_map.rayCastQTFromTo(ray_center.global_position, ray_pushback.global_position, Utils.player_bullet_collision_mask, false)
+		if ray:
+			player.linear_velocity = ((ray_center.global_position - ray_pushback.global_position).normalized() * 20000.0 / (ray.hit_distance + 10.0) * delta)
+		
+		if drilling_power >= 4:
+			laser_animator.play(\"drill\")
+			laser_animator.seek(0)
+#		position.x = 0
+#		Utils.explode_circle(global_position, 50, 0, 3, 244)
+		if not animator.is_playing():
+			animator.play(\"Drill\")
+		if not drill_sound_idle.playing:
+			drill_sound_idle.play()
+		if not drill_sound_working.playing:
+			drill_sound_working.play()
+		if spin_speed < 1.0:
+			spin_speed += delta
+		var too_hard=false
+		ray = Utils.game.map.pixel_map.rayCastQTFromTo(ray_center.global_position, ray_tip.global_position, Utils.player_bullet_collision_mask)
+		if not ray:
+			ray = Utils.game.map.pixel_map.rayCastQTFromTo(ray_left.global_position, ray_tip.global_position, Utils.player_bullet_collision_mask)
+		
+		if not ray:
+			ray = Utils.game.map.pixel_map.rayCastQTFromTo(ray_right.global_position, ray_tip.global_position, Utils.player_bullet_collision_mask)
+		
+		if ray:
+			var drilled_material = Utils.game.map.pixel_map.get_pixel_at(ray.hit_position - ray.hit_normal * 0.5)
+			var mat_dur = Utils.game.map.pixel_map.material_data.get_material_durability(drilled_material.g8)
+			if mat_dur> get_global_drill_durability_cap() :
+				too_hard=true
+			
+			has_contact = 0.1
+			
+			var player_global_position = player.get_global_position()
+			var drilling_tip = ray_tip.global_position
+			var from_player_to_drill_tip = drilling_tip - player_global_position
+			var from_player_to_drill_tip_distance = from_player_to_drill_tip.length()
+			var from_player_to_drill_tip_direction = from_player_to_drill_tip / from_player_to_drill_tip_distance
+			var drilling_distance = from_player_to_drill_tip_distance
+			var ray_from_player_to_drill_tip = Utils.game.map.pixel_map.rayCastQTFromTo(player_global_position, ray_tip.global_position, Utils.walkable_collision_mask)
+			if ray_from_player_to_drill_tip:
+				drilling_tip = ray_from_player_to_drill_tip.hit_position
+				drilling_distance = ray_from_player_to_drill_tip.hit_distance
+			
+			destroy_terrain(player_global_position + from_player_to_drill_tip_direction * 8, 0)
+			destroy_terrain(player_global_position + from_player_to_drill_tip_direction * drilling_distance * 0.5, drilling_distance * 0.5 / from_player_to_drill_tip_distance)
+			destroy_terrain(drilling_tip, drilling_distance / from_player_to_drill_tip_distance)
+
+#		update()
+		if too_hard:
+			sparks.emitting = true
+			#sparks.modulate.a=clamp(heat*2.0/15.0,0.01,1.0)
+			drill_sound_idle.pitch_scale = drill_sound_idle.pitch_scale * 0.9 + 0.1 * (1.3 + sin(Time.get_ticks_msec() * 0.015) * 1.2)
+			drill_sound_working.pitch_scale=drill_sound_idle.pitch_scale
+			if heat <= 15.0:
+				heat += delta*9.0
+		elif has_contact > 0:
+			Utils.vibrate(0.3, 0.3, 0.1, player)
+#			sparks.emitting=true
+			#sparks.modulate.a=clamp(heat*2.0/15.0,0.01,1.0)
+			#if drill_sound.stream != working_sound:
+			#	drill_sound.stream = working_sound
+			drill_sound_idle.volume_db=clamp(drill_sound_idle.volume_db-1.0,-20,-7.0)
+			drill_sound_working.volume_db=clamp(drill_sound_working.volume_db+1.0,-20,-7.0)
+			if heat <= 15.0:
+				heat += delta
+			drill_sound_idle.pitch_scale = drill_sound_idle.pitch_scale * 0.9 + 0.1 * (0.7 + sin(Time.get_ticks_msec() * 0.1) * 0.1)
+			drill_sound_working.pitch_scale=drill_sound_idle.pitch_scale
+		else:
+#			Utils.explode((ray_center.global_position + ray_tip.global_position)*0.5, 12, 20, 0.999, 3)
+#			destroy_terrain((ray_center.global_position + ray_tip.global_position)*0.5)
+
+#			if drill_sound.stream != idle_sound:
+#				drill_sound.stream = idle_sound
+			drill_sound_idle.volume_db=clamp(drill_sound_idle.volume_db+1.0,-20,-7.0)
+			drill_sound_working.volume_db=clamp(drill_sound_working.volume_db-1.0,-20,-7.0)
+			if heat > 0.0:
+				heat -= delta+delta_tip_move*0.02
+	#		drill_sound.pitch_scale = drill_sound.pitch_scale * 0.95 + 0.5 * 0.05
+			drill_sound_idle.pitch_scale = drill_sound_idle.pitch_scale*0.9 + spin_speed * 0.5*0.1
+			drill_sound_working.pitch_scale=drill_sound_idle.pitch_scale
+	else:
+		if heat > 0.0:
+			heat -= delta+delta_tip_move*0.02
+		if spin_speed > delta:
+			spin_speed -= delta
+			if  spin_speed <= 0.2:
+				drill_sound_idle.stop()
+				drill_sound_working.stop()
+				spin_speed = 0.0
+		attack_collider.disabled = true
+		drill_sound_idle.pitch_scale = max(0.2,spin_speed * 0.5)
+		drill_sound_working.pitch_scale=drill_sound_idle.pitch_scale
+		
+		
+	smoke.modulate.a=clamp(heat*2.0/15.0,0.0,1.0)
+	player.get_current_item()[\"heat\"]=heat
+	animator.playback_speed = spin_speed
+	timer += delta
+	base_upgrade.modulate.a = spin_speed + abs(sin(timer*10.0*spin_speed)) * 0.2
+	
+	emissive.modulate.r = heat
+	emissive.modulate.g = max(0.0, heat *0.35)
+	has_contact -= delta
+	last_tip_position=sparks.global_position
+
+func _sample_playback_complete():
+	playing_hit_sound = false
+
+func on_hit():
+	has_contact = 0.1
+
+func put_away():
+#	animator.stop()
+	animator.playback_speed = 0
+	attack_collider.disabled = true
+#	position.x = 12
+	
+func set_drill_style():
+	var data = $Area2D.get_meta(\"data\")
+	data.damage = 1
+	$Area2D.set_meta(\"data\", data)
+	if drilling_power>1 and drilling_power < 4:
+		base_upgrade.visible = true
+		$Drill_body/Drill_head.texture = preload(\"res://Nodes/Player/Weapons/Tools/Drill_Insert_002.png\")
+		emissive.texture = preload(\"res://Nodes/Player/Weapons/Tools/Drill_Insert_002_emissive.png\")
+	elif drilling_power >= 4:
+		base_upgrade.visible = true
+		$Drill_body/Drill_head.texture = preload(\"res://Nodes/Player/Weapons/Tools/Drill_Insert_003.png\")
+		emissive.texture = preload(\"res://Nodes/Player/Weapons/Tools/Drill_Insert_003_emissive.png\")
+
+func get_global_drill_durability_cap():
+	return drilling_power*1.5+2
+
+func destroy_terrain(where: Vector2, drilling_distance_part : float):
+	var radius_multipler = lerp(1, 0.5, drilling_distance_part)
+	var add_radius_multipler = lerp(0.3, 1, drilling_distance_part)
+	var drill_upgrade = drilling_power
+	var radius = (drill_upgrade * upgrade_radius_miltipler + base_radius) * radius_multipler
+	var dmg = (drill_upgrade * upgrade_dmg_multipler + base_dmg)
+	var durability_cap = min(drill_upgrade * upgrade_durability_cap_multipler + base_durability_cap, dmg)
+
+	Utils.explode_circle(where, radius, dmg, 3, durability_cap,-1,false,1.0,false)
+
+	radius += (drill_upgrade * upgrade_penetration_radius_add_multipler + base_penetration_radius_add) * add_radius_multipler
+	dmg *= radius * 2
+
+	seismic+=1
+	Utils.explode(where, radius, dmg, 1.0, durability_cap,-1,false,1.0,(seismic% 80)==0)
+
+func _exit_tree() -> void:
+	var trans := smoke.transform * global_transform
+	smoke.get_parent().remove_child(smoke)
+	smoke.owner = null
+	Utils.game.map.add_child(smoke)
+	smoke.global_transform = trans
+	get_tree().create_timer(smoke.lifetime * 2).connect(\"timeout\", Callable(smoke, \"queue_free\"))
+
+#func _draw():
+#	var radius = 2
+#	var color = Color(0, 1, 1)
+#	draw_circle(debug_point0.rotated(-global_rotation)/global_scale, radius, color)
+#	draw_circle(debug_point1.rotated(-global_rotation)/global_scale, radius, color)
+#	draw_circle(debug_point2.rotated(-global_rotation)/global_scale, radius, color)
+"
+
+[sub_resource type="Animation" id=2]
+length = 0.18
+loop = true
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("Drill_body/Drill_head:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.08, 0.1, 0.12, 0.18 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ true, true, false, true, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Drill_body/Drill_head/Drill_emissive:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Drill_body/Drill_head:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 0.08, 0.18 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 75, 0 ), Vector2( 80, 0 ), Vector2( 75, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Drill_body/Drill_head:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Drill_body:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Drill_body/Drill_head:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 75, 0 ) ]
+}
+
+[sub_resource type="Animation" id=19]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Drill_body/LaserSight:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=20]
+resource_name = "drill"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath("Drill_body/LaserSight:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Drill_body/LaserSight2:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Drill_body/LaserSight3:modulate:a")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"values": [ {
+"args": [  ],
+"method": "laser_randomize"
+} ]
+}
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 8, 6 )
+
+[sub_resource type="CanvasItemMaterial" id=5]
+particles_animation = true
+particles_anim_h_frames = 5
+particles_anim_v_frames = 3
+particles_anim_loop = true
+
+[sub_resource type="Curve" id=6]
+_data = [ Vector2( 0, 0.366564 ), 0.0, 0.144172, 0, 1, Vector2( 1, 0.510736 ), 0.144172, 0.0, 1, 0 ]
+
+[sub_resource type="Gradient" id=7]
+offsets = PackedFloat32Array( 0, 0.0598291, 0.150641, 0.709402 )
+colors = PackedColorArray( 0.74902, 0.74902, 0.74902, 0.352941, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="Gradient" id=10]
+colors = PackedColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=11]
+gradient = SubResource( 10 )
+
+[sub_resource type="ParticleProcessMaterial" id=9]
+lifetime_randomness = 1.0
+emission_shape = 1
+emission_sphere_radius = 10.0
+flag_disable_z = true
+direction = Vector3( -1, 0, 0 )
+spread = 80.63
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 1000.0
+initial_velocity_random = 0.47
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+angle = 720.0
+angle_random = 1.0
+scale = 0.01
+scale_random = 0.02
+color = Color( 3, 3, 3, 1 )
+color_ramp = SubResource( 11 )
+hue_variation = 0.36
+hue_variation_random = 0.5
+
+[sub_resource type="Shader" id=18]
+code = "shader_type canvas_item;
+
+uniform vec4 laser_color:source_color = vec4(1.0, 0.0, 0.0, 1.0);
+uniform sampler2D noise;
+
+void fragment() {
+	float noise_tex = min(texture(noise, vec2(SCREEN_UV.x*5.0+TIME *0.2, SCREEN_UV.y*5.0+TIME *0.2)).r + 0.3, 1.0);
+	COLOR.a = noise_tex * ( 1.0-UV.x ) * (1.0-abs(UV.y*2.0 - 1.0)) * laser_color.a;
+	COLOR.rgb = laser_color.rgb * ( 1.0-UV.x ) * (2.0 - abs(UV.y * 2.0 - 1.0));
+}
+"
+
+[sub_resource type="FastNoiseLite" id=13]
+period = 8.5
+persistence = 0.0
+lacunarity = 0.1
+
+[sub_resource type="NoiseTexture" id=14]
+width = 128
+height = 128
+seamless = true
+bump_strength = 13.5
+noise = SubResource( 13 )
+
+[sub_resource type="ShaderMaterial" id=17]
+shader = SubResource( 18 )
+shader_param/laser_color = Color( 10, 5, 5, 1 )
+shader_param/noise = SubResource( 14 )
+
+[node name="FearDrill" type="Node2D"]
+z_index = -1
+script = SubResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Drill"
+playback_process_mode = 0
+anims/Drill = SubResource( 2 )
+anims/RESET = SubResource( 3 )
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 19 )
+anims/drill = SubResource( 20 )
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2( 1.90735e-06, 0 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2( 8, 0 )
+shape = SubResource( 4 )
+disabled = true
+
+[node name="Drill_body" type="Sprite2D" parent="."]
+position = Vector2( -8, 0 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 4 )
+
+[node name="Drill_head" type="Sprite2D" parent="Drill_body"]
+show_behind_parent = true
+position = Vector2( 75, 0 )
+scale = Vector2( 1.5, 1.5 )
+texture = ExtResource( 1 )
+offset = Vector2( 50, 0 )
+hframes = 5
+vframes = 2
+
+[node name="ray_center" type="Marker2D" parent="Drill_body/Drill_head"]
+position = Vector2( -30, 0 )
+
+[node name="ray_left" type="Marker2D" parent="Drill_body/Drill_head"]
+position = Vector2( -40, -102 )
+
+[node name="ray_right" type="Marker2D" parent="Drill_body/Drill_head"]
+position = Vector2( -50, 44 )
+
+[node name="ray_tip" type="Marker2D" parent="Drill_body/Drill_head"]
+position = Vector2( 140, 0 )
+
+[node name="ray_pushback" type="Marker2D" parent="Drill_body/Drill_head"]
+position = Vector2( 109.593, 0 )
+
+[node name="Drill_emissive" type="Sprite2D" parent="Drill_body/Drill_head"]
+texture = ExtResource( 3 )
+offset = Vector2( 50, 0 )
+hframes = 5
+vframes = 2
+
+[node name="Smoke" type="CPUParticles2D" parent="Drill_body/Drill_head"]
+material = SubResource( 5 )
+position = Vector2( 100, 0 )
+scale = Vector2( 6.66667, 6.66667 )
+z_index = 4096
+amount = 25
+local_coords = false
+texture = ExtResource( 6 )
+emission_shape = 1
+emission_sphere_radius = 3.38
+direction = Vector2( -1, 0 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 15.0
+angular_velocity = 78.7
+angular_velocity_random = 1.0
+angle = 720.0
+scale_amount = 0.2
+scale_amount_curve = SubResource( 6 )
+color = Color( 1, 1, 1, 0.0784314 )
+color_ramp = SubResource( 7 )
+anim_offset = 1.0
+anim_offset_random = 1.0
+
+[node name="Sparks" type="GPUParticles2D" parent="Drill_body/Drill_head"]
+position = Vector2( 110, 0 )
+z_index = 4096
+emitting = false
+amount = 40
+lifetime = 0.3
+local_coords = false
+process_material = SubResource( 9 )
+texture = ExtResource( 7 )
+
+[node name="Drill_body_upgrade" type="Sprite2D" parent="Drill_body"]
+visible = false
+modulate = Color( 0, 6.32, 8, 1 )
+position = Vector2( 18.1576, 0.952034 )
+scale = Vector2( 0.8, 0.8 )
+texture = ExtResource( 5 )
+
+[node name="LaserSight" type="Line2D" parent="Drill_body"]
+visible = false
+show_behind_parent = true
+material = SubResource( 17 )
+position = Vector2( 0, -6 )
+points = PackedVector2Array( 80, 40, 390, 30 )
+default_color = Color( 2, 2, 2, 1 )
+texture_mode = 2
+begin_cap_mode = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="LaserSight2" type="Line2D" parent="Drill_body"]
+visible = false
+show_behind_parent = true
+material = SubResource( 17 )
+position = Vector2( 0, 3 )
+points = PackedVector2Array( 80, 0, 390, 0 )
+default_color = Color( 2, 2, 2, 1 )
+texture_mode = 2
+begin_cap_mode = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="LaserSight3" type="Line2D" parent="Drill_body"]
+visible = false
+show_behind_parent = true
+material = SubResource( 17 )
+points = PackedVector2Array( 80, -30, 390, -20 )
+default_color = Color( 2, 2, 2, 1 )
+texture_mode = 2
+begin_cap_mode = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+volume_db = -5.0
+pitch_scale = 0.32
+bus = "SFX"
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+volume_db = -5.0
+pitch_scale = 0.32
+bus = "SFX"
+
+[node name="Node" type="Node" parent="."]

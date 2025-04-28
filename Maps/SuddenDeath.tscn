@@ -1,0 +1,131 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://Resources/Materials/PixelMapMaterial.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FloorMaterial.tres" type="Material" id=3]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=5]
+[ext_resource path="res://Nodes/Buildings/Reactor/Reactor.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Pickups/SimplePickup.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Objects/Chest/Chest.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Resources/Materials/TerrainMaterials.tres" type="PixelMapMaterialData" id=12]
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenCrystal.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Nodes/Pickups/Ammo/AmmoPickup.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Nodes/Objects/Mushrooms/Mushroom.tscn" type="PackedScene" id=16]
+
+[sub_resource type="PixelMapMaterialData" id=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node
+
+func _ready() -> void:
+	Utils.game.ui.set_objective(0, \"Defend against the incoming enemy wave.\")
+	Utils.game.map.wave_manager.connect(\"wave_defeated\", Callable(self, \"win\"))
+
+func win():
+	Utils.game.win()
+"
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+wave_file_path = "res://Maps/SuddenDeathWaves.cfg"
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 1 )
+z_index = 500
+z_as_relative = false
+material_data = ExtResource( 12 )
+texture_path = "res://Maps/SuddenDeath.png"
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, null, null ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 4 )]
+ambient_color = Color( 0.128, 0.126, 0.15, 1 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 3 )
+scale = Vector2( 8, 8 )
+z_index = -4096
+fake_pixel_map = true
+material_data = SubResource( 2 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_lock_": true
+}
+default_color = Color( 1, 0, 0, 0 )
+textures = [ null, null, null, null ]
+
+[node name="Reactor" parent="." instance=ExtResource( 6 )]
+position = Vector2( 551.237, 205.387 )
+__meta__ = {
+"has_power": true,
+"range_expander_radius": 350.0
+}
+start_on = true
+
+[node name="WaveSpawner" parent="." instance=ExtResource( 7 )]
+position = Vector2( 458.799, 854.561 )
+radius = 100.0
+
+[node name="Secrets" type="Node2D" parent="."]
+
+[node name="Chest" parent="Secrets" instance=ExtResource( 10 )]
+position = Vector2( 66.3317, 444.142 )
+rotation = 0.261799
+
+[node name="SimplePickup" parent="Secrets/Chest" instance=ExtResource( 8 )]
+item = "MEDPACK"
+
+[node name="SimplePickup2" parent="Secrets/Chest" instance=ExtResource( 8 )]
+item = "METAL_SCRAP"
+amount = 15
+
+[node name="Chest2" parent="Secrets" instance=ExtResource( 10 )]
+position = Vector2( 956.887, 719.694 )
+rotation = 0.785397
+
+[node name="SimplePickup" parent="Secrets/Chest2" instance=ExtResource( 8 )]
+item = "REPAIR_KIT"
+amount = 5
+
+[node name="AmmoPickup" parent="Secrets/Chest2" instance=ExtResource( 15 )]
+amount = 30
+
+[node name="LumenCrystal" parent="Secrets" instance=ExtResource( 13 )]
+position = Vector2( 972.851, 753.797 )
+scale = Vector2( 0.3, 0.3 )
+
+[node name="Mushroom" parent="Secrets" instance=ExtResource( 16 )]
+position = Vector2( 933.955, 755.958 )
+scale = Vector2( 0.3, 0.3 )
+
+[node name="Base" type="Node2D" parent="."]
+
+[node name="LumenCrystal" parent="Base" instance=ExtResource( 13 )]
+position = Vector2( 644.238, 358.468 )
+rotation = -0.785397
+scale = Vector2( 0.6, 0.6 )
+
+[node name="Mushroom" parent="Base" instance=ExtResource( 16 )]
+position = Vector2( 398.621, 409.292 )
+scale = Vector2( 0.3, 0.3 )
+
+[node name="Mushroom2" parent="Base" instance=ExtResource( 16 )]
+position = Vector2( 412.114, 449.771 )
+scale = Vector2( 0.3, 0.3 )
+
+[node name="Mushroom3" parent="Base" instance=ExtResource( 16 )]
+position = Vector2( 724.039, 264.309 )
+scale = Vector2( 0.3, 0.3 )
+
+[node name="Objective" type="Node" parent="."]
+script = SubResource( 3 )

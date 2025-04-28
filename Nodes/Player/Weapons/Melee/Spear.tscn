@@ -1,0 +1,1101 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/Melee/Rust_spear_hilt.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Player/Weapons/Melee/Rust_spear_head_sheet.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Player/Weapons/Melee/MeleeWeapon.gd\"
+
+@onready var animator := $AnimationPlayer as AnimationPlayer
+@onready var animator_charged := $AnimationPlayer2 as AnimationPlayer
+@onready var collider := $Shaft/Area2D/CollisionShape2D as CollisionShape2D
+@onready var spearhead := $Shaft/SpearHead as Sprite2D
+@onready var tip_collision := $Shaft/Marker2D as Marker2D
+
+var combo := 0
+var combo_nerf := 0.2
+var move_in_progress:bool = false
+var attack_queued:bool = false
+var damage_magnify: = 1.0
+var stab_charge: = 0.0
+@export var stab_charge_max: = 3.0
+
+var charged_tween: Tween
+var is_charged :bool = false
+var is_stagered :bool = false
+
+#signal attacked
+var is_thrown :bool = false
+var throw_direction: = Vector2.ZERO
+@export var throw_range: = 300.0
+@export var throw_speed: = 300.0
+
+var speed: = 0.0
+var throw_distance: = 0.0
+var distance_since_last_hit: = 0.0
+var attacking: bool
+var shishkebab = [null,null,null,null,null]
+var shishkebab_combo: int = 0
+
+func _ready() -> void:
+	init(Const.ItemIDs.SPEAR, $Shaft/Area2D)
+#	connect(\"attacked\",self,\"on_hit_landed\")
+	set_physics_process(false)
+	Save.connect(\"unclocked_tech_number\", Callable(self, \"refresh_data\"))
+
+func refresh_data(whatever, whateverr):
+	data = player.get_upgraded_data(Const.Items[Const.ItemIDs.SPEAR])
+
+func _physics_process(delta: float) -> void:
+	set_process(false)
+	var ray := Utils.game.map.pixel_map.rayCastQTDistance(tip_collision.global_position, throw_direction, speed*delta, Utils.player_bullet_collision_mask)
+	if ray:
+		var dig_step = 2
+		var sumator := 0.0
+		while damage_data.damage > 0:
+			Utils.explode_circle(ray.hit_position + throw_direction * sumator, damage_data.damage*0.5, damage_data.damage * 100.0, 3, 3,-1)
+			sumator += dig_step
+			damage_data.damage -= 1 + damage_data.damage * 0.15
+		
+		Utils.play_sample(Utils.random_sound(\"res://SFX/Bullets/bullet_impact_metal_light\"), self)
+		throw_distance = throw_range
+		collider.disabled = true
+		position -= throw_direction * ray.hit_distance
+	else:
+		position += throw_direction * speed * delta
+		throw_distance += speed * delta
+		
+		if distance_since_last_hit > 0.5:
+			collider.disabled = false
+		else:
+			distance_since_last_hit += speed * delta
+			
+		speed = throw_speed * (1.0 - throw_distance/throw_range)
+#		speed = (throw_speed * (1.0 - throw_distance/throw_range)  ) * delta
+#		throw_distance += speed * delta
+#		if throw_distance > throw_range:
+		if speed < 50.0:
+			scale -= Vector2.ONE * delta *0.5
+			if scale.x < 0.1:
+				convert_to_pickup()
+
+	
+func _process(delta: float) -> void:
+	if is_stagered or is_thrown:
+		return
+	
+	if not player.tired:
+		if player.is_shooting():
+			attacking = true
+			stab_charge = min( stab_charge + delta * data.custom_stab_charge_speed, stab_charge_max )
+			if not move_in_progress:
+				if combo == 0:
+					animator.play(\"PrepareStab\")
+			else:
+				combo = 0
+		
+		if player.is_just_not_shooting() and attacking:
+			attacking = false
+			
+			if not move_in_progress:
+				match combo:
+					0:
+						animator.play(\"Stab\")
+						Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/Spear/whoosh_swish_high_fast_\"))
+						damage_magnify += combo*combo_nerf
+						use_stamina()
+					1:
+						animator.play(\"Swing_1\")
+						Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/Spear/whoosh_swish_small_harsh_\"))
+						damage_magnify += combo*combo_nerf
+						use_stamina()
+					2: 
+						animator.play(\"Swing_2\")
+						Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/Spear/whoosh_swish_small_harsh_\"))
+						damage_magnify += combo*combo_nerf
+						use_stamina()
+					3: 
+						animator.play(\"Swing_Round\")
+						Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/Spear/whoosh_weapon_spin_\"))
+						damage_magnify += combo*combo_nerf
+						use_stamina()
+#						use_all_stamina()
+	else:
+		animator.queue(\"PutAway\")
+		combo = 0
+		
+	if move_in_progress:
+		if not is_stagered:
+			var direction = tip_collision.global_position - global_position
+			var ray := Utils.game.map.pixel_map.rayCastQTDistance(global_position, direction, direction.length(), Utils.player_bullet_collision_mask)
+			if ray:
+				var dig_step = (ray.hit_position - tip_collision.global_position).length() / 3.0
+				var dir_norm = direction.normalized()
+				var sumator := 0.0
+				while damage_data.damage > 0:
+					Utils.explode_circle(ray.hit_position + dir_norm * sumator, damage_data.damage*0.5, damage_data.damage * 100.0, 3, 3,-1)
+					sumator += dig_step
+					damage_data.damage -= 1 + damage_data.damage * 0.15
+				Utils.play_sample(Utils.random_sound(\"res://SFX/Bullets/bullet_impact_metal_light\"), self)
+				animator.play(\"Bounce_back\")
+				is_stagered = true
+	else:
+		if animator.current_animation == \"PrepareStab\":
+			if stab_charge < stab_charge_max:
+				spearhead.modulate = Color(1,1,1) + Color(1,1,1) * (2 * stab_charge/stab_charge_max)
+				spearhead.modulate.a = 1.0
+				if stab_charge >= (stab_charge_max - 0.1) and not is_charged:
+					spear_charged()
+			elif not charged_tween:
+				blink()
+
+func can_throw() -> bool:
+	if is_charged:
+		is_thrown = true
+		SteamAPI.unlock_achievement(\"ST_JAVELIN\")
+		return true
+	return false
+
+func on_hit():
+	Utils.get_audio_manager(\"flesh_hit\").play(tip_collision.global_position)
+#	speed -= 10
+	if is_thrown:
+		throw_distance += throw_speed * 0.1
+		distance_since_last_hit = 0.0
+		collider.set_deferred(\"disabled\", true)
+		stab_charge *= 0.9
+		damage_data.damage = get_damage_with_powered_stand(data.damage) * stab_charge
+
+func on_hit_combo( enemy ):
+	if is_thrown:
+		if enemy in shishkebab:
+			pass
+		else:
+			shishkebab[shishkebab_combo] = enemy
+			shishkebab_combo+= 1
+
+		if shishkebab_combo == 5:
+			shishkebab_combo=0
+			shishkebab=[null,null,null,null,null]
+			SteamAPI.unlock_achievement(\"SHISHKEBAB\")
+			
+func throw()->void:
+	is_thrown = true
+	var pos = global_position
+	var rot = global_rotation
+	var scal = global_scale
+	
+	get_parent().remove_child(self)
+	
+#	Utils.game.map.call_deferred(\"add_child\", duplicate)
+	Utils.game.map.add_child(self)
+	player.subtract_stack(player.held_item, 1)
+	
+	# here player throw animation
+	#	player.torso_animator.play(\"Throw\")
+	#	player.torso_animator.seek(0, true)
+	# here player throw animation
+	
+	damage_data.damage = get_damage_with_powered_stand(data.damage) * stab_charge
+
+	position = pos
+	rotation = rot
+	scale = scal
+	speed = throw_speed
+	throw_direction = Vector2.RIGHT.rotated(rot)
+	set_physics_process(true)
+	set_process(false)
+	animator.play(\"Throw\")
+#	queue_free()
+
+func convert_to_pickup()->void:
+#	Utils.game.map.pickables.spawn_pickable(global_position, Const.ItemIDs.SPEAR, Vector2(0.1, 0.1), Vector2.ZERO)
+	
+	var pickup := Pickup.instantiate(Const.ItemIDs.SPEAR)
+	pickup.throwing_disable()
+#	pickup.data = cur_item.data
+
+	pickup.position = global_position
+	pickup.linear_velocity = throw_direction * 10
+	Utils.game.map.add_child(pickup)
+#	print(\"converting \", global_position)
+	queue_free()
+
+func spear_charged()->void:
+	animator_charged.play(\"Chrged\")
+	Utils.play_sample(\"res://SFX/Weapons/Spear/charged3.wav\")
+	is_charged = true 
+	
+func blink():
+	charged_tween = create_tween().set_loops()
+	charged_tween.tween_property(spearhead,\"modulate\",Color(2,2,2,1),0.20)
+	charged_tween.tween_property(spearhead,\"modulate\",Color(2,1,1,1),0.20)
+
+func put_away():
+	animator.play(\"PutAway\")
+	collider.disabled = true
+	
+func reset_combo():
+	move_in_progress = false
+	damage_magnify = 1.0
+	combo = 0
+
+	
+	is_stagered = false
+
+func toggle_move_in_progress():
+	damage_data.damage = get_damage_with_powered_stand(data.damage) * (damage_magnify+stab_charge)
+	stab_charge = 0.0
+	is_charged = false
+	if charged_tween:
+		charged_tween.kill()
+		charged_tween = null
+		
+	move_in_progress = not move_in_progress
+	if move_in_progress:
+		combo+=1
+"
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 31.125, 10.5 )
+
+[sub_resource type="Animation" id=11]
+resource_name = "Bounce_back"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.5 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:rotation_degrees")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ -10.0 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 2.5 ),
+"transitions": PackedFloat32Array( 1 ),
+"values": [ {
+"args": [  ],
+"method": "reset_combo"
+} ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath(".:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 1 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ Vector2( -12, 2 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Shaft/SpearHead:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ 1 ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "PrepareStab"
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.3 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.3 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ Vector2( -20, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0.3 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ 0.0 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0.3 ),
+"transitions": PackedFloat32Array( 1 ),
+"values": [ {
+"args": [  ],
+"method": "reset_combo"
+} ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Shaft/SpearHead:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ 1 ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "PutAway"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.5 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ -10.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.5 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 3,
+"values": [ Vector2( -12, 2 ) ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0.5 ),
+"transitions": PackedFloat32Array( 1 ),
+"values": [ {
+"args": [  ],
+"method": "reset_combo"
+} ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Shaft/SpearHead:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ 1 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Shaft/SpearHead2:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0.5 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 3, 3, 3, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( -12, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Shaft/SpearHead:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Shaft/SpearHead:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Shaft:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 10, 0 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Shaft/SpearHead2:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 3, 3, 3, 0 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.3, 1, 1.98479 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 5, 5, 5, 1 ), Color( 5, 5, 5, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.4, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ false, false, true ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "toggle_move_in_progress"
+}, {
+"args": [  ],
+"method": "toggle_move_in_progress"
+} ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 0.3, 0.8, 1.4 ),
+"transitions": PackedFloat32Array( -2, -2, -2, -2 ),
+"update": 0,
+"values": [ Vector2( -20, 0 ), Vector2( 5, 0 ), Vector2( 5, 0 ), Vector2( 0, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Shaft/SpearHead:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ 3, 1 ]
+}
+
+[sub_resource type="Animation" id=8]
+resource_name = "Swing_1"
+length = 3.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.2, 1, 3.3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 5, 5, 5, 1 ), Color( 5, 5, 5, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.2, 0.9, 1 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ false, false, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:rotation_degrees")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.2, 1 ),
+"transitions": PackedFloat32Array( -2, -2, -2 ),
+"update": 0,
+"values": [ 0.0, -33.3621, 116.231 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "toggle_move_in_progress"
+}, {
+"args": [  ],
+"method": "toggle_move_in_progress"
+} ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath(".:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0.2, 1 ),
+"transitions": PackedFloat32Array( -2, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -14.0166, 0 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Shaft/SpearHead:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0.2, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ 0, 1 ]
+}
+
+[sub_resource type="Animation" id=9]
+resource_name = "Swing_2"
+length = 3.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.2, 1.2, 2.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 5, 5, 5, 1 ), Color( 5, 5, 5, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.2, 1.1, 1.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ false, false, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 1.2 ),
+"transitions": PackedFloat32Array( -2, -2 ),
+"update": 0,
+"values": [ 116.231, -66.7 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 1.2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "toggle_move_in_progress"
+}, {
+"args": [  ],
+"method": "toggle_move_in_progress"
+} ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath(".:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0.2 ),
+"transitions": PackedFloat32Array( -2 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Shaft/SpearHead:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0.2, 1.2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ 2, 1 ]
+}
+
+[sub_resource type="Animation" id=14]
+resource_name = "Swing_Round"
+length = 2.2
+step = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.2, 1.9, 2.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 5, 5, 5, 1 ), Color( 5, 5, 5, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0.2, 1.9, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 3,
+"values": [ false, false, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0.2, 1.999, 2, 2.099 ),
+"transitions": PackedFloat32Array( -2, 0, -2, 0 ),
+"update": 0,
+"values": [ -66.7, 390.0, 30.0, 10.0 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "toggle_move_in_progress"
+}, {
+"args": [  ],
+"method": "toggle_move_in_progress"
+} ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath(".:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0.2, 0.9, 1.4, 2 ),
+"transitions": PackedFloat32Array( -2, -2, -2, -2 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -13, 0 ), Vector2( -7.628, -10 ), Vector2( 0, 0 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Shaft/SpearHead:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0.2, 1.9 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ 0, 1 ]
+}
+
+[sub_resource type="Animation" id=15]
+resource_name = "Throw"
+length = 0.1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 5, 5, 5, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/Area2D/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Shaft/SpearHead:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ 1 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Shaft:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( -20, 0 ) ]
+}
+
+[sub_resource type="Animation" id=12]
+resource_name = "Chrged"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead2:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/SpearHead2:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.3 ),
+"transitions": PackedFloat32Array( -2, -2 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 2, 2 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Shaft/SpearHead2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 3, 3, 3, 1 ), Color( 3, 3, 3, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Shaft/SpearHead2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 0.3 ),
+"transitions": PackedFloat32Array( -2, -2 ),
+"update": 0,
+"values": [ Vector2( 200, 0 ), Vector2( 200, 0 ) ]
+}
+
+[sub_resource type="Animation" id=13]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Shaft/SpearHead2:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shaft/SpearHead2:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 2, 2 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Shaft/SpearHead2:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 3, 3, 3, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Shaft/SpearHead2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 201, 0 ) ]
+}
+
+[node name="Spear" type="Node2D"]
+position = Vector2( -12, 0 )
+script = SubResource( 1 )
+
+[node name="Shaft" type="Sprite2D" parent="."]
+position = Vector2( 10, 0 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 2 )
+offset = Vector2( 14, 5 )
+
+[node name="SpearHead" type="Sprite2D" parent="Shaft"]
+position = Vector2( 200, 0 )
+texture = ExtResource( 3 )
+offset = Vector2( 0, 5 )
+hframes = 2
+vframes = 2
+frame = 1
+
+[node name="SpearHead2" type="Sprite2D" parent="Shaft"]
+visible = false
+modulate = Color( 3, 3, 3, 0 )
+position = Vector2( 201, 0 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 3 )
+offset = Vector2( 0, 5 )
+hframes = 2
+vframes = 2
+frame = 1
+
+[node name="Area2D" type="Area2D" parent="Shaft"]
+position = Vector2( 170, 0 )
+scale = Vector2( 8, 8 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Shaft/Area2D"]
+position = Vector2( -9.125, -5.5 )
+shape = SubResource( 5 )
+disabled = true
+
+[node name="Marker2D" type="Marker2D" parent="Shaft"]
+position = Vector2( 310, 0 )
+scale = Vector2( 8, 8 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "PutAway"
+playback_speed = 5.0
+method_call_mode = 1
+anims/Bounce_back = SubResource( 11 )
+anims/PrepareStab = SubResource( 7 )
+anims/PutAway = SubResource( 6 )
+anims/RESET = SubResource( 3 )
+anims/Stab = SubResource( 4 )
+anims/Swing_1 = SubResource( 8 )
+anims/Swing_2 = SubResource( 9 )
+anims/Swing_Round = SubResource( 14 )
+anims/Throw = SubResource( 15 )
+next/Bounce_back = "PutAway"
+next/Stab = "PutAway"
+next/Swing_1 = "PutAway"
+next/Swing_2 = "PutAway"
+next/Swing_Round = "PutAway"
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+anims/Chrged = SubResource( 12 )
+anims/RESET = SubResource( 13 )

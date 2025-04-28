@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Farm/FarmShroomer.png" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Sprite2D
+
+func get_mushroom(idx: int):
+	if get_child(idx).get_child_count() == 1:
+		return get_child(idx).get_child(0)
+	else:
+		return null
+
+func can_grow_mushroom(idx):
+	var posnode = get_child(idx)
+	return Utils.game.map.pixel_map.isCircleEmpty(posnode.global_position, 5)
+
+func add_mushroom(idx: int, mushroom: Node2D) -> Node2D:
+	var posnode = get_child(idx)
+	mushroom.position = posnode.global_position
+	mushroom.no_tracker = true
+	posnode.add_child(mushroom)
+	mushroom.autogrow = false
+	return mushroom
+"
+
+[node name="Shroomer" type="Sprite2D"]
+texture = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2( -370, -176 )
+
+[node name="Position2D2" type="Marker2D" parent="."]
+position = Vector2( -165, -176 )
+
+[node name="Position2D3" type="Marker2D" parent="."]
+position = Vector2( 165, -176 )
+
+[node name="Position2D4" type="Marker2D" parent="."]
+position = Vector2( 370, -176 )

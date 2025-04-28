@@ -1,0 +1,87 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Resources/Materials/PixelMapMaterial.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FloorMaterial.tres" type="Material" id=3]
+[ext_resource path="res://Nodes/Player/NPC.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=5]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Resources/Materials/TerrainMaterials.tres" type="PixelMapMaterialData" id=12]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=16]
+[ext_resource path="res://Nodes/Objects/Technical/MapTransition.tscn" type="PackedScene" id=32]
+
+[sub_resource type="PixelMapMaterialData" id=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node
+
+func _on_NPC_talked(player) -> void:
+	$\"../NPC\".talk(\"This is end of the demo. Thanks for playing and stay tuned for full story.\")
+"
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 135.019, 10 )
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+__meta__ = {
+"_edit_lock_": true
+}
+disable_darkness = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 16 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 1 )
+z_index = 500
+z_as_relative = false
+material_data = ExtResource( 12 )
+texture_path = "res://Maps/Story/DemoEnd.png"
+debug_flags = 4
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 6 )]
+ambient_color = Color( 0.128, 0.126, 0.15, 1 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 3 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+material_data = SubResource( 2 )
+debug_flags = 4
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ null, null, null, null ]
+
+[node name="Start0" type="Node2D" parent="."]
+position = Vector2( 519.782, 32.297 )
+
+[node name="NPC" parent="." instance=ExtResource( 4 )]
+position = Vector2( 471.128, 280.696 )
+rotation = -1.40259
+
+[node name="Node" type="Node" parent="."]
+script = SubResource( 3 )
+
+[node name="MapTransition" parent="." instance=ExtResource( 32 )]
+position = Vector2( 392.555, 6.44119 )
+target_map = "ScoutBase"
+target_entrance = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MapTransition"]
+position = Vector2( 125.018, 0 )
+shape = SubResource( 4 )
+
+[connection signal="talked" from="NPC" to="Node" method="_on_NPC_talked"]

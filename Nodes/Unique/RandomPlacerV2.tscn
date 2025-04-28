@@ -1,0 +1,88 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Unique/PlacerCircle.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+@export var what_place: PackedScene
+@export var drop_in_place:bool = false
+const sqrt3 = sqrt(3.0)
+
+
+func _ready() -> void:
+	pass
+	
+func _physics_process(delta):
+	$Marker.scale = scale
+	$Sprite2D.queue_free()
+	if what_place:
+		place_object(what_place.instantiate())
+	
+	var children = get_children()
+	for node in children:
+		if node.owner != self:
+			remove_child(node)
+			Utils.game.map.call_deferred(\"add_child\", node, true)
+			place_object(node)
+	set_physics_process(false)
+	
+func place_object(node: Node2D):
+	var pixel_map: PixelMap = Utils.game.map.pixel_map
+	var coords := Vector2.ZERO
+	var marker_index :int= 0
+	var possible_position:=[]
+	var object_radius = 12
+	
+	if drop_in_place:
+		node.global_position = global_position + coords
+		return
+	
+	var radius: int = global_scale.x * 256
+	while coords.length() < radius:
+		if Utils.is_position_in_pixel_map(global_position + coords, pixel_map):
+			possible_position.append(global_position + coords)
+		marker_index += 1
+		coords = getMarkerPosition(marker_index, object_radius) 
+	
+	possible_position.shuffle()
+	for i in possible_position.size():
+		if pixel_map.isCircleEmpty(possible_position[i], object_radius):
+			node.global_position = possible_position[i]
+			break
+
+func getMarkerPosition(_index: int, _markerSpacing: float) -> Vector2:
+	# mathfs
+	var ring:float = getRing(_index)
+	
+	if ring==0:
+		return Vector2.ZERO
+		
+	var radius:float = _markerSpacing / 2.0
+	var horizontalStep:float = sqrt3 * radius
+	var verticalStep:float = _markerSpacing * 0.75
+
+
+	var angle_deg:float = (60.0 / ring) * _index
+	var angle_rad:float = PI / 180.0 * angle_deg
+	
+	return Vector2(_markerSpacing * cos(angle_rad) * ring,
+		_markerSpacing * sin(angle_rad) * ring)
+
+func getRing(_index: int) -> float:
+	var ringX: float = sqrt( _index/3.0 + 0.25 ) - 0.5
+	return ceil(snapped( ringX, 0.001 ))
+"
+
+[node name="RandomPlacerV2" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Marker" parent="." instance=ExtResource( 1 )]
+modulate = Color( 1, 1, 1, 1 )
+texture = ExtResource( 2 )
+arrow = null
+rotate_arrow = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource( 2 )

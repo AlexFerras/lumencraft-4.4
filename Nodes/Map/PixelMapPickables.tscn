@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Resources/Materials/PickableShine.tres" type="Material" id=13]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends PixelMapPickables
+
+func _init() -> void:
+	collision_mask = Utils.walkable_collision_mask
+
+func _ready():
+	init(Const.resource_pickup_textures)
+	for i in range(2):
+		set_pickable_type_colors_range(i, Const.get_resource_color_range_start(i), Const.get_resource_color_range_end(i))
+		set_pickable_type_scale(i, Vector2(0.085, 0.085), 0.015)
+
+#func _draw():
+#	draw_debug()
+
+const PICKABLE_VEL = 150.0
+
+func spawn_pickable_nice(position: Vector2, type: int, velocity: Vector2 = Utils.random_point_in_circle(PICKABLE_VEL, 1.0)):
+	return spawn_pickable(position, type, false, velocity)
+
+func spawn_premium_pickable_nice(position: Vector2, type: int, velocity: Vector2 = Utils.random_point_in_circle(PICKABLE_VEL, 1.0)):
+	return spawn_pickable(position, type, true, velocity)
+"
+
+[node name="PixelMapPickables" type="PixelMapPickables"]
+modulate = Color( 1.8, 1.8, 1.8, 1 )
+material = ExtResource( 13 )
+z_index = 50
+z_as_relative = false
+bounciness = 0.3
+script = SubResource( 1 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 8 )]
+z_index = 50

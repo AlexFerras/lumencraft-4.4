@@ -1,0 +1,332 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Nodes/Player/BuildMenu/BuildMenu.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=2]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Nodes/UI/RadialMenu/upgrades2.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/pie_menu_message_box_req.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/pie_menu.tscn" type="PackedScene" id=19]
+
+[sub_resource type="GDScript" id=4]
+resource_name = "Pie"
+script/source = "extends Control
+
+@onready var category_label := $\"%Category\"
+@onready var category_row := $Row1
+@onready var building_row := $Row2
+
+var category_group: ButtonGroup
+var building_group: ButtonGroup
+
+var category_button_list: Array
+var building_button_list: Array
+
+var previews: Array
+
+func _ready() -> void:
+	category_group = $\"%Upgrades\".group
+	category_button_list = category_group.get_buttons()
+	category_button_list.sort_custom(Callable(self, \"button_sort1\"))
+	
+	building_group = building_row.get_child(0).group
+	building_button_list = building_group.get_buttons()
+	building_button_list.sort_custom(Callable(self, \"button_sort2\"))
+
+func set_category(text: String):
+	if text == \"Upgrades\":
+		category_label.text = \"Special\"
+	else:
+		category_label.text = text
+
+func clear_previews():
+	building_row.hide()
+	
+	for preview in previews:
+		preview.free()
+	previews.clear()
+	
+	for button in building_row.get_children():
+		button.hide()
+
+func add_preview(item, all: int):
+	building_row.show()
+	var preview = item.icon.duplicate()
+	
+	var id: int
+	match item.entry.category:
+		\"Utils\":
+			id = 3
+		\"Workshop\":
+			id = 6
+		\"Defense\":
+			id = 9
+	
+	id -= all / 2
+	if id < 0:
+		id += 12
+	
+	id = (id + previews.size()) % 12
+	previews.append(preview)
+	
+	building_row.get_child(id).set_meta(\"building\", item)
+	building_row.get_child(id).center.add_child(preview)
+	building_row.get_child(id).show()
+
+func refresh_buildings():
+	for building in building_row.get_children():
+		if building.visible:
+			var data = building.get_meta(\"building\")
+			if get_parent().is_building_available(data.entry):
+				building.can_afford = true
+			else:
+				building.can_afford = false
+
+func select_from_rotation(rot: float, category: bool):
+	if category:
+		var div = 360 / category_button_list.size()
+		rot += div / 2
+		var select: int = posmod(int(rot), 360) / div
+		category_button_list[select].grab_focus()
+	else:
+		var div = 360 / building_button_list.size()
+		rot += div / 2
+		var select: int = posmod(int(rot), 360) / div
+		
+		if building_button_list[select].visible:
+			building_button_list[select].grab_focus()
+
+func button_sort1(button1: BaseButton, button2: BaseButton) -> bool:
+	return button1.get_parent().get_index() < button2.get_parent().get_index()
+
+func button_sort2(button1: BaseButton, button2: BaseButton) -> bool:
+	return button1.get_index() < button2.get_index()
+"
+
+[sub_resource type="ButtonGroup" id=6]
+
+[sub_resource type="ButtonGroup" id=1]
+
+[sub_resource type="ButtonGroup" id=2]
+
+[sub_resource type="GDScript" id=7]
+resource_name = "Tooltip"
+script/source = "extends Control
+
+@onready var name_label: Label = $\"%Name\"
+@onready var description_label: Label = $\"%Description\"
+@onready var cost_labels := [$\"%Cost1\", $\"%Cost2\"]
+@onready var cost_containers := [$\"%Cost1Container\", $\"%Cost2Container\"]
+@onready var requirements := $\"%Requirements\"
+
+var current_building: Dictionary
+
+func set_building(data: Dictionary):
+	show()
+	current_building = data
+	refresh()
+
+func refresh():
+	if not visible or current_building.is_empty():
+		return
+	
+	name_label.text = current_building.name
+	description_label.text = current_building.description
+	
+	cost_labels[0].text = str(owner.player.get_item_count(Const.ItemIDs.METAL_SCRAP), \"/\", current_building.cost[Const.ItemIDs.METAL_SCRAP])
+	cost_labels[0].modulate = Color.WHITE if owner.player.get_item_count(Const.ItemIDs.METAL_SCRAP) >= current_building.cost[Const.ItemIDs.METAL_SCRAP] else Color.RED
+	if Const.ItemIDs.LUMEN in current_building.cost:
+		cost_containers[1].show()
+		cost_labels[1].text = str(owner.player.get_item_count(Const.ItemIDs.LUMEN), \"/\", current_building.cost[Const.ItemIDs.LUMEN])
+		cost_labels[1].modulate = Color.WHITE if owner.player.get_item_count(Const.ItemIDs.LUMEN) >= current_building.cost[Const.ItemIDs.LUMEN] else Color.RED
+	else:
+		cost_containers[1].hide()
+	
+	var reqs: Array = current_building.get(\"requirements\", [])
+	for i in requirements.get_child_count():
+		var req_label: Label = requirements.get_child(i)
+		
+		if i >= reqs.size():
+			req_label.hide()
+		else:
+			req_label.show()
+			req_label.text = \"- \" + BaseBuilding.get_requirement_text(reqs[i])
+			
+			if BaseBuilding.is_requirement_met(reqs[i]):
+				req_label.modulate = Color.GREEN
+			else:
+				req_label.modulate = Color.RED
+"
+
+[node name="BuildMenu" type="Node2D" groups=["config_observers"]]
+process_mode = 1
+z_index = -1
+script = ExtResource( 1 )
+
+[node name="PieMenu" parent="." instance=ExtResource( 19 )]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+script = SubResource( 4 )
+
+[node name="Upgrades" parent="PieMenu/Row1/PieMaster1" index="0"]
+group = SubResource( 6 )
+
+[node name="Icon" parent="PieMenu/Row1/PieMaster1/Upgrades" index="1"]
+offset_left = -54.0
+offset_top = -75.0
+offset_right = 54.0
+offset_bottom = 33.0
+custom_minimum_size = Vector2( 108, 108 )
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6
+
+[node name="Utils" parent="PieMenu/Row1/PieMaster2" index="0"]
+group = SubResource( 6 )
+
+[node name="Workshop" parent="PieMenu/Row1/PieMaster3" index="0"]
+group = SubResource( 6 )
+
+[node name="Defense" parent="PieMenu/Row1/PieMaster4" index="0"]
+group = SubResource( 6 )
+
+[node name="PieCenter" parent="PieMenu/Row1" index="4"]
+group = SubResource( 1 )
+
+[node name="Category" parent="PieMenu/Row1/PieCenter" index="3"]
+text = ""
+
+[node name="PieButton" parent="PieMenu/Row2" index="0"]
+group = SubResource( 2 )
+
+[node name="PieButton2" parent="PieMenu/Row2" index="1"]
+group = SubResource( 2 )
+
+[node name="PieButton3" parent="PieMenu/Row2" index="2"]
+group = SubResource( 2 )
+
+[node name="PieButton4" parent="PieMenu/Row2" index="3"]
+group = SubResource( 2 )
+
+[node name="PieButton5" parent="PieMenu/Row2" index="4"]
+group = SubResource( 2 )
+
+[node name="PieButton6" parent="PieMenu/Row2" index="5"]
+group = SubResource( 2 )
+
+[node name="PieButton7" parent="PieMenu/Row2" index="6"]
+group = SubResource( 2 )
+
+[node name="PieButton8" parent="PieMenu/Row2" index="7"]
+group = SubResource( 2 )
+
+[node name="PieButton9" parent="PieMenu/Row2" index="8"]
+group = SubResource( 2 )
+
+[node name="PieButton10" parent="PieMenu/Row2" index="9"]
+group = SubResource( 2 )
+
+[node name="PieButton11" parent="PieMenu/Row2" index="10"]
+group = SubResource( 2 )
+
+[node name="PieButton12" parent="PieMenu/Row2" index="11"]
+group = SubResource( 2 )
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2424.0
+offset_top = 546.0
+offset_right = 2424.0
+offset_bottom = 855.0
+mouse_filter = 2
+
+[node name="PieMenuMessageBoxReq" parent="CenterContainer" instance=ExtResource( 5 )]
+unique_name_in_owner = true
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 1648.0
+offset_top = 0.0
+offset_right = 3199.0
+offset_bottom = 309.0
+size_flags_horizontal = 4
+script = SubResource( 7 )
+
+[node name="Help" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 573.0
+offset_top = -171.0
+offset_right = 1335.0
+offset_bottom = 293.0
+mouse_filter = 2
+
+[node name="Select" parent="Help" instance=ExtResource( 3 )]
+offset_bottom = 99.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+action = "look"
+text = "select"
+
+[node name="Accept" parent="Help" instance=ExtResource( 3 )]
+offset_top = 103.0
+offset_bottom = 202.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+action = "accept"
+text = "accept"
+
+[node name="Demolish" parent="Help" instance=ExtResource( 3 )]
+offset_top = 206.0
+offset_bottom = 305.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+action = "respawn"
+text = "demolish"
+
+[node name="PanelContainer" type="PanelContainer" parent="Help"]
+offset_top = 309.0
+offset_right = 762.0
+offset_bottom = 464.0
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="Label" type="Label" parent="Help/PanelContainer"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 738.0
+offset_bottom = 143.0
+custom_minimum_size = Vector2( 600, 0 )
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 2 )
+text = "You can also demolish using drill (for less resources)."
+autowrap = true
+uppercase = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+bus = "SFX"
+
+[editable path="PieMenu"]
+[editable path="PieMenu/Row1/PieMaster1/Upgrades"]
+[editable path="PieMenu/Row1/PieMaster2/Utils"]
+[editable path="PieMenu/Row1/PieMaster3/Workshop"]
+[editable path="PieMenu/Row1/PieMaster4/Defense"]
+[editable path="PieMenu/Row1/PieCenter"]
+[editable path="PieMenu/Row2/PieButton"]
+[editable path="PieMenu/Row2/PieButton2"]
+[editable path="PieMenu/Row2/PieButton3"]
+[editable path="PieMenu/Row2/PieButton4"]
+[editable path="PieMenu/Row2/PieButton5"]
+[editable path="PieMenu/Row2/PieButton6"]
+[editable path="PieMenu/Row2/PieButton7"]
+[editable path="PieMenu/Row2/PieButton8"]
+[editable path="PieMenu/Row2/PieButton9"]
+[editable path="PieMenu/Row2/PieButton10"]
+[editable path="PieMenu/Row2/PieButton11"]
+[editable path="PieMenu/Row2/PieButton12"]

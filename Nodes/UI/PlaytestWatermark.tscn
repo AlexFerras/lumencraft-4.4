@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Fonts/Font28Outline.tres" type="FontFile" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Label
+
+var original_text: String
+
+func _ready() -> void:
+	if Music.is_demo_build():
+		original_text = \"DEMO.%s\"
+	else:
+		original_text = text
+	_notification(NOTIFICATION_TRANSLATION_CHANGED)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED:
+		text = tr(original_text) % preload(\"res://Tools/version.gd\").VERSION
+"
+
+[node name="Watermark" type="CanvasLayer"]
+layer = 128
+
+[node name="Label" type="Label" parent="."]
+modulate = Color( 1, 1, 1, 0.235294 )
+anchor_right = 1.0
+offset_top = 30.0
+offset_bottom = 92.0
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "Early Access build.%s"
+align = 1
+valign = 1
+script = SubResource( 1 )

@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var inventory: Array
+var timer: float
+
+func _process(delta: float) -> void:
+	if inventory.is_empty():
+		queue_free()
+		return
+	
+	timer += delta
+	if timer >= 0.2:
+		timer = 0
+		throw_resource(inventory.front())
+
+func throw_resource(item: Dictionary):
+	var dir := Vector2.RIGHT.rotated(randf() * TAU)
+	
+	if item.id < Const.RESOURCE_COUNT:
+		var tot: int = item.amount
+		for i in tot:
+			item.amount -= 1
+			Utils.game.map.pickables.spawn_pickable_nice(global_position, item.id, dir * randf_range(0.0,50))
+			dir = Vector2.RIGHT.rotated(randf() * TAU)
+	else:
+		var pickup := Pickup.instantiate(item.id)
+		pickup.data = item.data
+		pickup.amount = item.amount
+		item.amount = 0
+		pickup.position = position
+		pickup.linear_velocity = dir * randf_range(0.0,50)
+		Utils.game.map.add_child(pickup)
+	
+	if item.amount == 0:
+		inventory.erase(item)
+"
+
+[node name="Dumper" type="Node2D"]
+script = SubResource( 1 )

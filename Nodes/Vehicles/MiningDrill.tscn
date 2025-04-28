@@ -1,0 +1,147 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Vehicles/MiningDrill.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=2]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends GenericVehicle
+
+@onready var pixel_map: PixelMap = Utils.game.map.pixel_map
+
+@onready var light := $Light3D as Node2D
+@onready var animator := $AnimationPlayer as AnimationPlayer
+@onready var drill_point := $Marker2D as Node2D
+@onready var rot_collider := $RotCollider
+@onready var move_collider := $MoveCollider
+
+var drilling: bool
+var gear: int = 1
+
+func _physics_process(delta: float) -> void:
+	if drilling:
+		animator.play(\"Drill\")
+		Utils.game.map.pixel_map.update_damage_circle(drill_point.global_position, 24, 100, 2)
+	else:
+		animator.stop()
+	drilling = false
+	
+	if not driving:
+		return
+	
+	if Input.is_action_just_released(\"next_weapon\") or Input.is_action_just_pressed(\"up\"):
+		gear = 1
+	elif Input.is_action_just_released(\"prev_weapon\") or Input.is_action_just_pressed(\"down\"):
+		gear = -1
+	var move := int(Input.is_action_pressed(\"drive\")) * gear
+	
+	player.force_position = lerp(player.global_position, global_position, 0.1)
+	velocity += Vector2.RIGHT.rotated(rotation) * move * 100 * delta
+	
+	var rot := lerp_angle(rotation, global_position.direction_to(get_global_mouse_position()).angle(), 0.05 * abs(move)) - rotation
+	if (rot < 0 and not pixel_map.is_pixel_solid(get_rot_collider(0),Utils.walkable_collision_mask) and not pixel_map.is_pixel_solid(get_rot_collider(3),Utils.walkable_collision_mask)) or\\
+			(rot > 0 and not pixel_map.is_pixel_solid(get_rot_collider(1),Utils.walkable_collision_mask) and not pixel_map.is_pixel_solid(get_rot_collider(2),Utils.walkable_collision_mask)):
+		rotation += rot
+	if (move > 0 and not pixel_map.is_pixel_solid(get_move_collider(0),Utils.walkable_collision_mask) and not pixel_map.is_pixel_solid(get_move_collider(1),Utils.walkable_collision_mask)) or\\
+			(move < 0 and not pixel_map.is_pixel_solid(get_move_collider(2),Utils.walkable_collision_mask) and not pixel_map.is_pixel_solid(get_move_collider(3),Utils.walkable_collision_mask)):
+		position += velocity * delta
+	
+	velocity *= 0.9
+	
+	if Input.is_action_pressed(\"shoot\"):
+		drilling = true
+
+func enter_player():
+	light.visible = true
+
+func exit_player():
+	light.visible = false
+
+func get_rot_collider(i: int) -> Vector2:
+	return rot_collider.get_child(i).global_position
+
+func get_move_collider(i: int) -> Vector2:
+	return move_collider.get_child(i).global_position
+"
+
+[sub_resource type="Animation" id=2]
+resource_name = "Drill"
+length = 0.3
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2 ]
+}
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 30, 12 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 35, 18 )
+
+[node name="MiningDrill" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Drill = SubResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 3 )
+
+[node name="EnterArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnterArea"]
+shape = SubResource( 4 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 1 )
+hframes = 3
+
+[node name="Light3D" type="Node2D" parent="."]
+visible = false
+modulate = Color( 1, 0.991, 0.82, 1 )
+position = Vector2( 5, 0 )
+scale = Vector2( 0.5, 1 )
+script = ExtResource( 2 )
+texture = ExtResource( 3 )
+follow_rotation = true
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2( 20, 0 )
+
+[node name="RotCollider" type="Node2D" parent="."]
+
+[node name="FrontL" type="Marker2D" parent="RotCollider"]
+position = Vector2( 10, -15 )
+
+[node name="FrontR" type="Marker2D" parent="RotCollider"]
+position = Vector2( 10, 15 )
+
+[node name="BackL" type="Marker2D" parent="RotCollider"]
+position = Vector2( -30, -15 )
+
+[node name="BackR" type="Marker2D" parent="RotCollider"]
+position = Vector2( -30, 15 )
+
+[node name="MoveCollider" type="Node2D" parent="."]
+
+[node name="FrontL" type="Marker2D" parent="MoveCollider"]
+position = Vector2( 13, -12 )
+
+[node name="FrontR" type="Marker2D" parent="MoveCollider"]
+position = Vector2( 13, 12 )
+
+[node name="BackL" type="Marker2D" parent="MoveCollider"]
+position = Vector2( -33, -12 )
+
+[node name="BackR" type="Marker2D" parent="MoveCollider"]
+position = Vector2( -33, 12 )

@@ -1,0 +1,149 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Nodes/Player/BuildMenu/BuildInterface.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Buildings/Common/BuildCursor.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Fonts/Font40Outline2.tres" type="FontFile" id=3]
+[ext_resource path="res://Resources/Theme/DefaultTheme.tres" type="Theme" id=4]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=5]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=7]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=8]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 1.0
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends VBoxContainer
+
+@onready var mouse := $Rotate2 as Control
+
+func _physics_process(delta: float) -> void:
+	mouse.visible = not owner.player.using_joypad()
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 5 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 7 )
+
+[node name="BuildInterface" type="Node2D" groups=["config_observers"]]
+z_index = -10
+script = ExtResource( 1 )
+
+[node name="Cursor" type="Sprite2D" parent="."]
+texture = ExtResource( 2 )
+
+[node name="Offset" type="Node2D" parent="Cursor"]
+
+[node name="BuildingDetector" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BuildingDetector"]
+shape = SubResource( 1 )
+
+[node name="SkalujMnie" type="Node2D" parent="."]
+
+[node name="Help" type="VBoxContainer" parent="SkalujMnie"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -131.5
+offset_top = -255.5
+offset_right = 448.5
+offset_bottom = 429.5
+mouse_filter = 2
+theme = ExtResource( 4 )
+script = SubResource( 3 )
+
+[node name="Move" parent="SkalujMnie/Help" instance=ExtResource( 6 )]
+offset_bottom = 99.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+action = "look"
+text = "select spot"
+
+[node name="Rotate" parent="SkalujMnie/Help" instance=ExtResource( 6 )]
+offset_top = 103.0
+offset_bottom = 202.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+action = "rotate"
+text = "rotate"
+
+[node name="Rotate2" parent="SkalujMnie/Help" instance=ExtResource( 6 )]
+offset_top = 206.0
+offset_bottom = 305.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+hold = true
+action = "lmb"
+text = "and move to rotate"
+
+[node name="Place" parent="SkalujMnie/Help" instance=ExtResource( 6 )]
+offset_top = 309.0
+offset_bottom = 408.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+action = "accept"
+text = "accept"
+
+[node name="Multiple" parent="SkalujMnie/Help" instance=ExtResource( 6 )]
+unique_name_in_owner = true
+offset_top = 412.0
+offset_bottom = 511.0
+size_flags_horizontal = 0
+theme_type_variation = "0010_yellow_border_transparent"
+hold = true
+action = "run"
+text = "place multiple"
+
+[node name="Demolish" type="PanelContainer" parent="SkalujMnie/Help"]
+unique_name_in_owner = true
+material = SubResource( 2 )
+offset_top = 515.0
+offset_right = 580.0
+offset_bottom = 685.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "0010_yellow_border_transparent"
+
+[node name="MarginContainer" type="MarginContainer" parent="SkalujMnie/Help/Demolish"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 556.0
+offset_bottom = 158.0
+size_flags_vertical = 4
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 16
+
+[node name="Hold" type="Label" parent="SkalujMnie/Help/Demolish/MarginContainer"]
+offset_left = 16.0
+offset_right = 516.0
+offset_bottom = 146.0
+custom_minimum_size = Vector2( 500, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 1
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_constants/line_spacing = -23
+theme_override_fonts/font = ExtResource( 8 )
+text = "Select a building or blueprint placed by player."
+valign = 1
+autowrap = true
+uppercase = true
+
+[node name="ErrorLabel" type="Label" parent="SkalujMnie"]
+unique_name_in_owner = true
+offset_top = 197.0
+offset_right = 634.0
+offset_bottom = 243.0
+theme_override_colors/font_color = Color( 1, 0, 0, 1 )
+theme_override_colors/font_outline_color = Color( 0.25098, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "test"
+valign = 1
+autowrap = true
+
+[connection signal="area_entered" from="BuildingDetector" to="." method="cursor_entered"]
+[connection signal="area_exited" from="BuildingDetector" to="." method="cursor_exited"]

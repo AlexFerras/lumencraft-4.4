@@ -1,0 +1,60 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_micro_outline.tres" type="FontFile" id=1]
+[ext_resource path="res://Maps/Campaign/HubNodes/Locked.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var workshop_icon: Node2D
+
+func _ready() -> void:
+	hide()
+	$\"%Sprite2D\".hide()
+	update_config()
+
+func _physics_process(delta: float) -> void:
+	var player := Utils.game.map.player_tracker.getAnyTrackingNode2DInCircle(global_position, 60, true)
+	visible = player != null
+	$\"%Sprite2D\".visible = player != null
+	if workshop_icon:
+		workshop_icon.visible = player == null
+
+func update_config():
+	$\"%Sprite2D\".modulate = Const.UI_MAIN_COLOR
+"
+
+[node name="NotUnlocked" type="Node2D" groups=["config_observers"]]
+scale = Vector2( 0.125, 0.125 )
+z_index = 4001
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -472.0
+offset_top = -232.0
+offset_right = 472.0
+offset_bottom = -55.0
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "Building not yet unlocked."
+align = 1
+autowrap = true
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="."]
+remote_path = NodePath("../UsuwaModulate/Sprite2D")
+update_rotation = false
+update_scale = false
+
+[node name="UsuwaModulate" type="Node" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="UsuwaModulate"]
+unique_name_in_owner = true
+self_modulate = Color( 1.52549, 1.2, 1, 1 )
+scale = Vector2( 0.06, 0.06 )
+z_index = 4003
+texture = ExtResource( 2 )

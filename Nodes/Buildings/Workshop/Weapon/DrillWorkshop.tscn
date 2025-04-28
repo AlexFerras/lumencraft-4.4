@@ -1,0 +1,78 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Workshop/Weapon/WeaponWorkshopBase.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Buildings/Workshop/WorkshopStand.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/WorkshopShadow0x2.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Buildings/Icons/IconDrillWorkshop.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Computer4.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Computer6.png" type="Texture2D" id=8]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 42.5802, 25.5 )
+
+[node name="DrillWorkshop" instance=ExtResource( 1 )]
+weapon_name = "DRILL"
+
+[node name="FloodLight" parent="." index="0"]
+position = Vector2( -17.203, -6.55 )
+
+[node name="LightSprite" parent="." index="1"]
+position = Vector2( 9.56086, -5.35 )
+
+[node name="CollisionShape2D" parent="." index="2"]
+position = Vector2( -1.19209e-06, 0.5 )
+shape = SubResource( 1 )
+
+[node name="Shadow" parent="." index="3"]
+position = Vector2( 0.886775, 0.65 )
+scale = Vector2( 0.100754, 0.100754 )
+texture = ExtResource( 3 )
+
+[node name="Sprite2D" parent="." index="4"]
+position = Vector2( 11.0308, -5.35 )
+
+[node name="Computer4" type="Sprite2D" parent="Sprite2D/Screens" index="0"]
+position = Vector2( -92.3145, 562.635 )
+scale = Vector2( 1.3, 1.3 )
+texture = ExtResource( 6 )
+
+[node name="Computer6" type="Sprite2D" parent="Sprite2D/Screens" index="1"]
+position = Vector2( 407.686, 562.635 )
+scale = Vector2( 1.3, 1.3 )
+texture = ExtResource( 8 )
+
+[node name="WorkshopStand" parent="Sprite2D/Stands" index="0" instance=ExtResource( 2 )]
+position = Vector2( -290.149, 660.309 )
+scale = Vector2( 13, 13 )
+target_screen = NodePath("../../../ComputerScreen")
+override_position = 1
+
+[node name="WorkshopStand3" parent="Sprite2D/Stands" index="1" instance=ExtResource( 2 )]
+position = Vector2( 206.285, 660.309 )
+scale = Vector2( 13, 13 )
+target_screen = NodePath("../../../ComputerScreen")
+override_position = 1
+
+[node name="LavaChecks" parent="." index="5"]
+position = Vector2( 0.797, -5.35 )
+
+[node name="Position1" parent="ComputerScreen" index="2"]
+offset_left = -750.0
+offset_top = -792.0
+offset_right = 750.0
+offset_bottom = 8.0
+
+[node name="Socket" parent="." index="11"]
+position = Vector2( -10, -18 )
+
+[node name="HealthBar" parent="." index="12"]
+position = Vector2( 7.797, -12.55 )
+
+[node name="TerrainMask" parent="." index="13" instance=ExtResource( 5 )]
+visible = false
+self_modulate = Color( 1, 1, 1, 1 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[editable path="FloodLight"]

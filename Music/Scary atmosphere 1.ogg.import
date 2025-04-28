@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bd4i1iscc1kvg"
+path="res://.godot/imported/Scary atmosphere 1.ogg-7a2af65404143be3400d47d95b5d36d2.oggvorbisstr"
+
+[deps]
+
+source_file="res://Music/Scary atmosphere 1.ogg"
+dest_files=["res://.godot/imported/Scary atmosphere 1.ogg-7a2af65404143be3400d47d95b5d36d2.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

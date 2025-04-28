@@ -1,0 +1,125 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=3]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends \"res://Nodes/Player/Weapons/Ranged/PlayerBullet.gd\"
+
+@onready var timer := $Timer as Timer
+@onready var light_sprite := $LightSprite
+
+var life_time := 2.0
+var damping := 0.96
+var lingering: bool
+var die: float
+
+func _ready() -> void:
+	Utils.play_sample(\"res://SFX/Weapons/Flamethrower.wav\", self, false, 1.2)
+	dir = dir.rotated(randf_range(-0.1, 0.1)).rotated(randf_range(-0.1, 0.1))
+	light_sprite.modulate.a = 0
+	
+	$Timer.start(life_time)
+#	speed = rand_range(speed*0.4, speed)
+
+func _physics_process(delta: float) -> void:
+	speed *= damping
+	light_sprite.modulate.a = 1.0 - abs(timer.time_left - timer.wait_time * 0.5) / (timer.wait_time * 0.5)
+	var ray := Utils.game.map.pixel_map.rayCastQTDistance(global_position,  dir, speed * delta, Player.get_weapon_mask(get_meta(\"data\")))
+	if ray:
+		speed = 0
+		global_position = ray.hit_position
+		Utils.explode_circle_no_debris(global_position, 10, 10, 0.5, 10, (~Utils.fire_resistant_mask))
+	else:
+		if Utils.game.map.pixel_map.get_pixel_at(global_position).g8 == Const.Materials.TAR:
+			Utils.explode_circle_no_debris(global_position, 10, 10, 0.5, 10, 1<< Const.Materials.TAR)
+		global_position += dir * speed * delta
+	
+	if die > 0:
+		modulate.a = 1 - die
+		die += delta
+		if die >= 1:
+			queue_free()
+
+func get_damage_data() -> Dictionary:
+	return {damage = 5, good = true, high = true, keep = lingering}
+
+func dead():
+	die = 0.01
+"
+
+[sub_resource type="CircleShape2D" id=20]
+radius = 3.05025
+
+[sub_resource type="CanvasItemMaterial" id=25]
+blend_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id=21]
+blend_mode = 1
+
+[sub_resource type="Gradient" id=22]
+offsets = PackedFloat32Array( 0, 0.60307, 0.997807 )
+colors = PackedColorArray( 0.054902, 0.301961, 1, 1, 1, 0.204193, 0.0648351, 1, 1, 0, 0, 0 )
+
+[sub_resource type="GradientTexture2D" id=4]
+gradient = SubResource( 22 )
+
+[sub_resource type="Curve" id=23]
+_data = [ Vector2( 0, 0.228528 ), 0.0, 3.59156, 0, 1, Vector2( 0.084127, 0.530675 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.512435, 0.0, 1, 0 ]
+
+[sub_resource type="CurveTexture" id=19]
+curve = SubResource( 23 )
+
+[sub_resource type="ParticleProcessMaterial" id=24]
+trail_divisor = 10
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 1.0
+angle_random = 1.0
+scale = 0.05
+scale_curve = SubResource( 19 )
+color = Color( 1, 1, 1, 0.47451 )
+color_ramp = SubResource( 4 )
+
+[node name="Flame" type="Area2D"]
+z_index = 700
+z_as_relative = false
+script = SubResource( 3 )
+speed = 200.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource( 20 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color( 0.988235, 0.431373, 0.0823529, 0.529412 )
+material = SubResource( 25 )
+scale = Vector2( 0.07, 0.07 )
+texture = ExtResource( 2 )
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+modulate = Color( 0.25, 0.25, 0.25, 1 )
+show_behind_parent = true
+material = SubResource( 21 )
+lifetime = 2.2
+process_material = SubResource( 24 )
+texture = ExtResource( 2 )
+
+[node name="LightSprite" type="Node2D" parent="."]
+modulate = Color( 0.137255, 0.0705882, 0.0117647, 1 )
+position = Vector2( 0.238, 0.071 )
+scale = Vector2( 0.45, 0.45 )
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="ZIndexer" parent="." instance=ExtResource( 3 )]
+z_index = 700
+
+[connection signal="timeout" from="Timer" to="." method="dead"]

@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=1]
+
+[node name="LavaChecks" type="Node2D"]
+visible = false
+script = ExtResource( 1 )
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2( 0.216248, -7.49477 )
+
+[node name="Position2D2" type="Marker2D" parent="."]
+position = Vector2( 4.9919, -5.62646 )
+
+[node name="Position2D5" type="Marker2D" parent="."]
+position = Vector2( -5.5087, -4.32863 )
+
+[node name="Position2D6" type="Marker2D" parent="."]
+position = Vector2( 6.68301, 0.0761129 )
+
+[node name="Position2D7" type="Marker2D" parent="."]
+position = Vector2( 4.9919, 5.30676 )
+
+[node name="Position2D8" type="Marker2D" parent="."]
+position = Vector2( -4.95811, 4.9528 )
+
+[node name="Position2D3" type="Marker2D" parent="."]
+position = Vector2( 0.325989, 7.63691 )
+
+[node name="Position2D4" type="Marker2D" parent="."]
+position = Vector2( -6.92243, 0.329155 )

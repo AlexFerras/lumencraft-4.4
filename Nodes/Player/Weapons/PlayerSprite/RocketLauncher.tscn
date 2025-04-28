@@ -1,0 +1,175 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/PlayerSprite/RocketLauncher.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/LockOn.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends \"res://Nodes/Player/Weapons/PlayerSprite/GunSprite.gd\"
+
+@onready var lock: Node2D = $LockOn
+
+var locked_target: Node2D
+var use_lock: bool
+
+func _ready() -> void:
+	if not Save.is_tech_unlocked(\"homing_missiles\"):
+		set_physics_process(false)
+	else:
+		lock.set_as_top_level(true)
+		lock.get_node(\"AP\").play(\"Rotat\")
+
+func shoot(bullet: Node2D):
+	if locked_target and use_lock:
+		bullet.locked_enemy = locked_target
+
+func _physics_process(delta: float) -> void:
+	var new_target: Node2D
+	var min_dist: float = INF
+#	var enemies := Utils.game.map.enemy_tracker.getAnyTrackingNode2DInCircleThatPassRayCastTestOnPixelMap(global_position, 300, true, Utils.game.map.pixel_map, Utils.player_bullet_collision_mask & (~(Utils.walls_mask | 1 << Const.Materials.GATE)), true)
+	var enemies := Utils.game.map.enemy_tracker.getTrackingNodes2DInCircle(global_position, 300, true)
+	var my_dir := Vector2.RIGHT.rotated(global_rotation)
+	
+	for enemy in enemies:
+		if my_dir.dot(global_position.direction_to(enemy.global_position)) < 0.5:
+			continue
+		
+		var dist := global_position.distance_squared_to(enemy.global_position)
+		if dist < min_dist:
+			new_target = enemy
+			min_dist = dist
+	
+	if new_target:
+		lock.show()
+		lock.global_position = new_target.global_position
+		
+		if new_target != locked_target:
+			use_lock = false
+			lock.get_node(\"AP\").play(\"Lock\")
+	else:
+		lock.hide()
+	locked_target = new_target
+
+func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
+	## TODO: SFX
+	use_lock = true
+	lock.get_node(\"AP\").play(\"Rotat\")
+"
+
+[sub_resource type="Animation" id=4]
+resource_name = "Lock"
+tracks/0/type = "value"
+tracks/0/path = NodePath("LockOn:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 0.25, 0.25 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LockOn:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 2, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LockOn:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("LockOn:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("LockOn:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.25, 0.25 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("LockOn:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "Rotat"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("LockOn:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 360.0 ]
+}
+
+[node name="RocketLauncher" type="Node2D"]
+script = SubResource( 3 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( -3.52264, 0 )
+scale = Vector2( 0.05, 0.05 )
+z_index = 1
+texture = ExtResource( 1 )
+
+[node name="ShootPoint" type="Node2D" parent="Sprite2D"]
+position = Vector2( 220.515, 0 )
+scale = Vector2( 20, 20 )
+
+[node name="LockOn" type="Sprite2D" parent="."]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 3 )
+
+[node name="AP" type="AnimationPlayer" parent="LockOn"]
+root_node = NodePath("../..")
+anims/Lock = SubResource( 4 )
+anims/RESET = SubResource( 1 )
+anims/Rotat = SubResource( 2 )
+
+[connection signal="animation_finished" from="LockOn/AP" to="." method="_on_AnimationPlayer_animation_finished"]

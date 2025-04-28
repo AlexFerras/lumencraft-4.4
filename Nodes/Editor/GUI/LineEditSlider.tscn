@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends VBoxContainer
+
+@export var editable: bool: set = set_editable
+
+var syncing: bool
+
+func _ready() -> void:
+	$HSlider.connect(\"value_changed\", Callable(self, \"sync_line_edit\"))
+	$LineEdit.connect(\"text_changed\", Callable(self, \"sync_slider\"))
+	await get_tree().idle_frame
+	sync_line_edit(get_child(0).value)
+
+func set_editable(e: bool):
+	editable = e
+	$HSlider.editable = e
+	$LineEdit.editable = e
+
+func sync_line_edit(value):
+	if syncing or $LineEdit.text == str(value):
+		return
+	
+	syncing = true
+	$LineEdit.text = str(value)
+	syncing = false
+
+func sync_slider(text):
+	if syncing:
+		return
+	
+	syncing = true
+	$HSlider.value = float(text)
+	syncing = false
+	
+	sync_line_edit($HSlider.value)
+"
+
+[node name="LineEditSlider" type="VBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = SubResource( 1 )
+
+[node name="HSlider" type="HSlider" parent="."]
+offset_right = 40.0
+offset_bottom = 16.0
+
+[node name="LineEdit" type="LineEdit" parent="."]
+offset_top = 20.0
+offset_right = 40.0
+offset_bottom = 44.0
+theme_override_constants/minimum_spaces = 4

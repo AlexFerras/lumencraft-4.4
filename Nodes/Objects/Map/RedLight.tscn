@@ -1,0 +1,92 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Objects/Map/RedLamp.png" type="Texture2D" id=3]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+
+@onready var checker_pos: Vector2 = $Marker2D.global_position
+
+var check_timer: float
+
+func _physics_process(delta: float) -> void:
+	check_timer += delta
+	if check_timer >= 0.5:
+		check_timer = 0
+		if not Utils.game.map.pixel_map.is_pixel_solid(checker_pos, Utils.walkable_collision_mask):
+			queue_free()
+"
+
+[sub_resource type="Animation" id=1]
+resource_name = "Pulse"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Light3D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( -2, -2 ),
+"update": 0,
+"values": [ Vector2( 0.6, 0.6 ), Vector2( 0.4, 0.4 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Light3D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.5, 1 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 0.713726 ), Color( 1, 0, 0, 0.388235 ), Color( 1, 0, 0, 0.713726 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Light3D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 0.713726 ) ]
+}
+
+[node name="RedLamp" type="Node2D"]
+script = SubResource( 3 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.0243902, 0.0243902 )
+texture = ExtResource( 3 )
+
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+position = Vector2( -2, -5 )
+scale = Vector2( 0.0243902, 0.0243902 )
+rect = Rect2( 0, 0, 200, 400 )
+physics_process_parent = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Pulse"
+anims/Pulse = SubResource( 1 )
+anims/RESET = SubResource( 4 )
+
+[node name="Light3D" type="Node2D" parent="."]
+modulate = Color( 1, 0, 0, 0.713726 )
+position = Vector2( 0.609756, 0 )
+scale = Vector2( 0.6, 0.6 )
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2( -2.22656, 0 )
+scale = Vector2( 0.0243902, 0.0243902 )

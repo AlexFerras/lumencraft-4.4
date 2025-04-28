@@ -1,0 +1,223 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://Nodes/Objects/Explosive/ExplosiveBarrel.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.gdshader" type="Shader" id=3]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Buildings/Wall/Wall.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Buildings/Reactor/Reactor.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Buildings/Tower/Tower.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=9]
+[ext_resource path="res://Nodes/Buildings/Tower/Stand.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Resources/Terrain/Images/FloorSteel.png" type="Texture2D" id=11]
+[ext_resource path="res://Nodes/Enemies/Wednesday/Frog.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Nodes/Effects/SmokeBigFog.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Resources/Terrain/Images/FloorDirt.jpg" type="Texture2D" id=15]
+[ext_resource path="res://Resources/Terrain/Images/FloorGround.png" type="Texture2D" id=16]
+[ext_resource path="res://Resources/Terrain/Images/FloorSandy.png" type="Texture2D" id=17]
+
+[sub_resource type="PixelMapMaterialData" id=4]
+resource_local_to_scene = true
+name_table = PackedStringArray( "Dirt", "Clay", "Rocks", "Poor Metal", "Metal", "Rich Metal", "Rock6", "Rock9", "Foam", "Steel", "Fireproof Foam", "Unused", "Concrete", "Unused", "Unused", "Unused", "Unused", "Unnamed", "Unnamed", "Unnamed", "Low building", "Wall", "Upgraded Wall", "Upgraded II Wall", "Tar", "Empty", "Dead Lumen", "Lumen", "Gate", "Water", "Lava", "Unnamed", "Building", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed" )
+durability_table = PackedInt32Array( 1, 5, 100, 1, 3, 9, 6, 9, 1, 8, 1, 1, 80, 2, 2, 1, 1, 2, 1, 1, 255, 2, 4, 6, 1, 1, 25, 1, 254, 1, 1, 1, 9999, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 )
+simulated_materials = PackedInt32Array( 15, 16 )
+reaction_table = PackedInt32Array( 15, 16, 14 )
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = ExtResource( 3 )
+shader_param/resolution1 = 40.0
+shader_param/resolution2 = 60.0
+shader_param/resolution3 = 100.0
+shader_param/resolution4 = 32.0
+shader_param/hsvoffset1 = 0.513
+shader_param/hsvsaturation1 = -0.289
+shader_param/hsvlight1 = -0.093
+shader_param/hsvoffset2 = 0.459
+shader_param/hsvsaturation2 = -0.211
+shader_param/hsvlight2 = -0.134
+shader_param/hsvoffset3 = 0.01
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = -0.891
+shader_param/hsvsaturation4 = -0.741
+shader_param/hsvlight4 = 0.0
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 16 )
+shader_param/texture2 = ExtResource( 15 )
+shader_param/texture3 = ExtResource( 11 )
+shader_param/texture4 = ExtResource( 17 )
+
+[sub_resource type="PixelMapMaterialData" id=2]
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 3 )
+shader_param/resolution1 = 40.0
+shader_param/resolution2 = 60.0
+shader_param/resolution3 = 100.0
+shader_param/resolution4 = 32.0
+shader_param/hsvoffset1 = 0.513
+shader_param/hsvsaturation1 = -0.289
+shader_param/hsvlight1 = -0.093
+shader_param/hsvoffset2 = 0.459
+shader_param/hsvsaturation2 = -0.211
+shader_param/hsvlight2 = -0.134
+shader_param/hsvoffset3 = 0.01
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = -0.891
+shader_param/hsvsaturation4 = -0.741
+shader_param/hsvlight4 = 0.0
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 16 )
+shader_param/texture2 = ExtResource( 15 )
+shader_param/texture3 = ExtResource( 11 )
+shader_param/texture4 = ExtResource( 17 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends \"res://Scripts/MapEvents.gd\"
+
+func _ready() -> void:
+	if not is_ready:
+		Utils.game.ui.set_objective(0, \"Use flares to defeat incoming enemies.\")
+	
+	Utils.game.map.wave_manager.connect(\"wave_defeated\", Callable(self, \"win\"))
+
+func on_spawn_enemy(enemy):
+	if enemy is BaseEnemy:
+		enemy.hp = 1
+	else:
+		enemy.max_hp = 1
+
+func win():
+	if Utils.game.map.wave_manager.is_finished():
+		Utils.game.win()
+
+func _physics_process(delta: float) -> void:
+	for player in Utils.game.players:
+		player.subtract_item(Const.ItemIDs.DRILL)
+
+func _config_map(config: Dictionary):
+	config.inventory = [{id = \"FLARE\", amount = 100000}]
+	config.include_default = false
+	config.upgrades = {backpack_upgrade = 10}
+"
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+wave_file_path = "res://Maps/FlareSiegeWaves.cfg"
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+z_index = 500
+z_as_relative = false
+material_data = SubResource( 4 )
+texture_path = "res://Maps/FlareSiege.png"
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, null, null, null, null ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 4 )]
+ambient_color = Color( 0.129412, 0.12549, 0.14902, 1 )
+
+[node name="Smoke" parent="PixelMap" instance=ExtResource( 13 )]
+position = Vector2( -602.044, -314.646 )
+scale = Vector2( 1470, 954 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 5 )
+scale = Vector2( 8, 8 )
+z_index = -4096
+fake_pixel_map = true
+material_data = SubResource( 2 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_lock_": true
+}
+default_color = Color( 1, 0, 0, 0 )
+textures = [ null, null, null, null ]
+
+[node name="Floor2" type="PixelMap" parent="."]
+process_priority = 100
+material = SubResource( 6 )
+scale = Vector2( 8, 8 )
+z_index = -4096
+fake_pixel_map = true
+material_data = SubResource( 2 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_lock_": true
+}
+default_color = Color( 0, 0, 0, 0 )
+textures = [ null, null, null, null ]
+layer = 2
+
+[node name="Reactor" parent="." instance=ExtResource( 6 )]
+position = Vector2( 157, 538 )
+__meta__ = {
+"has_power": true,
+"range_expander_radius": 350.0
+}
+start_on = true
+
+[node name="WaveSpawner" parent="." instance=ExtResource( 7 )]
+position = Vector2( 884, 541 )
+radius = 120.0
+
+[node name="MapEvents" type="Node" parent="."]
+script = SubResource( 3 )
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Wall" parent="Walls" instance=ExtResource( 5 )]
+position = Vector2( 496, 539 )
+rotation = -1.57079
+
+[node name="Wall2" parent="Walls" instance=ExtResource( 5 )]
+position = Vector2( 495, 442 )
+rotation = -1.57079
+
+[node name="Wall3" parent="Walls" instance=ExtResource( 5 )]
+position = Vector2( 496, 633 )
+rotation = -1.57079
+
+[node name="Wall4" parent="Walls" instance=ExtResource( 5 )]
+position = Vector2( 518, 539 )
+rotation = -1.57079
+
+[node name="Wall5" parent="Walls" instance=ExtResource( 5 )]
+position = Vector2( 517, 442 )
+rotation = -1.57079
+
+[node name="Wall6" parent="Walls" instance=ExtResource( 5 )]
+position = Vector2( 518, 633 )
+rotation = -1.57079
+
+[node name="Tower" parent="Walls" instance=ExtResource( 8 )]
+position = Vector2( 437, 631 )
+
+[node name="Tower2" parent="Walls" instance=ExtResource( 8 )]
+position = Vector2( 437, 539 )
+
+[node name="Tower3" parent="Walls" instance=ExtResource( 8 )]
+position = Vector2( 437, 444 )
+
+[node name="Stand" parent="Walls" instance=ExtResource( 10 )]
+position = Vector2( 436, 583.666 )
+
+[node name="Stand2" parent="Walls" instance=ExtResource( 10 )]
+position = Vector2( 436, 489 )
+
+[node name="ExplosiveBarrel" parent="." instance=ExtResource( 1 )]
+position = Vector2( 966, 673 )
+
+[node name="Frog" parent="." instance=ExtResource( 12 )]
+position = Vector2( 912, 779 )
+
+[connection signal="spawned_enemy" from="WaveSpawner" to="MapEvents" method="on_spawn_enemy"]

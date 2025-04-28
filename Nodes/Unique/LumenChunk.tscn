@@ -1,0 +1,314 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Nodes/Unique/Lumen_Cristal_.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+
+[sub_resource type="GDScript" id=20]
+script/source = "extends PixelMapRigidBody
+
+func _ready():	
+	add_to_group(\"repair_kit_pickable\")
+	set_meta(\"object_type\", \"Lumen Chunk\")
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	pixel_map_physics(state, Utils.walkable_collision_mask)
+"
+
+[sub_resource type="CircleShape2D" id=19]
+radius = 11.6947
+
+[sub_resource type="Shader" id=27]
+code = "shader_type canvas_item;    
+
+uniform float hue = 0.0;
+uniform float saturation = 0.0;
+uniform float value = 0.0;
+uniform vec2 position = vec2(0.0,0.0);
+
+vec3 mod2893(vec3 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec4 mod2894(vec4 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec4 permute(vec4 x) {
+     return mod2894(((x*34.0)+1.0)*x);
+}
+
+vec4 taylorInvSqrt(vec4 r)
+{
+  return 1.79284291400159 - 0.85373472095314 * r;
+}
+
+float snoise(vec3 v)
+  { 
+  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+
+// First corner
+  vec3 i  = floor(v + dot(v, C.yyy) );
+  vec3 x0 =   v - i + dot(i, C.xxx) ;
+
+// Other corners
+  vec3 g = step(x0.yzx, x0.xyz);
+  vec3 l = 1.0 - g;
+  vec3 i1 = min( g.xyz, l.zxy );
+  vec3 i2 = max( g.xyz, l.zxy );
+
+  //   x0 = x0 - 0.0 + 0.0 * C.xxx;
+  //   x1 = x0 - i1  + 1.0 * C.xxx;
+  //   x2 = x0 - i2  + 2.0 * C.xxx;
+  //   x3 = x0 - 1.0 + 3.0 * C.xxx;
+  vec3 x1 = x0 - i1 + C.xxx;
+  vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
+  vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
+
+// Permutations
+  i = mod2893(i); 
+  vec4 p = permute( permute( permute( 
+             i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+           + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) 
+           + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+
+// Gradients: 7x7 points over a square, mapped onto an octahedron.
+// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
+  float n_ = 0.142857142857; // 1.0/7.0
+  vec3  ns = n_ * D.wyz - D.xzx;
+
+  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
+
+  vec4 x_ = floor(j * ns.z);
+  vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+
+  vec4 x = x_ *ns.x + ns.yyyy;
+  vec4 y = y_ *ns.x + ns.yyyy;
+  vec4 h = 1.0 - abs(x) - abs(y);
+
+  vec4 b0 = vec4( x.xy, y.xy );
+  vec4 b1 = vec4( x.zw, y.zw );
+
+  //vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;
+  //vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;
+  vec4 s0 = floor(b0)*2.0 + 1.0;
+  vec4 s1 = floor(b1)*2.0 + 1.0;
+  vec4 sh = -step(h, vec4(0.0));
+
+  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+
+  vec3 p0 = vec3(a0.xy,h.x);
+  vec3 p1 = vec3(a0.zw,h.y);
+  vec3 p2 = vec3(a1.xy,h.z);
+  vec3 p3 = vec3(a1.zw,h.w);
+
+//Normalise gradients
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x;
+  p1 *= norm.y;
+  p2 *= norm.z;
+  p3 *= norm.w;
+
+// Mix final noise value
+  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+  m = m * m;
+  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), 
+                                dot(p2,x2), dot(p3,x3) ) );
+  }
+vec3 rgb2hsv(vec3 c) {
+	vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+	vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+	vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+	float d = q.x - min(q.w, q.y);
+	float e = 1.0e-10;
+	return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+vec3 hsv2rgb(vec3 c) {
+	c.r += hue;
+	c.g += saturation;
+	c.b += value;
+	vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+	vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+	return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+void fragment () {
+	vec4 color = texture(TEXTURE, UV);
+	float var1 = 0.0;
+	float var2 = 0.5;
+	float var3 = 0.3;
+	COLOR.r = hsv2rgb( rgb2hsv(color.rgb)+vec3(UV.x*0.05*sin(TIME*2.34)) ).r;
+	COLOR.g = hsv2rgb( rgb2hsv(color.rgb)-vec3(UV.y*0.05*sin(TIME*1.345)) ).g;
+	COLOR.b = hsv2rgb( rgb2hsv(color.rgb+vec3(UV.y*0.05+UV.x*0.05)) ).b;
+
+	COLOR.a = color.a;
+}
+
+
+
+
+"
+
+[sub_resource type="ShaderMaterial" id=21]
+shader = SubResource( 27 )
+shader_param/hue = 0.2
+shader_param/saturation = 1.0
+shader_param/value = 1.0
+shader_param/position = Vector2( 0, 0 )
+
+[sub_resource type="Animation" id=22]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:material:shader_param/value")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:material:shader_param/saturation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=23]
+resource_name = "pulse"
+length = 7.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:material:shader_param/value")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 3.5, 7 ),
+"transitions": PackedFloat32Array( -2, -2, -2 ),
+"update": 0,
+"values": [ 0.0, 0.25, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:material:shader_param/saturation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 3.5, 7 ),
+"transitions": PackedFloat32Array( -2, -2, -2 ),
+"update": 0,
+"values": [ 1.0, 0.25, 1.0 ]
+}
+
+[sub_resource type="Animation" id=24]
+resource_name = "HueChange"
+length = 13.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:material:shader_param/hue")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 6, 13 ),
+"transitions": PackedFloat32Array( -2, -2, -2 ),
+"update": 0,
+"values": [ 0.2, 0.7, 0.0 ]
+}
+
+[sub_resource type="Animation" id=25]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:material:shader_param/value")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2D:material:shader_param/hue")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.2 ]
+}
+
+[sub_resource type="Animation" id=26]
+resource_name = "pulse"
+length = 7.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:material:shader_param/value")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 3.5, 7 ),
+"transitions": PackedFloat32Array( -2, -2, -2 ),
+"update": 0,
+"values": [ 0.0, 0.5, 0.0 ]
+}
+
+[node name="LumenChunk" type="PixelMapRigidBody" groups=["lumen_chunks"]]
+z_index = 150
+z_as_relative = false
+mass = 2.0
+linear_damp = 5.0
+angular_damp = 5.0
+radius = 5
+script = SubResource( 20 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+position = Vector2( 0.120667, -0.0464478 )
+shape = SubResource( 19 )
+
+[node name="shadow2" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 0, 0.752941 )
+scale = Vector2( 0.122423, 0.122423 )
+z_index = -2
+texture = ExtResource( 4 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 3 )]
+z_index = 150
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource( 21 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "pulse"
+anims/RESET = SubResource( 22 )
+anims/pulse = SubResource( 23 )
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+anims/HueChange = SubResource( 24 )
+anims/RESET = SubResource( 25 )
+anims/pulse = SubResource( 26 )

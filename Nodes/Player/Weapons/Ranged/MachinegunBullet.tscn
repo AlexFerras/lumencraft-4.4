@@ -1,0 +1,101 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Effects/SimpleTrail.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Textures/gradient_smooth.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=5]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Player/Weapons/Ranged/PlayerBullet.gd\"
+
+@onready var trail := $Trail
+
+var bounces: int
+var physics_frame=0
+
+func _ready() -> void:
+	if Save.is_tech_unlocked(\"bouncy_machinegun\"):
+		bounces = 10
+
+func _physics_process(delta: float) -> void:
+	physics_frame+=1
+	if physics_frame==2:
+		$first_frame_shape.queue_free()
+	var col = Utils.game.map.pixel_map.rayCastQTDistance(global_position, dir, speed * delta, Player.get_weapon_mask(get_meta(\"data\")))
+	if col:
+		if bounces > 0:
+			trail = trail.dup()
+			bounces -= 1
+			dir = dir.bounce(col.hit_normal)
+			rotation = dir.angle()
+			global_position = col.hit_position
+			position += dir
+		else:
+			global_position = col.hit_position
+			Utils.explode_circle(col.hit_position, 2, 400, 3, 5, -1)
+			Utils.play_sample(Utils.get_material_hit_sound(col.hit_position), self)
+			queue_destroy()
+	else:
+		var dist=speed * delta
+		distance_traveled+=dist
+		if distance_traveled >= minimal_distance_to_flip_z_index:
+			$Sprite2D.z_index = 700
+		if distance_traveled >= max_distance:
+			Utils.get_audio_manager(\"bullet_hit_dirt\").play(global_position)
+			destroy(false)
+		else:
+			global_position += dir * dist
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 7.49973, 2 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 6, 6 )
+
+[node name="MachinegunBullet" type="Area2D"]
+z_index = 700
+z_as_relative = false
+collision_mask = 33
+script = SubResource( 1 )
+speed = 800.0
+max_distance = 250.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -7.50028, 2.98023e-08 )
+shape = SubResource( 2 )
+
+[node name="first_frame_shape" type="CollisionShape2D" parent="."]
+position = Vector2( -7, 0 )
+shape = SubResource( 3 )
+
+[node name="BulletLight" type="Node2D" parent="."]
+position = Vector2( -0.898, 0 )
+scale = Vector2( 0.02, 0.02 )
+script = ExtResource( 5 )
+texture = ExtResource( 4 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 1 )]
+z_index = 700
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color( 4.01176, 1.13725, 0.427451, 1 )
+position = Vector2( -1.5891, 0.0225086 )
+rotation = 3.14159
+scale = Vector2( 0.03, -0.015 )
+z_index = 199
+z_as_relative = false
+texture = ExtResource( 3 )
+
+[node name="Trail" type="Sprite2D" parent="."]
+modulate = Color( 0.568627, 0.568627, 0.556863, 0.560784 )
+position = Vector2( -69.6698, -0.0496635 )
+scale = Vector2( 1, 0.015 )
+z_index = 700
+z_as_relative = false
+texture = ExtResource( 3 )
+script = ExtResource( 2 )
+
+[node name="ZIndexer" parent="Trail" instance=ExtResource( 1 )]
+z_index = 700

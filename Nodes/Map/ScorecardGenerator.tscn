@@ -1,0 +1,178 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Scenes/Title/Background.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/UI/ScoreFinished.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Fonts/Font40.tres" type="FontFile" id=3]
+[ext_resource path="res://Resources/Fonts/Font60.tres" type="FontFile" id=4]
+[ext_resource path="res://Resources/Fonts/Font10.tres" type="FontFile" id=5]
+[ext_resource path="res://Resources/Fonts/Font14.tres" type="FontFile" id=6]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Control
+
+var map_name: String
+var score: int
+var scoreboard: Dictionary
+var uid: String
+var completed: bool
+
+signal finished
+
+func _ready() -> void:
+	$MapName.text = map_name
+	$Score.text = str(score)
+	
+	var id_base := str(score, uid, scoreboard.values()).md5_buffer()
+	var id_base2 := PackedStringArray()
+	for byte in id_base:
+		id_base2.append(str(byte))
+	
+	var score_id := \"\".join(id_base2).substr(0, 9)
+	$ScoreID.text += str(score_id)
+	
+	for item in scoreboard:
+		var label := Label.new()
+		label.text = tr(item.capitalize())
+		$Scoreboard.add_child(label)
+		
+		label = Label.new()
+		if item == \"time\":
+			label.text = str(\"%01d:%02d:%02d\" % [scoreboard[item] / 3600, scoreboard[item] / 60 % 60, scoreboard[item] % 60])
+		else:
+			label.text = str(scoreboard[item])
+		$Scoreboard.add_child(label)
+	
+	if SteamAPI.IS_ONLINE:
+		$Player/PlayerName.text = SteamAPI.STEAM_NAME
+		SteamAPI.singleton.connect(\"avatar_loaded\", Callable(self, \"on_avatar_loaded\"))
+		SteamAPI.get_avatar(SteamAPI.STEAM_ID)
+	else:
+		$Player.hide()
+		emit_finished()
+	
+	$Finished.visible = completed
+
+func draw_uid() -> void:
+	var uid_label = $UID
+	for i in 9:
+		uid_label.draw_texture(preload(\"res://Resources/Textures/1px.png\"), Vector2(i, 0), Color(0, 0, uid.ord_at(i) / 255.0))
+
+func emit_finished():
+	get_tree().create_timer(0.5).connect(\"timeout\", Callable(self, \"emit_signal\").bind(\"finished\"))
+
+func on_avatar_loaded(id: int, width: int, data: PackedByteArray):
+	var image := Image.new()
+	image.create_from_data(width, data.size() / 4 / width, false, Image.FORMAT_RGBA8, data)
+	var texture := ImageTexture.new()
+	texture.create_from_image(image)
+	$Player/PlayerAvatar.texture = texture
+	get_viewport().render_target_update_mode = SubViewport.UPDATE_ONCE
+	emit_finished()
+"
+
+[sub_resource type="Theme" id=1]
+default_font = ExtResource( 5 )
+
+[node name="Control" type="Control"]
+offset_right = 400.0
+offset_bottom = 200.0
+script = SubResource( 2 )
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color( 0.5, 0.5, 0.5, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 7
+
+[node name="ScoreID" type="Label" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_fonts/font = ExtResource( 5 )
+text = "ID "
+align = 2
+valign = 2
+
+[node name="MapName" type="Label" parent="."]
+modulate = Color( 0, 1, 1, 1 )
+anchor_right = 1.0
+offset_top = 20.0
+offset_right = 400.0
+offset_bottom = 66.0
+scale = Vector2( 0.5, 0.5 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Map Name"
+align = 1
+
+[node name="Score" type="Label" parent="."]
+modulate = Color( 1, 1, 0, 1 )
+offset_top = 120.0
+offset_right = 800.0
+offset_bottom = 189.0
+scale = Vector2( 0.5, 0.5 )
+theme_override_fonts/font = ExtResource( 4 )
+text = "999999999"
+align = 1
+
+[node name="UID" type="Control" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_right = 9.0
+custom_minimum_size = Vector2( 0, 1 )
+
+[node name="ColorRect" type="ColorRect" parent="UID"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_minimum_size = Vector2( 0, 1 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="Player" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -30.0
+offset_right = 97.0
+offset_bottom = -10.0
+
+[node name="PlayerAvatar" type="TextureRect" parent="Player"]
+offset_right = 20.0
+offset_bottom = 20.0
+custom_minimum_size = Vector2( 20, 20 )
+expand = true
+stretch_mode = 6
+
+[node name="ColorRect" type="ColorRect" parent="Player/PlayerAvatar"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="PlayerName" type="Label" parent="Player"]
+offset_left = 24.0
+offset_top = 2.0
+offset_right = 87.0
+offset_bottom = 18.0
+theme_override_fonts/font = ExtResource( 6 )
+text = "Player"
+
+[node name="Scoreboard" type="GridContainer" parent="."]
+offset_left = 10.0
+offset_top = 50.0
+offset_right = 59.0
+offset_bottom = 113.0
+theme = SubResource( 1 )
+theme_override_constants/h_separation = 16
+columns = 2
+
+[node name="Finished" type="TextureRect" parent="."]
+offset_left = 370.0
+offset_top = 164.0
+offset_right = 390.0
+offset_bottom = 184.0
+texture = ExtResource( 2 )
+expand = true
+
+[connection signal="draw" from="UID" to="." method="draw_uid"]

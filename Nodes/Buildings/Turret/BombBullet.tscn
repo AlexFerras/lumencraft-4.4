@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Resources/Textures/light5.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Player/Weapons/Throwable/Bomb.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Buildings/Turret/BombBullet.gd" type="Script" id=4]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=5]
+
+[node name="BombBullet" type="Node2D"]
+z_index = 700
+z_as_relative = false
+script = ExtResource( 4 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color( 2, 2, 2, 1 )
+scale = Vector2( 0.01, 0.01 )
+texture = ExtResource( 3 )
+
+[node name="Shadow" type="Sprite2D" parent="Sprite2D"]
+modulate = Color( 0, 0, 0, 0.611765 )
+show_behind_parent = true
+position = Vector2( 2.35962, 9.43874 )
+scale = Vector2( 1.6, 1.6 )
+texture = ExtResource( 5 )
+
+[node name="LightSprite" parent="Sprite2D" instance=ExtResource( 1 )]
+modulate = Color( 0.984314, 1.10196, 0.501961, 0.643137 )
+position = Vector2( 0.156311, 1.45825 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 2 )
+drop_shadow = false
+follow_rotation = true
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+autostart = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

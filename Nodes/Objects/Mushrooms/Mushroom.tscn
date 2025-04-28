@@ -1,0 +1,276 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://Nodes/Objects/Mushrooms/mushroom_anim_00.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Reactor/Smoke_1.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Nodes/Player/Weapons/smokeball.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Nodes/Objects/Mushrooms/MushroomMaterial.tres" type="Material" id=6]
+
+[sub_resource type="GDScript" id=20]
+script/source = "extends StaticBody2D
+
+@onready var shroom=$MushroomAnim00
+@onready var small_particles=$small
+@onready var big_particles=$big
+var kicked_time=0
+var last_=0
+@export var hp=10
+@export var lumens_inside=5
+@export var max_grow=1.0
+@export var grow_time=60.0
+@export var random_growth=true
+
+var dead=false
+var autogrow := true
+var exited_time: int
+var no_tracker: bool
+
+func _ready():
+	Utils.set_collisions($Detector, Const.ENEMY_COLLISION_LAYER, Utils.PASSIVE)
+	if not no_tracker:
+		Utils.add_to_tracker(self, Utils.game.map.pickup_tracker, 25)
+	
+	if random_growth:
+		scale=Vector2.ONE*(0.1+randf_range(0.0,0.3))
+		max_grow=randf_range(0.25,1.0)
+	shroom.material = shroom.material.duplicate()
+	
+	z_index_change()
+
+func _physics_process(delta: float) -> void:
+	if dead:
+		return
+	
+	shroom.material.set_shader_parameter(\"kicked_time\",kicked_time)
+	kicked_time += delta
+	if kicked_time>1.0:
+		small_particles.emitting = false
+	
+	if autogrow and can_grow() and kicked_time> grow_time + (int(position.length_squared()) %20):
+		kicked_time=0.01
+		grow()
+
+func z_index_change(time := 4.0):
+	if scale.x>0.2:
+		z_index=ZIndexer.Indexes.PIX_MAP
+	else:
+		z_index=ZIndexer.Indexes.SMALL_DECOR
+	
+func can_grow():
+	if scale.x>=max_grow || is_equal_approx(scale.x,max_grow):
+		return false
+	return true
+	
+func grow(time := 4.0, scale_add=0.1):
+	if !can_grow():
+		return
+	
+	if not is_inside_tree():
+		scale = min(scale.x + scale_add, max_grow) * Vector2.ONE
+		return
+	
+	Utils.play_sample(Utils.random_sound(\"res://SFX/Misc/mushroom/squeezing\"),self)
+	var seq := create_tween()
+	seq.tween_property(self, \"scale\", min(scale.x + scale_add, max_grow) * Vector2.ONE, time).set_trans(Tween.TRANS_ELASTIC)
+	seq.tween_callback(Callable(self, \"z_index_change\"))
+
+func on_enter(area: Area2D) -> void:
+	if dead:
+		return
+	
+	if area.is_in_group(\"player_projectile\"):
+		Utils.on_hit(area)
+		kicked_time=0.05
+		var data: Dictionary = area.get_meta(\"data\")
+		var dmg: int = data.damage
+		hp-=dmg
+		small_particles.emitting=true
+		if hp<=0:
+			destroy(data)
+		Utils.get_audio_manager(\"gore_audio\").play(self)
+	
+	if Player.get_from_area(area):
+		kicked_time = 0.2
+
+func _get_save_data() -> Dictionary:
+	return Save.get_properties(self, [\"scale\"])
+
+func _set_save_data(data: Dictionary):
+	Save.set_properties(self, data)
+	random_growth = false
+
+func _exit_tree() -> void:
+	exited_time = Time.get_ticks_msec()
+
+func _enter_tree() -> void:
+	if exited_time > 0:
+		var elapsed_time = Time.get_ticks_msec() - exited_time
+		scale = min(scale.x + 0.1 * round(elapsed_time * 0.001 / grow_time), max_grow) * Vector2.ONE
+		exited_time = 0
+
+func destroy(data: Dictionary):
+	Utils.game.map.pixel_map.flesh_manager.spawn_in_position(global_position, int(50*scale.x+1), data.get(\"velocity\", Vector2()) * 0.15,Color(0.6,0.8,0.11))
+	small_particles.emitting=false
+	big_particles.emitting=true
+	for i in lumens_inside*scale.x:
+		Utils.game.map.pickables.spawn_premium_pickable_nice(global_position, Const.ItemIDs.LUMEN, Utils.random_point_in_circle(120, 70))
+
+	$CollisionShape2D.set_deferred(\"disabled\",true)
+	get_tree().create_timer(5).connect(\"timeout\", Callable(self, \"queue_free\"))
+	dead=true
+	var seq := create_tween()
+	seq.tween_property(shroom, \"modulate:a\", 0.0 , 0.5).set_trans(Tween.TRANS_SINE)
+	seq.parallel().tween_property($LightSprite, \"modulate:a\", 0.0 , 2.0).set_trans(Tween.TRANS_SINE)
+	Utils.play_sample(\"res://SFX/Misc/mushroom/gore2.wav\", self, false, 2.0)
+	Utils.play_sample(Utils.random_sound(\"res://SFX/Misc/mushroom/air-release.wav\"),self,false,2.0)
+"
+
+[sub_resource type="CircleShape2D" id=21]
+radius = 6.78583
+
+[sub_resource type="CanvasItemMaterial" id=30]
+particles_animation = true
+particles_anim_h_frames = 5
+particles_anim_v_frames = 3
+particles_anim_loop = true
+
+[sub_resource type="Gradient" id=25]
+offsets = PackedFloat32Array( 0, 0.190303, 0.516364, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 1, 1, 1, 0.4, 1, 1, 1, 0.294118, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=3]
+gradient = SubResource( 25 )
+
+[sub_resource type="Curve" id=26]
+max_value = 100.0
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.147619, 100 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5]
+curve = SubResource( 26 )
+
+[sub_resource type="Curve" id=27]
+_data = [ Vector2( 0, 0.732955 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=7]
+curve = SubResource( 27 )
+
+[sub_resource type="ParticleProcessMaterial" id=31]
+emission_shape = 1
+emission_sphere_radius = 121.46
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 104.56
+initial_velocity_random = 0.56
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 200.0
+damping_curve = SubResource( 5 )
+angle = 720.0
+angle_random = 1.0
+scale = 1.4
+scale_curve = SubResource( 7 )
+color_ramp = SubResource( 3 )
+
+[sub_resource type="CanvasItemMaterial" id=24]
+particles_animation = true
+particles_anim_h_frames = 8
+particles_anim_v_frames = 4
+particles_anim_loop = true
+
+[sub_resource type="ParticleProcessMaterial" id=28]
+emission_shape = 1
+emission_sphere_radius = 121.46
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 104.56
+initial_velocity_random = 0.56
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 200.0
+damping_curve = SubResource( 5 )
+angle = 720.0
+angle_random = 1.0
+scale = 1.4
+scale_curve = SubResource( 7 )
+color_ramp = SubResource( 3 )
+anim_speed = 3.31
+
+[sub_resource type="Animation" id=29]
+resource_name = "grow"
+length = 300.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 9.6 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+
+[node name="Mushroom" type="StaticBody2D"]
+z_index = 140
+z_as_relative = false
+script = SubResource( 20 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -0.132282, 1.39685 )
+shape = SubResource( 21 )
+
+[node name="Detector" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Detector"]
+polygon = PackedVector2Array( -17.7451, 4.70271, -11.3333, 0.791676, 1.919, 3.24758, 12.5376, 16.8551, 22.3303, -3.55618, 20.5998, -12.9556, 9.50932, -22.1977, -0.00807571, -19.4447, 2.50891, -9.80936, -13.7729, -9.14077, -19.8688, -2.88761 )
+
+[node name="MushroomAnim00" type="Sprite2D" parent="."]
+material = ExtResource( 6 )
+position = Vector2( 0.416664, 0.166664 )
+scale = Vector2( 0.3, 0.3 )
+z_index = 2
+texture = ExtResource( 1 )
+
+[node name="LightSprite" parent="." instance=ExtResource( 3 )]
+modulate = Color( 0.529412, 0.333333, 0.501961, 1 )
+scale = Vector2( 0.3, 0.3 )
+drop_shadow = false
+is_static = true
+
+[node name="small" type="GPUParticles2D" parent="."]
+modulate = Color( 1, 0.552941, 1, 1 )
+material = SubResource( 30 )
+scale = Vector2( 0.15, 0.15 )
+z_index = 6
+emitting = false
+amount = 11
+lifetime = 4.0
+visibility_rect = Rect2( -370.445, -395.467, 766.593, 797.391 )
+process_material = SubResource( 31 )
+texture = ExtResource( 2 )
+
+[node name="big" type="GPUParticles2D" parent="."]
+modulate = Color( 1, 0.552941, 1, 0.611765 )
+material = SubResource( 24 )
+scale = Vector2( 0.15, 0.15 )
+z_index = 6
+emitting = false
+amount = 30
+lifetime = 4.0
+one_shot = true
+explosiveness = 1.0
+visibility_rect = Rect2( -370.445, -395.467, 766.593, 797.391 )
+process_material = SubResource( 28 )
+texture = ExtResource( 4 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/grow = SubResource( 29 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 5 )]
+z_index = 140
+
+[connection signal="area_entered" from="Detector" to="." method="on_enter"]

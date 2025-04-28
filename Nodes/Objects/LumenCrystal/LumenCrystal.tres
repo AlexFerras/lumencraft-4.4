@@ -1,0 +1,147 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://ecnhqx75qvba"]
+
+[ext_resource type="Texture2D" uid="uid://dbm6faqljvboj" path="res://Resources/Textures/Cracks.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://dqmgebadythey" path="res://Resources/Textures/NoiseRGB.png" id="2"]
+
+[sub_resource type="Shader" id="32"]
+code = "shader_type canvas_item;
+render_mode skip_vertex_transform ;
+
+uniform mat4 global_transform;
+
+uniform bool let_me_see= false;
+uniform float masked_material_number= 26.0;
+uniform float random_blur =0.5;
+uniform float shuffle_tile_border =4.0;
+uniform float blur_amount =1.5;
+uniform float random_blur_border =4.0;
+uniform float random_noise_mul =2.0;
+
+
+uniform sampler2D crack_tiled;
+uniform float crack_tile_mul =5.0;
+
+uniform sampler2D random_noise;
+uniform sampler2D map_tex;
+
+varying vec2 global_position;
+varying vec2 worldUV;
+
+
+uniform vec4 glitter_color=vec4(1.0,1.0,1.0,1.0);
+uniform float mul=1.0;
+uniform float power=3.0;
+uniform vec4 lumen_color=vec4(1.0,1.0,1.0,1.0);
+
+
+void vertex()
+{
+global_position=(global_transform * vec4(VERTEX, 1.0, 1.0)).xy;
+}
+
+
+vec3 addCracks(vec2 UV_in_scaled, vec4 real_col, vec4 col)
+{
+	vec4 crack=texture(crack_tiled, vec2(UV_in_scaled*crack_tile_mul)); 
+	vec4 crack_small=texture(crack_tiled, vec2(UV_in_scaled*crack_tile_mul)*3.0); 
+	//commented section is to disable cracks on some material	
+	float healthy=clamp(1.0-(pow(real_col.r,3.0)/*+is_res1*/),0.0,1.0);
+	return col.a*(((1.0-crack.rgb*1.0)*healthy+(3.0-crack_small.rgb*3.0)*clamp(healthy-0.6,0.0,1.0))); //crack damaged terrain	
+}
+
+
+void fragment()
+{		
+	vec2 tex_size=vec2(textureSize(map_tex,0));
+	vec2 inv_size=1.0/tex_size;
+	vec2 UV_in=global_position*inv_size;
+
+	vec4 real_col=texelFetch(map_tex, ivec2(UV_in*tex_size),0);
+	vec4 col=textureLod(map_tex, UV_in,blur_amount);
+	float difference_material_type= abs(col.g-real_col.g);
+	float difference_material_alpha= abs(col.a-real_col.a);
+	
+	
+
+	if(abs(real_col.g*255.0-masked_material_number)>1.0+difference_material_alpha*100.0)
+		discard;
+	vec2 UV_in_scaled=UV_in*tex_size*0.001;
+
+	vec2 random_blur_border_scaled=random_blur_border*inv_size;
+	
+
+	vec4 outCOLOR;
+
+	
+		outCOLOR=vec4(1.0);
+		
+		outCOLOR.rgb=outCOLOR.rgb+0.8*addCracks(UV_in_scaled,real_col,col);
+		
+		outCOLOR.rgb +=(1.0-(texture(crack_tiled, UV_in*50.3).r)) * 0.55;
+			
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+ //  outCOLOR.rgb=outCOLOR.rgb*pow(1.0-min(difference_material_type*120.0, 1.0),0.2);
+	
+	//outCOLOR=outCOLOR*float(abs(real_col.g-(masked_material_number/255.0))<=1.0/(255.0*2.0));
+	
+	
+	//COLOR.a=unshaded_faloff;
+	vec4 texture_color=texture(TEXTURE,UV);
+	COLOR=texture_color*lumen_color*outCOLOR;
+
+	float result = 0.0;
+    result += texture(random_noise, UV * .2 + vec2(TIME*-0.005)).r;
+    result *= texture(random_noise, UV * .1 + vec2(TIME*+0.005)).g;
+    result = pow(result, power);
+
+    COLOR.rgb = (COLOR.rgb+ mul*glitter_color.rgb*result*outCOLOR.rgb)*COLOR.a;
+
+
+	{
+		//DARK AMBIENT, FROM BORDER OF TERRAIN TO EMPTY
+		COLOR.rgb-=1.0*(1.0-col.a);
+		COLOR.rgb*=pow(col.a,3.0);
+		COLOR.a=pow(min(1.0,clamp((col.a*texture_color.a),0.0,1.0)),0.6);
+
+		
+
+	}
+
+	if(difference_material_type > 0.001) COLOR.rgb=COLOR.rgb*pow(1.0-min((difference_material_type)*10.8, 1.0),4.0);
+	
+	//COLOR*=clamp(difference_material_type*100.0,0.0,10.0);
+	if(let_me_see)
+		COLOR=texture(TEXTURE,UV);
+	
+}"
+
+[resource]
+shader = SubResource("32")
+shader_parameter/global_transform = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+shader_parameter/let_me_see = false
+shader_parameter/masked_material_number = 27.0
+shader_parameter/random_blur = 0.5
+shader_parameter/shuffle_tile_border = 4.0
+shader_parameter/blur_amount = 0.5
+shader_parameter/random_blur_border = 4.0
+shader_parameter/random_noise_mul = 2.0
+shader_parameter/crack_tiled = ExtResource("1")
+shader_parameter/crack_tile_mul = 3.306
+shader_parameter/random_noise = ExtResource("2")
+shader_parameter/glitter_color = Vector4(1, 1, 1, 1)
+shader_parameter/mul = 1.0
+shader_parameter/power = 3.0
+shader_parameter/lumen_color = Vector4(1, 1, 1, 1)

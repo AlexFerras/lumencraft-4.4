@@ -1,0 +1,62 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Resources/Textures/clouds__00335_00178.png" type="Texture2D" id=1]
+
+[sub_resource type="Gradient" id=111]
+offsets = PackedFloat32Array( 0, 0.0841122, 0.446262, 0.815421, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 1, 1, 1, 0.305882, 1, 1, 1, 0.607843, 1, 1, 1, 0.299103, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=112]
+gradient = SubResource( 111 )
+
+[sub_resource type="Curve" id=113]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.115299, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=114]
+curve = SubResource( 113 )
+
+[sub_resource type="Curve" id=115]
+max_value = 0.01
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.00702273 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=116]
+curve = SubResource( 115 )
+
+[sub_resource type="Curve" id=117]
+max_value = 2.0
+_data = [ Vector2( 0, 0.265909 ), 0.0, 0.854168, 0, 0, Vector2( 0.478936, 0.556818 ), 0.820001, 0.820001, 0, 0, Vector2( 1, 1.13864 ), 1.32973, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=118]
+curve = SubResource( 117 )
+
+[sub_resource type="ParticleProcessMaterial" id=119]
+emission_shape = 2
+emission_box_extents = Vector3( 250, 250, 0 )
+flag_disable_z = true
+direction = Vector3( 0, 0, 0 )
+spread = 60.0
+gravity = Vector3( 0, 2, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+orbit_velocity_curve = SubResource( 116 )
+damping_curve = SubResource( 114 )
+angle = 360.0
+angle_random = 1.0
+scale_random = 0.2
+scale_curve = SubResource( 118 )
+color_ramp = SubResource( 112 )
+
+[node name="Smoke_Clouds_Fog4" type="GPUParticles2D"]
+modulate = Color( 0.831373, 0.701961, 0.901961, 1 )
+self_modulate = Color( 1, 0.996078, 0.984314, 1 )
+position = Vector2( 893, 109 )
+rotation = 1.22718
+scale = Vector2( 0.25, 0.25 )
+z_index = 1000
+amount = 20
+lifetime = 40.0
+preprocess = 200.0
+speed_scale = 0.2
+visibility_rect = Rect2( -1000, -100, 5000, 5000 )
+process_material = SubResource( 119 )
+texture = ExtResource( 1 )

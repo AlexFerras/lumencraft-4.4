@@ -1,0 +1,506 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Nodes/Objects/StoneGate/left_metal_panel__00000.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Objects/StoneGate/towers__00012.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Objects/StoneGate/right_stone_part___00012.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/Objects/StoneGate/right_metal_panel___00000.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Objects/StoneGate/left_stone_part__00012.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Objects/StoneGate/LockAnim_small.png" type="Texture2D" id=6]
+[ext_resource path="res://Scripts/GenericInteractable.gd" type="Script" id=7]
+[ext_resource path="res://Nodes/Objects/StoneGate/ground_keygate_00000.png" type="Texture2D" id=8]
+[ext_resource path="res://Resources/Fonts/Font40.tres" type="FontFile" id=9]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Nodes/Buildings/Wall/DestructibleSprite.gd" type="Script" id=15]
+[ext_resource path="res://Nodes/Objects/StoneGate/left_stone_part__00012shadow.png" type="Texture2D" id=16]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=17]
+
+[sub_resource type="GDScript" id=4]
+script/source = "tool
+extends Node2D
+
+const MAX_REQUIRED = 5
+
+@onready var animator := $AnimationPlayer
+@onready var ui = $\"%ComputerScreen\"
+@onready var item_container: Control = $\"%ItemContainer\"
+@onready var interactable_area = $GenericInteractable
+
+var item_prefab: PackedScene
+var can_open: bool
+var opened: bool
+var ui_animator: Tween
+var ui_max_scale: float
+
+var pending_cost: Array
+var cost = []
+
+var refresher: Player
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_process(false)
+		return
+	
+	for i in MAX_REQUIRED:
+		var amount = get(str(\"amount\", i))
+		if not amount:
+			break
+		
+		cost.append({id = Const.ItemIDs.keys().find(get(\"item%s\" % i)), amount = get(\"amount%s\" % i), data = get(\"data%s\" % i)})
+	
+	if cost.is_empty():
+		interactable_area.can_interact = false
+	
+	item_prefab = Prefab.create($\"%Item\")
+	set_process(false)
+	
+	item_container.show()
+	ui.add_custom_control(item_container)
+	ui.reset()
+	
+	if not Music.is_game_build():
+		add_to_group(\"debug:stone_gates\")
+
+func _process(delta: float) -> void:
+	if interactable_area.players_inside.is_empty():
+		if !ui.main_window.animator.is_playing():
+			set_show_ui(false)
+			set_process(false)
+
+
+func on_interacted(player: Player) -> void:
+	if not ui.main_window.visible:
+		refresher = player
+		refresh_ui(player)
+		set_show_ui(true)
+		set_process(true)
+	elif can_open:
+		if ui.main_window.animator.is_playing():
+			can_open = false
+			await ui.main_window.animator.animation_finished
+		
+		for item in cost:
+			if item.id == Const.ItemIDs.LUMEN:
+				player.pay_with_lumen(item.amount, player.global_position)
+			elif item.id == Const.ItemIDs.METAL_SCRAP:
+				player.pay_with_metal(item.amount, player.global_position)
+			else:
+				player.subtract_item(item.id, item.amount, item.get(\"data\"))
+		
+		cost.clear()
+		interactable_area.can_interact = false
+		set_show_ui(false)
+		open()
+	else:
+		Utils.play_ui_sample(Utils.UI_FAIL)
+
+func refresh_ui(player: Player):
+	for item in item_container.get_children():
+		item.queue_free()
+	
+	can_open = not cost.is_empty()
+	for item in cost:
+		var current_count := player.get_item_count(item.id, item.get(\"data\"))
+		
+		var instance = item_prefab.instantiate()
+		instance.get_child(0).texture = Utils.get_item_icon(item.id, item.get(\"data\"))
+		instance.get_child(1).text = \"%s/%s\" % [current_count, item.amount]
+		item_container.add_child(instance)
+		
+		if current_count < item.amount:
+			instance.get_child(1).modulate = Color.RED
+			can_open = false
+
+func _get_save_data() -> Dictionary:
+	return {opened = opened}
+
+func _set_save_data(data: Dictionary):
+	if data.get(\"opened\", false):
+		await self.ready
+		animator.play(\"Open\")
+		animator.advance(1000)
+		interactable_area.can_interact = false
+		opened = true
+
+func set_show_ui(show: bool):
+	if show:
+		ui.main_window.showme()
+		ui.main_window.show()
+		ui.call_deferred(\"reset_window\")
+		refresher.connect(\"inventory_changed\", Callable(self, \"refresh_ui\").bind(refresher))
+	else:
+		ui.hide_ui()
+		if refresher:
+			refresher.disconnect(\"inventory_changed\", Callable(self, \"refresh_ui\"))
+			refresher = null
+	interactable_area.disable_icon = show
+
+func _get_property_list() -> Array:
+	var properties: Array
+	
+	for i in MAX_REQUIRED:
+		var usage := PROPERTY_USAGE_EDITOR
+		usage |= PROPERTY_USAGE_STORAGE * int(bool(get(str(\"amount\", i))))
+		
+		properties.append({name = str(\"item\", i), usage = usage, type = TYPE_STRING, hint = PROPERTY_HINT_ENUM, hint_string = enum_to_hint(Const.ItemIDs)})
+		properties.append({name = str(\"amount\", i), usage = usage, type = TYPE_INT})
+		
+		match get(str(\"item\", i)):
+			\"AMMO\":
+				properties.append({name = str(\"data\", i), usage = usage, type = TYPE_INT, hint = PROPERTY_HINT_ENUM, hint_string = enum_to_hint(Const.Ammo)})
+				ensure_data(i, 0)
+			\"KEY\":
+				properties.append({name = str(\"data\", i), usage = usage, type = TYPE_INT, hint = PROPERTY_HINT_ENUM, hint_string = enum_to_hint(load(\"res://Nodes/Pickups/Artifact/KeyPickup.gd\").Type)})
+				ensure_data(i, 0)
+			\"ARTIFACT\":
+				properties.append({name = str(\"data\", i), usage = usage, type = TYPE_INT, hint = PROPERTY_HINT_ENUM, hint_string = PackedStringArray(Constants.\",\".join(ARTIFACT_NAMES))})
+				ensure_data(i, 0)
+
+	return properties
+
+func _set(property: String, value) -> bool:
+	if property.begins_with(\"item\"):
+		set_pending_value(\"item\", int(property), value)
+		notify_property_list_changed()
+		return true
+	
+	if property.begins_with(\"amount\"):
+		set_pending_value(\"amount\", int(property), value)
+		notify_property_list_changed()
+		return true
+	
+	if property.begins_with(\"data\"):
+		set_pending_value(\"data\", int(property), value)
+		return true
+	
+	return false
+
+func _get(property: String):
+	if property.begins_with(\"item\"):
+		return get_pending_value(\"item\", int(property))
+	
+	if property.begins_with(\"amount\"):
+		return get_pending_value(\"amount\", int(property))
+	
+	if property.begins_with(\"data\"):
+		return get_pending_value(\"data\", int(property))
+
+func enum_to_hint(emun: Dictionary):
+	return PackedStringArray(emun.\",\".join(keys()))
+
+func set_pending_value(property: String, idx: int, value):
+	if pending_cost.size() <= idx:
+		pending_cost.resize(idx + 1)
+	
+	if not pending_cost[idx]:
+		pending_cost[idx] = {}
+	
+	pending_cost[idx][property] = value
+
+func get_pending_value(property: String, idx: int):
+	if pending_cost.size() <= idx or not pending_cost[idx]:
+		return get_default(property)
+	
+	return pending_cost[idx].get(property, get_default(property))
+
+func get_default(property: String):
+	match property:
+		\"item\":
+			return 0
+		\"amount\":
+			return 0
+		_:
+			return null
+
+func ensure_data(idx: int, default):
+	if get(str(\"data\", idx)) == null:
+		set(str(\"data\", idx), default)
+
+func is_condition_met(condition: String, data: Dictionary) -> bool:
+	return opened
+
+func execute_action(action: String, data: Dictionary):
+	match action:
+		\"open\":
+			if not opened:
+				open()
+		\"close\":
+			## sfx
+			if opened:
+				Utils.game.shake_in_position(global_position, 1, 4)
+				opened = false
+				animator.play_backwards(\"Open\")
+
+func open():
+	Utils.game.shake_in_position(global_position, 1, 4)
+	opened = true
+	animator.play(\"Open\")
+	Utils.play_sample(\"res://SFX/Objects/click_and_open_stonegate_.wav\",global_position)
+"
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 32, 34 )
+
+[sub_resource type="Animation" id=106]
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprites/LockAnim:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprites/LockAnim:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprites/RightStonePart00012:region_rect")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, -2, 1 ),
+"update": 0,
+"values": [ Rect2( 0, 0, 373, 234 ), Rect2( 0, 0, 373, 234 ), Rect2( -200, 0, 373, 234 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Sprites/RightStonePart00012/LeftStonePart00012Shadow2:region_rect")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, -2, 1 ),
+"update": 0,
+"values": [ Rect2( 0, 0, 128, 104 ), Rect2( 0, 0, 128, 104 ), Rect2( 37, 0, 128, 104 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Sprites/RightMetalPanel00000:region_rect")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, -2, 1 ),
+"update": 0,
+"values": [ Rect2( 0, 0, 424, 134 ), Rect2( 0, 0, 424, 134 ), Rect2( -200, 0, 424, 134 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprites/LeftMetalPanel00000:region_rect")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 0.9, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, 1, -3, 1 ),
+"update": 0,
+"values": [ Rect2( 0, 0, 387, 137 ), Rect2( 14, 0, 387, 137 ), Rect2( 14, 0, 387, 137 ), Rect2( 210, 0, 387, 137 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Sprites/LeftStonePart00012:region_rect")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, -3, 1 ),
+"update": 0,
+"values": [ Rect2( 0, 0, 348, 238 ), Rect2( 0, 0, 348, 238 ), Rect2( 195, 0, 348, 238 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Sprites/LeftStonePart00012/LeftStonePart00012Shadow:region_rect")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, -3, 1 ),
+"update": 0,
+"values": [ Rect2( 0, 0, 128, 104 ), Rect2( 0, 0, 128, 104 ), Rect2( 40, 0, 128, 104 ) ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Sprites/LeftStonePart00012/LeftStonePart00013:position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, -3, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 0, 0 ), Vector2( -195, 0 ) ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("Sprites/RightStonePart00012/RightStonePart00013:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PackedFloat32Array( 0, 1.1, 4 ),
+"transitions": PackedFloat32Array( 1, -2, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 0, 0 ), Vector2( 200, 0 ) ]
+}
+
+[node name="StoneGate" type="Node2D"]
+script = SubResource( 4 )
+
+[node name="GenericInteractable" type="Area2D" parent="."]
+script = ExtResource( 7 )
+one_player_only = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GenericInteractable"]
+shape = SubResource( 3 )
+
+[node name="Sprites" type="Node2D" parent="."]
+scale = Vector2( 0.14, 0.14 )
+z_index = 600
+z_as_relative = false
+
+[node name="GroundKeygate00000" type="Sprite2D" parent="Sprites"]
+visible = false
+position = Vector2( 20, -25 )
+z_index = -500
+z_as_relative = false
+texture = ExtResource( 8 )
+
+[node name="ZIndexer" parent="Sprites/GroundKeygate00000" instance=ExtResource( 14 )]
+z_index = -500
+
+[node name="RightStonePart00012" type="Sprite2D" parent="Sprites"]
+position = Vector2( 165, 0 )
+texture = ExtResource( 3 )
+offset = Vector2( -1, 0 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 373, 234 )
+
+[node name="LeftStonePart00012Shadow2" type="Sprite2D" parent="Sprites/RightStonePart00012"]
+scale = Vector2( -5, 5 )
+z_index = -4
+texture = ExtResource( 16 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 128, 104 )
+
+[node name="RightStonePart00013" type="Sprite2D" parent="Sprites/RightStonePart00012"]
+visible = false
+texture = ExtResource( 3 )
+script = ExtResource( 15 )
+mask_region = NodePath("../../terrain_mask")
+painting_material = 2
+paint_force = true
+
+[node name="LeftStonePart00012" type="Sprite2D" parent="Sprites"]
+position = Vector2( -155, -1 )
+texture = ExtResource( 5 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 348, 238 )
+
+[node name="LeftStonePart00012Shadow" type="Sprite2D" parent="Sprites/LeftStonePart00012"]
+scale = Vector2( 5, 5 )
+z_index = -4
+texture = ExtResource( 16 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 128, 104 )
+
+[node name="LeftStonePart00013" type="Sprite2D" parent="Sprites/LeftStonePart00012"]
+visible = false
+texture = ExtResource( 5 )
+script = ExtResource( 15 )
+mask_region = NodePath("../../terrain_mask")
+painting_material = 2
+paint_force = true
+
+[node name="LockAnim" type="Sprite2D" parent="Sprites"]
+texture = ExtResource( 6 )
+offset = Vector2( -1, 0 )
+hframes = 4
+vframes = 2
+
+[node name="RightMetalPanel00000" type="Sprite2D" parent="Sprites"]
+position = Vector2( 185, 1 )
+texture = ExtResource( 4 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 424, 134 )
+
+[node name="LeftMetalPanel00000" type="Sprite2D" parent="Sprites"]
+position = Vector2( -158, -4 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 387, 137 )
+
+[node name="terrain_mask" type="Sprite2D" parent="Sprites"]
+visible = false
+position = Vector2( 14.973, 3.80067 )
+scale = Vector2( 462.834, 254.712 )
+texture = ExtResource( 17 )
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
+texture = ExtResource( 2 )
+script = ExtResource( 15 )
+painting_material = 2
+paint_force = true
+
+[node name="ZIndexer" parent="Sprites" instance=ExtResource( 14 )]
+z_index = 600
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Open = SubResource( 106 )
+
+[node name="ItemContainer" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+offset_left = -84.0
+offset_top = 53.0
+offset_right = 135.0
+offset_bottom = 113.0
+alignment = 1
+
+[node name="Item" type="HBoxContainer" parent="ItemContainer"]
+unique_name_in_owner = true
+offset_right = 220.0
+offset_bottom = 120.0
+theme_override_constants/separation = 30
+
+[node name="TextureRect" type="TextureRect" parent="ItemContainer/Item"]
+offset_right = 120.0
+offset_bottom = 120.0
+custom_minimum_size = Vector2( 120, 120 )
+expand = true
+stretch_mode = 6
+
+[node name="Label" type="Label" parent="ItemContainer/Item"]
+offset_left = 150.0
+offset_top = 37.0
+offset_right = 220.0
+offset_bottom = 83.0
+theme_override_fonts/font = ExtResource( 9 )
+text = "x1"
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 10 )]
+unique_name_in_owner = true
+hide_header = true
+
+[connection signal="interacted" from="GenericInteractable" to="." method="on_interacted"]

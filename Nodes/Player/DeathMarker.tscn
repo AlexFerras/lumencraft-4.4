@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Player/LastDeathMarker.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Map/MapMarker/MapMarker.gd\"
+
+func _physics_process(delta: float) -> void:
+	for player in Utils.game.players:
+		if not player.dead and player.global_position.distance_squared_to(global_position) < 5000:
+			queue_free()
+"
+
+[node name="Marker" groups=["player_died_here"] instance=ExtResource( 1 )]
+modulate = Color( 1, 1, 1, 1 )
+scale = Vector2( 1.5, 1.5 )
+script = SubResource( 1 )
+texture = ExtResource( 2 )
+arrow = ExtResource( 2 )
+max_radius = 99999.0
+rotate_arrow = false

@@ -1,0 +1,249 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Nodes/Editor/Icons/Player.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Lab/tech_icons/pistol.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Buildings/Lab/preview_icon.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/UI/TechTree/Arrow.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/UI/TechTree/Level.png" type="Texture2D" id=5]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends PanelContainer
+
+enum {ITEM_TECH, ITEM_ARROW, ITEM_LEVEL}
+
+var button_prefab: PackedScene
+var arrow_prefab: PackedScene
+var level_prefab: PackedScene
+
+var lab_tech_list: Dictionary
+
+func _ready() -> void:
+	get_viewport().connect(\"gui_focus_changed\", Callable(self, \"on_focus\"))
+	button_prefab = Prefab.create($\"%ButtonPrefab\")
+	arrow_prefab = Prefab.create($\"%ArrowPrefab\")
+	level_prefab = Prefab.create($\"%LevelPrefab\")
+	
+	for button in $\"%TabButtons\".get_children():
+		button.connect(\"pressed\", Callable(self, \"set_tab\").bind(button.get_index()))
+	$\"%TabButtons\".get_child(0).button_pressed = true
+	
+	var container = $\"%LabTech\"
+	var x := 0
+	for tech in Const.Technology.values():
+		var button: Button
+		if tech.get(\"depend\", []).is_empty():
+			button = create_item(ITEM_TECH, Vector2(x, 0))
+			x += 1
+		else:
+			var parent = lab_tech_list[tech.depend.front()]
+			var pos: Vector2 = parent.get_meta(\"pos\")
+			
+			var item = create_item(ITEM_ARROW, pos + Vector2.DOWN)
+			container.add_child(item)
+			
+			button = create_item(ITEM_TECH, pos + Vector2.DOWN * 2)
+		
+		button.icon = load(tech.icon)
+		button.set_meta(\"tech\", tech)
+		container.add_child(button)
+		
+		container.custom_minimum_size.x = max(button.get_rect().end.x + 20, container.custom_minimum_size.x)
+		container.custom_minimum_size.y = max(button.get_rect().end.y + 20, container.custom_minimum_size.y)
+		lab_tech_list[tech.tech] = button
+	
+	container = $\"%WeaponTech\"
+	x = 0
+	for w in Const.game_data.upgradable_weapons:
+		var weapon: Button = create_item(ITEM_TECH, Vector2(x, 0))
+		weapon.icon = Utils.get_item_icon(w)
+		container.add_child(weapon)
+		
+		var upgrade_list: Array = Const.Items[w].upgrades
+		for upgrade in upgrade_list:
+			var button = create_item(ITEM_TECH, Vector2(x, 1))
+			button.icon = Const.get_upgrade_icon(upgrade.name)
+			container.add_child(button)
+			
+			for lv in upgrade.costs.size():
+				var item = create_item(ITEM_LEVEL, Vector2(x, lv + 2))
+				container.add_child(item)
+				container.custom_minimum_size.y = max(item.get_rect().end.y + 20, container.custom_minimum_size.y)
+				
+			container.custom_minimum_size.x = max(button.get_rect().end.x + 20, container.custom_minimum_size.x)
+			
+			x += 1
+	
+	container = $\"%ScoutTech\"
+	x = 0
+	for s in [\"health\", \"stamina\", \"speed\", \"evasion\", \"backpack\"]:
+		var stat: Button = create_item(ITEM_TECH, Vector2(x, 0))
+		stat.icon = Const.SCOUT_ICONS[s]
+		container.add_child(stat)
+		container.custom_minimum_size.x = max(stat.get_rect().end.x + 20, container.custom_minimum_size.x)
+		
+		for i in 10:
+			var button = create_item(ITEM_LEVEL, Vector2(x, i + 1))
+			container.add_child(button)
+			container.custom_minimum_size.y = max(button.get_rect().end.y + 20, container.custom_minimum_size.y)
+		
+		x += 1
+
+func on_focus(control: Control):
+	if control in lab_tech_list.values():
+		var tech: Dictionary = control.get_meta(\"tech\")
+		$\"%TechName\".text = tech.name
+		$\"%Description\".text = tech.description
+		$\"%TechContainer\".scroll_horizontal = control.position.x + control.size.x / 2 - $\"%TechContainer\".size.x / 2
+
+func create_item(type: int, pos: Vector2) -> Control:
+	var item: Control
+	match type:
+		ITEM_TECH:
+			item = button_prefab.instantiate()
+			item.position = Vector2(20, 20)
+		ITEM_ARROW:
+			item = arrow_prefab.instantiate()
+			item.position = Vector2(20, 20)
+		ITEM_LEVEL:
+			item = level_prefab.instantiate()
+			item.position = Vector2(20, 0)
+	
+	item.position += pos * 80
+	item.set_meta(\"pos\", pos)
+	return item
+
+func set_tab(idx: int):
+	for tab in $\"%TechContainer\".get_children():
+		tab.visible = tab.get_index() == idx
+"
+
+[sub_resource type="ButtonGroup" id=2]
+
+[node name="TechTree" type="PanelContainer"]
+offset_right = 614.0
+offset_bottom = 614.0
+script = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 607.0
+offset_bottom = 607.0
+custom_minimum_size = Vector2( 600, 600 )
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+offset_right = 600.0
+offset_bottom = 54.0
+
+[node name="TabButtons" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
+unique_name_in_owner = true
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 593.0
+offset_bottom = 47.0
+custom_minimum_size = Vector2( 0, 40 )
+theme_override_constants/separation = 20
+
+[node name="Button" type="Button" parent="VBoxContainer/PanelContainer/TabButtons"]
+offset_right = 40.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 0 )
+toggle_mode = true
+group = SubResource( 2 )
+icon = ExtResource( 3 )
+expand_icon = true
+
+[node name="Button2" type="Button" parent="VBoxContainer/PanelContainer/TabButtons"]
+offset_left = 60.0
+offset_right = 100.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 0 )
+toggle_mode = true
+group = SubResource( 2 )
+icon = ExtResource( 2 )
+expand_icon = true
+
+[node name="Button3" type="Button" parent="VBoxContainer/PanelContainer/TabButtons"]
+offset_left = 120.0
+offset_right = 160.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 0 )
+toggle_mode = true
+group = SubResource( 2 )
+icon = ExtResource( 1 )
+expand_icon = true
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer"]
+offset_top = 58.0
+offset_right = 600.0
+offset_bottom = 550.0
+size_flags_vertical = 3
+
+[node name="TechContainer" type="ScrollContainer" parent="VBoxContainer/PanelContainer2"]
+unique_name_in_owner = true
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 593.0
+offset_bottom = 485.0
+
+[node name="LabTech" type="Control" parent="VBoxContainer/PanelContainer2/TechContainer"]
+unique_name_in_owner = true
+visible = false
+offset_right = 522.0
+offset_bottom = 478.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ButtonPrefab" type="Button" parent="VBoxContainer/PanelContainer2/TechContainer/LabTech"]
+unique_name_in_owner = true
+offset_right = 12.0
+offset_bottom = 20.0
+custom_minimum_size = Vector2( 60, 60 )
+expand_icon = true
+
+[node name="ArrowPrefab" type="TextureRect" parent="VBoxContainer/PanelContainer2/TechContainer/LabTech"]
+unique_name_in_owner = true
+offset_left = 90.0
+offset_top = 63.0
+offset_right = 150.0
+offset_bottom = 123.0
+custom_minimum_size = Vector2( 60, 60 )
+texture = ExtResource( 4 )
+
+[node name="LevelPrefab" type="TextureRect" parent="VBoxContainer/PanelContainer2/TechContainer/LabTech"]
+unique_name_in_owner = true
+offset_left = 156.0
+offset_top = 150.0
+offset_right = 216.0
+offset_bottom = 210.0
+custom_minimum_size = Vector2( 60, 60 )
+texture = ExtResource( 5 )
+
+[node name="WeaponTech" type="Control" parent="VBoxContainer/PanelContainer2/TechContainer"]
+unique_name_in_owner = true
+visible = false
+
+[node name="ScoutTech" type="Control" parent="VBoxContainer/PanelContainer2/TechContainer"]
+unique_name_in_owner = true
+
+[node name="PanelContainer3" type="PanelContainer" parent="VBoxContainer"]
+offset_top = 554.0
+offset_right = 600.0
+offset_bottom = 600.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer3"]
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 593.0
+offset_bottom = 39.0
+
+[node name="TechName" type="Label" parent="VBoxContainer/PanelContainer3/VBoxContainer"]
+unique_name_in_owner = true
+offset_right = 586.0
+offset_bottom = 14.0
+
+[node name="Description" type="Label" parent="VBoxContainer/PanelContainer3/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 18.0
+offset_right = 586.0
+offset_bottom = 32.0

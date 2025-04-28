@@ -1,0 +1,52 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Map/Old/MapDarknessOld.gdshader" type="Shader" id=2]
+[ext_resource path="res://Nodes/Map/Old/MapDarknessPostProcessOld.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Map/Old/MapDarknessOld.gd" type="Script" id=4]
+
+[sub_resource type="Environment" id=3]
+
+[sub_resource type="World" id=4]
+environment = SubResource( 3 )
+
+[sub_resource type="ViewportTexture" id=26]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="ShaderMaterial" id=25]
+resource_local_to_scene = true
+shader = ExtResource( 2 )
+shader_param/global_transform = Transform2D( 916, 0, 0, 597, -459.311, -209.853 )
+shader_param/light_exponent = 1.0
+shader_param/light_amplify = 1.0
+shader_param/darkness = SubResource( 26 )
+
+[node name="MapDarkness" type="Node2D"]
+z_index = 1000
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true
+}
+ambient_color = Color( 0.564706, 0.564706, 0.564706, 1 )
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2( 915, 596 )
+world = SubResource( 4 )
+handle_input_locally = false
+render_target_v_flip = true
+render_target_update_mode = 3
+gui_disable_input = true
+
+[node name="Ambient" type="ColorRect" parent="SubViewport"]
+offset_right = 965.0
+offset_bottom = 646.0
+color = Color( 0.564706, 0.564706, 0.564706, 1 )
+
+[node name="Darkness" type="Sprite2D" parent="."]
+material = SubResource( 25 )
+position = Vector2( -459.311, -209.853 )
+scale = Vector2( 916, 597 )
+z_index = 2891
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 3 )

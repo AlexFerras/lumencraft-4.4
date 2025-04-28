@@ -1,0 +1,555 @@
+[gd_scene load_steps=28 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Turret/TurretBase.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Turret/TurretRocketLauncher.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Buildings/Turret/BombShoot(kradziony).png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Buildings/Turret/UpgradeStar.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Buildings/Turret/TurretComputer.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Resources/Textures/lights_vfx/radial_spot_light_001.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=9]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=11]
+[ext_resource path="res://Resources/Textures/lights_vfx/Lamp_light_Radial_main_T001.png" type="Texture2D" id=12]
+[ext_resource path="res://Nodes/Buildings/Turret/BombTurret.gd" type="Script" id=13]
+[ext_resource path="res://Nodes/Buildings/Turret/Turrent_T002_terrain_mask.png" type="Texture2D" id=14]
+[ext_resource path="res://SFX/Turret/TurretReadyNot.wav" type="AudioStream" id=15]
+[ext_resource path="res://SFX/Turret/TurretReady.wav" type="AudioStream" id=16]
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Nodes/Buildings/Common/HealthBar.tscn" type="PackedScene" id=19]
+
+[sub_resource type="CircleShape2D" id=13]
+radius = 9.74367
+
+[sub_resource type="Animation" id=20]
+resource_name = "PowerOFF"
+length = 2.3
+step = 0.017
+tracks/0/type = "value"
+tracks/0/path = NodePath("FlashLight:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 2.176 ),
+"transitions": PackedFloat32Array( 0.5, 0.5 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "audio"
+tracks/1/path = NodePath("Top/ShootPoint/AudioStreamPlayer2D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 15 )
+} ],
+"times": PackedFloat32Array( 0.595 )
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("FlashLight:is_static")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 2.295 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("AnimationPlayer:playback_speed")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=15]
+resource_name = "PowerON"
+length = 2.3
+step = 0.017
+tracks/0/type = "value"
+tracks/0/path = NodePath("FlashLight:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1.768 ),
+"transitions": PackedFloat32Array( 2, 2 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "audio"
+tracks/1/path = NodePath("Top/ShootPoint/AudioStreamPlayer2D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 16 )
+} ],
+"times": PackedFloat32Array( 0.017 )
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0.629 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("FlashLight:is_static")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 1.972 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("AnimationPlayer:playback_speed")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=14]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("FlashLight:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("TerrainMask:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Top/ShootPoint/BombShoot:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Top/ShootPoint/BombShoot:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Top/ShootPoint/BombShoot:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.196, 0.196 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("FlashLight:is_static")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=16]
+resource_name = "shoot"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Top/ShootPoint/BombShoot:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Top/ShootPoint/BombShoot:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.2, 0.5 ),
+"transitions": PackedFloat32Array( 0.5, 2, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 2, 1, 1, 1 ), Color( 2, 1, 1, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Top/ShootPoint/BombShoot:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.2 ),
+"transitions": PackedFloat32Array( 0.5, 1 ),
+"update": 0,
+"values": [ Vector2( 0.196, 0.196 ), Vector2( 0.256, 0.256 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("AnimationPlayer:playback_speed")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 4.0 ]
+}
+
+[sub_resource type="Animation" id=21]
+resource_name = "Blink_Noise"
+length = 2.126
+loop = true
+
+[sub_resource type="Animation" id=22]
+resource_name = "PowerOFF"
+length = 2.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 3,
+"values": [ Color( 1.86275, 1, 0.290196, 0.0666667 ), Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../LightSprite2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 3,
+"values": [ Color( 2.1098, 1.98039, 1.43529, 0.509804 ), Color( 2.1098, 1.98039, 1.43529, 0.509804 ) ]
+}
+
+[sub_resource type="Animation" id=23]
+resource_name = "PowerON"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 1.7, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ), Color( 1.86275, 1, 0.290196, 0.156863 ), Color( 1.86275, 1, 0.290196, 0.0666667 ), Color( 1.86275, 1, 0.290196, 0.0666667 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../LightSprite2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 2.1098, 1.98039, 1.43529, 0 ), Color( 2.1098, 1.98039, 1.43529, 0.313726 ), Color( 2.1098, 1.98039, 1.43529, 0.0784314 ), Color( 2.1098, 1.98039, 1.43529, 0.509804 ) ]
+}
+
+[sub_resource type="Animation" id=24]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../LightSprite2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 2.1098, 1.98039, 1.43529, 0 ) ]
+}
+
+[node name="BombTurret" type="Area2D"]
+z_index = 600
+z_as_relative = false
+script = ExtResource( 13 )
+radius = 9.0
+base_max_range = 150.0
+base_shoot_delay = 4.0
+
+[node name="TurretComputer" parent="." instance=ExtResource( 7 )]
+position = Vector2( -0.58, -0.222 )
+target_screen = NodePath("../ComputerScreen")
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 4 )]
+
+[node name="PreferredSize" type="ReferenceRect" parent="ComputerScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -270.0
+offset_right = 450.0
+offset_bottom = 270.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2( -0.58, -0.222 )
+shape = SubResource( 13 )
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( -0.58, -0.222 )
+scale = Vector2( 0.06, 0.06 )
+z_index = -1002
+z_as_relative = false
+texture = ExtResource( 1 )
+
+[node name="ZIndexer" parent="Sprite2D" instance=ExtResource( 10 )]
+z_index = -1000
+offset = -2
+
+[node name="Top" type="Sprite2D" parent="."]
+modulate = Color( 1.17, 1.02, 0.98, 1 )
+position = Vector2( -0.58, -0.222 )
+scale = Vector2( 0.03, 0.03 )
+texture = ExtResource( 2 )
+offset = Vector2( 20, 0 )
+
+[node name="ShootPoint" type="Marker2D" parent="Top"]
+position = Vector2( 480, 0 )
+scale = Vector2( 12.5, 12.5 )
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Top/ShootPoint"]
+position = Vector2( -15, 0 )
+stream = ExtResource( 15 )
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="BombShoot" type="Sprite2D" parent="Top/ShootPoint"]
+visible = false
+position = Vector2( 3.6553, 0.239527 )
+scale = Vector2( 0.196, 0.196 )
+z_index = -1
+texture = ExtResource( 5 )
+
+[node name="UpgradeStars" type="Node2D" parent="Top"]
+unique_name_in_owner = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Top/UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( -269.751, -86.2266 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 6 )
+
+[node name="Sprite2" type="Sprite2D" parent="Top/UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( -269.751, 102.32 )
+rotation = 3.14159
+scale = Vector2( 3, 3 )
+texture = ExtResource( 6 )
+
+[node name="Sprite3" type="Sprite2D" parent="Top/UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( -101.951, 10.5542 )
+rotation = 2.83616
+scale = Vector2( 3, 3 )
+texture = ExtResource( 6 )
+
+[node name="FlashLight" type="Node2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0 )
+position = Vector2( -0.58, -0.222 )
+scale = Vector2( 0.087, 0.087 )
+script = ExtResource( 3 )
+texture = ExtResource( 11 )
+is_static = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/PowerOFF = SubResource( 20 )
+anims/PowerON = SubResource( 15 )
+anims/RESET = SubResource( 14 )
+anims/shoot = SubResource( 16 )
+
+[node name="LavaChecks" type="Node2D" parent="."]
+visible = false
+position = Vector2( 0.58667, -0.555332 )
+script = ExtResource( 9 )
+
+[node name="Marker2D" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.177034, -10.1691 )
+
+[node name="Position2D2" type="Marker2D" parent="LavaChecks"]
+position = Vector2( 10.6158, -0.67112 )
+
+[node name="Position2D3" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.303259, 10.8225 )
+
+[node name="Position2D4" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -11.9958, 0.722435 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 10 )]
+z_index = 600
+
+[node name="TerrainMask" type="Sprite2D" parent="."]
+visible = false
+position = Vector2( -0.58, -0.222 )
+scale = Vector2( 0.2, 0.2 )
+z_as_relative = false
+texture = ExtResource( 14 )
+
+[node name="attack_range_visual" parent="." instance=ExtResource( 17 )]
+modulate = Color( 0.5, 1, 1, 1 )
+position = Vector2( -0.58, -0.222 )
+max_radius = 99999.0
+
+[node name="attack_range_upgrade_visual" parent="." instance=ExtResource( 17 )]
+modulate = Color( 1, 0.5, 0.3, 1 )
+position = Vector2( -0.58, -0.222 )
+max_radius = 99999.0
+
+[node name="HealthBar" parent="." instance=ExtResource( 19 )]
+position = Vector2( -0.58, -0.222 )
+scale = Vector2( 0.5, 1 )
+
+[node name="HealthBar" parent="HealthBar" index="0"]
+offset_top = 6.0
+offset_bottom = 7.0
+
+[node name="LampaHalo2" type="Sprite2D" parent="."]
+modulate = Color( 1.86275, 1, 0.290196, 0 )
+self_modulate = Color( 1.79, 1.91, 1.32, 1 )
+position = Vector2( 2.38419e-07, 0 )
+rotation = 4.71312
+scale = Vector2( 0.1089, 0.155483 )
+z_index = 16
+texture = ExtResource( 8 )
+
+[node name="LightSprite2" type="Node2D" parent="."]
+modulate = Color( 2.1098, 1.98039, 1.43529, 0 )
+position = Vector2( 23, -3 )
+rotation = 3.11901
+scale = Vector2( 0.129953, -0.164887 )
+script = ExtResource( 3 )
+texture = ExtResource( 12 )
+offset = Vector2( 174.865, 0 )
+follow_rotation = true
+is_static = true
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+root_node = NodePath("../LampaHalo2")
+playback_process_mode = 0
+anims/Blink_Noise = SubResource( 21 )
+anims/PowerOFF = SubResource( 22 )
+anims/PowerON = SubResource( 23 )
+anims/RESET = SubResource( 24 )
+next/PowerOFF = "Blink_Noise"
+next/PowerON = "Blink_Noise"
+
+[editable path="HealthBar"]

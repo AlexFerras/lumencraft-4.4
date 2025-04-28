@@ -1,0 +1,663 @@
+[gd_scene load_steps=84 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Cannon/scanner_building_.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Cannon/scanner_building_002.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerInteractable.gd" type="Script" id=4]
+[ext_resource path="res://Nodes/Buildings/Cannon/scanner_building_001.png" type="Texture2D" id=5]
+[ext_resource path="res://SFX/Turret/rotate_beam.wav" type="AudioStream" id=6]
+[ext_resource path="res://Nodes/Buildings/Cannon/LumenCannon.gd" type="Script" id=7]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=9]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=11]
+[ext_resource path="res://SFX/Turret/laser_loop2.wav" type="AudioStream" id=12]
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/LightningBall.png" type="Texture2D" id=13]
+[ext_resource path="res://Nodes/Buildings/Turret/Turrent_T002_terrain_mask.png" type="Texture2D" id=14]
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/Laser.gd" type="Script" id=15]
+[ext_resource path="res://Nodes/Effects/ConnectorLightning.png" type="Texture2D" id=16]
+[ext_resource path="res://Nodes/Buildings/Common/HealthBar.tscn" type="PackedScene" id=19]
+
+[sub_resource type="CircleShape2D" id=13]
+radius = 10.5796
+
+[sub_resource type="CircleShape2D" id=21]
+radius = 3.38158
+
+[sub_resource type="CapsuleShape2D" id=22]
+radius = 5.1088
+height = 38.4221
+
+[sub_resource type="AtlasTexture" id=53]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 0, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=54]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 740, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=55]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 1480, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=56]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2220, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=57]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2960, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=58]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 3700, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=59]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 4440, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=60]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5180, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=61]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5920, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=62]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 6660, 0, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=63]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 0, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=64]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 740, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=65]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2220, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=66]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2960, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=67]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 3700, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=68]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 4440, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=69]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5180, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=70]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5920, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=71]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 6660, 84, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=72]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 0, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=73]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 740, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=74]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 1480, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=75]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2960, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=76]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 3700, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=77]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 4440, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=78]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5180, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=79]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5920, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=80]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 6660, 168, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=81]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 0, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=82]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 740, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=83]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 1480, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=84]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2220, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=85]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 3700, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=86]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 4440, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=87]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5180, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=88]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5920, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=89]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 6660, 252, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=90]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 0, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=91]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 740, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=92]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 1480, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=93]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2220, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=94]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2960, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=95]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 4440, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=96]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5180, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=97]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5920, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=98]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 6660, 336, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=99]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 0, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=100]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 740, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=101]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 1480, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=102]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2220, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=103]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 2960, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=104]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 3700, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=105]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 4440, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=106]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5180, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=107]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 5920, 420, 740, 84 )
+
+[sub_resource type="AtlasTexture" id=108]
+flags = 5
+atlas = ExtResource( 16 )
+region = Rect2( 6660, 420, 740, 84 )
+
+[sub_resource type="SpriteFrames" id=109]
+animations = [ {
+"frames": [ SubResource( 53 ), SubResource( 54 ), SubResource( 55 ), SubResource( 56 ), SubResource( 57 ), SubResource( 58 ), SubResource( 59 ), SubResource( 60 ), SubResource( 61 ), SubResource( 62 ), SubResource( 63 ), SubResource( 64 ), SubResource( 65 ), SubResource( 66 ), SubResource( 67 ), SubResource( 68 ), SubResource( 69 ), SubResource( 70 ), SubResource( 71 ), SubResource( 72 ), SubResource( 73 ), SubResource( 74 ), SubResource( 75 ), SubResource( 76 ), SubResource( 77 ), SubResource( 78 ), SubResource( 79 ), SubResource( 80 ), SubResource( 81 ), SubResource( 82 ), SubResource( 83 ), SubResource( 84 ), SubResource( 85 ), SubResource( 86 ), SubResource( 87 ), SubResource( 88 ), SubResource( 89 ), SubResource( 90 ), SubResource( 91 ), SubResource( 92 ), SubResource( 93 ), SubResource( 94 ), SubResource( 95 ), SubResource( 96 ), SubResource( 97 ), SubResource( 98 ), SubResource( 99 ), SubResource( 100 ), SubResource( 101 ), SubResource( 102 ), SubResource( 103 ), SubResource( 104 ), SubResource( 105 ), SubResource( 106 ), SubResource( 107 ), SubResource( 108 ), SubResource( 108 ), SubResource( 107 ), SubResource( 106 ), SubResource( 105 ), SubResource( 104 ), SubResource( 103 ), SubResource( 102 ), SubResource( 101 ), SubResource( 100 ), SubResource( 99 ), SubResource( 98 ), SubResource( 97 ), SubResource( 96 ), SubResource( 95 ), SubResource( 94 ), SubResource( 93 ), SubResource( 92 ), SubResource( 91 ), SubResource( 90 ), SubResource( 89 ), SubResource( 88 ), SubResource( 87 ), SubResource( 86 ), SubResource( 85 ), SubResource( 84 ), SubResource( 83 ), SubResource( 82 ), SubResource( 81 ), SubResource( 80 ), SubResource( 79 ), SubResource( 78 ), SubResource( 77 ), SubResource( 76 ), SubResource( 75 ), SubResource( 74 ), SubResource( 73 ), SubResource( 72 ), SubResource( 71 ), SubResource( 70 ), SubResource( 69 ), SubResource( 68 ), SubResource( 67 ), SubResource( 66 ), SubResource( 65 ), SubResource( 64 ), SubResource( 63 ), SubResource( 62 ), SubResource( 61 ), SubResource( 60 ), SubResource( 59 ), SubResource( 58 ), SubResource( 57 ), SubResource( 56 ), SubResource( 55 ), SubResource( 54 ) ],
+"loop": true,
+"name": "anime",
+"speed": 60.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 36.962, 1.672 )
+
+[sub_resource type="CanvasItemMaterial" id=49]
+blend_mode = 1
+
+[sub_resource type="Animation" id=14]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Body/Top/light:is_static")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Body/Top/ScannerBuilding001:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Body/Top/light:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=16]
+resource_name = "shoot"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Body/Top/ScannerBuilding001:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1.7, 2 ),
+"transitions": PackedFloat32Array( 0.5, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 3.09538, 1, 3.1157, 1 ), Color( 5, 1, 5, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Body/Top/light:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 1 ), Color( 2.96, 1, 3.42, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Body/Top/light:is_static")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="GDScript" id=47]
+script/source = "extends \"res://Nodes/Buildings/Common/Computer/GenericComputer.gd\"
+
+func _setup():
+	if active:
+		screen.set_title(\"Shoot Laser\")
+		var description := tr(\"Will automatically shoot for 10s.\")
+		if owner.shoot_time > 0:
+			description += \"\\n\" + tr(\"Remaining time: %.1f.\") % owner.shoot_time
+		screen.set_description(description)
+		screen.add_cost(Const.ItemIDs.LUMEN, 10)
+		screen.set_interact_action(\"Shoot\")
+		
+		if owner.locked:
+			screen.set_long_action(\"Unlock Rotation\")
+		else:
+			screen.set_long_action(\"Lock Rotation\")
+
+func _make():
+	owner.prelong()
+	reload()
+
+func _long_make():
+	owner.toggle_lock()
+	reload()
+"
+
+[sub_resource type="CircleShape2D" id=46]
+radius = 195.511
+
+[node name="LumenCannon" type="Area2D"]
+z_index = 600
+z_as_relative = false
+script = ExtResource( 7 )
+radius = 9.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2( -0.142992, -0.284431 )
+shape = SubResource( 13 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+z_index = -200
+z_as_relative = false
+texture = ExtResource( 2 )
+
+[node name="ZIndexer" parent="Sprite2D" instance=ExtResource( 10 )]
+z_index = -200
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2( -1, 0 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 21 )
+
+[node name="PinJoint2D" type="PinJoint2D" parent="StaticBody2D"]
+visible = false
+position = Vector2( 1, 0 )
+node_a = NodePath("../../Body")
+node_b = NodePath("..")
+
+[node name="Body" type="RigidBody2D" parent="."]
+mass = 3.0
+gravity_scale = 0.0
+angular_damp = 5.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+position = Vector2( 1.372, -5.31 )
+rotation = -1.57079
+shape = SubResource( 22 )
+
+[node name="Top" type="Sprite2D" parent="Body"]
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 1 )
+offset = Vector2( 12.8453, -27.7181 )
+
+[node name="ShootPoint" type="Marker2D" parent="Body/Top"]
+unique_name_in_owner = true
+position = Vector2( -5.37682, -99.9474 )
+
+[node name="Laser" type="Area2D" parent="Body/Top/ShootPoint"]
+visible = false
+position = Vector2( 2.10602, -11.2423 )
+rotation = -1.5708
+scale = Vector2( 20, 10 )
+script = ExtResource( 15 )
+
+[node name="Lightning" type="AnimatedSprite2D" parent="Body/Top/ShootPoint/Laser"]
+modulate = Color( 5, 1.5, 6, 1 )
+show_behind_parent = true
+scale = Vector2( 0.1, 0.067 )
+frames = SubResource( 109 )
+animation = "anime"
+frame = 92
+speed_scale = 5.986
+playing = true
+centered = false
+offset = Vector2( 0, -36.452 )
+
+[node name="Lightning2" type="AnimatedSprite2D" parent="Body/Top/ShootPoint/Laser"]
+modulate = Color( 5, 1.5, 6, 1 )
+show_behind_parent = true
+scale = Vector2( 0.1, 0.0666667 )
+frames = SubResource( 109 )
+animation = "anime"
+frame = 54
+speed_scale = 8.0
+playing = true
+centered = false
+offset = Vector2( 0, -36.452 )
+
+[node name="Lightning3" type="AnimatedSprite2D" parent="Body/Top/ShootPoint/Laser"]
+modulate = Color( 5, 1.5, 6, 1 )
+show_behind_parent = true
+scale = Vector2( 0.1, 0.144 )
+frames = SubResource( 109 )
+animation = "anime"
+frame = 14
+playing = true
+centered = false
+offset = Vector2( 0, -36.452 )
+
+[node name="Lightning4" type="AnimatedSprite2D" parent="Body/Top/ShootPoint/Laser"]
+modulate = Color( 5, 1.50196, 8.02745, 1 )
+show_behind_parent = true
+scale = Vector2( 0.1, 0.14 )
+frames = SubResource( 109 )
+animation = "anime"
+frame = 105
+speed_scale = 2.0
+playing = true
+centered = false
+offset = Vector2( 0, -36.452 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Top/ShootPoint/Laser"]
+position = Vector2( 36.9617, -3.8147e-06 )
+shape = SubResource( 3 )
+disabled = true
+
+[node name="ballpos" type="Marker2D" parent="Body/Top/ShootPoint/Laser"]
+position = Vector2( 74, 0 )
+
+[node name="LightningBall" type="Sprite2D" parent="Body/Top/ShootPoint"]
+visible = false
+modulate = Color( 2.68, 0.87, 1.01, 1 )
+position = Vector2( 2.10599, -1491.24 )
+rotation = -1.5708
+scale = Vector2( 0.74, 0.75 )
+texture = ExtResource( 13 )
+
+[node name="ScannerBuilding001" type="Sprite2D" parent="Body/Top"]
+modulate = Color( 1, 1, 1, 0 )
+material = SubResource( 49 )
+position = Vector2( -1.17851, 0 )
+texture = ExtResource( 5 )
+offset = Vector2( 12.845, -27.718 )
+
+[node name="LightningBall" type="Sprite2D" parent="Body/Top/ScannerBuilding001"]
+position = Vector2( -4.19831, -109.547 )
+texture = ExtResource( 13 )
+
+[node name="light" type="Node2D" parent="Body/Top"]
+modulate = Color( 0, 0, 0, 0 )
+self_modulate = Color( 1, 1, 1, 0 )
+scale = Vector2( 0.2, 0.2 )
+script = ExtResource( 3 )
+texture = ExtResource( 11 )
+follow_rotation = true
+is_static = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_speed = 2.0
+anims/RESET = SubResource( 14 )
+anims/shoot = SubResource( 16 )
+
+[node name="LavaChecks" type="Node2D" parent="."]
+position = Vector2( 0.58667, -0.555332 )
+script = ExtResource( 9 )
+
+[node name="Marker2D" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.177034, -13.4447 )
+
+[node name="Position2D2" type="Marker2D" parent="LavaChecks"]
+position = Vector2( 13.4133, -0.67112 )
+
+[node name="Position2D3" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.303259, 13.5553 )
+
+[node name="Position2D4" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -14.5867, 0.722435 )
+
+[node name="ZIndexer" parent="." instance=ExtResource( 10 )]
+z_index = 600
+
+[node name="TerrainMask" type="Sprite2D" parent="."]
+visible = false
+position = Vector2( -0.050869, -0.122787 )
+scale = Vector2( 0.376, 0.375 )
+z_index = 2677
+z_as_relative = false
+texture = ExtResource( 14 )
+
+[node name="HealthBar" parent="." instance=ExtResource( 19 )]
+position = Vector2( 0.0139331, 0.000724912 )
+scale = Vector2( 0.5, 1 )
+
+[node name="HealthBar" parent="HealthBar" index="0"]
+offset_top = 6.0
+offset_bottom = 7.0
+
+[node name="Computer" type="Node2D" parent="."]
+script = SubResource( 47 )
+highlight_green = null
+highlight_red = null
+target_screen = NodePath("../ComputerScreen")
+
+[node name="PlayerDetector" type="Area2D" parent="Computer"]
+scale = Vector2( 0.1, 0.1 )
+script = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Computer/PlayerDetector"]
+visible = false
+shape = SubResource( 46 )
+
+[node name="Sprite2D" type="Sprite2D" parent="Computer"]
+z_index = -201
+z_as_relative = false
+
+[node name="Highlight" type="Sprite2D" parent="Computer/Sprite2D"]
+visible = false
+scale = Vector2( 0.5, 0.5 )
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 8 )]
+position = Vector2( 0, -11 )
+
+[node name="PreferredSize" type="ReferenceRect" parent="ComputerScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -726.0
+offset_top = -544.0
+offset_right = 744.0
+offset_bottom = -4.0
+
+[node name="beam_rotate" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 6 )
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="beam_active" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 12 )
+pitch_scale = 1.8
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[editable path="HealthBar"]

@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/UI/AutoAction/AutoAction.gd" type="Script" id=1]
+
+[sub_resource type="Shader" id=1]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.5.beta's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+uniform float cutoff=1.5;
+uniform float range=0.4;
+void fragment()
+{
+	vec4 tex_col=texture(TEXTURE,UV);
+	float avg= (tex_col.x+tex_col.y+tex_col.z)/3.0;
+	float is_white=smoothstep(cutoff,cutoff+range,length(tex_col)*tex_col.a);
+	COLOR=clamp(tex_col*MODULATE+is_white*1.1,vec4(0.0),vec4(1.0));
+//	if(length(tex_col.rgb-avg)>0.2)
+//		COLOR.rgb*=(tex_col.rgb-avg)*100.0;
+//		COLOR.rgb=clamp(COLOR.rgb,vec3(0.0),vec3(1.0));
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/cutoff = 1.114
+shader_param/range = 0.834
+
+[node name="AutoAction" type="TextureRect"]
+modulate = Color( 2, 1.2, 0.5, 1 )
+material = SubResource( 2 )
+offset_right = 40.0
+offset_bottom = 40.0
+expand = true
+stretch_mode = 6
+script = ExtResource( 1 )

@@ -1,0 +1,105 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Nodes/Objects/Deco/computer_panel_t002.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=5]
+[ext_resource path="res://Nodes/Objects/Deco/Laptop.gd" type="Script" id=6]
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 6.54064, 6.61496 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 5, 4 )
+
+[sub_resource type="Animation" id=4]
+resource_name = "Active"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/LightSprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=5]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D/LightSprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ false ]
+}
+
+[node name="Laptop" type="Area2D"]
+script = ExtResource( 6 )
+
+[node name="SmoothRect" type="Sprite2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 0.105106, 0.792 )
+scale = Vector2( 0.08, 0.068 )
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource( 3 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+visible = false
+shape = SubResource( 2 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.01, 0.01 )
+texture = ExtResource( 1 )
+
+[node name="LightSprite" type="Node2D" parent="Sprite2D"]
+visible = false
+modulate = Color( 10, 10, 10, 1 )
+position = Vector2( 0, -100 )
+scale = Vector2( 0.01, 0.01 )
+script = ExtResource( 3 )
+texture = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Active = SubResource( 4 )
+anims/RESET = SubResource( 5 )
+
+[node name="Detector" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detector"]
+visible = false
+shape = SubResource( 3 )
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 4 )]
+hide_header = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+visible = false
+offset_right = 600.0
+offset_bottom = 400.0
+custom_minimum_size = Vector2( 1000, 400 )
+
+[node name="ScrollMessage" type="Label" parent="ScrollContainer"]
+unique_name_in_owner = true
+offset_right = 536.0
+offset_bottom = 55.0
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource( 5 )
+autowrap = true
+
+[connection signal="area_entered" from="Detector" to="." method="on_enter_damage"]

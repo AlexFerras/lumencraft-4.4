@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://SFX/wind-blowing.wav" type="AudioStream" id=1]
+
+[node name="Wind_Blowing" type="AudioStreamPlayer2D"]
+position = Vector2( 291, 333 )
+stream = ExtResource( 1 )
+volume_db = -22.023
+autoplay = true
+max_distance = 6000.0

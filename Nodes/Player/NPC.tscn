@@ -1,0 +1,2318 @@
+[gd_scene load_steps=44 format=2]
+
+[ext_resource path="res://Nodes/Player/Animations/Hold_1h_small_shadow.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Lights/Textures/Flashlight3.png" type="Texture2D" id=2]
+[ext_resource path="res://Scripts/GenericInteractable.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=4]
+[ext_resource path="res://Nodes/Player/ThrowingPower.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/Player/Animations/Death_small.png" type="Texture2D" id=6]
+[ext_resource path="res://Nodes/Player/Animations/Slide_Forward_small_shadow.png" type="Texture2D" id=7]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=8]
+[ext_resource path="res://Nodes/Player/Animations/Legs_shadow.png" type="Texture2D" id=9]
+[ext_resource path="res://Nodes/Player/Animations/Throw_small_shadow.png" type="Texture2D" id=10]
+[ext_resource path="res://Nodes/Player/Animations/Hold_2h_small_shadow.png" type="Texture2D" id=13]
+[ext_resource path="res://Nodes/Player/Animations/Idle_small_shadow.png" type="Texture2D" id=14]
+[ext_resource path="res://Nodes/Player/Animations/Carry_small_shadow.png" type="Texture2D" id=15]
+[ext_resource path="res://Nodes/Player/Animations/Hold_heavy_small_shadow.png" type="Texture2D" id=16]
+[ext_resource path="res://Nodes/Map/LavaChecks.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Nodes/Buildings/Reactor/Smoke_1.png" type="Texture2D" id=23]
+[ext_resource path="res://Nodes/Lights/LightHalo.gd" type="Script" id=24]
+[ext_resource path="res://Nodes/Lights/Textures/Flashlight4_Halo_tp.png" type="Texture2D" id=25]
+
+[sub_resource type="GDScript" id=39]
+script/source = "extends PixelMapRigidBody
+
+const MAGNET_RANGE = 25
+const THROW_VARIATION = Vector2(2, 2.5)
+const DASH_STAMINA = 30
+
+@export var hp: float
+@export var inventory: Array
+@export var threat: float
+
+@onready var torso := $Torso as Sprite2D
+@onready var torso_scale := torso.scale
+@onready var legs := $Legs as Sprite2D
+@onready var hold_point := $Torso/HoldPoint as Node2D
+@onready var throwing_sprite := $Torso/Throwing as Sprite2D
+@onready var collider := Utils.get_node_by_type(self, Area2D) as Area2D
+
+@onready var legs_animator  := $Legs/AnimatorLegs as AnimationPlayer
+@onready var torso_animator := $AnimationPlayer as AnimationPlayer
+@onready var hurt_audio := $HurtAudio
+@onready var run_debris := $RunDebris
+
+enum {NONE, THROW, SHOOT, DASH}
+var animation_state: int = NONE
+
+var map: Map: set = set_map
+
+var time_from_last_shoot := 0.0
+var force_position: Vector2
+var block_scroll: bool
+var prev_angle: float
+
+var max_hp: float
+var dead: bool
+
+var fake_move: Vector2
+var fake_angle: float
+var fake_press: Array
+var fake_hold: Array
+var fake_release: Array
+var fake_path: Array
+
+var throw_timer: float
+
+var interactables: Array
+var current_interactable: Node2D
+var prev_interactable: Node2D
+
+var inventory_select: int
+var prev_item: Dictionary
+var flare: Dictionary
+var counters: Array
+var queued_erase: Array
+
+var throwing: float
+var throwing_power: float
+var thrown_item: Dictionary
+var in_vehicle: bool
+var on_stand: bool
+var after_build: bool
+var last_build_angle: float
+
+var melee: Node2D
+var build_menu: Node2D
+var gun_audio: AudioStreamPlayer2D
+var gun_sprite: Node2D
+
+var player_id := 0
+var control_id := 1
+var inventory_visible: bool
+var position_on_screen: Vector2
+var using_computer: Node2D
+
+signal hp_changed
+signal destination_reached
+signal talked(player)
+
+func _init() -> void:
+	flare = {id = Const.ItemIDs.FLARE}
+	validate_item(flare)
+
+func _ready() -> void:
+	torso_animator.play(get_current_item_data().get(\"animation\", \"Carry\"))
+	fake_angle = global_rotation
+	
+	max_hp = hp
+	force_position = global_position
+	
+	set_map(Utils.game.get(\"map\"))
+	
+	if position == Vector2():
+		position = Vector2(1, 1)
+	map.player_tracker.add(self, radius, 999999)
+	
+	$LavaChecks.connect(\"lava_touching\", Callable(self, \"damage\").bind({damage = 10}))
+	
+	collider.collision_layer = Const.PLAYER_COLLISION_LAYER
+	collider.collision_mask = 0
+	
+	if not get_signal_connection_list(\"talked\").is_empty():
+		$GenericInteractable.connect(\"interacted\", Callable(self, \"on_interacted\"))
+	else:
+		$GenericInteractable.queue_free()
+
+func on_interacted(player):
+	emit_signal(\"talked\", player)
+
+func _process(delta: float) -> void:
+	throwing -= delta
+	
+	process_controls(delta)
+	process_shooting(delta)
+	process_throwing(delta)
+	process_animation()
+	
+	for counter in counters:
+		counter.timer += delta * 1000
+	
+	if not fake_path.is_empty():
+		var next_point = fake_path.front()
+		fake_move = global_position.direction_to(next_point)
+		
+		if global_position.distance_squared_to(next_point) < 100:
+			fake_path.pop_front()
+			if fake_path.is_empty():
+				fake_move = Vector2()
+				emit_signal(\"destination_reached\")
+
+func process_controls(delta: float):
+	if is_action_just_pressed(\"map\"):
+		Utils.game.ui.toggle_map()
+	
+	var pickables: PixelMapPickables = map.pickables
+	for id in pickables.get_pickables_in_range(global_position, MAGNET_RANGE):
+		pickables.set_pickable_velocity(id, pickables.get_pickable_velocity(id) + pickables.get_pickable_position(id).direction_to(global_position) * 100 * delta)
+	
+	if is_action_just_pressed(\"slot1\") and is_slot_usable(0):
+		inventory_select = 0
+		select_changed()
+	
+	if is_action_just_pressed(\"slot2\") and is_slot_usable(1):
+		inventory_select = 1
+		select_changed()
+	
+	if is_action_just_pressed(\"slot3\") and is_slot_usable(2):
+		inventory_select = 2
+		select_changed()
+	
+	if is_action_just_pressed(\"slot4\") and is_slot_usable(3):
+		inventory_select = 3
+		select_changed()
+
+func process_shooting(delta: float):
+	time_from_last_shoot += delta
+	if build_menu:
+		return
+	
+	if is_action_just_pressed(\"shoot2\") and animation_state != THROW and can_use_delayed(flare):
+		shoot(flare)
+	
+	var current_weapon: Dictionary = get_current_item()
+	if not current_weapon or current_weapon.id < Const.RESOURCE_COUNT or not can_use(current_weapon) or get_tree().is_input_handled():
+		return
+	
+	if is_action_just_released(\"shoot\"):
+		deshoot()
+		
+		if not queued_erase.is_empty():
+			for erase in queued_erase:
+				erase_stack(erase)
+			queued_erase.clear()
+	
+#	if is_action_just_pressed(\"reload\") and \"reload\" in current_weapon:
+#		reload_weapon(current_weapon)
+	
+	if animation_state != THROW and (is_action_just_pressed(\"shoot\") or is_action_pressed(\"shoot\") and current_weapon.get(\"autofire\")):
+		if get_ammo(current_weapon) > 0:
+			if shoot(current_weapon):
+				time_from_last_shoot = 0.0
+				if not \"infinite\" in current_weapon:
+					var data: Dictionary = Const.Items[current_weapon.id]
+					if \"ammo\" in data:
+						subtract_item(Const.ItemIDs.AMMO, data.get(\"ammo_per_shot\", 1), data.ammo, true)
+						skip_select = false
+					else:
+						subtract_stack(current_weapon, 1)
+		else:
+			var data: Dictionary = Const.Items[current_weapon.id]
+			if \"delay\" in data:
+				if not can_use_delayed(current_weapon):
+					return false
+				current_weapon.last_shot = Time.get_ticks_msec()
+			
+			Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/gun_revolver_pistol_dry_fire\"), self)
+			deshoot()
+
+func process_throwing(delta: float):
+	if thrown_item:
+		throwing_power = min(throwing_power + delta, 1)
+		throwing_sprite.show()
+		throwing_sprite.region_rect.size.x = 160 * (throwing_power / 1.0)
+		
+		if is_action_just_released(\"shoot\") or is_action_just_released(\"shoot2\") or build_menu:
+			torso_animator.seek(28, true)
+			shoot(thrown_item)
+			throwing_power = 0
+			throwing_sprite.hide()
+			thrown_item = {}
+	
+	if build_menu:
+		return
+	
+	var scroll_allowed := not block_scroll
+	if scroll_allowed and current_interactable and current_interactable.get(\"block_scroll\"):
+		scroll_allowed = false
+	
+	if throw_timer >= 0 and is_action_just_released(\"throw_item\") or throw_timer >= 0.5:
+		var current_item: Dictionary = get_current_item()
+		if current_item:
+			Utils.play_sample(preload(\"res://SFX/Player/346373__denao270__throwing-whip-effect.wav\"), null, false, 1.2)
+			throw_resource(current_item, Vector2.RIGHT.rotated(get_shoot_rotation()) * randf_range(THROW_VARIATION.x, THROW_VARIATION.y))
+		throw_timer = -999
+	
+	if is_action_pressed(\"throw_item\"):
+		throw_timer += delta
+	else:
+		throw_timer = 0
+
+func exit_build():
+	build_menu = null
+	after_build = true
+	if is_inside_tree():
+		get_tree().create_timer(0.1).connect(\"timeout\", Callable(self, \"set\").bind(\"after_build\", false))
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	
+	if is_action_pressed(\"slot1\"):
+		map.pixel_map.update_material_spiral(global_position,25,Const.Materials.TAR, 2+ randi()%15, 1<<Const.Materials.EMPTY)
+
+	if force_position:
+		state.transform.origin = force_position
+		force_position = Vector2()
+		return
+	
+	var angle := get_look_angle()
+	if angle != INF:
+		var rot := lerp_angle(torso.rotation, angle, 0.2)
+		legs.rotation = rot
+		torso.rotation = rot
+		prev_angle = torso.rotation
+	
+	var move := fake_move
+	
+#	var speed := 600.0 + get_buff(Const.Buffs.SPEED_BUFF) * 200 + speed_bonus
+	var speed := 600.0 * min(move.dot(Vector2.RIGHT.rotated(get_shoot_rotation())) * 0.8 + 1.5, 1)
+	
+	if is_action_pressed(\"run\"):
+		run_debris.emitting = true
+		speed *= 1.5
+	else:
+		run_debris.emitting = false
+	
+	applied_force = move * speed
+	pixel_map_physics(state, Utils.walkable_collision_mask)
+	rotation = 0
+
+func start_building(data):
+	var preview: Node2D = data.preview
+	preview.set_meta(\"scene\", data.scene)
+	
+	var build_interface := preload(\"res://Nodes/Player/BuildMenu/BuildInterface.tscn\").instantiate() as Node2D
+	build_interface.player = self
+	build_interface.building = preview
+	Utils.game.ui.add_child(build_interface)
+	build_interface.global_position = get_viewport().canvas_transform * (global_position)
+	build_interface.connect(\"place\", Callable(Utils.game, \"place_building\"))
+	build_menu.connect(\"tree_exited\", Callable(build_interface, \"queue_free\"))
+	
+	map.post_process.start_build_mode(global_position)
+	
+	build_menu.build_interface = build_interface
+	build_interface.connect(\"tree_exiting\", Callable(build_menu, \"build_end\"))
+	build_menu.hide()
+
+func get_look_angle() -> float:
+	if fake_move:
+		return fake_move.angle()
+	return fake_angle
+
+func shoot(weapon: Dictionary) -> bool:
+	var data: Dictionary = Const.Items[weapon.id]
+	if \"variable_throw\" in data and throwing_power == 0:
+		set_held_item(weapon, true, true)
+		thrown_item = weapon
+		animation_state = THROW
+		return false
+	
+	if \"need_lumen\" in data:
+		if get_item_count(Const.ItemIDs.LUMEN) == 0:
+			return false
+		else:
+			subtract_item(Const.ItemIDs.LUMEN)
+	
+	if \"delay\" in data:
+		if not can_use_delayed(weapon):
+			return false
+		
+		if \"last_shot\" in weapon:
+			weapon.last_shot = Time.get_ticks_msec()
+		else:
+			var delay: int = data.delay
+			weapon.timer = min(weapon.timer, delay * data.delay_uses) - delay
+	
+	if \"reload\" in data:
+		if Time.get_ticks_msec() - weapon.reload_time < data.reload_time:
+			return false
+		
+		weapon.reload -= 1
+		if weapon.reload == 0:
+			reload_weapon(weapon)
+	
+	if \"recoil\" in data:
+		var recoil = data.recoil
+#		var rot: float = recoil
+#		torso.set_deferred(\"rotation\", torso.rotation + rot)
+		Utils.vibrate(recoil * 2, recoil * 2, 0.1)
+		Utils.game.shake(recoil * 10)
+	
+	if \"drop_shells\" in data:
+		map.pixel_map.flesh_manager.spawn_shell(position, -Vector2.RIGHT.rotated(get_shoot_rotation()) * 20)
+		get_tree().create_timer(0.3).connect(\"timeout\", Callable(Utils, \"play_sample\").bind(Utils.random_sound(\"res://SFX/Bullets/bullet_shell_bounce_concrete1\"), self))
+	
+	if gun_audio:
+		gun_audio.shoot()
+	
+	if \"shoot_scene\" in data:
+		shoot_attack(weapon, data.shoot_scene)
+		return true
+	
+	if \"melee_scene\" in data:
+		melee_attack(weapon, data.melee_scene)
+		return true
+	
+	if \"throwable_scene\" in data:
+		set_held_item({id = 0}, true, true)
+		throw_attack(weapon, data.throwable_scene)
+		return true
+	
+	match weapon.id:
+		Const.ItemIDs.PLASMA_GUN:
+			check_hp()
+			shoot_energy_ball(weapon.data)
+		Const.ItemIDs.SHOTGUN:
+			Utils.play_sample(Utils.random_sound(\"res://SFX/Weapons/gun_shotgun_shot\"), self)
+			get_tree().create_timer(0.5, false).connect(\"timeout\", Callable(Utils, \"play_sample\").bind(Utils.random_sound(\"res://SFX/Weapons/gun_shotgun_cock\"), self))
+			for i in min(get_item_count(Const.ItemIDs.AMMO, Const.Ammo.BULLETS), 7):
+				shoot_attack(weapon, \"res://Nodes/Player/Weapons/Ranged/ShotgunBullet.tscn\", get_shoot_rotation() + randf_range(-0.2, 0.2), i == 0)
+		Const.ItemIDs.FOAM_GUN:
+			var ball := load(\"res://Nodes/Player/Weapons/Tools/FoamBall.tscn\").instantiate() as Node2D
+			ball.position = get_shoot_point()
+			ball.velocity = Vector2.RIGHT.rotated(get_shoot_rotation()).rotated(randf_range(-0.2, 0.2)) * 300 + linear_velocity
+			map.add_child(ball)
+		Const.ItemIDs.MEDPACK:
+			heal(20)
+	return true
+
+func create_energy_ball(upgrades: Dictionary, dir: Vector2) -> Node2D:
+	var ball := load(\"res://Nodes/Player/Weapons/Ranged/PlasmaGun/EnergyBall.tscn\").instantiate() as Node2D
+	ball.direction = dir
+	ball.position = get_shoot_point()
+	
+	ball.size = 1 + upgrades.get(\"size\", 0)
+	ball.dig = upgrades.get(\"dig\", 0)
+	ball.bounce = upgrades.get(\"bounce\", 0)
+	ball.explosion = upgrades.get(\"explosion\", 0)
+	
+	map.call_deferred(\"add_child\", ball)
+	return ball
+
+func damage(data: Dictionary) -> bool:
+	if dead:
+		return false
+	
+	Utils.game.start_battle()
+	var damager = data.get(\"owner\")
+	
+	var dmg: int
+	if damager is Node2D:
+		if damager.is_in_group(\"enemies\"):
+			dmg = damager.damage
+		else:
+			dmg = damager.get_meta(\"data\").damage
+		linear_velocity += (global_position - damager.global_position).normalized() * dmg * 25
+	elif damager is int:
+		dmg = 5
+	else:
+		dmg = data.damage
+	
+	if dmg == 0:
+		return false
+	
+	if not hurt_audio.playing:
+		Utils.play_sample(Utils.random_sound(\"res://SFX/Player/Male taking damage\"), hurt_audio, true, 1.1)
+	if Save.config.show_damage_numbers:
+		Utils.game.map.add_dmg_number().setup(self, dmg, Color.DARK_GOLDENROD)
+	hp = max(hp - dmg, 0)
+	emit_signal(\"hp_changed\")
+	call_deferred(\"check_hp\")
+	return true
+
+func heal(h: float):
+	hp = min(hp + h, max_hp)
+	emit_signal(\"hp_changed\")
+
+func throw_resource(item: Dictionary, dir := Vector2.RIGHT.rotated(get_shoot_rotation())):
+	throwing = 0.2
+	
+	if item.id < Const.RESOURCE_COUNT:
+		var tot: int = item.amount if dead or throw_timer >= 0.5 else 1
+		for i in tot:
+			subtract_stack(item, 1)
+			map.pickables.spawn_pickable_nice(global_position, item.id, dir * 100 + linear_velocity)
+			dir = Vector2.RIGHT.rotated(get_shoot_rotation()).rotated(randf_range(-0.1, 0.1)) * randf_range(THROW_VARIATION.x, THROW_VARIATION.y)
+	else:
+		var thr := 5 if dead else 1
+		
+		for i in thr:
+			if i > 0:
+				throw_pickup(dir * randf())
+			else:
+				throw_pickup(dir)
+			
+			dir = Vector2.RIGHT.rotated(randf() * TAU)
+			if item.amount == 0:
+				break
+
+func throw_pickup(dir := Vector2.RIGHT.rotated(get_shoot_rotation())):
+	var cur_item: Dictionary = get_current_item()
+	
+	var pickup := Pickup.instantiate(cur_item.id)
+	pickup.throwing_disable()
+	pickup.data = cur_item.data
+	
+	if throw_timer >= 0.5:
+		pickup.amount = cur_item.amount
+		subtract_stack(cur_item, cur_item.amount)
+	else:
+		pickup.amount = 1
+		subtract_stack(cur_item, 1)
+	
+	pickup.position = position
+	pickup.linear_velocity = dir * 100 +linear_velocity
+	map.add_child(pickup)
+
+func get_shoot_point() -> Vector2:
+	if gun_sprite and gun_sprite.get(\"shoot_point\"):
+		return gun_sprite.shoot_point.global_position
+	else:
+		return hold_point.global_position
+
+func get_shoot_rotation() -> float:
+	return torso.rotation
+
+func set_map(m: Map):
+	map = m
+	assign_pixel_map(map.pixel_map)
+
+func get_current_item() -> Dictionary:
+	if inventory_select == -1 or inventory_select >= inventory.size():
+		return {}
+	return inventory[inventory_select]
+
+func get_current_item_data() -> Dictionary:
+	return Const.Items.get(get_current_item().get(\"id\", -1), {})
+
+
+func _on_Area2D_body_entered(body):
+	area_collided(body) 
+
+func area_collided(area) -> void:
+	if area is Pickup:
+		if throwing > 0:
+			return
+		
+		add_item(area.id, area.amount, area.data)
+		area.collect()
+	elif area.is_in_group(\"enemy_projectile\"):
+		area.set_meta(\"last_attacked\", self)
+		Utils.on_hit(area)
+		damage(area.get_meta(\"data\"))
+
+func validate_item(item):
+	if item.id < Const.RESOURCE_COUNT:
+		return
+	
+	var item_data: Dictionary = Const.Items[item.id]
+	if \"autofire\" in item_data:
+		item.autofire = item_data.autofire
+	if \"infinite\" in item_data:
+		item.infinite = item_data.infinite
+	if \"delay\" in item_data:
+		if \"delay_uses\" in item_data:
+			item.timer = INF
+			counters.append(item)
+		else:
+			item.last_shot = -INF
+	if \"reload\" in item_data:
+		item.reload = item_data.reload
+		item.reload_time = -INF
+
+func enter_vehicle():
+	in_vehicle = true
+	hide()
+
+func exit_vehicle():
+	in_vehicle = false
+	show()
+
+func do_fake_press(action: String, keep := true):
+	fake_press.append(action)
+	await get_tree().idle_frame
+	fake_press.erase(action)
+	if keep:
+		fake_hold.append(action)
+
+func do_fake_release(action: String):
+	fake_hold.erase(action)
+	fake_release.append(action)
+	await get_tree().idle_frame
+	fake_release.erase(action)
+
+func is_action_pressed(action: String) -> bool:
+	return action in fake_press or action in fake_hold
+
+func is_action_just_pressed(action: String) -> bool:
+	return action in fake_press
+
+func is_action_just_released(action: String) -> bool:
+	return action in fake_release
+
+func check_hp():
+	if dead:
+		return
+	
+	if hp <= 0:
+		inventory_select = 0
+		died()
+
+func add_item(id: int, amount := 1, data = null) -> int:
+	var total_added: int
+	
+	for i in inventory.size() + 1:
+		var item: Dictionary
+		
+		if i < inventory.size():
+			item = inventory[i]
+			if item and (item.id != id or item.data != data):
+				continue
+		
+		if not item:
+			item = {id = id, amount = 0, data = data, index = inventory.size()}
+			validate_item(item)
+			inventory.append(item)
+		
+		var to_add := min(amount, Utils.get_stack_size(id, data) - item.amount)
+		item.amount += to_add
+		amount -= to_add
+		total_added += to_add
+		
+		if amount == 0:
+			break
+		
+	if inventory_select < 0:
+		inventory_select = 0
+	
+	refresh_select()
+	return amount
+
+var skip_select: bool
+
+func subtract_item(id: int, amount := 1, data = null, force := false) -> int:
+	while amount > 0:
+		var item := get_item(id, data, true)
+		if item:
+			amount = subtract_stack(item, amount, force)
+		else:
+			break
+	return amount
+
+func subtract_stack(item: Dictionary, amount: int, force := false) -> int:
+	if item:
+		var sub: int = min(item.amount, amount)
+		item.amount -= sub
+		
+		if item.amount <= 0:
+			if is_action_pressed(\"shoot\") and not force:
+				queued_erase.append(item)
+			else:
+				erase_stack(item)
+		return amount - sub
+	return amount
+
+func erase_stack(item: Dictionary):
+	inventory.erase(item)
+	counters.erase(item)
+	inventory_select = min(inventory_select, inventory.size() - 1)
+	if not dead:
+		emit_signal(\"inventory_changed\")
+		refresh_select()
+
+func get_item(id: int, data = null, ignore_empty := false) -> Dictionary:
+	for item in inventory:
+		if item.id == id and item.get(\"data\") == data and (not ignore_empty or item.amount > 0):
+			return item
+	return {}
+
+func get_items(id: int) -> Array:
+	var items: Array
+	for item in inventory:
+		if item.id == id:
+			items.append(item)
+	return items
+
+func get_available_lumen():
+	var all=get_item_count(Const.ItemIDs.LUMEN)
+	var running_storages=Utils.game.get_all_running_storages()
+	for i in running_storages:
+		all+=i.stored_lumen
+	return all
+	
+func get_available_metal():
+	var all=get_item_count(Const.ItemIDs.METAL_SCRAP)
+	var running_storages=Utils.game.get_all_running_storages()
+	for i in running_storages:
+		all+=i.stored_metal
+	return all
+	
+	
+class DistanceSort:
+	var point=Vector2.ZERO
+	func sort_by_distance(a, b):
+		if a.global_position.distance_squared_to(point) < b.global_position.distance_squared_to(point):	
+			return true
+		return false
+
+
+func pay_with_lumen(how_many,build_position):
+	var running_storages:Array =Utils.game.get_all_running_storages()
+	var sorter=DistanceSort.new()
+	sorter.point=build_position
+	running_storages.sort_custom(Callable(sorter, \"sort_by_distance\"))
+
+	for i in running_storages:
+		how_many-=i.use_lumen(how_many)
+		if how_many<=0:
+			break
+	subtract_item(Const.ItemIDs.LUMEN,how_many)
+	
+	
+func pay_with_metal(how_many,build_position):
+	var running_storages:Array =Utils.game.get_all_running_storages()
+	var sorter=DistanceSort.new()
+	sorter.point=build_position
+	running_storages.sort_custom(Callable(sorter, \"sort_by_distance\"))
+
+	for i in running_storages:
+		how_many-=i.use_metal(how_many)
+		if how_many<=0:
+			break
+	subtract_item(Const.ItemIDs.METAL_SCRAP,how_many)
+
+func get_item_count(id: int, data = null) -> int:
+	var count := 0
+	for item in inventory:
+		if item.id == id and item.get(\"data\") == data:
+			count += item.amount
+	
+	return count
+
+func can_use(item: Dictionary) -> bool:
+	if item.id < Const.RESOURCE_COUNT:
+		return false
+	
+	if  not Const.Items[item.id].usable:
+		return false
+	
+	match item.id:
+		Const.ItemIDs.MEDPACK:
+			return hp < max_hp
+		_:
+			return true
+
+func died():
+	Utils.play_sample(preload(\"res://SFX/Player/Die.wav\"), hurt_audio)
+	
+	linear_velocity = Vector2()
+	torso_animator.play(\"Dead\")
+	torso_animator.playback_speed = 30
+	thrown_item = {}
+	throwing_power = 0
+	throwing_sprite.hide()
+	animation_state = NONE
+	
+	dead = true
+	
+	if melee:
+		melee.queue_free()
+
+func process_animation():
+	var is_walking := linear_velocity.length_squared() > 0.1
+	if is_walking:
+		legs_animator.play()
+		legs_animator.playback_speed = linear_velocity.length() / 2.0
+	else:
+		legs_animator.stop()
+	
+	if animation_state == NONE:
+		if is_walking:
+			torso_animator.play()
+			torso_animator.playback_speed = linear_velocity.length() / 2.0
+		else:
+			torso_animator.stop()
+	elif animation_state == THROW:
+		torso_animator.playback_speed = 30
+		if thrown_item:
+			torso_animator.play(\"Throw\")
+			torso_animator.seek(throwing_power * 28, true)
+		else:
+			torso_animator.play(\"Throw\")
+	elif animation_state == SHOOT:
+		torso_animator.playback_speed = 1
+	elif animation_state == DASH:
+		torso_animator.playback_speed = 30
+
+func get_ammo(weapon: Dictionary) -> int:
+	var data: Dictionary = Const.Items[weapon.id]
+	if \"ammo\" in data:
+		return get_item_count(Const.ItemIDs.AMMO, data.ammo)
+	else:
+		return weapon.amount
+
+func shoot_energy_ball(upgrades: Dictionary):
+	var ball: Node2D
+	
+	var multi: int = 1 + upgrades.get(\"multi\", 0)
+	for i in multi:
+		var offset: int = i - multi / 2
+		if offset >= 0 and multi % 2 == 0:
+			offset += 1
+		var dir := Vector2.RIGHT.rotated(get_shoot_rotation() + offset * PI/16)
+		
+		if \"wave\" in upgrades:
+			ball = create_energy_ball(upgrades, dir)
+			ball.wave_offset = PI
+			
+			ball = create_energy_ball(upgrades, dir)
+			ball.wave_offset = TAU
+		else:
+			ball = create_energy_ball(upgrades, dir)
+
+func shoot_attack(weapon: Dictionary, scene: String, rot := get_shoot_rotation(), apply_damage := true):
+	if apply_damage:
+		damage_item(weapon)
+	
+	torso_animator.play(\"Shoot\")
+	torso_animator.seek(0, true)
+	animation_state = SHOOT
+	
+	if gun_sprite and gun_sprite.has_method(\"shoot\"):
+		gun_sprite.shoot()
+	
+	var bullet := load(scene).instantiate() as Node2D
+	if bullet.get(\"weapon_id\") != null:
+		bullet.weapon_id = weapon.id
+	if bullet.has_method(\"set_player\"):
+		bullet.set_player(self)
+	
+	bullet.rotation = rot
+	bullet.position = get_shoot_point()
+	map.add_child(bullet)
+
+func melee_attack(weapon: Dictionary, scene: String):
+	if melee:
+		return
+	
+	melee = load(scene).instantiate() as Node2D
+#	melee.connect(\"attacked\", self, \"damage_item\", [weapon], CONNECT_ONESHOT)
+	if melee.has_method(\"set_data\"):
+		melee.set_data(weapon.data)
+	if melee.has_method(\"set_player\"):
+		melee.set_player(self)
+	
+	hold_point.add_child(melee)
+	
+#	var remo := RemoteTransform2D.new()
+#	remo.update_scale = false
+#	melee_point.add_child(remo)
+#	remo.remote_path = remo.get_path_to(melee)
+	
+	await melee.tree_exited
+#	remo.queue_free()
+	melee = null
+
+func throw_attack(weapon: Dictionary, scene: String):
+	Utils.play_sample(preload(\"res://SFX/Player/346373__denao270__throwing-whip-effect.wav\"), null, false, 1.2)
+	if \"variable_throw\" in Const.Items[weapon.id] and weapon != flare: #trochę hack
+		subtract_stack(weapon, 1)
+	
+	var throwable := load(scene).instantiate() as RigidBody2D
+	if throwable.has_method(\"thrown\"):
+		throwable.thrown(self)
+	if throwable.has_method(\"set_player\"):
+		throwable.set_player(self)
+	throwable.position = get_shoot_point()
+	
+	if using_joypad():
+		throwable.linear_velocity = Vector2.RIGHT.rotated(torso.rotation) * 50 * (1 + throwing_power * 8) + linear_velocity
+	else:
+		throwable.linear_velocity = get_shoot_point().direction_to(get_global_mouse_position()) * 50 * (1 + throwing_power * 8) + linear_velocity
+	
+	if throwable.has_method(\"set_data\"):
+		throwable.set_data(weapon.data)
+	
+	map.add_child(throwable)
+
+func damage_item(item: Dictionary):
+	if not \"durability\" in item: #TODO: Trzeba dodać znowu jak trzeba.
+		return
+#	assert(\"durability\" in item)
+	
+	item.durability -= 1
+	if item.durability <= 0:
+		subtract_item(item.id)
+		#TODO: Można dać jakiś fajny efekt jak w Zeldzie BotW
+
+func select_changed():
+	refresh_select()
+
+func refresh_select():
+	var item := get_current_item()
+	var switched := (prev_item != item)
+	if animation_state != THROW and animation_state != DASH:
+		set_held_item(item, switched)
+	prev_item = item
+
+func set_held_item(item: Dictionary, switched: bool, is_throwing := false):
+	if switched:
+		if melee:
+			melee.free()
+			melee = null
+		
+		if gun_audio:
+			gun_audio.free()
+			gun_audio = null
+		
+		if gun_sprite:
+			gun_sprite.free()
+			gun_sprite = null
+		
+		if torso_animator:
+			if item.get(\"id\", -1) >= Const.RESOURCE_COUNT and (animation_state == NONE or animation_state == SHOOT):
+				torso_animator.play(Const.Items[item.id].get(\"animation\", \"Carry\"))
+				torso_animator.advance(0)
+			elif not is_throwing:
+				torso_animator.play(\"Carry\")
+				torso_animator.advance(0)
+	
+	if not item:
+		return
+	
+	if item.id < Const.RESOURCE_COUNT:
+		return
+	
+	var data: Dictionary = Const.Items[item.id]
+	
+	if not hold_point:
+		await self.ready
+	
+	if switched:
+		if \"sprite\" in data:
+			gun_sprite = load(data.sprite).instantiate()
+			gun_sprite.player = self
+			hold_point.add_child(gun_sprite)
+		
+		if is_throwing and \"throw_sprite\" in data:
+			gun_sprite = Sprite2D.new()
+			gun_sprite.texture = load(data.throw_sprite)
+			gun_sprite.global_scale = Vector2.ONE * data.get(\"sprite_scale\", 1)
+			hold_point.add_child(gun_sprite)
+		
+		if \"melee_scene\" in data:
+			melee = load(data.melee_scene).instantiate() as Node2D
+			if melee.has_method(\"set_data\"):
+				melee.set_data(item.data)
+			if melee.has_method(\"set_player\"):
+				melee.set_player(self)
+			
+			if melee.has_method(\"put_away\"):
+				hold_point.call_deferred(\"add_child\", melee)
+				melee.connect(\"ready\", Callable(melee, \"put_away\").bind(), CONNECT_ONE_SHOT)
+				await melee.tree_exited
+				melee = null
+			else:
+				melee.free()
+				melee = null
+	
+	if not \"use_gun_audio\" in data:
+		return
+	
+	match item.id:
+		Const.ItemIDs.MACHINE_GUN:
+			gun_audio = preload(\"res://Nodes/Effects/Audio/GunAudioController.gd\").new()
+			gun_audio.shot_path = \"res://SFX/Turret/gun_semi_auto_rifle_shot_\"
+			add_child(gun_audio)
+
+func can_use_delayed(item: Dictionary) -> bool:
+	var data: Dictionary = Const.Items[item.id]
+	if \"timer\" in item:
+		return item.get(\"timer\") > data.delay
+	else:
+		return Time.get_ticks_msec() - item.last_shot > data.delay
+
+func is_slot_usable(idx: int) -> bool:
+	if inventory_visible:
+		return true
+	if idx >= inventory.size():
+		return false
+	return Const.Items.get(inventory[idx].id, {}).get(\"usable\")
+
+const WALK_SFX_FRAMES = [6, 15, 27, 40]
+
+func _on_Legs_frame_changed():
+	if legs and legs.frame in WALK_SFX_FRAMES:
+		Utils.play_sample(Utils.random_sound(\"res://SFX/Player/Dirt footsteps\"), self).bus = \"Footsteps\"
+
+func torso_animation_finished(anim_name: String) -> void:
+	if anim_name == \"Shoot\":
+		animation_state = NONE
+		torso_animator.play(get_current_item_data().get(\"animation\", \"Carry\"))
+		if melee and melee.has_method(\"put_away\"):
+			melee.put_away()
+	elif anim_name == \"Throw\":
+		animation_state = NONE
+		set_held_item(get_current_item(), true)
+	elif anim_name == \"Slide_Foroward\":
+		animation_state = NONE
+		set_held_item(get_current_item(), true)
+
+func test_darkness() -> void:
+	var data = map.darkness.viewport.get_texture().get_data()
+	false # data.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+	print(data.get_pixel(global_position.x, global_position.y))
+	false # data.unlock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+
+func deshoot():
+	if gun_sprite and gun_sprite.has_method(\"deshoot\"):
+		gun_sprite.deshoot()
+
+func using_joypad() -> bool:
+	if control_id == 1:
+		return Utils.is_using_joypad()
+	
+	if control_id == 2:
+		return false
+	
+	return true
+
+func leave_coop():
+	map.player_tracker.remove(self)
+	var dumper: Node2D = load(\"res://Nodes/Player/InventoryDumper.tscn\").instantiate()
+	dumper.position = global_position
+	dumper.inventory = inventory
+	map.add_child(dumper)
+	queue_free()
+
+func reload_weapon(weapon: Dictionary):
+	weapon.reload = Const.Items[weapon.id].reload
+	weapon.reload_time = Time.get_ticks_msec()
+	if gun_sprite and gun_sprite.has_method(\"reload\"):
+		gun_sprite.reload()
+	
+	var reload_sfx := [
+		Utils.random_sound(\"res://SFX/Weapons/gun_revolver_pistol_cylinder_open\"),
+		Utils.random_sound(\"res://SFX/Weapons/gun_revolver_pistol_load_bullet\"),
+		Utils.random_sound(\"res://SFX/Weapons/gun_revolver_pistol_cylinder_close\"),
+		Utils.random_sound(\"res://SFX/Weapons/gun_revolver_pistol_cock\")
+	]
+	get_tree().create_timer(0.5).connect(\"timeout\", Callable(Utils, \"play_sample\").bind(reload_sfx, self, true))
+
+func talk(line: String):
+	$GenericInteractable.can_interact = false
+	Cutscene.show_message(line, self).connect(\"tree_exited\", Callable($GenericInteractable, \"set\").bind(\"can_interact\", true))
+
+func hold(item: int):
+	inventory_select = 0
+	add_item(item)
+
+func goto(pos: Vector2):
+	var data = PathFinding.get_path_no_dig_from_to_position(global_position, pos, 10, true)
+	if data:
+		fake_path = data.get_path()
+"
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 6.0
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 6.0
+
+[sub_resource type="CircleShape2D" id=40]
+radius = 12.0
+
+[sub_resource type="Animation" id=23]
+resource_name = "Carry"
+length = 94.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:vframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 8 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso/HoldPoint:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 5, 11, 20, 31, 36, 40, 49, 59, 66, 74, 81, 93 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 49.529, 0 ), Vector2( 49.777, 0 ), Vector2( 48.537, 0 ), Vector2( 51.762, 0 ), Vector2( 48.537, 0 ), Vector2( 49.281, 0 ), Vector2( 48.537, 0 ), Vector2( 51.762, 0 ), Vector2( 48.537, 0 ), Vector2( 49.529, 0 ), Vector2( 48.537, 0 ), Vector2( 51.762, 0 ), Vector2( 48.537, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:hframes")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 12 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 15 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Torso:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93 ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Legs:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 61 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=14]
+resource_name = "Dead"
+length = 60.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ 8 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso:vframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ 9 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ ExtResource( 6 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.05, 0.05 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Torso:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 20 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Vector2( -8, 1 ), Vector2( 3, -3 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Legs:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=20]
+resource_name = "Hold_1h"
+length = 43.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:vframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 4 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso/HoldPoint:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 11, 12, 21, 22, 30, 36 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 45.9695, -10.4563 ), Vector2( 52.9249, -10.3 ), Vector2( 51.9874, -10.4563 ), Vector2( 44.0998, -10.8279 ), Vector2( 44.0998, -10.8279 ), Vector2( 50.5489, -6.76113 ), Vector2( 50.1592, -6.15658 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso:offset")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:hframes")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 11 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 1 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Torso:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42 ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Legs:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0, 13, 20, 32 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ -1.68621, -1.78125, -0.885974, 1.45764 ]
+}
+
+[sub_resource type="Animation" id=26]
+resource_name = "Hold_2h"
+length = 42.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:vframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 6 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso:hframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 7 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 13 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Legs:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Torso/HoldPoint:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 6, 11, 12, 19, 21, 27, 30, 34, 38 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 47.8018, 16.4302 ), Vector2( 51.7039, 15.5011 ), Vector2( 46.6457, 15.1037 ), Vector2( 46.1375, 16.7888 ), Vector2( 50.7069, 18.6124 ), Vector2( 49.4147, 16.9925 ), Vector2( 52.9887, 18.7431 ), Vector2( 53.3157, 17.5903 ), Vector2( 51.5839, 15.1862 ), Vector2( 50.3432, 15.3437 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0, 6, 11, 12, 19, 21, 27, 34, 38 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ -6.40853, -7.96884, -6.57507, -6.64858, -7.74267, -9.2728, -9.33145, -6.26837, -7.07154 ]
+}
+
+[sub_resource type="Animation" id=24]
+resource_name = "Hold_heavy"
+length = 43.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:vframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 4 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso:hframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 11 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 16 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Legs:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 6, 15, 23, 30 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ -11.4992, -12.8675, -10.8986, -13.9977, -15.0204 ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Torso/HoldPoint:position")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0, 6, 12, 15, 23, 30, 36 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 43.6975, 32.2151 ), Vector2( 44.8123, 31.8435 ), Vector2( 43.6975, 32.2151 ), Vector2( 45.5556, 32.9584 ), Vector2( 43.3524, 32.0027 ), Vector2( 45.3651, 32.9073 ), Vector2( 43.6975, 32.2151 ) ]
+}
+
+[sub_resource type="Animation" id=22]
+resource_name = "Idle"
+length = 78.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:vframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 3 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso:hframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 13 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 14 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Legs:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Torso/HoldPoint:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 35, 53 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 42.9542, 37.6037 ), Vector2( 41.8393, 38.7186 ), Vector2( 43.0493, 38.0661 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0, 35, 53 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ -15.7922, -18.8374, -19.0311 ]
+}
+
+[sub_resource type="Animation" id=5]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ -7.40707 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso/HoldPoint:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.791, 21.633 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:hframes")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 13 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:vframes")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 3 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Torso:offset")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Torso:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.1, 0.1 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Torso:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Torso/FlashLight:position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 35.6244, 44.6716 ) ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("Torso/FlashLight:rotation_degrees")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ -2.81852 ]
+}
+tracks/10/type = "value"
+tracks/10/path = NodePath("AnimationPlayer:playback_speed")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 30.0 ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("Legs:frame")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/12/type = "value"
+tracks/12/path = NodePath("Legs:visible")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/13/type = "value"
+tracks/13/path = NodePath("Torso:texture")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ ExtResource( 14 ) ]
+}
+tracks/14/type = "value"
+tracks/14/path = NodePath(".:modulate")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/15/type = "value"
+tracks/15/path = NodePath("Torso:position")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "Shoot"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 3,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=38]
+length = 13.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 7 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso:hframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 4 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:vframes")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 3 ]
+}
+
+[sub_resource type="Animation" id=27]
+resource_name = "Throw"
+length = 47.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Torso:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 16 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Torso:vframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 6 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Torso:hframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 8 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Torso:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 10 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Torso:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Legs:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 47 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Torso/HoldPoint:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 2, 5, 11, 12, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36, 38, 39, 40, 47 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 51.704, 0 ), Vector2( 48.3481, 7.95325 ), Vector2( 35.422, 16.3754 ), Vector2( 9.71005, 33.7109 ), Vector2( 0.171614, 31.4811 ), Vector2( -6.64154, 29.2513 ), Vector2( 2.0917, 48.576 ), Vector2( 12.5475, 55.2691 ), Vector2( 19.4955, 57.4021 ), Vector2( 15.9205, 60.5875 ), Vector2( 0.419376, 66.2283 ), Vector2( -22.8538, 74.9615 ), Vector2( -49.2858, 84.376 ), Vector2( -72.6518, 88.8665 ), Vector2( -85.9839, 82.5798 ), Vector2( -70.004, 52.2922 ), Vector2( -71.7383, 49.3811 ), Vector2( -74.959, 56.8756 ), Vector2( -52.3517, 81.4649 ), Vector2( 21.9302, 80.0505 ), Vector2( 72.1434, 58.6098 ), Vector2( 78.0894, 26.1854 ), Vector2( 69.542, 12.7139 ), Vector2( 57.1938, 11.599 ), Vector2( 52.7747, 14.7062 ), Vector2( 51.3285, 13.3539 ), Vector2( 51.704, 0 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Torso/HoldPoint:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=25]
+resource_name = "Legs"
+length = 43.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ ExtResource( 9 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:hframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 4 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:vframes")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 11 ]
+}
+
+[sub_resource type="Animation" id=10]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=8]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=9]
+resource_name = "start"
+length = 5.0
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 3.03, 3.53, 3.73, 3.83, 3.88, 3.98, 4.08, 4.18, 4.43, 4.94 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0.00392157 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=28]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=29]
+resource_name = "start"
+length = 5.0
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 3.03, 3.53, 3.73, 3.83, 3.88, 3.98, 4.08, 4.18, 4.43, 4.94 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0.00392157 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="CanvasItemMaterial" id=34]
+particles_animation = true
+particles_anim_h_frames = 5
+particles_anim_v_frames = 3
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id=35]
+offsets = PackedFloat32Array( 0, 0.218884, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 0.588235, 0.560784, 0.556863, 0.588235, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=36]
+gradient = SubResource( 35 )
+width = 128
+
+[sub_resource type="ParticleProcessMaterial" id=37]
+emission_shape = 1
+emission_sphere_radius = 3.0
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 3.0
+angular_velocity = 98.63
+angular_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+angle = 720.0
+angle_random = 1.0
+scale = 0.03
+scale_random = 0.02
+color_ramp = SubResource( 36 )
+
+[node name="NPC" type="PixelMapRigidBody" groups=["repels_debris"]]
+z_index = 200
+z_as_relative = false
+gravity_scale = 0.0
+can_sleep = false
+linear_damp = 10.0
+radius = 6
+collision_correction = 1.0
+pixel_map_bounce = 0.8
+script = SubResource( 39 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Area2D" type="Area2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 2 )
+
+[node name="GenericInteractable" type="Area2D" parent="."]
+script = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GenericInteractable"]
+shape = SubResource( 40 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
+playback_speed = 30.0
+anims/Carry = SubResource( 23 )
+anims/Dead = SubResource( 14 )
+anims/Hold_1h = SubResource( 20 )
+anims/Hold_2h = SubResource( 26 )
+anims/Hold_heavy = SubResource( 24 )
+anims/Idle = SubResource( 22 )
+anims/RESET = SubResource( 5 )
+anims/Shoot = SubResource( 7 )
+anims/Slide_Foroward = SubResource( 38 )
+anims/Throw = SubResource( 27 )
+
+[node name="Legs" type="Sprite2D" parent="."]
+position = Vector2( -2, 0 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 9 )
+hframes = 4
+vframes = 11
+
+[node name="AnimatorLegs" type="AnimationPlayer" parent="Legs"]
+autoplay = "Legs"
+playback_speed = 30.0
+anims/Legs = SubResource( 25 )
+anims/RESET = SubResource( 10 )
+
+[node name="Torso" type="Sprite2D" parent="."]
+modulate = Color( 0.64, 0.192, 0.199467, 1 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 14 )
+hframes = 13
+vframes = 3
+
+[node name="HaloSprite2" type="Node2D" parent="Torso"]
+position = Vector2( 35.624, 44.672 )
+rotation = -0.0491925
+scale = Vector2( 0.1, 0.1 )
+script = ExtResource( 24 )
+texture = ExtResource( 25 )
+offset = Vector2( 200, 0 )
+follow_rotation = true
+
+[node name="Flashlight4HaloTp" type="Sprite2D" parent="Torso"]
+visible = false
+position = Vector2( 35.624, 44.672 )
+rotation = -0.0491925
+texture = ExtResource( 25 )
+offset = Vector2( 200, 0 )
+
+[node name="FlashLight" type="Node2D" parent="Torso"]
+modulate = Color( 0.847059, 1, 0.980392, 0.498039 )
+position = Vector2( 35.6244, 44.6716 )
+rotation = -0.0491925
+scale = Vector2( 0.3, 0.6 )
+script = ExtResource( 4 )
+texture = ExtResource( 2 )
+offset = Vector2( 440, 0 )
+drop_shadow = true
+follow_rotation = true
+
+[node name="AnimatorFlashlight" type="AnimationPlayer" parent="Torso/FlashLight"]
+autoplay = "start"
+anims/RESET = SubResource( 8 )
+anims/start = SubResource( 9 )
+
+[node name="FlashLight2" type="Node2D" parent="Torso"]
+modulate = Color( 0.85, 1, 0.98, 0.25 )
+position = Vector2( 35.6244, 44.6716 )
+rotation = -0.0491925
+scale = Vector2( 0.3, 0.6 )
+script = ExtResource( 4 )
+texture = ExtResource( 2 )
+offset = Vector2( 440, 0 )
+follow_rotation = true
+
+[node name="AnimatorFlashlight" type="AnimationPlayer" parent="Torso/FlashLight2"]
+autoplay = "start"
+anims/RESET = SubResource( 28 )
+anims/start = SubResource( 29 )
+
+[node name="Throwing" type="Sprite2D" parent="Torso"]
+position = Vector2( 110, -42 )
+texture = ExtResource( 5 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 0, 80 )
+
+[node name="Spotlight" type="Node2D" parent="Torso"]
+modulate = Color( 0.5, 0.5, 0.5, 1 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 4 )
+texture = ExtResource( 8 )
+
+[node name="HoldPoint" type="Marker2D" parent="Torso"]
+show_behind_parent = true
+position = Vector2( 0.791, 21.633 )
+rotation = -0.129278
+scale = Vector2( 5, 5 )
+__meta__ = {
+"_gizmo_extents_": 35.0
+}
+
+[node name="HurtAudio" type="AudioStreamPlayer2D" parent="."]
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="LavaChecks" parent="." instance=ExtResource( 17 )]
+
+[node name="ZIndexer" parent="." instance=ExtResource( 18 )]
+z_index = 200
+
+[node name="RunDebris" type="GPUParticles2D" parent="."]
+material = SubResource( 34 )
+position = Vector2( -1.30618, -0.160942 )
+z_index = -4
+emitting = false
+amount = 100
+lifetime = 2.0
+randomness = 1.0
+fixed_fps = 60
+fract_delta = false
+visibility_rect = Rect2( -10000, -10000, 20000, 20000 )
+local_coords = false
+process_material = SubResource( 37 )
+texture = ExtResource( 23 )
+
+[connection signal="area_entered" from="Area2D" to="." method="area_collided"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_Area2D_body_entered"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="torso_animation_finished"]
+[connection signal="frame_changed" from="Legs" to="." method="_on_Legs_frame_changed"]

@@ -1,0 +1,221 @@
+[gd_scene load_steps=24 format=2]
+
+[ext_resource path="res://Nodes/Pickups/SimplePickup.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.tres" type="Material" id=3]
+[ext_resource path="res://Resources/Terrain/TerrainTextures/Sandstone.tres" type="Resource" id=4]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Buildings/Reactor/Reactor.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=16]
+[ext_resource path="res://Nodes/Buildings/Lab/Lab.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Tools/TerrainDrawer/TerrainDrawer.tscn" type="PackedScene" id=23]
+[ext_resource path="res://Nodes/Buildings/Workshop/Weapon/ShotgunWorkshop.tscn" type="PackedScene" id=32]
+[ext_resource path="res://Nodes/Buildings/HeroCenter/HeroCenter.tscn" type="PackedScene" id=40]
+[ext_resource path="res://Resources/Materials/FloorMaterial2.tres" type="Material" id=41]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=51]
+[ext_resource path="res://Resources/Terrain/FloorTextures/1Steel.tres" type="Resource" id=52]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Biomass.tres" type="Resource" id=55]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Fungus.tres" type="Resource" id=57]
+[ext_resource path="res://Resources/Terrain/FloorTextures/2Snow.tres" type="Resource" id=58]
+[ext_resource path="res://Nodes/Buildings/Storage/Storage.tscn" type="PackedScene" id=59]
+[ext_resource path="res://Resources/Terrain/FloorTextures/1Dirt.tres" type="Resource" id=60]
+
+[sub_resource type="PixelMapMaterialData" id=18]
+resource_local_to_scene = true
+name_table = PackedStringArray( "Dirt", "Clay", "Rocks", "Poor Metal", "Metal", "Rich Metal", "Rock6", "Rock9", "Foam", "Steel", "Fireproof Foam", "Unused", "Concrete", "Unused", "Unused", "Unused", "Unused", "Unnamed", "Unnamed", "Unnamed", "Low building", "Wall", "Upgraded Wall", "Upgraded II Wall", "Tar", "Empty", "Dead Lumen", "Lumen", "Gate", "Water", "Lava", "Unnamed", "Building", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed", "Unnamed" )
+durability_table = PackedInt32Array( 1, 5, 100, 1, 3, 9, 6, 9, 1, 2, 1, 1, 80, 2, 2, 1, 1, 2, 1, 1, 255, 2, 4, 6, 1, 1, 25, 1, 254, 1, 1, 1, 9999, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 )
+simulated_materials = PackedInt32Array( 15, 16 )
+reaction_table = PackedInt32Array( 15, 16, 14 )
+
+[sub_resource type="PixelMapMaterialData" id=17]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+
+func _ready() -> void:
+	if not visible:
+		return
+	
+	await get_tree().idle_frame
+	add_items(Utils.game.main_player)
+#	Utils.game.map.find_node(\"Lab\").time_ratio = 0.000001
+#	Save.unlock_tech(\"fireproof_gate\")
+#	Save.unlock_tech(\"hp_regeneration\")
+#	Save.unlock_tech(\"stamina_regeneration\")
+#	Save.unlock_tech(\"dead_lumen_convert\")
+#	Save.unlock_tech(\"fast_gate\")
+#	Save.unlock_tech(\"make_time\")
+	Save.clones = 3
+	
+#	Save.unlock_tech(\"shotgun_possible\")
+#	Save.unlock_tech(\"machinegun_possible\")
+#	Save.unlock_tech(\"item_detector\")
+	
+#	for tech in Const.Technology:
+#		Save.unlock_tech(tech)
+
+func _physics_process(delta: float) -> void:
+	if Utils.game.players.size() == 2:
+		add_items(Utils.game.players[1])
+		set_physics_process(false)
+
+func add_items(player: Player):
+#	player.max_stacks = 12
+	
+#	player.add_item(Const.ItemIDs.AMMO, 50, Const.Ammo.BULLETS, false, player.StackPolicy.FORCE_STACK)
+#	player.add_item(Const.ItemIDs.AMMO, 100, Const.Ammo.BULLETS, false, player.StackPolicy.FORCE_STACK)
+#	player.add_item(Const.ItemIDs.AMMO, 150, Const.Ammo.BULLETS, false, player.StackPolicy.FORCE_STACK)
+	
+#	player.add_item(Const.ItemIDs.FLARE, 3)
+#	player.add_item(Const.ItemIDs.BAT, 1)
+#	player.add_item(Const.ItemIDs.KATANA, 1)
+	player.add_item(Const.ItemIDs.REPAIR_KIT, 10)
+	player.add_item(Const.ItemIDs.GRENADE, 1)
+	player.add_item(Const.ItemIDs.SPEAR, 1)
+#	player.add_item(Const.ItemIDs.ROCKET_LAUNCHER, 1)
+#	player.add_item(Const.ItemIDs.LUMEN, 9999, null, false, true)
+#	player.add_item(Const.ItemIDs.METAL_SCRAP, 9999, null, false, Player.StackPolicy.ANY, true)
+#	player.add_item(Const.ItemIDs.METAL_SCRAP, 90, null, false, true)
+#	player.add_item(Const.ItemIDs.LUMEN, 9999, null, false, Player.StackPolicy.ANY, true)
+#	player.add_item(Const.ItemIDs.MEDPACK, 1)
+#	player.add_item(Const.ItemIDs.HOOK, 1)
+#	player.add_item(Const.ItemIDs.MACHINE_GUN, 1)
+#	player.add_item(Const.ItemIDs.MINE, 10)
+#	player.add_item(Const.ItemIDs.REPAIR_KIT, 999999)
+#	player.add_item(Const.ItemIDs.MAGNUM, 1)
+#	player.add_item(Const.ItemIDs.AMMO, 5000, Const.Ammo.BULLETS, false, true)
+#	player.add_item(Const.ItemIDs.AMMO, 5000, Const.Ammo.ROCKETS, false, true)
+#	player.add_item(Const.ItemIDs.NAPALM, 9999)
+#	player.add_item(Const.ItemIDs.AMMO, 50, Const.Ammo.ROCKETS)
+#	player.add_item(Const.ItemIDs.METAL_SCRAP, 500)
+#	player.add_item(Const.ItemIDs.LIGHTNING_GUN, 1)
+#	player.add_item(Const.ItemIDs.MINE, 20)
+#	player.add_item(Const.ItemIDs.GRENADE, 50)
+	player.add_item(Const.ItemIDs.FLAMETHROWER, 1)
+#	player.add_item(Const.ItemIDs.PICKAXE, 1, \"DiamondPickaxe\")
+	player.add_item(Const.ItemIDs.SHOTGUN, 1)
+#	player.inventory_secondary = 4
+#	player.add_item(Const.ItemIDs.ONE_SHOT, 1)
+	player.add_item(Const.ItemIDs.ROCKET_LAUNCHER, 1)
+	player.add_item(Const.ItemIDs.FOAM_GUN, 5)
+#	player.add_item(Const.ItemIDs.AMMO, 50, Const.Ammo.ROCKETS)
+#	player.add_item(Const.ItemIDs.AMMO, 300, Const.Ammo.BULLETS)
+#	player.add_item(Const.ItemIDs.AMMO, 25, Const.Ammo.BULLETS)
+#	player.add_item(Const.ItemIDs.AMMO, 9999, Const.Ammo.NAPALM)
+	
+#	for i in 6:
+#		Save.set_unlocked_tech(\"drill_upgrade\", i)
+	
+	
+"
+
+[node name="Map2" type="Node2D"]
+script = ExtResource( 14 )
+__meta__ = {
+"_edit_lock_": true
+}
+disable_darkness = true
+disable_fog_of_war = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 16 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+z_index = 500
+z_as_relative = false
+material_data = SubResource( 18 )
+texture_path = "res://Maps/TestMap.png"
+debug_flags = 4
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+custom_materials = [ null, null, ExtResource( 4 ), null, null, null ]
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 6 )]
+ambient_color = Color( 0.128, 0.126, 0.15, 1 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 3 )
+scale = Vector2( 8, 8 )
+z_index = -4096
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 17 )
+debug_flags = 4
+script = ExtResource( 51 )
+__meta__ = {
+"_edit_lock_": true
+}
+default_color = Color( 1, 0, 0, 0 )
+textures = [ ExtResource( 60 ), null, ExtResource( 52 ), null ]
+
+[node name="Floor2" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 41 )
+scale = Vector2( 8, 8 )
+z_index = -4096
+z_as_relative = false
+fake_pixel_map = true
+material_data = SubResource( 17 )
+debug_flags = 4
+script = ExtResource( 51 )
+__meta__ = {
+"_edit_lock_": true
+}
+default_color = Color( 0, 0, 0, 0 )
+textures = [ null, ExtResource( 55 ), ExtResource( 57 ), ExtResource( 58 ) ]
+layer = 2
+
+[node name="Start" type="Node2D" parent="."]
+position = Vector2( 224, 554 )
+
+[node name="InventoryHack" type="Node2D" parent="."]
+script = SubResource( 3 )
+
+[node name="TerrainDrawer" parent="." instance=ExtResource( 23 )]
+
+[node name="Reactor" parent="." instance=ExtResource( 7 )]
+position = Vector2( 406.904, 411.137 )
+start_on = true
+
+[node name="ShotgunWorkshop" parent="." instance=ExtResource( 32 )]
+position = Vector2( 566, 339 )
+
+[node name="Lab" parent="." instance=ExtResource( 17 )]
+position = Vector2( 712, 335 )
+
+[node name="HeroCenter" parent="." instance=ExtResource( 40 )]
+position = Vector2( 567, 476 )
+
+[node name="Storage" parent="." instance=ExtResource( 59 )]
+position = Vector2( 700, 462 )
+
+[node name="SimplePickup" parent="." instance=ExtResource( 1 )]
+position = Vector2( 433.778, 627.943 )
+item = "HOOK"
+
+[node name="SimplePickup2" parent="." instance=ExtResource( 1 )]
+position = Vector2( 479, 573 )
+item = "HOOK"
+
+[node name="SimplePickup3" parent="." instance=ExtResource( 1 )]
+position = Vector2( 276, 640 )
+item = "HOOK"
+
+[node name="SimplePickup4" parent="." instance=ExtResource( 1 )]
+position = Vector2( 452.778, 643.943 )
+item = "HOOK"
+
+[node name="SimplePickup5" parent="." instance=ExtResource( 1 )]
+position = Vector2( 498, 589 )
+item = "HOOK"
+
+[node name="SimplePickup6" parent="." instance=ExtResource( 1 )]
+position = Vector2( 295, 656 )
+item = "HOOK"

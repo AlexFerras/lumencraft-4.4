@@ -1,0 +1,112 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Enemies/Surrounder/Bug.PNG" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends WalkingEnemy
+
+var last_goo: Vector2
+var start_angle: float
+
+func global_state(delta: float):
+	super.global_state(delta)
+	if global_position.distance_squared_to(last_goo) > 64:
+		last_goo = global_position
+		var goo := preload(\"res://Nodes/Enemies/Projectiles/ToxicGoo.tscn\").instantiate() as Node2D
+		Utils.game.map.add_child(goo)
+		goo.global_position = global_position
+
+func goto_target(delta: float):
+	if not validate_target():
+		set_state(\"look_for_target\")
+		return
+	
+	if not path:
+		search_path_to_target()
+		return
+	
+	follow_path()
+	
+	if timer >= 1:
+		timer = 0
+		path.clear()
+	
+	if is_near_target(50):
+		start_angle = target.global_position.direction_to(global_position).angle()
+		set_state(\"surround_target\")
+
+func surround_target(delta: float):
+	if not validate_target():
+		set_state(\"look_for_target\")
+		return
+	
+	if not is_near_target(60):
+		set_state(\"goto_target\")
+		return
+	
+	if timer >= TAU / 2.5:
+		timer -= TAU / 2.5
+		start_angle += PI/2
+	
+	velocity += seek(global_position, target.global_position + Vector2.RIGHT.rotated(start_angle + timer * 5) * 40)
+	velocity += collision_avoidance() * 7.0 + update_avoid_others_in_range(avoid_range) * 0.5
+"
+
+[sub_resource type="Animation" id=2]
+resource_name = "Walk"
+length = 0.3
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2 ]
+}
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 4.0
+
+[node name="Surrounder" type="Node2D"]
+z_as_relative = false
+script = SubResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Walk"
+anims/Walk = SubResource( 2 )
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 32
+
+[node name="Shape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource( 3 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = -1.57079
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+hframes = 5
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="LeftStart" type="Marker2D" parent="Collisions"]
+position = Vector2( 0, -6 )
+z_index = 1023
+
+[node name="LeftEnd" type="Marker2D" parent="Collisions"]
+position = Vector2( 6, -7 )
+z_index = 1023
+
+[node name="RightStart" type="Marker2D" parent="Collisions"]
+position = Vector2( 0, 6 )
+z_index = 1023
+
+[node name="RightEnd" type="Marker2D" parent="Collisions"]
+position = Vector2( 6, 7 )
+z_index = 1023

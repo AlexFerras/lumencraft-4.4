@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://cy314qmtsbp4x"
+path="res://.godot/imported/FlareSiege.png-76f6b6b6cd8fcb1748c40c027afebae8.image"
+
+[deps]
+
+source_file="res://Maps/FlareSiege.png"
+dest_files=["res://.godot/imported/FlareSiege.png-76f6b6b6cd8fcb1748c40c027afebae8.image"]
+
+[params]
+

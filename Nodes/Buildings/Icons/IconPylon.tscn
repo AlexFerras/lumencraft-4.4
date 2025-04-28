@@ -1,0 +1,50 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Pylon/PylonIcon.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Lab/tech_icons/zap_upgrade.png" type="Texture2D" id=5]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Buildings/Icons/GenericPreview.gd\"
+
+func set_as_preview():
+	super.set_as_preview()
+	BaseBuilding.init_range_extender_node(self, preload(\"res://Nodes/Buildings/Pylon/Pylon.gd\").RANGE, 1.0)
+	remove_from_group(\"range_expander\")
+	set_meta(\"custom_canvas\", true)
+
+func on_moved():
+	Utils.game.map.post_process.range_dirty = true
+
+func on_placed():
+	set_meta(\"custom_canvas\", false)
+	Utils.game.map.post_process.range_dirty = true
+"
+
+[node name="IconPylon" type="Sprite2D" groups=["temporary_expander"]]
+modulate = Color( 1.69, 2.06, 2.75, 1 )
+scale = Vector2( 0.052, 0.052 )
+texture = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 3 )
+scale = Vector2( 201.982, 203.573 )
+z_index = -1
+texture = ExtResource( 2 )
+
+[node name="Unused" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 2, 1, 0, 1 )
+scale = Vector2( 1.02745, 1.02745 )
+texture = ExtResource( 5 )
+
+[node name="darker_bg" type="Sprite2D" parent="Unused"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.979471, 0.979471 )
+texture = ExtResource( 4 )

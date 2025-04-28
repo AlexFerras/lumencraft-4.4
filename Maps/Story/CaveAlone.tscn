@@ -1,0 +1,711 @@
+[gd_scene load_steps=41 format=2]
+
+[ext_resource path="res://Resources/Materials/PixelMapMaterial.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Map/MapPixelMap.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Materials/FloorMaterial.tres" type="Material" id=3]
+[ext_resource path="res://Nodes/Enemies/Swarm/SwarmEnemy.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Nodes/Map/FloorPixelMap.gd" type="Script" id=5]
+[ext_resource path="res://Nodes/Map/MapDarkness.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Nodes/Objects/LumenCrystal/LumenCrystal.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Objects/Hole/Hole.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Scripts/PlayerDetector.gd" type="Script" id=9]
+[ext_resource path="res://Nodes/Objects/Chest/RustyChest.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Nodes/Pickups/Ammo/AmmoPickup.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Resources/Materials/TerrainMaterials.tres" type="PixelMapMaterialData" id=12]
+[ext_resource path="res://Nodes/Map/Map.gd" type="Script" id=14]
+[ext_resource path="res://Nodes/Pickups/SimplePickup.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=16]
+[ext_resource path="res://Nodes/Objects/Rock/Rock.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Nodes/Enemies/Arthoma/Arthoma.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Nodes/Enemies/Pider/Pider.tscn" type="PackedScene" id=19]
+[ext_resource path="res://Nodes/Buildings/Pylon/Pylon.tscn" type="PackedScene" id=20]
+[ext_resource path="res://Nodes/Buildings/Pylon/Generator.tscn" type="PackedScene" id=21]
+[ext_resource path="res://Nodes/Buildings/Turret/MachinegunTurret.tscn" type="PackedScene" id=22]
+[ext_resource path="res://Nodes/Buildings/Tower/Tower.tscn" type="PackedScene" id=23]
+[ext_resource path="res://Nodes/Buildings/Turret/SniperTurret.tscn" type="PackedScene" id=24]
+[ext_resource path="res://Nodes/Objects/Chest/Chest.tscn" type="PackedScene" id=25]
+[ext_resource path="res://Nodes/Objects/Deco/Campsite.tscn" type="PackedScene" id=26]
+[ext_resource path="res://Nodes/Map/ZIndexer.gd" type="Script" id=27]
+[ext_resource path="res://Nodes/Objects/Deco/Corpses.png" type="Texture2D" id=28]
+[ext_resource path="res://Nodes/Objects/Deco/Sea_flower/sea_flower.tscn" type="PackedScene" id=29]
+[ext_resource path="res://Nodes/Buildings/InteractiveLight/InteractiveLight.tscn" type="PackedScene" id=30]
+[ext_resource path="res://Nodes/Objects/Technical/CheckPoint.tscn" type="PackedScene" id=31]
+[ext_resource path="res://Nodes/Objects/Technical/MapTransition.tscn" type="PackedScene" id=32]
+
+[sub_resource type="PixelMapMaterialData" id=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends \"res://Scripts/MapEvents.gd\"
+
+@export var monster_count1: int
+
+func _enter_map():
+	if not Save.is_event_done(\"start_story\"):
+		for player in Utils.game.players:
+			player.call_deferred(\"add_item\", Const.ItemIDs.MAGNUM)
+			player.call_deferred(\"add_item\", Const.ItemIDs.AMMO, 50, Const.Ammo.BULLETS)
+		
+		for monster in $\"../Monsters1\".get_children():
+			if not monster is BaseEnemy:
+				continue
+			
+			monster_count1 += 1
+			monster.connect(\"died\", Callable(self, \"monster_died1\"))
+
+func _game_start():
+	if Save.do_event(\"start_story\"):
+		for player in Utils.game.players:
+			player.torso.rotation = Vector2(-1, -1).angle()
+			player.torso_animator.playback_speed = 0
+			player.legs_animator.playback_speed = 0
+		
+		var cut := Cutscene.new()
+		cut.append_message(\"Oh no, the path got blocked after the quake.\", Utils.game.main_player)
+		cut.append_message(\"Can anyone hear me?\", Utils.game.main_player)
+		cut.append_message(\"Looks like I'm alone now. I need to find the others.\", Utils.game.main_player)
+		cut.append_tween().append_callback(Save, \"autosave\")
+
+func monster_died1():
+	monster_count1 -= 1
+	if monster_count1 == 0:
+		var cut := Cutscene.new(true)
+		cut.append_message(\"What the hell were these creatures?\", Utils.game.main_player, true)
+		cut.append_message(\"At this rate I will run out of ammo.\", Utils.game.main_player, true)
+		cut.append_message(\"Maybe I can find more if I look around.\", Utils.game.main_player, true)
+
+func trap1_triggered(player) -> void:
+	$\"../Trap1/Hole\".trigger()
+	$\"../Trap1/Hole2\".trigger(false)
+
+func on_generator_turned_on() -> void:
+	$\"../Battle/PlayerDetector\".queue_free()
+	var cut := Cutscene.new()
+	cut.append_message(\"I have a bad feeling about this.\", Utils.game.main_player)
+	var seq := cut.append_tween()
+	seq.append_callback(Utils.game.camera, \"set_physics_process\", [false])
+	seq.append(Utils.game.camera, \"global_position\", $\"../Battle/CameraPoint\".global_position, 2)
+	seq.parallel().append_method(self, \"reveal_view\", 0, 1, 2)
+	seq.append_callback(self, \"trigger_battle\")
+	seq.append_interval(2)
+	seq.append_callback(Utils.game.camera, \"set_physics_process\", [true])
+	cut.append_message(\"Yep.\", Utils.game.main_player)
+
+func reveal_view(size):
+	Utils.game.map.pixel_map.fog_of_war.clear_circular_area(Utils.game.camera.global_position, 200, Color(1, 1, 1, 0.06))
+
+func trigger_battle(player = null) -> void:
+	Utils.game.start_battle()
+	for hole in $\"../Battle/Holes\".get_children():
+		hole.trigger(false)
+
+func handy(player) -> void:
+	Cutscene.show_message(\"Hmmm, this might come in handy later.\", Utils.game.main_player, true)
+	$\"../Handy\".queue_free()
+
+func trigger_monsters(player) -> void:
+	Utils.game.start_battle()
+	for enemy in $\"../Monsters1\".get_children():
+		if enemy is BaseEnemy:
+			enemy.set_target(player)
+
+func campsite(player) -> void:
+	Cutscene.show_message(\"Some abandoned campsite. I am getting close.\", player, true)
+
+var enemy_count: int
+
+func mogila(player) -> void:
+	Cutscene.show_message(\"What... No...\", player, true)
+	await get_tree().create_timer(0.5, false).timeout
+	for enemy in $\"../End/Mogila\".get_children():
+		if enemy is BaseEnemy:
+			enemy_count += 1
+			enemy.connect(\"died\", Callable(self, \"mogila_died\"))
+			enemy.set_target(player)
+
+func mogila_died():
+	enemy_count -= 1
+	if enemy_count == 0:
+		Cutscene.show_message(\"This is not good. I hope someone survived.\", Utils.game.main_player, true)
+"
+
+[sub_resource type="SeparationRayShape2D" id=6]
+length = 160.749
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 31.9406, 185.096 )
+
+[sub_resource type="SegmentShape2D" id=9]
+a = Vector2( 378.86, -72.4912 )
+b = Vector2( -212.182, 38.0977 )
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 116.667
+
+[sub_resource type="CircleShape2D" id=7]
+radius = 196.733
+
+[sub_resource type="CircleShape2D" id=8]
+radius = 142.386
+
+[sub_resource type="RectangleShape2D" id=10]
+extents = Vector2( 4.82935, 61.7363 )
+
+[node name="Map" type="Node2D"]
+script = ExtResource( 14 )
+__meta__ = {
+"_edit_lock_": true
+}
+disable_darkness = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 16 )
+
+[node name="PixelMap" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 1 )
+z_index = 500
+z_as_relative = false
+material_data = ExtResource( 12 )
+texture_path = "res://Maps/Story/CaveAlone.png"
+debug_flags = 4
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="PixelMapPhysics" type="PixelMapPhysics" parent="PixelMap"]
+
+[node name="MapDarkness" parent="PixelMap" instance=ExtResource( 6 )]
+ambient_color = Color( 0.128, 0.126, 0.15, 1 )
+
+[node name="Floor" type="PixelMap" parent="."]
+process_priority = 100
+material = ExtResource( 3 )
+scale = Vector2( 8, 8 )
+z_index = -2000
+z_as_relative = false
+material_data = SubResource( 2 )
+debug_flags = 4
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_lock_": true
+}
+textures = [ null, null, null, null ]
+
+[node name="Start" type="Node2D" parent="."]
+position = Vector2( 137.397, 165.87 )
+
+[node name="Start0" type="Node2D" parent="."]
+position = Vector2( 4071.22, 3906.91 )
+
+[node name="DebugStart" type="Node2D" parent="."]
+visible = false
+position = Vector2( 3996.35, 3924.72 )
+
+[node name="MapEvents" type="Node" parent="."]
+script = SubResource( 3 )
+
+[node name="Rocks" type="Node2D" parent="."]
+
+[node name="PixelMapRigidBody" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 14.0312, 14.9302 )
+
+[node name="PixelMapRigidBody2" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 41.8278, 19.8007 )
+
+[node name="PixelMapRigidBody3" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 18.7588, 39.8792 )
+
+[node name="PixelMapRigidBody4" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 16.0812, 68.3959 )
+
+[node name="PixelMapRigidBody5" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 45.0262, 45.3269 )
+
+[node name="PixelMapRigidBody9" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 70.9906, 14.8039 )
+
+[node name="PixelMapRigidBody10" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 93.3873, 36.4078 )
+
+[node name="PixelMapRigidBody6" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 17.897, 123.264 )
+
+[node name="PixelMapRigidBody7" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 18.2147, 97.2574 )
+
+[node name="PixelMapRigidBody8" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 71.3908, 54.6355 )
+
+[node name="PixelMapRigidBody11" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 45.8229, 75.6448 )
+
+[node name="PixelMapRigidBody12" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 47.0121, 103.988 )
+
+[node name="PixelMapRigidBody13" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 74.7602, 82.1854 )
+
+[node name="PixelMapRigidBody14" parent="Rocks" instance=ExtResource( 17 )]
+position = Vector2( 106.274, 63.7527 )
+
+[node name="Monsters1" type="Node2D" parent="."]
+
+[node name="Enemy_Swarm" parent="Monsters1" instance=ExtResource( 4 )]
+position = Vector2( 1122.42, 316.084 )
+
+[node name="Enemy_Swarm2" parent="Monsters1" instance=ExtResource( 4 )]
+position = Vector2( 1128.3, 374.04 )
+
+[node name="Enemy_Swarm3" parent="Monsters1" instance=ExtResource( 4 )]
+position = Vector2( 1201.37, 323.643 )
+
+[node name="Enemy_Swarm4" parent="Monsters1" instance=ExtResource( 4 )]
+position = Vector2( 1184.15, 420.237 )
+
+[node name="PlayerDetector" type="Area2D" parent="Monsters1"]
+position = Vector2( 1046.52, 196.787 )
+rotation = 0.1255
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Monsters1/PlayerDetector"]
+position = Vector2( -37.2473, -1.47758 )
+shape = SubResource( 6 )
+
+[node name="Trap1" type="Node2D" parent="."]
+
+[node name="Hole" parent="Trap1" instance=ExtResource( 8 )]
+position = Vector2( 1807.7, 642.337 )
+total_monsters = 4
+max_monsters_at_once = 2
+spawn_batch = 2
+unlimited_range = true
+
+[node name="Hole2" parent="Trap1" instance=ExtResource( 8 )]
+position = Vector2( 1747.46, 792.372 )
+total_monsters = 4
+max_monsters_at_once = 2
+spawn_batch = 2
+unlimited_range = true
+
+[node name="PlayerDetector" type="Area2D" parent="Trap1"]
+position = Vector2( 1774.03, 710.433 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Trap1/PlayerDetector"]
+rotation = 0.261799
+shape = SubResource( 4 )
+
+[node name="DeadEnds" type="Node2D" parent="."]
+
+[node name="LumenCrystal" parent="DeadEnds" instance=ExtResource( 7 )]
+position = Vector2( 1019.37, 1300.1 )
+rotation = -0.924093
+scale = Vector2( 0.468868, 0.468868 )
+
+[node name="RustyChest" parent="DeadEnds" instance=ExtResource( 10 )]
+position = Vector2( 2417.86, 1041.42 )
+rotation = 0.523598
+
+[node name="AmmoPickup" parent="DeadEnds/RustyChest" instance=ExtResource( 11 )]
+amount = 15
+
+[node name="RustyChest3" parent="DeadEnds" instance=ExtResource( 10 )]
+position = Vector2( 3270.86, 955.754 )
+rotation = 2.13545
+
+[node name="SimplePickup" parent="DeadEnds/RustyChest3" instance=ExtResource( 15 )]
+item = "GRENADE"
+
+[node name="SimplePickup2" parent="DeadEnds/RustyChest3" instance=ExtResource( 15 )]
+item = "METAL_SCRAP"
+amount = 5
+
+[node name="AmmoPickup" parent="DeadEnds/RustyChest3" instance=ExtResource( 11 )]
+amount = 15
+
+[node name="RustyChest2" parent="DeadEnds" instance=ExtResource( 10 )]
+position = Vector2( 2021.86, 1419.75 )
+rotation = -1.0472
+
+[node name="SimplePickup" parent="DeadEnds/RustyChest2" instance=ExtResource( 15 )]
+item = "MEDPACK"
+
+[node name="SimplePickup3" parent="DeadEnds/RustyChest2" instance=ExtResource( 15 )]
+item = "METAL_SCRAP"
+amount = 15
+
+[node name="SimplePickup2" parent="DeadEnds/RustyChest2" instance=ExtResource( 15 )]
+item = "GRENADE"
+amount = 2
+
+[node name="Hole" parent="DeadEnds" instance=ExtResource( 8 )]
+position = Vector2( 2686.6, 494.258 )
+trigger_size = 100.0
+unlimited_range = true
+
+[node name="Enemy_Arthoma" parent="DeadEnds" instance=ExtResource( 18 )]
+position = Vector2( 1879.13, 1309.66 )
+
+[node name="Enemy_Arthoma2" parent="DeadEnds" instance=ExtResource( 18 )]
+position = Vector2( 2412.29, 1123.35 )
+
+[node name="Monsters2" type="Node2D" parent="."]
+
+[node name="Enemy_Swarm" parent="Monsters2" instance=ExtResource( 4 )]
+position = Vector2( 2820.58, 1241.48 )
+
+[node name="Enemy_Swarm2" parent="Monsters2" instance=ExtResource( 4 )]
+position = Vector2( 2790.85, 1260.11 )
+
+[node name="Enemy_Swarm3" parent="Monsters2" instance=ExtResource( 4 )]
+position = Vector2( 2838.02, 1278.34 )
+
+[node name="Enemy_Smart" parent="Monsters2" instance=ExtResource( 19 )]
+position = Vector2( 2735.75, 1306.49 )
+
+[node name="Enemy_Smart2" parent="Monsters2" instance=ExtResource( 19 )]
+position = Vector2( 2815.03, 1336.22 )
+
+[node name="Enemy_Smart3" parent="Monsters2" instance=ExtResource( 19 )]
+position = Vector2( 2888.37, 1368.72 )
+
+[node name="Enemy_Smart4" parent="Monsters2" instance=ExtResource( 19 )]
+position = Vector2( 2784.51, 1402.81 )
+
+[node name="SideCorridors" type="Node2D" parent="."]
+
+[node name="Enemy_Arthoma" parent="SideCorridors" instance=ExtResource( 18 )]
+position = Vector2( 1417.51, 2236 )
+
+[node name="Enemy_Arthoma2" parent="SideCorridors" instance=ExtResource( 18 )]
+position = Vector2( 1374.84, 2182.67 )
+
+[node name="LumenCrystal2" parent="SideCorridors" instance=ExtResource( 7 )]
+position = Vector2( 720.028, 2664.36 )
+rotation = 0.785397
+scale = Vector2( 0.807603, 0.807603 )
+
+[node name="LumenCrystal3" parent="SideCorridors" instance=ExtResource( 7 )]
+position = Vector2( 3777.59, 3174.55 )
+rotation = -2.35619
+scale = Vector2( 1.25382, 1.25382 )
+
+[node name="Hole" parent="SideCorridors" instance=ExtResource( 8 )]
+position = Vector2( 590, 2280.07 )
+swarm_object = ExtResource( 18 )
+total_monsters = 2
+trigger_size = 60.0
+unlimited_range = true
+
+[node name="Hole2" parent="SideCorridors" instance=ExtResource( 8 )]
+position = Vector2( 3630.93, 3175.72 )
+total_monsters = 8
+max_monsters_at_once = 1
+spawn_interval = 0.5
+trigger_timeout = 1.0
+trigger_size = 60.0
+unlimited_range = true
+
+[node name="Chest" parent="SideCorridors" instance=ExtResource( 25 )]
+position = Vector2( 1243.7, 2760.14 )
+rotation = 0.85205
+
+[node name="AmmoPickup" parent="SideCorridors/Chest" instance=ExtResource( 11 )]
+amount = 30
+
+[node name="SimplePickup" parent="SideCorridors/Chest" instance=ExtResource( 15 )]
+item = "METAL_SCRAP"
+amount = 20
+
+[node name="RustyChest" parent="SideCorridors" instance=ExtResource( 10 )]
+position = Vector2( 2880.44, 1053.15 )
+rotation = -0.870688
+
+[node name="AmmoPickup" parent="SideCorridors/RustyChest" instance=ExtResource( 11 )]
+amount = 30
+
+[node name="SimplePickup" parent="SideCorridors/RustyChest" instance=ExtResource( 15 )]
+item = "MEDPACK"
+
+[node name="CheckPoint" parent="SideCorridors" instance=ExtResource( 31 )]
+position = Vector2( 2740.4, 1767.98 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SideCorridors/CheckPoint"]
+shape = SubResource( 9 )
+
+[node name="Battle" type="Node2D" parent="."]
+
+[node name="Generator" parent="Battle" instance=ExtResource( 21 )]
+position = Vector2( 2714.84, 2070 )
+turned_on = false
+stored_power = 120.0
+
+[node name="Pylon" parent="Battle" instance=ExtResource( 20 )]
+position = Vector2( 2702.37, 2086.53 )
+
+[node name="MachinegunTurret" parent="Battle" instance=ExtResource( 22 )]
+position = Vector2( 2590.17, 2107.45 )
+rotation = 2.61799
+
+[node name="SniperTurret" parent="Battle" instance=ExtResource( 24 )]
+position = Vector2( 2724.2, 2190.22 )
+rotation = 1.309
+
+[node name="Tower" parent="Battle" instance=ExtResource( 23 )]
+position = Vector2( 2599.29, 2056.5 )
+rotation = 2.61799
+
+[node name="Tower2" parent="Battle" instance=ExtResource( 23 )]
+position = Vector2( 2788.77, 2127.46 )
+rotation = 1.0472
+
+[node name="Tower3" parent="Battle" instance=ExtResource( 23 )]
+position = Vector2( 2731.69, 2008.93 )
+rotation = -1.0472
+
+[node name="Holes" type="Node2D" parent="Battle"]
+
+[node name="Hole" parent="Battle/Holes" instance=ExtResource( 8 )]
+position = Vector2( 2184.8, 2702.11 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 2
+trigger_timeout = 1.0
+unlimited_range = true
+
+[node name="Hole2" parent="Battle/Holes" instance=ExtResource( 8 )]
+position = Vector2( 2323.54, 2758.18 )
+swarm_object = ExtResource( 19 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 2
+trigger_timeout = 1.0
+unlimited_range = true
+
+[node name="Hole3" parent="Battle/Holes" instance=ExtResource( 8 )]
+position = Vector2( 2365.45, 2811.59 )
+swarm_object = ExtResource( 19 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 2
+trigger_timeout = 1.0
+unlimited_range = true
+
+[node name="Hole4" parent="Battle/Holes" instance=ExtResource( 8 )]
+position = Vector2( 2295.08, 2959.77 )
+swarm_object = ExtResource( 18 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 2
+trigger_timeout = 1.0
+unlimited_range = true
+
+[node name="Hole5" parent="Battle/Holes" instance=ExtResource( 8 )]
+position = Vector2( 2114.24, 2767.7 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 2
+trigger_timeout = 1.0
+unlimited_range = true
+
+[node name="Hole6" parent="Battle/Holes" instance=ExtResource( 8 )]
+position = Vector2( 2124.54, 2877.1 )
+swarm_object = ExtResource( 18 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 2
+trigger_timeout = 1.0
+unlimited_range = true
+
+[node name="Hole7" parent="Battle/Holes" instance=ExtResource( 8 )]
+position = Vector2( 2270.42, 2853.32 )
+total_monsters = 4
+max_monsters_at_once = 3
+spawn_batch = 2
+trigger_timeout = 1.0
+unlimited_range = true
+
+[node name="PlayerDetector" type="Area2D" parent="Battle"]
+position = Vector2( 2359.21, 2655.12 )
+script = ExtResource( 9 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Battle/PlayerDetector"]
+polygon = PackedVector2Array( -436.043, -80.8662, -123.678, -80.8662, 297.302, 304.437, 443.97, 265.589, -88.7942, -152.219, -476.476, -157.768 )
+
+[node name="CameraPoint" type="Marker2D" parent="Battle"]
+position = Vector2( 2215.67, 2805.33 )
+
+[node name="InteractiveLight" parent="Battle" instance=ExtResource( 30 )]
+position = Vector2( 2653.15, 1939.35 )
+index = 3
+color = Color( 1, 0, 0, 1 )
+
+[node name="InteractiveLight2" parent="Battle" instance=ExtResource( 30 )]
+position = Vector2( 2626.91, 1904.15 )
+index = 2
+color = Color( 1, 0, 0, 1 )
+
+[node name="InteractiveLight3" parent="Battle" instance=ExtResource( 30 )]
+position = Vector2( 2598.98, 1872.06 )
+index = 1
+color = Color( 1, 0, 0, 1 )
+
+[node name="InteractiveLight4" parent="Battle" instance=ExtResource( 30 )]
+position = Vector2( 2572.68, 1841.71 )
+color = Color( 1, 0, 0, 1 )
+
+[node name="Handy" type="Node2D" parent="."]
+
+[node name="PlayerDetector" type="Area2D" parent="Handy"]
+position = Vector2( 1022.71, 1305.07 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Handy/PlayerDetector"]
+shape = SubResource( 5 )
+
+[node name="PlayerDetector2" type="Area2D" parent="Handy"]
+position = Vector2( 3776.12, 3171.34 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Handy/PlayerDetector2"]
+shape = SubResource( 5 )
+
+[node name="PlayerDetector3" type="Area2D" parent="Handy"]
+position = Vector2( 721.57, 2665.91 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Handy/PlayerDetector3"]
+shape = SubResource( 5 )
+
+[node name="End" type="Node2D" parent="."]
+
+[node name="StaticBody2D" parent="End" instance=ExtResource( 26 )]
+position = Vector2( 1628.08, 3250.41 )
+
+[node name="PlayerDetector" type="Area2D" parent="End"]
+position = Vector2( 1617.41, 3235.57 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="End/PlayerDetector"]
+shape = SubResource( 7 )
+
+[node name="PlayerDetector2" type="Area2D" parent="End"]
+position = Vector2( 1073, 3921.34 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="End/PlayerDetector2"]
+shape = SubResource( 8 )
+
+[node name="Mogila" type="Node2D" parent="End"]
+
+[node name="Corpse" type="Sprite2D" parent="End/Mogila"]
+position = Vector2( 1055.91, 3897.35 )
+rotation = -0.523598
+scale = Vector2( 0.5, 0.5 )
+z_index = -500
+z_as_relative = false
+texture = ExtResource( 28 )
+hframes = 2
+
+[node name="ZIndexer" type="Node" parent="End/Mogila/Corpse"]
+script = ExtResource( 27 )
+z_index = -500
+
+[node name="Corpse2" type="Sprite2D" parent="End/Mogila"]
+position = Vector2( 1047.06, 3947.77 )
+rotation = -2.42604
+scale = Vector2( 0.5, 0.5 )
+z_index = -500
+z_as_relative = false
+texture = ExtResource( 28 )
+hframes = 2
+frame = 1
+
+[node name="ZIndexer" type="Node" parent="End/Mogila/Corpse2"]
+script = ExtResource( 27 )
+z_index = -500
+
+[node name="Corpse3" type="Sprite2D" parent="End/Mogila"]
+position = Vector2( 1113.63, 3917.64 )
+rotation = 0.261799
+scale = Vector2( 0.5, 0.5 )
+z_index = -500
+z_as_relative = false
+texture = ExtResource( 28 )
+hframes = 2
+frame = 1
+
+[node name="ZIndexer" type="Node" parent="End/Mogila/Corpse3"]
+script = ExtResource( 27 )
+z_index = -500
+
+[node name="Enemy_Swarm" parent="End/Mogila" instance=ExtResource( 4 )]
+position = Vector2( 1054.2, 3900.7 )
+
+[node name="Enemy_Swarm2" parent="End/Mogila" instance=ExtResource( 4 )]
+position = Vector2( 1033.87, 3940.7 )
+
+[node name="Enemy_Swarm3" parent="End/Mogila" instance=ExtResource( 4 )]
+position = Vector2( 1058.21, 3949.04 )
+rotation = 2.87979
+
+[node name="Enemy_Swarm4" parent="End/Mogila" instance=ExtResource( 4 )]
+position = Vector2( 1110.54, 3922.37 )
+rotation = 5.49778
+
+[node name="AmmoPickup" parent="End" instance=ExtResource( 11 )]
+position = Vector2( 1591, 3297 )
+amount = 25
+
+[node name="MapTransition" parent="End" instance=ExtResource( 32 )]
+position = Vector2( 4090.4, 3907.9 )
+target_map = "ScoutBase"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="End/MapTransition"]
+shape = SubResource( 10 )
+
+[node name="Deco" type="Node2D" parent="."]
+
+[node name="Rock" parent="Deco" instance=ExtResource( 17 )]
+position = Vector2( 3375.41, 2627.42 )
+
+[node name="Rock2" parent="Deco" instance=ExtResource( 17 )]
+position = Vector2( 3355.28, 2601.64 )
+
+[node name="Rock3" parent="Deco" instance=ExtResource( 17 )]
+position = Vector2( 3391.31, 2596.34 )
+
+[node name="sea_flower" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 3257.44, 1949.8 )
+
+[node name="sea_flower2" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 3498.73, 2497.98 )
+
+[node name="sea_flower3" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 1225.05, 2808.56 )
+
+[node name="sea_flower4" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 918.93, 1175.6 )
+
+[node name="sea_flower5" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 1261.54, 522.42 )
+
+[node name="sea_flower6" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 2977.25, 795.617 )
+
+[node name="sea_flower7" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 836.17, 3317.57 )
+
+[node name="sea_flower8" parent="Deco" instance=ExtResource( 29 )]
+position = Vector2( 1628.17, 3692.22 )
+
+[connection signal="player_entered" from="Monsters1/PlayerDetector" to="MapEvents" method="trigger_monsters"]
+[connection signal="player_entered" from="Trap1/PlayerDetector" to="MapEvents" method="trap1_triggered"]
+[connection signal="toggled" from="Battle/Generator" to="MapEvents" method="on_generator_turned_on" flags=6]
+[connection signal="player_entered" from="Battle/PlayerDetector" to="MapEvents" method="trigger_battle"]
+[connection signal="player_entered" from="Handy/PlayerDetector" to="MapEvents" method="handy"]
+[connection signal="player_entered" from="Handy/PlayerDetector2" to="MapEvents" method="handy"]
+[connection signal="player_entered" from="Handy/PlayerDetector3" to="MapEvents" method="handy"]
+[connection signal="player_entered" from="End/PlayerDetector" to="MapEvents" method="campsite"]
+[connection signal="player_entered" from="End/PlayerDetector2" to="MapEvents" method="mogila"]

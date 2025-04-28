@@ -1,0 +1,247 @@
+[gd_scene load_steps=24 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Turret/TurretFlamer.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Turret/TurretBase.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/Flashlight.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Effects/Audio/GunAudioController.gd" type="Script" id=5]
+[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=6]
+[ext_resource path="res://Nodes/Buildings/Icons/IconFlamerTurret.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Nodes/Buildings/Turret/TurretComputer.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Nodes/Buildings/Common/Computer/ComputerScreen.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Resources/Textures/gradient.png" type="Texture2D" id=10]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=11]
+[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Nodes/Buildings/Common/HealthBar.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Nodes/Buildings/Turret/UpgradeStar.png" type="Texture2D" id=14]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://Nodes/Buildings/Turret/GunTurret.gd\"
+
+var flame_amount: int
+var damping: float
+var linger: int
+
+func _shoot():
+	for i in flame_amount:
+		var bullet := preload(\"res://Nodes/Player/Weapons/Ranged/Flame.tscn\").instantiate() as Node2D
+		bullet.speed = 200
+		bullet.damping = damping
+		bullet.rotation = angle_to_target
+		bullet.position = shoot_point.global_position
+		bullet.lingering = bool(linger)
+		bullet.life_time += linger * 4
+		Utils.game.map.add_child(bullet)
+
+func _refresh_upgrades(upgrades: Dictionary):
+	flame_amount = 1 + upgrades.flame_amount
+	max_range = base_max_range + upgrades.range * 40
+	damping = 0.965 + upgrades.range * 0.01
+	linger = upgrades.sticky_flame
+"
+
+[sub_resource type="CircleShape2D" id=11]
+radius = 7.96106
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 600.0
+
+[sub_resource type="CircleShape2D" id=12]
+radius = 8.10365
+
+[sub_resource type="Shader" id=18]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise;
+uniform float ray_length = 300;
+//
+//vec3 mod2893(vec3 x) {
+//  return x - floor(x * (1.0 / 289.0)) * 289.0;
+//}
+
+float rand(vec2 co){
+	return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+}
+void fragment() {
+	COLOR=texture(TEXTURE,UV)*COLOR;
+	float noise_tex = texture(noise, vec2(SCREEN_UV.x*5.0+TIME *0.2, SCREEN_UV.y*5.0+TIME *0.2)).r;
+	COLOR.a *= 2.0*pow(noise_tex,2.0) * (1.0-UV.x * ray_length/300.0 );
+//	COLOR.a = (max(0.0, snoise( vec3( SCREEN_UV*50.0, TIME*2.0 ) ))*0.5 + 0.3) * (1.0-UV.x);
+	COLOR.rgb = vec3(1.0,0.0,0.0);
+}
+"
+
+[sub_resource type="FastNoiseLite" id=20]
+period = 8.5
+persistence = 0.0
+lacunarity = 0.1
+
+[sub_resource type="NoiseTexture" id=19]
+width = 128
+height = 128
+seamless = true
+bump_strength = 13.5
+noise = SubResource( 20 )
+
+[sub_resource type="ShaderMaterial" id=21]
+shader = SubResource( 18 )
+shader_param/ray_length = 200.0
+shader_param/noise = SubResource( 19 )
+
+[sub_resource type="GDScript" id=22]
+script/source = "extends Sprite2D
+
+var texture_width=128.0
+@export var start_point : Vector2
+@export var end_point : Vector2
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	start_point=get_parent().global_position
+	set_as_top_level(true)
+	texture_width=texture.get_width()
+
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _physics_process(delta):
+
+	var diff= end_point -start_point
+	var length=diff.length()
+	global_position=start_point +diff*0.5
+	global_scale.x=length/texture_width
+	global_rotation=diff.angle()
+
+"
+
+[node name="FlamerTurret" type="Area2D"]
+script = SubResource( 1 )
+radius = 10.0
+base_max_range = 100.0
+base_shoot_delay = 0.02
+
+[node name="TurretComputer" parent="." instance=ExtResource( 8 )]
+target_screen = NodePath("../ComputerScreen")
+
+[node name="ComputerScreen" parent="." instance=ExtResource( 9 )]
+
+[node name="PreferredSize" type="ReferenceRect" parent="ComputerScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -250.0
+offset_right = 440.0
+offset_bottom = 250.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Detector" type="Area2D" parent="."]
+visible = false
+collision_layer = 0
+collision_mask = 32
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detector"]
+shape = SubResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 12 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 2 )
+
+[node name="Top" type="Sprite2D" parent="."]
+scale = Vector2( 0.05, 0.05 )
+texture = ExtResource( 1 )
+offset = Vector2( 10, 0 )
+
+[node name="ShootPoint" type="Marker2D" parent="Top"]
+position = Vector2( 187.5, 0 )
+scale = Vector2( 12.5, 12.5 )
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Top/ShootPoint"]
+position = Vector2( -15, 0 )
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+script = ExtResource( 5 )
+shot_path = "res://SFX/Turret/gun_submachine_auto_shot_"
+
+[node name="FlashLight2" type="Node2D" parent="Top/ShootPoint"]
+position = Vector2( -32, 0 )
+script = ExtResource( 3 )
+texture = ExtResource( 4 )
+offset = Vector2( 164, 0 )
+drop_shadow = true
+follow_rotation = true
+
+[node name="LaserStart" type="Node2D" parent="Top/ShootPoint"]
+position = Vector2( -5.4, 0.801983 )
+
+[node name="Laser" type="Sprite2D" parent="Top/ShootPoint"]
+visible = false
+material = SubResource( 21 )
+position = Vector2( 54.4449, 0.817734 )
+scale = Vector2( 0.935, 0.005 )
+z_index = 610
+z_as_relative = false
+texture = ExtResource( 10 )
+script = SubResource( 22 )
+
+[node name="ZIndexer" parent="Top/ShootPoint/Laser" instance=ExtResource( 12 )]
+z_index = 600
+offset = 10
+
+[node name="FlashLight" type="Node2D" parent="."]
+scale = Vector2( 0.35, 0.35 )
+script = ExtResource( 3 )
+texture = ExtResource( 11 )
+
+[node name="LavaChecks" type="Node2D" parent="."]
+visible = false
+script = ExtResource( 6 )
+
+[node name="Marker2D" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.177034, -10.1691 )
+
+[node name="Position2D2" type="Marker2D" parent="LavaChecks"]
+position = Vector2( 10.6158, -0.67112 )
+
+[node name="Position2D3" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -0.303259, 10.8225 )
+
+[node name="Position2D4" type="Marker2D" parent="LavaChecks"]
+position = Vector2( -11.9958, 0.722435 )
+
+[node name="Icon" parent="." instance=ExtResource( 7 )]
+
+[node name="HealthBar" parent="." instance=ExtResource( 13 )]
+position = Vector2( 0, -5 )
+scale = Vector2( 0.6, 0.6 )
+
+[node name="UpgradeStars" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Sprite2D" type="Sprite2D" parent="UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( -5, -8 )
+scale = Vector2( 0.108974, 0.108974 )
+texture = ExtResource( 14 )
+
+[node name="Sprite2" type="Sprite2D" parent="UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( 4, -8 )
+scale = Vector2( 0.108974, 0.108974 )
+texture = ExtResource( 14 )
+
+[node name="Sprite3" type="Sprite2D" parent="UpgradeStars"]
+modulate = Color( 2, 2, 2, 1 )
+position = Vector2( -0.5, -10 )
+scale = Vector2( 0.108974, 0.108974 )
+texture = ExtResource( 14 )

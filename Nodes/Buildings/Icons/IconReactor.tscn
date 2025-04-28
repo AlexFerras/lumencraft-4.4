@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Nodes/Buildings/Reactor/ReactorPhoto.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Buildings/Icons/GenericPreview.gd" type="Script" id=5]
+[ext_resource path="res://Resources/Textures/1px.png" type="Texture2D" id=6]
+[ext_resource path="res://Resources/Materials/BoundingRectangle.tres" type="Material" id=7]
+
+[node name="Sprite2D" type="Sprite2D"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )
+script = ExtResource( 5 )
+
+[node name="BoundingRect" type="Sprite2D" parent="."]
+self_modulate = Color( 1, 1, 1, 0.501961 )
+material = ExtResource( 7 )
+position = Vector2( -3.17075, -42.8955 )
+scale = Vector2( 691.912, 663.042 )
+z_index = -1
+texture = ExtResource( 6 )

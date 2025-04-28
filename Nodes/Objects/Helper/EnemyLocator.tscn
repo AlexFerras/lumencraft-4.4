@@ -1,0 +1,86 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Nodes/Map/MapMarker/WaveEnemyMarker.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Timer
+
+@onready var marker: Node2D = $Marker
+
+var stalked_enemy: Node2D
+var data: int
+var wave_only: bool
+
+func _ready() -> void:
+	connect(\"timeout\", Callable(self, \"find_enemy\"))
+
+func _physics_process(delta: float) -> void:
+	if not is_instance_valid(stalked_enemy):
+		marker.hide()
+		return
+	
+	if stalked_enemy is BaseEnemy:
+		if stalked_enemy.is_dead:
+			stalked_enemy = null
+		else:
+			marker.show()
+			marker.global_position = stalked_enemy.global_position
+	elif stalked_enemy is Swarm:
+		if is_nan(stalked_enemy.getUnitHP(data)):
+			stalked_enemy = null
+		else:
+			marker.show()
+			marker.global_position = stalked_enemy.getUnitPosition(data)
+
+func find_enemy():
+	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+		return
+	stalked_enemy = null
+	data = -1
+	var closest_dist_sq: float = INF
+	
+	var target_pos
+	if Utils.game.core:
+		target_pos=Utils.game.core.global_position
+	else:
+		target_pos=Utils.game.camera.get_camera_screen_center()
+	
+	var wave_enemies: Array
+	if wave_only:
+		wave_enemies = get_tree().get_nodes_in_group(\"__wave_enemies__\")
+	else:
+		wave_enemies = get_tree().get_nodes_in_group(\"enemies\")
+	
+	for enemy in wave_enemies:
+		if enemy is BaseEnemy and not enemy.is_dead:
+			var dist_sq: float = enemy.global_position.distance_squared_to(target_pos)
+			if dist_sq < closest_dist_sq:
+				closest_dist_sq = dist_sq
+				stalked_enemy = enemy
+				data = -1
+	
+	if not wave_only:
+		wave_enemies = get_tree().get_nodes_in_group(\"MegaSwarm\")
+	
+	for enemy in wave_enemies:
+		if enemy is Swarm:
+			var id: int = enemy.getClosestUnitInCircle(target_pos, sqrt(closest_dist_sq), true, true)
+			if id != -1:
+				var dist_sq: float = enemy.getUnitPosition(id).distance_squared_to(target_pos)
+				if dist_sq < closest_dist_sq:
+					closest_dist_sq = dist_sq
+					stalked_enemy = enemy
+					data = id
+"
+
+[node name="EnemyLocator" type="Timer" groups=["dont_save"]]
+autostart = true
+script = SubResource( 1 )
+
+[node name="Marker" parent="." instance=ExtResource( 1 )]
+modulate = Color( 2, 0, 0, 1 )
+texture = ExtResource( 2 )
+arrow = ExtResource( 2 )
+max_radius = 999999.0
+rotate_arrow = false

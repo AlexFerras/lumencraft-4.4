@@ -1,0 +1,289 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/LightningNoise.png" type="Texture2D" id=1]
+[ext_resource path="res://Nodes/Player/Weapons/Ranged/LightningBall.png" type="Texture2D" id=2]
+[ext_resource path="res://SFX/Weapons/Lightning.wav" type="AudioStream" id=3]
+[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=5]
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends Area2D
+
+const RANGE = 192.0
+const TIMER = 0.25
+
+@onready var enemy_tracker := Utils.game.map.enemy_tracker
+
+@onready var sprite := $Sprite2D as Sprite2D
+@onready var end := $Sprite2D/Sprite2D
+@onready var ball := $ball
+
+@onready var collider := $CollisionShape2D as CollisionShape2D
+@onready var light := $LightSprite as Node2D
+
+var target
+var target_swarm: int
+
+var next_lightning: Node2D
+var parent: Node2D
+var player: Player
+var max_jumps: int = 2
+var timer: float
+var base_damage: int
+
+func set_player(p: Player):
+	player = p
+
+func _ready() -> void:
+	Player.init_weapon(self, self, Const.ItemIDs.LIGHTNING_GUN)
+	base_damage = get_meta(\"data\").damage
+	get_meta(\"data\").velocity = Vector2.RIGHT.rotated(rotation) * 60
+	get_meta(\"data\").keep = true
+	get_meta(\"data\").damage_timeout = 12
+	
+	var seq := create_tween().set_loops() # HAXX ##
+	seq.tween_property(collider, \"disabled\", false, 0.1)
+	seq.tween_property(collider, \"disabled\", true, 0.1)
+	
+	_physics_process(get_physics_process_delta_time())
+	timer = TIMER * 3
+
+func _physics_process(delta: float) -> void:
+	timer += delta
+	while timer >= TIMER:
+		use_lumen()
+		timer -= TIMER
+	
+	var prev_target = target
+	var prev_swarm = target_swarm
+
+	if parent:
+		global_position = parent.ball.global_position
+	else:
+		global_position = player.get_shoot_point()
+	
+	var min_dist := RANGE * RANGE
+	var min_enemy = null
+	var min_swarm: int = -1
+	
+	var data: Dictionary = get_meta(\"data\")
+	data.high = player.on_stand
+	data.damage = base_damage + ceil(base_damage * 0.2 if player.on_stand >= 2 else 0.0)
+	z_index = ZIndexer.Indexes.BUILDING_HIGH + 10 if player.on_stand else 0
+	
+	if is_target_valid():
+		min_dist = global_position.distance_squared_to(get_target_position())
+		min_enemy = target
+		min_swarm = target_swarm
+	else:
+		target = null
+		target_swarm = -1
+	
+	var test_position := global_position
+#	if not parent:
+#		test_position = (test_position + end.global_position) * 0.5
+	
+	var enemy_list = enemy_tracker.getTrackingNodes2DInCircle(test_position, RANGE if parent else 80.0, true)
+	for enemy in enemy_list:
+		if check_parent_target(enemy):
+			continue
+		
+		if not parent:
+			if player.get_shoot_forward().dot(player.global_position.direction_to(enemy.global_position)) < 0.7:
+				continue
+		
+		var dist: float = global_position.distance_squared_to(enemy.global_position)
+		if dist < min_dist:
+			dist = min_dist
+			min_enemy = enemy
+	
+	if parent:
+		test_position += Vector2.RIGHT.rotated(randf() * TAU) * 50
+	
+	for swarm in get_tree().get_nodes_in_group(\"MegaSwarm\"):
+		var id: int = swarm.getClosestUnitInCircle(test_position, sqrt(min_dist), true, true)
+		if id != -1:
+			var dist_sq: float = swarm.getUnitPosition(id).distance_squared_to(test_position)
+			if dist_sq < min_dist:
+				min_dist = dist_sq
+				min_enemy = swarm
+				min_swarm = id
+	
+	target = min_enemy
+	target_swarm = min_swarm
+	
+	if target:
+		if target is BaseEnemy and global_position.distance_to(get_target_position()) > RANGE:
+			target = null
+		elif target is Swarm and global_position.distance_to(target.getUnitPosition(target_swarm)) > RANGE:
+			target = null
+	
+	if (target != prev_target or target_swarm != prev_swarm) and is_instance_valid(next_lightning):
+		next_lightning.queue_free()
+		next_lightning = null
+	
+	if target and prev_target:
+		if target != prev_target or target_swarm != prev_swarm:
+			timer += 0.05
+	
+	if target:
+		var target_pos := get_target_position()
+		global_rotation = global_position.direction_to(target_pos).angle()
+		end.global_position = target_pos
+	elif not parent:
+		global_rotation = player.get_shoot_rotation()
+		end.global_position = global_position + Vector2.RIGHT.rotated(global_rotation) * 128
+	else:
+		queue_free()
+	
+	var col := Utils.game.map.pixel_map.rayCastQTFromTo(global_position,  end.global_position, Player.get_weapon_mask(data))
+	if col:
+		end.global_position = global_position + Vector2.RIGHT.rotated(global_rotation) * (col.hit_position - global_position).length()
+		ball.visible = true
+	else:
+		ball.visible = is_target_valid()
+	
+		if target:
+			if not is_instance_valid(next_lightning) and max_jumps > 0:
+				timer += 0.1
+				next_lightning = load(filename).instantiate()
+				next_lightning.player = player
+				next_lightning.parent = self
+				next_lightning.max_jumps = max_jumps - 1
+				get_parent().add_child(next_lightning)
+		else:
+			end.global_position = global_position + Vector2.RIGHT.rotated(global_rotation) * 128
+	
+	update_lightning()
+	
+	if not player.is_shooting():
+		queue_free()
+	ball.rotation = randf() * TAU
+	ball.global_position=end.global_position
+
+const DISTANCE_SCALE = 1.0 / 512.0
+
+func update_lightning():
+	collider.global_position = end.global_position
+	
+	var ball_len := global_position.distance_to(end.global_position)
+	sprite.scale.x = ball_len * DISTANCE_SCALE
+	light.position.x = ball_len * 0.5625
+	light.scale.x = ball_len / 160.0
+
+func use_lumen() -> void:
+	if parent:
+		return
+	
+	player.subtract_item(Const.ItemIDs.LUMEN)
+	if player.get_item_count(Const.ItemIDs.LUMEN, null, false) == 0:
+		queue_free()
+
+func check_parent_target(checked: BaseEnemy) -> bool:
+	var checkman := self
+	while checkman.parent:
+		if checkman.target == checked:
+			return true
+		checkman = checkman.parent
+	
+	return checkman.target == checked
+
+func get_target_position() -> Vector2:
+	if target is BaseEnemy:
+		return target.global_position
+	elif target is Swarm:
+		return target.getUnitPosition(target_swarm)
+	return Vector2()
+
+func is_target_valid() -> bool:
+	if not is_instance_valid(target):
+		return false
+	
+	if target is BaseEnemy:
+		if target.is_dead:
+			return false
+	
+	if target is Swarm:
+		if target.getNumOfLivingUnits() == 0:
+			return false
+		
+		var hp = target.getUnitHP(target_swarm)
+		if is_nan(hp) or hp == 0:
+			return false
+	
+	return true
+
+func _exit_tree() -> void:
+	if is_instance_valid(next_lightning):
+		next_lightning.free()
+"
+
+[sub_resource type="Shader" id=9]
+code = "shader_type canvas_item;
+
+vec3 noise(vec2 uv) {
+	return vec3(1.0, 0.5, 0.8) * max(0.0, 1.0 - pow(32.0 * abs(0.5 - uv.x), 0.15));
+}
+
+vec3 bolt(vec2 uv, float speed, float freq, sampler2D base, float time) {
+	vec3 col = vec3(0.0);
+	
+	for (float i = 0.0; i < 0.05; i += 0.01 ) {
+		vec2 nuv = uv;
+		nuv.x += 0.55 * (0.5 - texture(base, vec2((time - i) * speed, uv.y * freq)).x) * pow(0.5 - abs(0.5 - uv.y), 0.7);
+		col += 0.5 * noise(nuv)* pow(0.5 - abs(0.5 - uv.y), .5);
+	}
+	
+	return col;
+}
+
+void fragment() {
+	vec2 uv = vec2(UV.y * 0.25 + 0.375, UV.x);
+	vec3 col = vec3(0.0);
+	
+	col += bolt(uv, 0.53534, 0.21, TEXTURE, TIME);
+	col += bolt(uv, 0.64563, 0.22, TEXTURE, TIME);
+	col += bolt(uv, 0.73425, 0.23, TEXTURE, TIME);
+	
+	COLOR = vec4(clamp(col,vec3(0.0),vec3(1.0,0.7,1.0)), col.g);
+}"
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 9 )
+
+[sub_resource type="CircleShape2D" id=12]
+
+[node name="Lightning" type="Area2D"]
+script = SubResource( 11 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource( 10 )
+scale = Vector2( 0.25, 0.0846991 )
+texture = ExtResource( 1 )
+offset = Vector2( 256, 0 )
+
+[node name="Sprite2D" type="Marker2D" parent="Sprite2D"]
+position = Vector2( 512, 0 )
+scale = Vector2( 0.4, 1.2 )
+
+[node name="ball" type="Sprite2D" parent="."]
+position = Vector2( 128, 0 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 127.876, 0 )
+shape = SubResource( 12 )
+
+[node name="LightSprite" type="Node2D" parent="."]
+modulate = Color( 1, 0.65098, 1, 1 )
+position = Vector2( 72, 0 )
+scale = Vector2( 1e-05, 0.3 )
+script = ExtResource( 5 )
+texture = ExtResource( 4 )
+follow_rotation = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
+autoplay = true
+bus = "SFX"

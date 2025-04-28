@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Textures/blood_spalt_new.png" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Sprite2D
+
+var tween: Tween
+
+func _ready():
+#	modulate = Color(4,0,0) 
+	modulate = Color.from_hsv(Save.config.blood_color.h, 1.0, 4.0, 1.0)
+	scale = Vector2.ZERO
+	flip_v = bool(randi()%2)
+	
+	var tween2 = create_tween()
+	tween2.tween_property(self, \"scale\", Vector2.ONE * randf_range(0.06, 0.12), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)
+	var tween3 = create_tween()
+	tween3.tween_interval(0.1)
+	tween3.tween_property(self, \"modulate\", Color.from_hsv(Save.config.blood_color.h, randf_range(0.7,1.0),0.31, 0.5), 0.1)
+	
+func fade():
+	tween = create_tween()
+	tween.tween_property(self, \"modulate:a\", 0.0, 1)
+	tween.tween_callback(Callable(self, \"queue_free\"))
+"
+
+[node name="Splat" type="Sprite2D"]
+modulate = Color( 0.313726, 0, 0, 0.400462 )
+scale = Vector2( 0.1, 0.1 )
+z_index = -500
+z_as_relative = false
+texture = ExtResource( 1 )
+offset = Vector2( 120, 0 )
+script = SubResource( 3 )

@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+@onready var shape := $CollisionShape2D
+
+var pickable_list: Array
+
+func pickable_detected(pickable_id: int, pickable_type: int):
+	pickable_list.append(pickable_id)
+
+func _physics_process(delta: float) -> void:
+	var pickables: PixelMapPickables = Utils.game.map.pickables
+	var i: int
+	while i < pickable_list.size():
+		var id: int = pickable_list[i]
+		if pickables.is_pickable_valid(id):
+			pickables.set_pickable_velocity(id, pickables.get_pickable_velocity(id) + pickables.get_pickable_position(id).direction_to(global_position) * 100 * delta)
+			i += 1
+		else:
+			pickable_list.remove(i)
+"
+
+[sub_resource type="CircleShape2D" id=2]
+resource_local_to_scene = true
+radius = 50.0
+
+[node name="PickupMagnet" type="Area2D" groups=[
+"detect_pickables",
+]]
+monitoring = false
+monitorable = false
+script = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )

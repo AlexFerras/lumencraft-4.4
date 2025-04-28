@@ -1,0 +1,152 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=1]
+
+[sub_resource type="Theme" id=1]
+default_font = ExtResource( 1 )
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Control
+
+@onready var console_panel: PanelContainer = $\"%ConsolePanel\"
+
+var god_mode: bool
+
+func _ready() -> void:
+	if not Save.config.editor_console_active:
+		console_panel.hide()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.keycode == KEY_F1 and event.pressed:
+			console_panel.visible = not console_panel.visible
+			Save.config.editor_console_active = console_panel.visible
+			Save.save_config()
+
+func _physics_process(delta: float) -> void:
+	if god_mode:
+		for player in Utils.game.players:
+			player.hp = player.get_max_hp()
+			player.stamina = player.get_max_stamina()
+
+func jump_to_wave() -> void:
+	var wave_id: int = $\"%WaveNumber\".value
+	var waves = Utils.game.map.wave_manager
+	
+	waves.current_wave = 0
+	waves.current_repeat = 0
+	waves.current_wave_multiplier = 1.0
+	waves.current_wave_number = 0
+	
+	waves.skip_waves(wave_id - 1)
+	waves.wave_to_launch.clear()
+	waves.skip_waves(1)
+
+func skip_wave_timer() -> void:
+	Utils.game.map.wave_manager.wave_countdown = 1
+
+func set_god_mode(button_pressed: bool) -> void:
+	god_mode = button_pressed
+
+func quit() -> void:
+	Utils.game.exit(false)
+"
+
+[node name="EditorConsole" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = SubResource( 1 )
+script = SubResource( 2 )
+
+[node name="Console" type="VBoxContainer" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -648.0
+offset_top = 592.0
+offset_right = -63.0
+offset_bottom = 789.0
+
+[node name="Label" type="Label" parent="Console"]
+offset_right = 585.0
+offset_bottom = 55.0
+grow_horizontal = 0
+text = "F1: Editor Console"
+align = 1
+
+[node name="ConsolePanel" type="PanelContainer" parent="Console"]
+unique_name_in_owner = true
+offset_top = 59.0
+offset_right = 585.0
+offset_bottom = 410.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Console/ConsolePanel"]
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 578.0
+offset_bottom = 344.0
+
+[node name="Label" type="Label" parent="Console/ConsolePanel/VBoxContainer"]
+offset_right = 571.0
+offset_bottom = 55.0
+text = "Jump to wave"
+align = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Console/ConsolePanel/VBoxContainer"]
+offset_top = 59.0
+offset_right = 571.0
+offset_bottom = 124.0
+
+[node name="WaveNumber" type="SpinBox" parent="Console/ConsolePanel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_right = 457.0
+offset_bottom = 65.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 999999.0
+value = 2.0
+
+[node name="Button" type="Button" parent="Console/ConsolePanel/VBoxContainer/HBoxContainer"]
+offset_left = 461.0
+offset_right = 571.0
+offset_bottom = 65.0
+text = "Jump"
+
+[node name="Button2" type="Button" parent="Console/ConsolePanel/VBoxContainer"]
+offset_left = 98.0
+offset_top = 128.0
+offset_right = 472.0
+offset_bottom = 189.0
+size_flags_horizontal = 4
+text = "Skip Wave Timer"
+
+[node name="HSeparator" type="HSeparator" parent="Console/ConsolePanel/VBoxContainer"]
+offset_top = 193.0
+offset_right = 571.0
+offset_bottom = 197.0
+
+[node name="CheckButton" type="CheckButton" parent="Console/ConsolePanel/VBoxContainer"]
+offset_left = 148.0
+offset_top = 201.0
+offset_right = 422.0
+offset_bottom = 264.0
+size_flags_horizontal = 4
+text = "God Mode"
+
+[node name="HSeparator2" type="HSeparator" parent="Console/ConsolePanel/VBoxContainer"]
+offset_top = 268.0
+offset_right = 571.0
+offset_bottom = 272.0
+
+[node name="Button" type="Button" parent="Console/ConsolePanel/VBoxContainer"]
+offset_left = 110.0
+offset_top = 276.0
+offset_right = 460.0
+offset_bottom = 337.0
+size_flags_horizontal = 4
+text = "Back to Editor"
+
+[connection signal="pressed" from="Console/ConsolePanel/VBoxContainer/HBoxContainer/Button" to="." method="jump_to_wave"]
+[connection signal="pressed" from="Console/ConsolePanel/VBoxContainer/Button2" to="." method="skip_wave_timer"]
+[connection signal="toggled" from="Console/ConsolePanel/VBoxContainer/CheckButton" to="." method="set_god_mode"]
+[connection signal="pressed" from="Console/ConsolePanel/VBoxContainer/Button" to="." method="quit" flags=3]

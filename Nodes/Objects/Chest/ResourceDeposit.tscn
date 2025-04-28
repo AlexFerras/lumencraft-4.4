@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Resources/Materials/BuildingDestruction.tres" type="Material" id=1]
+[ext_resource path="res://Nodes/Pickups/Resources/Stone.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends StaticBody2D
+
+@export var resource # (Constants.ItemIDs)
+@export var amount := 1.0
+@export var max_hp := 10.0
+var actual_hp := 10.0
+var spawn_hp := 10.0
+
+@onready var sprite := $Sprite2D as Sprite2D
+
+
+func _ready() -> void:
+	actual_hp = max_hp
+	spawn_hp=max_hp - (max_hp/amount)
+	assert(resource < Const.RESOURCE_COUNT, str(\"Wartość resource musi być mniejsza niż \", Const.RESOURCE_COUNT))
+	sprite.texture = Utils.get_item_icon(resource)
+
+func on_enter(area: Area2D) -> void:
+	if is_queued_for_deletion():
+		return
+	if area.is_in_group(\"player_projectile\"):
+		var ownr: Node2D = area.get_meta(\"data\").owner
+		if ownr.has_method(\"on_hit\"):
+			ownr.on_hit()
+		else:
+			ownr.queue_free()
+	
+		actual_hp -= 1
+		
+		while actual_hp<=spawn_hp:
+			Utils.game.map.pickables.spawn_pickable_nice(global_position, resource, Utils.random_point_in_circle(120, 70))
+			spawn_hp-= (max_hp/amount)
+		sprite.material.set_shader_parameter(\"destruction\", 1.0-(actual_hp / max_hp))
+		
+		if actual_hp <= 0.0:
+			queue_free()
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 12, 12 )
+
+[node name="ResourceDeposit" type="StaticBody2D"]
+script = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[node name="Detector" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detector"]
+shape = SubResource( 2 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource( 1 )
+texture = ExtResource( 2 )
+
+[connection signal="area_entered" from="Detector" to="." method="on_enter"]

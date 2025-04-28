@@ -1,0 +1,90 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://SFX/Weapons/repair_gun.wav" type="AudioStream" id=1]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/RepairKitWave.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/RepairKit.gd" type="Script" id=3]
+[ext_resource path="res://Resources/Textures/AsileFX_Alpha_0139.jpg" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Player/Weapons/Tools/repear_tool_gun_.png" type="Texture2D" id=5]
+
+[sub_resource type="CanvasItemMaterial" id=13]
+blend_mode = 1
+
+[sub_resource type="Gradient" id=8]
+offsets = PackedFloat32Array( 0.1417, 0.720648, 0.997976, 1 )
+colors = PackedColorArray( 0, 0.0156863, 1, 0.780392, 0.141176, 0.109804, 1, 1, 0.992157, 1, 0.8, 0, 0.992157, 1, 1, 0 )
+
+[sub_resource type="GradientTexture2D" id=9]
+gradient = SubResource( 8 )
+width = 128
+
+[sub_resource type="Curve" id=10]
+_data = [ Vector2( 0, 0.285276 ), 0.0, -1.20914, 0, 0, Vector2( 0.22296, 0.41411 ), 0.530021, 0.530021, 0, 0, Vector2( 0.682163, 0.812883 ), -2.44456, -2.44456, 0, 0, Vector2( 0.985769, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=11]
+width = 128
+curve = SubResource( 10 )
+
+[sub_resource type="ParticleProcessMaterial" id=12]
+flag_disable_z = true
+spread = 6.14
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 90.0
+angular_velocity = 720.0
+angular_velocity_random = 0.54
+orbit_velocity = 0.0
+orbit_velocity_random = 1.0
+damping = 94.51
+damping_random = 1.0
+angle = 720.0
+angle_random = 1.0
+scale = 0.27
+scale_curve = SubResource( 11 )
+color_ramp = SubResource( 9 )
+hue_variation = -0.02
+hue_variation_random = 0.55
+
+[sub_resource type="CircleShape2D" id=5]
+
+[node name="RepairKit" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+modulate = Color( 2.68, 1.32, 1, 1 )
+material = SubResource( 13 )
+position = Vector2( 8.18024, -0.15731 )
+z_index = 4096
+amount = 41
+lifetime = 0.58
+fixed_fps = 60
+local_coords = false
+process_material = SubResource( 12 )
+texture = ExtResource( 4 )
+
+[node name="reapair_point" type="Sprite2D" parent="."]
+visible = false
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 40, 0 )
+scale = Vector2( 0.5, 0.5 )
+z_index = 4096
+texture = ExtResource( 2 )
+
+[node name="Area2D" type="Area2D" parent="reapair_point"]
+scale = Vector2( 2, 2 )
+collision_layer = 0
+collision_mask = 23
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="reapair_point/Area2D"]
+shape = SubResource( 5 )
+
+[node name="repair_sound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 1 )
+volume_db = 15.0
+pitch_scale = 0.7
+max_distance = 500.0
+attenuation = 2.0
+bus = "SFX"
+
+[node name="RepearToolGun" type="Sprite2D" parent="."]
+position = Vector2( -3.21352, -0.235977 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 5 )

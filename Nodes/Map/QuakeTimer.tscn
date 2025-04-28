@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Timer
+
+@export var min_time = 3.0
+@export var max_time = 5.0
+
+signal quake
+
+func _ready() -> void:
+	restart()
+
+func restart():
+	start(randf_range(min_time * 60, max_time * 60))
+
+func timeout() -> void:
+	Utils.play_sample(\"res://SFX/Environmnent/rock_avalanche_landslide_debris_01.wav\")
+	emit_signal(\"quake\")
+	restart()
+	Utils.game.shake(2,10)
+#	Utils.game.shake(100)
+"
+
+[node name="QuakeTimer" type="Timer"]
+one_shot = true
+script = SubResource( 4 )
+
+[connection signal="timeout" from="." to="." method="timeout"]

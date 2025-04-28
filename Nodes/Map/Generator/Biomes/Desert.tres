@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Nodes/Map/Generator/Biomes/Biome.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+soft_wall_material = "Sandstone"
+hard_wall_material = "Ruins"
+upper_floor_textures = PackedStringArray( "Empty", "Empty", "Empty", "Empty" )
+lower_floor_textures = PackedStringArray( "Sand", "Sand", "Ruins", "Ruins" )
