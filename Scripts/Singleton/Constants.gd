@@ -2,8 +2,8 @@
 extends Node
 class_name Constants
 
-@export var resource_pickup_textures # (Array, Texture2D)
-@export var resource_icons_textures # (Array, Texture2D)
+@export var resource_pickup_textures:Array[Texture2D] # (Array, Texture2D)
+@export var resource_icons_textures:Array[Texture2D] # (Array, Texture2D)
 
 const GAME_DATA_SCRIPT = preload("res://Scripts/Data/GameData.gd")
 var game_data: GAME_DATA_SCRIPT
@@ -73,7 +73,7 @@ enum ItemIDs {
 	REPAIR_KIT,
 	DRILL,
 	HOOK,
-	FOAM_GUN
+	FOAM_GUN,
 	PICKAXE,
 	
 	MEDPACK,
@@ -115,7 +115,7 @@ enum Materials {
 	WALL = 21,
 	WALL1 = 22,
 	WALL2 = 23,
-	TAR = 24
+	TAR = 24,
 	EMPTY = 25,
 	DEAD_LUMEN = 26,
 	LUMEN = 27,
@@ -188,7 +188,7 @@ const MaterialResources = {
 	Materials.LUMEN: ItemIDs.LUMEN, 
 }
 
-const CraftedRects = {}
+static var CraftedRects = {}
 
 func get_resource_color(material_type: int) -> Color:
 	var color_range_start = get_resource_color_range_start(material_type)
@@ -344,8 +344,7 @@ func _ready():
 	assert(PLAYER_COLLISION_LAYER and BUILDING_COLLISION_LAYER and ENEMY_COLLISION_LAYER and PICKUP_COLLISION_LAYER)
 
 func cache_directory(path: String):
-	var dir := DirAccess.new()
-	dir.open(path)
+	var dir = DirAccess.open(path)
 	dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	
 	var file := dir.get_next()
@@ -368,7 +367,7 @@ func _enter_tree() -> void:
 	
 	if SteamAPI.singleton and SteamAPI.singleton.isSteamRunningOnSteamDeck():
 		is_steam_deck = true
-	elif OS.has_feature("X11") and DisplayServer.screen_get_size() == Vector2(1280, 800):
+	elif OS.has_feature("X11") and DisplayServer.screen_get_size() == Vector2i(1280, 800):
 		is_steam_deck = true
 	elif get_override("TEST_STEAM_DECK"):
 		is_steam_deck = true
@@ -424,22 +423,20 @@ func _enter_tree() -> void:
 	storage.load_from_path("res://Resources/Data/Campaign.cfg")
 	CampaignLevels = storage.get_dictionary()
 	
-	var f := File.new()
-	f.open("res://Resources/Data/Hints.txt", f.READ)
+	var f = FileAccess.open("res://Resources/Data/Hints.txt", FileAccess.READ)
 	HINTS = f.get_as_text().split("\n")
 	
 	if not OS.has_feature("editor"):
 		if not OS.has_feature("steam"):
-			HINTS.remove(0)
+			HINTS.erase(0)
 		
 		if OS.has_feature("mobile"):
-			HINTS.remove(0)
-			HINTS.remove(0)
+			HINTS.erase(0)
+			HINTS.erase(0)
 	
 	game_data = GAME_DATA_SCRIPT.new()
 	
-	var dir := DirAccess.new()
-	dir.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/")
+	var dir = DirAccess.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/")
 	dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	
 	var file := dir.get_next()
@@ -448,10 +445,10 @@ func _enter_tree() -> void:
 			var source_name := file.trim_suffix("_pixels.bin")
 			var data = {}
 			
-			f.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + source_name + "_nodes.bin", File.READ)
+			f = FileAccess.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + source_name + "_nodes.bin", FileAccess.READ)
 			data.scene = f.get_var(true)
 			
-			f.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + file, File.READ)
+			f = FileAccess.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + file, FileAccess.READ)
 			data.image = f.get_var(true)
 			
 			CraftedRects[source_name] = data
@@ -478,12 +475,11 @@ static func is_resource_built_in(resource: Resource) -> bool:
 static func get_crafted_rect(rect: String) -> Dictionary:
 	if Engine.is_editor_hint():
 		var data = {}
-		var f := File.new()
 		
-		f.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + rect + "_nodes.bin", File.READ)
+		var f = FileAccess.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + rect + "_nodes.bin", FileAccess.READ)
 		data.scene = f.get_var(true)
 		
-		f.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + rect + "_pixels.bin", File.READ)
+		f = FileAccess.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + rect + "_pixels.bin", FileAccess.READ)
 		data.image = f.get_var(true)
 		
 		return data

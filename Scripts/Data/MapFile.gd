@@ -35,8 +35,7 @@ func save_to_file(path: String):
 	if uid.is_empty():
 		uid = generate_uid()
 	
-	var file := File.new()
-	file.open(path, file.WRITE)
+	var file = FileAccess.open(path, FileAccess.WRITE)
 	
 	file.store_32(VERSION)
 	

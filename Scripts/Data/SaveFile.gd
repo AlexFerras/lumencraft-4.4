@@ -10,9 +10,9 @@ var savegame_data: Dictionary
 var map_data: Dictionary
 
 func save_to_file(path: String):
-	var file := File.new()
-	var open = Utils.safe_open(file, path, File.WRITE)
-	assert(open, "Can't open file: " + path)
+
+	var file = Utils.safe_open(Utils.FILE, path, FileAccess.WRITE)
+	assert(file, "Can't open file: " + path)
 	
 	file.store_32(VERSION)
 	
@@ -55,9 +55,8 @@ func save_to_file(path: String):
 	file.close()
 
 func load_from_file(path: String):
-	var file := File.new()
-	var open = Utils.safe_open(file, path, file.READ)
-	assert(open)
+	var file:FileAccess = Utils.safe_open(Utils.FILE, path, FileAccess.READ)
+	assert(file)
 	
 	var version := file.get_32()
 	if version < VERSION:
@@ -92,14 +91,13 @@ func load_from_file(path: String):
 	file.close()
 
 func load_metadata(path: String):
-	var file := File.new()
-	file.open(path, file.READ)
+	var file = FileAccess.open(path, FileAccess.READ)
 	
 	var version := file.get_32()
 	
 	file.close()
 
-func upgrade_save(from_version: int, file: File):
+func upgrade_save(from_version: int, file: FileAccess):
 	if from_version < 3:
 		Utils.game.connect("map_pre_instance", Callable(self, "hack_buildings_compat"))
 

@@ -27,14 +27,14 @@ func _get_property_list() -> Array:
 
 	return []
 
-func _set(property: String, value) -> bool:
+func _set(property: StringName, value:Variant) -> bool:
 	if property == "data":
 		data = value
 		return true
 	
 	return false
 
-func _get(property: String):
+func _get(property: StringName):
 	if property == "data":
 		return data
 

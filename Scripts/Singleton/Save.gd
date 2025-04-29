@@ -36,7 +36,8 @@ signal saved
 var map_completed: bool
 
 func _ready() -> void:
-	DirAccess.new().make_dir("user://Saves")
+	var dir = DirAccess.open("user://")
+	dir.make_dir("Saves")
 	debug = not Music.is_game_build()
 	
 	load_config()
@@ -50,8 +51,8 @@ func _ready() -> void:
 		if not player_data:
 			player_data = PlayerData.new()
 	elif ResourceLoader.exists("user://player_data.tres"): # compat
-		var dir := DirAccess.new()
-		dir.copy("user://player_data.tres", PLAYER_DATA_PATH)
+		dir = DirAccess.open("user://")
+		dir.copy("player_data.tres", PLAYER_DATA_PATH)
 		
 		player_data = load(PLAYER_DATA_PATH)
 		if not player_data:
@@ -103,7 +104,7 @@ func save_game(slot: String, silent := false):
 	add_child(saving)
 	
 #	Utils.start_time_tracking("saving")
-	data.timestamp = Time.get_unix_time_from_system() + OS.get_time_zone_info().bias * 60
+	data.timestamp = Time.get_unix_time_from_system() + Time.get_time_zone_from_system().bias * 60
 	data.game_time = game_time
 	data.slot_name = get_current_map_name()
 	data.game_version = int(preload("res://Tools/version.gd").VERSION)
@@ -340,21 +341,21 @@ func load_config():
 			config.screenmode = Config.FULLSCREEN
 			config.fullscreen_resolution = Vector2(1280, 720)
 			
-			config.controls2.set_action_button("build", Utils.button_event(JOY_BUTTON_0))
-			config.controls2.set_action_button("interact", Utils.button_event(JOY_BUTTON_1))
+			config.controls2.set_action_button("build", Utils.button_event(JOY_BUTTON_A))
+			config.controls2.set_action_button("interact", Utils.button_event(JOY_BUTTON_B))
 			config.controls2.create_remap()
 			
-			config.controls3.set_action_button("build", Utils.button_event(JOY_BUTTON_0))
-			config.controls3.set_action_button("interact", Utils.button_event(JOY_BUTTON_1))
+			config.controls3.set_action_button("build", Utils.button_event(JOY_BUTTON_A))
+			config.controls3.set_action_button("interact", Utils.button_event(JOY_BUTTON_B))
 			config.controls3.create_remap()
 	
 	if Const.get_override("TEST_SWITCH"):
-			config.controls2.set_action_button("build", Utils.button_event(JOY_BUTTON_0))
-			config.controls2.set_action_button("interact", Utils.button_event(JOY_BUTTON_1))
+			config.controls2.set_action_button("build", Utils.button_event(JOY_BUTTON_A))
+			config.controls2.set_action_button("interact", Utils.button_event(JOY_BUTTON_B))
 			config.controls2.create_remap()
 			
-			config.controls3.set_action_button("build", Utils.button_event(JOY_BUTTON_0))
-			config.controls3.set_action_button("interact", Utils.button_event(JOY_BUTTON_1))
+			config.controls3.set_action_button("build", Utils.button_event(JOY_BUTTON_A))
+			config.controls3.set_action_button("interact", Utils.button_event(JOY_BUTTON_B))
 			config.controls3.create_remap()
 	
 	if config.prev_version < int(preload("res://Tools/version.gd").VERSION):
@@ -371,7 +372,7 @@ func load_config():
 	config.apply()
 
 func save_config():
-	ResourceSaver.save(CONFIG_PATH, config)
+	ResourceSaver.save(config, CONFIG_PATH)
 
 func count_score(field: String, inc := 1):
 	scoreboard[field] = scoreboard.get(field, 0) + inc

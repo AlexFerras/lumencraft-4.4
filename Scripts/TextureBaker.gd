@@ -45,7 +45,8 @@ func bake():
 func _bake():
 	var viewport := SubViewport.new()
 	viewport.size = _size
-	viewport.usage = SubViewport.USAGE_2D
+	# this prop is not in 4.x
+	#viewport.usage = SubViewport.USAGE_2D
 	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	viewport.render_target_v_flip = true
 	viewport.own_world = true

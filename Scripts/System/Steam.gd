@@ -369,15 +369,14 @@ func release_workshop_handle():
 	singleton.releaseQueryUGCRequest(workshop_handle)
 	workshop_handle = -1
 
-const GIF_BYTES = PackedByteArray([71, 73, 70])
-const PNG_BYTES = PackedByteArray([137, 80, 78, 71])
-const JPG_BYTES = PackedByteArray([255, 216, 255, 224])
-const JPG_BYTES2 = PackedByteArray([255, 216, 255, 225])
+static var GIF_BYTES = PackedByteArray([71, 73, 70])
+static var PNG_BYTES = PackedByteArray([137, 80, 78, 71])
+static var JPG_BYTES = PackedByteArray([255, 216, 255, 224])
+static var JPG_BYTES2 = PackedByteArray([255, 216, 255, 225])
 
 func load_preview_image(path: String) -> Texture2D:
-	var dir := DirAccess.new()
-	if not dir.file_exists(path):
-		dir.open(path.get_base_dir())
+	if not FileAccess.file_exists(path):
+		var dir = DirAccess.open(path.get_base_dir())
 		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		
 		var file := dir.get_next()
@@ -390,46 +389,45 @@ func load_preview_image(path: String) -> Texture2D:
 	
 	var old_path := path
 	if path.get_extension().is_empty():
-		var file := File.new()
-		file.open(path, file.READ)
+		var file = FileAccess.open(path, FileAccess.READ)
 		var bytes := file.get_buffer(file.get_length())
 		
-		var bytes3 = bytes.subarray(0, 2)
+		var bytes3 = bytes.slice(0, 2)
 		if bytes3 == GIF_BYTES:
 			path += ".gif"
 		else:
-			var bytes4 = bytes.subarray(0, 3)
+			var bytes4 = bytes.slice(0, 3)
 			if bytes4 == PNG_BYTES:
 				path += ".png"
 			if bytes4 == JPG_BYTES or bytes4 == JPG_BYTES2:
 				path += ".jpg"
 	
 	if path != old_path:
-		dir.rename(old_path, path)
+		pass
+		#dir.rename(old_path, path)
 	
 	match path.get_extension():
 		"png", "jpg":
 			var image := Image.new()
 			image.load(path)
-			var texture := ImageTexture.new()
-			texture.create_from_image(image)
+			var texture = ImageTexture.create_from_image(image)
 			return texture
 		
-		"gif":
-			var image := ImageFrames.new()
-			image.load(path)
-			
-			var texture := AnimatedTexture.new()
-			texture.frames = image.get_frame_count()
-			texture.fps = 30
-			
-			for i in image.get_frame_count():
-				var frame := image.get_frame_image(i)
-				var frame_tex := ImageTexture.new()
-				frame_tex.create_from_image(frame)
-				
-				texture.set_frame_texture(i, frame_tex)
-				texture.set_frame_delay(i, image.get_frame_delay(i))
+	#	"gif":
+	#		var image := Image.new()
+	#		image.load(path)
+	#		
+	#		var texture := AnimatedTexture.new()
+	#		texture.frames = image.get_frame_count()
+	#		texture.fps = 30
+	#		
+	#		for i in image.get_frame_count():
+	#			var frame := image.get_frame_image(i)
+	#			var frame_tex := ImageTexture.new()
+	#			frame_tex.create_from_image(frame)
+	#			
+	#			texture.set_frame_texture(i, frame_tex)
+	#			texture.set_frame_delay(i, image.get_frame_delay(i))
 			
 			return texture
 	
@@ -462,7 +460,7 @@ func save_files(files: Array):
 func _on_file_write_async_complete(result):
 	print("[singleton] Cloud saved: ", result)
 
-func query_item_tags(item: int, callback: FuncRef):
+func query_item_tags(item: int, callback: Callable):
 	var tags: PackedStringArray
 	if not active:
 		return tags
@@ -474,4 +472,4 @@ func query_item_tags(item: int, callback: FuncRef):
 		tags.append(singleton.getQueryUGCTagDisplayName(handle, 0, i))
 	singleton.releaseQueryUGCRequest(handle)
 	
-	callback.call_func(tags)
+	callback.call(tags)

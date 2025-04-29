@@ -14,9 +14,9 @@ const RARITY_QUALITY = {
 	2: 0.1,
 }
 
-const item_cache = {}
-const pool_cache = {}
-const hack = [false]
+static var item_cache = {}
+static var pool_cache = {}
+static var hack = [false]
 
 static func reset():
 	item_cache.clear()
@@ -70,7 +70,7 @@ func generate_treasure(value: float, rng_: RandomNumberGenerator, cfg := {}) -> 
 			break
 	
 	rarity_slots.sort()
-	rarity_slots.invert()
+	rarity_slots.reverse()
 	
 	value /= 10
 	for rare in rarity_slots:

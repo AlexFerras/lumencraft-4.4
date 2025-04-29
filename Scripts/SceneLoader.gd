@@ -1,20 +1,21 @@
 extends RefCounted
 
-var loader: ResourceLoader
 var resource: Resource
 var is_finished: bool
+var path:String
+
 
 signal finished
 
-func interactive_load(path):
-	loader = ResourceLoader.load_threaded_request(path)
+func interactive_load(in_path):
+	self.path = in_path
+	ResourceLoader.load_threaded_request(path)
+	
 
 func progress():
-	if not loader:
-		return
+	var status = ResourceLoader.load_threaded_get_status(path)
 	
-	if loader.poll() == ERR_FILE_EOF:
-		resource = loader.get_resource()
+	if status == ResourceLoader.THREAD_LOAD_LOADED:
+		resource = ResourceLoader.load_threaded_get(path)
 		is_finished = true
-		loader = null
 		emit_signal("finished")

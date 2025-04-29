@@ -28,7 +28,7 @@ func _process(delta: float) -> void:
 				color2 = Color(randf(), randf(), randf(), randf())
 			Utils.recolor_theme(color1, color2)
 		SCHEME_UV:
-			var uv := get_viewport().get_mouse_position() / get_viewport().size
+			var uv := get_viewport().get_mouse_position() / get_viewport().get_visible_rect().size
 			Utils.recolor_theme(Color(uv.x, uv.y, 1), Color(1, 1 - uv.y, uv.x))
 		SCHEME_GHOST:
 			if Const.UI_MAIN_COLOR.a == 1:

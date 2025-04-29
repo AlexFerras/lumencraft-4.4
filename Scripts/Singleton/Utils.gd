@@ -2,6 +2,9 @@ extends PixelUtilities
 
 const PARTICLE_DIVISOR = 1
 
+const FILE = 0
+const DIR = 1
+
 var game: Game
 var editor: Node
 
@@ -51,7 +54,7 @@ func _init():
 		var mod = load("res://load_mods.gd").new()
 		mod.initialize()
 	
-	DirAccess.new().make_dir_recursive("user://Maps")
+	DirAccess.open("user://").make_dir_recursive("Maps")
 	
 	spiral_of_life = preload("res://Nodes/Objects/Helper/SpiralOfLife.gd").new()
 	add_child(spiral_of_life)
@@ -295,7 +298,7 @@ func _ready():
 	
 	
 #	add_child(preload("res://Tools/PreAlpha.tscn").instance())
-	DirAccess.new().make_dir("user://Maps")
+	DirAccess.make_dir_absolute("user://Maps")
 
 func _notification(what: int) -> void:
 	match what:
@@ -464,7 +467,7 @@ func get_pixel_material(pixel: Color) -> int:
 
 func get_node_by_type(parent: Node, type) -> Node:
 	for node in parent.get_children():
-		if node is type:
+		if is_instance_of(node, type):
 			return node
 		else:
 			var ret := get_node_by_type(node, type)
@@ -486,12 +489,15 @@ func get_node_by_scene(parent: Node, scene: String) -> Node:
 
 func get_environment() -> Environment:
 	return preload("res://Resources/Misc/MapEnvironment.tres")
-	
+
+
+
 var exploded_list: Array
 var spawn_amount_mul:float =1.0
 var explosion_accum: = {}
 
 var MIN_PARTICLE_EXPLOSION_RADIUS=18
+
 
 func explode(position: Vector2, radius: float, dmg: int, penetration: float ,threshold: float, mask = player_bullet_collision_mask, no_repel := false, pickable_spawn_mul=1.0,seismic=false):
 	call_deferred("true_explode", "update_damage_circle_penetrating_explosive", position, radius, dmg, penetration, threshold, mask, no_repel, pickable_spawn_mul,seismic)
@@ -704,10 +710,11 @@ func create_atlas_frame(texture: Texture2D, frames: Vector2, frame: int) -> Atla
 func create_resized_texture(texture: Texture2D, target_size: Vector2) -> Texture2D:
 	var key := [texture, target_size]
 	if not key in atlas_cache:
-		var image := texture.get_data()
+		var image:Image
+		image = texture.get_data()[0]
 		image.resize(target_size.x, target_size.y, Image.INTERPOLATE_CUBIC)
-		var resized := ImageTexture.new()
-		resized.create_from_image(image)
+
+		var resized = ImageTexture.create_from_image(image)
 		atlas_cache[key] = resized
 	return atlas_cache[key]
 
@@ -846,7 +853,7 @@ func _input(event: InputEvent) -> void:
 			if not (is_instance_valid(game) and is_instance_valid(game.map) and not game.map.started):
 				if Save.config.screenmode > Save.config.WINDOWED:
 					Save.config.screenmode = Save.config.WINDOWED
-					OS.center_window()
+					get_viewport().get_window().move_to_center()
 				else:
 					Save.config.screenmode = Save.config.BORDERLESS_FULLSCREEN
 				Save.config.request_refresh_display()
@@ -856,7 +863,7 @@ func _input(event: InputEvent) -> void:
 	##debug
 	if OS.has_feature("editor"):
 		if event is InputEventKey and event.keycode == KEY_HOME and event.pressed:
-			get_window().always_on_top = (not get_window().always_on_top
+			get_window().always_on_top = not get_window().always_on_top
 
 func vibrate(weak_magnitude: float, strong_magnitude: float, duration: float, player: Player = null):
 	if player:
@@ -908,7 +915,7 @@ func play_sample(sample, source = null, follow := false, random_pitch := 1.0, pi
 		sample = load(sample)
 	elif sample is Array:
 		for s in sample:
-			await play_sample(s, source, follow, random_pitch).finished
+			await play_sample(s, source, follow, random_pitch)
 		return
 	
 	assert(sample is AudioStream)
@@ -1052,8 +1059,7 @@ func random_sound(base_path: String):
 		var open_path := base_path if base_path.ends_with("/") else base_path.get_base_dir()
 		
 		var base_file := base_path.get_file()
-		var dir := DirAccess.new()
-		dir.open(open_path)
+		var dir := DirAccess.open(open_path)
 		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		
 		var file := dir.get_next()
@@ -1202,7 +1208,8 @@ enum {UI_SELECT, UI_FAIL}
 func play_ui_sample(sample: int):
 	match sample:
 		UI_SELECT:
-			play_sample(preload("res://SFX/UI/CountPoint.wav"), null,false, 1.02,0.7).volume_db = -8
+			var player = await play_sample(preload("res://SFX/UI/CountPoint.wav"), null,false, 1.02,0.7)
+			player.volume_db = -8
 		UI_FAIL:
 			play_sample(preload("res://SFX/UI/OptionsFail.wav"), null,false, 1.02,0.7)
 
@@ -1265,7 +1272,7 @@ class AudioManager:
 					elif sample is String:
 						sound = Utils.random_sound(sample)
 					
-					var aud = Utils.play_sample(sound, _queue[k], true, random_pitch, pitch_scale, rnd_offset)
+					var aud = await Utils.play_sample(sound, _queue[k], true, random_pitch, pitch_scale, rnd_offset)
 					if override_volume >= 0:
 						aud.volume_db = override_volume
 					else:
@@ -1292,7 +1299,7 @@ func generate_scorecard(map_name: String, score: int, scoreboard: Dictionary, ma
 	
 	var viewport := SubViewport.new()
 	viewport.size = generator.size
-	viewport.usage = SubViewport.USAGE_2D
+	#viewport.usage = SubViewport.USAGE_2D
 	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	viewport.render_target_v_flip = true
 	viewport.add_child(generator)
@@ -1300,7 +1307,7 @@ func generate_scorecard(map_name: String, score: int, scoreboard: Dictionary, ma
 	
 	await generator.finished
 	
-	DirAccess.new().make_dir_recursive("user://scorecards")
+	DirAccess.make_dir_absolute("user://scorecards")
 	viewport.get_texture().get_data().save_png("user://scorecards/%s.png" % map_uid)
 	viewport.queue_free()
 
@@ -1362,12 +1369,12 @@ func debug_count_nodes(from = null):
 	
 	return child_count
 
-func array_map(array: Array, f: FuncRef) -> Array:
+func array_map(array: Array, f: Callable) -> Array:
 	var ret: Array
 	ret.resize(array.size())
 	
 	for i in array.size():
-		ret[i] = f.call_func(array[i])
+		ret[i] = f.call(array[i])
 	
 	return ret
 
@@ -1462,7 +1469,7 @@ func print_material_mask(mask: int):
 	for i in Const.Materials.keys().size():
 		if mask & (1 << i):
 			mats.append(Const.Materials.keys()[i])
-	", ".join(print(mats))
+	print(", ".join(mats))
 	
 	
 func get_global_transform_until_null(node:CanvasItem) -> Transform2D:
@@ -1512,14 +1519,13 @@ func recolor_theme(new_main_color: Color, new_secondary_color: Color):
 	get_tree().current_scene.propagate_notification(Control.NOTIFICATION_THEME_CHANGED)
 
 func fix_broken_script(file: String, fixed_script: String, line := 2):
-	var f := File.new()
-	f.open(file, File.READ)
+	var f = FileAccess.open(file, FileAccess.READ)
 	var lines := f.get_as_text().split("\n")
 	lines[line] = fixed_script
 	f.close()
 	
-	f.open(file, File.WRITE)
-	f."\n".join(store_string(lines))
+	f = FileAccess.open(file, FileAccess.WRITE)
+	f.store_string("\n".join(lines))
 	f.close()
 
 func start_time_tracking(variable: String):
@@ -1606,12 +1612,15 @@ func get_version_suffix() -> String:
 	else:
 		return ""
 
-func safe_open(opener, path: String, mode := -1) -> bool:
-	if opener is File:
-		return opener.open(path, mode) == OK
-	elif opener is DirAccess:
-		return opener.open(path) == OK
-	return false
+func safe_open(opener:int, path: String, mode := -1) -> Variant:
+	match opener:
+		0:
+			return FileAccess.open(path, mode)
+		1:
+			return DirAccess.open(path)
+		_:
+			return false
+	
 
 func button_event(idx: int) -> InputEventJoypadButton:
 	var b := InputEventJoypadButton.new()

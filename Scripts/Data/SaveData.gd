@@ -50,7 +50,7 @@ enum CompatIDs { # compat
 	REPAIR_KIT,
 	DRILL,
 	HOOK,
-	FOAM_GUN
+	FOAM_GUN,
 	PICKAXE,
 	
 	MEDPACK,

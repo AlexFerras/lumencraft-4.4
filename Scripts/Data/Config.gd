@@ -175,24 +175,22 @@ func apply_display():
 			is_fullscreen = false
 #			OS.window_fullscreen = false
 #			OS.set_window_always_on_top(false)
-			get_window().borderless = false
-			get_window().unresizable = not (true)
-			get_window().size = windowed_resolution
 			Utils.get_tree().connect("idle_frame", Callable(OS, "center_window").bind(), CONNECT_ONE_SHOT)
 		else:
 			is_fullscreen = true
 			target_window_size = DisplayServer.screen_get_size()
 			target_window_position = DisplayServer.screen_get_position()
 #			OS.window_fullscreen = false
-			get_window().mode = Window.MODE_MAXIMIZED if (false) else Window.MODE_WINDOWED
+			var window = Utils.get_window()
+			Utils.get_window().mode = Window.MODE_MAXIMIZED if (false) else Window.MODE_WINDOWED
 			match OS.get_name():
 				"OSX":
 					pass
 				_:
-					get_window().unresizable = not (true)
-					get_window().borderless = false
+					window.unresizable = not (true)
+					window.borderless = false
 
-			get_window().borderless = true
+			window.borderless = true
 			Utils.handler.handle_resigs()
 			Utils.handler.handle_movix()
 			Utils.handler.handle_maxing()
@@ -257,13 +255,13 @@ func apply_window_resize():
 func apply_window_maximize():
 	Utils.log_message("Maximizing Window")
 	if screenmode == Save.config.FULLSCREEN:
-		get_window().size = target_window_size
+		Utils.get_window().size = target_window_size
 #		OS.window_fullscreen = true
 	else:
-		get_window().size = target_window_size + Vector2(0,1)
+		Utils.get_window().size = target_window_size + Vector2(0,1)
 		
 func apply_window_move():
-	get_window().position = target_window_position
+	Utils.get_window().position = target_window_position
 
 func apply_vieport_size():
 	Utils.get_viewport().size = get_resolution()
@@ -271,7 +269,7 @@ func apply_vieport_size():
 		previous_resolution = get_resolution()
 
 func apply_frame_cap():
-	Engine.target_fps = limit_fps
+	Utils.Engine.target_fps = limit_fps
 
 func apply_downsampling():
 	light_downsample = clamp(light_downsample, 1, 6)

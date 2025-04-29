@@ -23,4 +23,4 @@ func is_frog_found(map: String):
 	return map in frogs_found
 
 func save():
-	ResourceSaver.save(resource_path, self)
+	ResourceSaver.save(self, resource_path)
