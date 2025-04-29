@@ -26,28 +26,28 @@ func set_wall_level(new_lvl):
 		sprite.painting_material=wall_material
 		sprite.texture = preload("res://Nodes/Buildings/Wall/Level4.png")
 		sprite.refresh_mask()
-		sprite.draw()
+		sprite.queue_draw()
 	elif new_lvl==2 && wall_material!=Const.Materials.WALL2:
 		sprite.clear()
 		wall_material=Const.Materials.WALL2
 		sprite.painting_material=wall_material
 		sprite.texture = preload("res://Nodes/Buildings/Wall/Level3.png")
 		sprite.refresh_mask()
-		sprite.draw()
+		sprite.queue_draw()
 	elif new_lvl==1 && wall_material!=Const.Materials.WALL1:
 		sprite.clear()
 		wall_material=Const.Materials.WALL1
 		sprite.painting_material=wall_material
 		sprite.texture = preload("res://Nodes/Buildings/Wall/Level2.png")
 		sprite.refresh_mask()
-		sprite.draw()
+		sprite.queue_draw()
 	elif wall_material!=Const.Materials.WALL:
 		sprite.clear()
 		wall_material=Const.Materials.WALL
 		sprite.texture = preload("res://Nodes/Buildings/Wall/Level1.png")
 		sprite.refresh_mask()
 		sprite.painting_material=wall_material
-		sprite.draw()
+		sprite.queue_draw()
 
 func _ready() -> void:
 	BaseBuilding.init_structure(self, "Wall")
@@ -75,7 +75,7 @@ func on_placed():
 
 func remove_check_point_in_rectangle(polygon: PackedVector2Array):
 	for i in check_points.get_children():
-		if Geometry.is_point_in_polygon(i.global_position,polygon):
+		if Geometry2D.is_point_in_polygon(i.global_position,polygon):
 			check_points.remove_child(i)
 
 func check() -> void:

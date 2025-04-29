@@ -5,7 +5,7 @@ class_name Map
 const WAVE_MANAGER = preload("res://Nodes/Map/WaveManager.gd")
 const SWARM_MANAGER = preload("res://Nodes/Map/SwarmManager.gd")
 
-@onready var events = get_node_or_null(@"MapEvents")
+@onready var events = get_node_or_null("MapEvents")
 @onready var blood_spawner = $"%BloodSpawner"
 
 var ResourceSpawnRateModifier = {

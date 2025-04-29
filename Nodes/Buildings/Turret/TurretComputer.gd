@@ -26,7 +26,7 @@ func _ready() -> void:
 	
 	refresh_stars()
 	
-	turret.connect("ready", Callable(self, "refresh_turret").bind(), CONNECT_ONE_SHOT)
+	turret.connect("is_ready", Callable(self, "refresh_turret").bind(), CONNECT_ONE_SHOT)
 
 func _setup():
 	if current_upgrade == upgrades.size():
@@ -71,7 +71,8 @@ func _setup():
 					description.append("[color=#00ff00]%s[/color]" % BaseBuilding.get_requirement_text(req))
 				else:
 					description.append("[color=red]%s[/color]" % BaseBuilding.get_requirement_text(req))
-		screen."\n".join(set_description(description))
+		#screen."\n".join(set_description(description))
+		screen.set_description("\n".join(description))
 		
 		for cost in upgrade.cost:
 			screen.add_cost(cost.id, cost.amount)

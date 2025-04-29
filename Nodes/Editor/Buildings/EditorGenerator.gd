@@ -21,7 +21,7 @@ func _configure(editor):
 func set_running(r: bool):
 	object_data.running = r
 	emit_signal("data_changed")
-	update()
+	queue_redraw()
 
 func _draw() -> void:
 	if Utils.editor.hide_gizmos:

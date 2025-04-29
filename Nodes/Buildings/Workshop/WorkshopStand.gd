@@ -231,7 +231,7 @@ func set_flip_icon(f: bool):
 	super.set_flip_icon(f)
 	
 	if not is_inside_tree():
-		await self.ready
+		await self.is_ready
 	
 	if f:
 		$Labels.rotation = PI
@@ -242,7 +242,7 @@ func _long_make():
 func pop_upgrade() -> Dictionary:
 	had_upgrades = true
 	var upgrade: Dictionary = upgrades[current_upgrade]
-	upgrades.remove(current_upgrade)
+	upgrades.erase(current_upgrade)
 	current_upgrade = min(current_upgrade, upgrades.size() - 1)
 	queued_upgrades.append(upgrade)
 	return upgrade

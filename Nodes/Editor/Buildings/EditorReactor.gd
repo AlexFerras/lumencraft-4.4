@@ -54,7 +54,7 @@ func _configure(editor):
 func set_running(r: bool):
 	object_data.running = r
 	emit_signal("data_changed")
-	update()
+	queue_redraw()
 
 func set_enabled_screen(enabled: bool, idx: int):
 	if enabled:

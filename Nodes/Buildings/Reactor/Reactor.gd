@@ -253,7 +253,7 @@ func _get_save_data() -> Dictionary:
 	if lumen_slots:
 		data.merge(lumen_slots.get_data())
 	
-	return Utils.merge_dicts(._get_save_data(), data)
+	return Utils.merge_dicts(_get_save_data(), data)
 
 func _set_save_data(data: Dictionary):
 	super._set_save_data(data)

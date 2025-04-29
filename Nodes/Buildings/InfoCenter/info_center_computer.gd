@@ -88,7 +88,8 @@ func _setup():
 	
 	if not encounter.is_empty():
 		description.append(str(tr("Count:"), " ", encounter.count))
-		screen."\n".join(set_description(description))
+		#screen."\n".join(set_description(description))
+		screen.set_description("\n".join(description))
 	
 	screen.set_interact_action("Next Enemy")
 	screen.set_long_action("Show All")

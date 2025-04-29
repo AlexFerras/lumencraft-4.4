@@ -64,7 +64,7 @@ func get_random_possible_tech_not_used_on_map(ignore_self := false) -> bool:
 		set_disabled(not lab.is_running)
 	else:
 		if not ignore_self:
-			return get_random_possible_tech_not_used_on_map(true)
+			return await get_random_possible_tech_not_used_on_map(true)
 		
 		tech_to_make_name = ""
 		tech_to_make_data = {}

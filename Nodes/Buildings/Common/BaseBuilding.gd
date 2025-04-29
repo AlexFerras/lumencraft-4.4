@@ -31,7 +31,7 @@ var first_check := true
 
 var lava_check_random := 2.0
 var next_lava_check := randf_range(0.5, lava_check_random)
-var destroyed: bool
+var is_destroyed: bool
 var in_construction: bool
 var resource_ratio := 1.0
 var just_damaged_by_lava: bool
@@ -292,7 +292,7 @@ func repair(amount: int):
 	refresh_hp()
 
 func refresh_hp(bulldozer := false):
-	if destroyed:
+	if is_destroyed:
 		return
 	
 	emit_signal("hp_changed")
@@ -303,7 +303,7 @@ func refresh_hp(bulldozer := false):
 			Utils.game.ui.notify("Building demolished")
 		else:
 			Utils.game.ui.evil_notify("Building destroyed")
-		destroyed = true
+		is_destroyed = true
 		destroy()
 		emit_signal("destroyed")
 		SteamAPI.try_achievement("LOSE_BUILDINGS")

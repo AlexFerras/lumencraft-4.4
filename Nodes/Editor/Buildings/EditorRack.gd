@@ -59,7 +59,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 		"item_stored":
 			var items2 = create_items()
 			items2.set_item_text(0, "Any")
-			editor.register_data("item", funcref(items, "set_selected_metadata"), funcref(items, "get_selected_metadata"))
+			editor.register_data("item", Callable(items, "set_selected_metadata"), Callable(items, "get_selected_metadata"))
 			return items2
 	
 	return null

@@ -13,14 +13,14 @@ extends Node2D
 
 @export var override_position: int
 
-@onready var icon_node: Sprite2D = get_node_or_null(@"Icon")
-@onready var icon_node2: Sprite2D = get_node_or_null(@"SecondaryIcon")
-@onready var highlight: Sprite2D = get_node_or_null(@"Sprite2D/Highlight")
+@onready var icon_node: Sprite2D = get_node_or_null("Icon")
+@onready var icon_node2: Sprite2D = get_node_or_null("SecondaryIcon")
+@onready var highlight: Sprite2D = get_node_or_null("Sprite2D/Highlight")
 @onready var screen = get_node(target_screen)
 
 @onready var detector := $PlayerDetector as GenericInteractable
 
-var ready: bool
+var is_ready: bool
 var active: bool
 var disabled: bool
 var locked: bool
@@ -28,7 +28,7 @@ var locked: bool
 func _ready():
 	assert(not target_screen.is_empty())
 	
-	ready = true
+	is_ready = true
 	if Engine.is_editor_hint():
 		return
 	
@@ -91,7 +91,7 @@ func set_normal_icon_color():
 	set_icon_tint(Color("#ffffffc0"))
 
 func update_icon():
-	if not ready:
+	if not is_ready:
 		await self.ready
 	
 	if icon_node:

@@ -66,7 +66,7 @@ func _physics_process(delta: float) -> void:
 
 func _get_save_data() -> Dictionary:
 
-	return Utils.merge_dicts(._get_save_data(), {head_rotation = body.global_rotation})
+	return Utils.merge_dicts(_get_save_data(), {head_rotation = body.global_rotation})
 
 
 func _set_save_data(data: Dictionary):

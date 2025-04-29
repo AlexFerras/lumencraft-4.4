@@ -1,10 +1,10 @@
 extends Sprite2D
 
-@onready var bounding_rect: Sprite2D = get_node_or_null(@"BoundingRect")
-@onready var ground_rect: Sprite2D = get_node_or_null(@"GroundRect")
-@onready var angle_indicator: CanvasItem = get_node_or_null(@"AngleIndicator")
-@onready var socket: Node2D = get_node_or_null(@"Socket")
-@onready var item_icon: Node2D = get_node_or_null(@"Item")
+@onready var bounding_rect: Sprite2D = get_node_or_null("BoundingRect")
+@onready var ground_rect: Sprite2D = get_node_or_null("GroundRect")
+@onready var angle_indicator: CanvasItem = get_node_or_null("AngleIndicator")
+@onready var socket: Node2D = get_node_or_null("Socket")
+@onready var item_icon: Node2D = get_node_or_null("Item")
 
 @export var building_data: Dictionary
 @export var use_sprite_for_scale: bool
@@ -18,14 +18,14 @@ var target_building: Node2D
 var can_build: bool
 var canceled: bool
 
-signal cancel
+signal on_cancel
 
 func _ready() -> void:
 	set_physics_process(false)
 	add_to_group("dont_save")
 	
 	if not bounding_rect:
-		push_error("Brak bounding rect w " + filename.get_file())
+		push_error("Brak bounding rect w " + scene_file_path.get_file())
 		return
 	
 	bounding_rect.hide()
@@ -143,13 +143,13 @@ func get_bounds() -> Rect2:
 	return Rect2(bounding_rect.global_position - size * 0.5, size)
 
 func _get_save_data() -> Dictionary:
-	return {scene = filename, pos = global_position, rot = angle}
+	return {scene = scene_file_path, pos = global_position, rot = angle}
 
 func cancel():
 	if canceled:
 		return
 	
-	emit_signal("cancel")
+	emit_signal("on_cancel")
 	canceled = true
 	
 	for id in building_data.cost:
