@@ -2217,11 +2217,11 @@ func _input(event: InputEvent) -> void:
 			fake_event.global_position = get_viewport().get_mouse_position()
 			fake_event.position = fake_event.global_position
 			
-			if Input.is_joy_button_pressed(0, JOY_BUTTON_0):
+			if Input.is_joy_button_pressed(0, JOY_BUTTON_A):
 				fake_event.command = true
-			if Input.is_joy_button_pressed(0, JOY_BUTTON_2):
+			if Input.is_joy_button_pressed(0, JOY_BUTTON_X):
 				fake_event.shift = true
-			if Input.is_joy_button_pressed(0, JOY_BUTTON_3):
+			if Input.is_joy_button_pressed(0, JOY_BUTTON_Y):
 				fake_event.alt = true
 		
 		Input.parse_input_event(fake_event)

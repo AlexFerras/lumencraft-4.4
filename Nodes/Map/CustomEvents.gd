@@ -44,7 +44,7 @@ func _physics_process(delta: float) -> void:
 			execute_action(action)
 		
 		if not event.get("repeatable", false):
-			events.remove(j)
+			events.remove_at(j)
 	
 	special.clear_events()
 

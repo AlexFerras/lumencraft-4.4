@@ -108,7 +108,7 @@ func search_path_to(target_position: Vector2, type:int = 0):
 		is_path_through_terrain = path_data.path_goes_through_materials
 		has_path_culling_line_of_sight = true
 		is_path_found = true
-		path = path_data.get_path()
+		path = path_data.get_path_custom()
 		path_index = 0
 		
 func follow_path():

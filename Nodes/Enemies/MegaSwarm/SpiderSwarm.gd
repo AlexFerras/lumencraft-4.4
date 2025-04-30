@@ -85,7 +85,7 @@ func _ready():
 	pre_ready()
 	if swarm_data.is_empty():
 		for enemy in Const.Enemies.values():
-			if enemy.is_swarm and enemy.scene == filename:
+			if enemy.is_swarm and enemy.scene == scene_file_path:
 				swarm_data = enemy
 				break
 	

@@ -33,7 +33,7 @@ func explode():
 	
 
 	for i in cluster:
-		var bullet = load(filename).instantiate()
+		var bullet = load(scene_file_path).instantiate()
 		bullet.cluster=0
 		bullet.rotation = randf()*TAU
 		bullet.position = global_position

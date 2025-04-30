@@ -19,7 +19,7 @@ func set_miner(miner: bool):
 		object_data.has_miner = true
 	else:
 		object_data.erase("has_miner")
-	update()
+	queue_redraw()
 
 func _draw() -> void:
 	if not object_data.get("has_miner", false):

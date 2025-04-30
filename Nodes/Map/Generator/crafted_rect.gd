@@ -1,13 +1,13 @@
 @tool
 extends "res://Nodes/Map/Generator/rect_generator.gd"
 
-@export var rect_list # (Array, String)
+@export var rect_list:Array[String] # (Array, String)
 
 var filtered_rects: Array
 var picked_rect: String
 
 func set_size(s: Vector2):
-	if not has_node(@"preview"):
+	if not has_node("preview"):
 		return
 	
 	super.set_size(s)
@@ -20,7 +20,7 @@ func set_size(s: Vector2):
 			filtered_rects.append(rect)
 
 func set_seed(newseed):
-	if not has_node(@"preview"):
+	if not has_node("preview"):
 		return
 	
 	if filtered_rects.is_empty():

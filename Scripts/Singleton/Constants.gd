@@ -9,7 +9,7 @@ const GAME_DATA_SCRIPT = preload("res://Scripts/Data/GameData.gd")
 var game_data: GAME_DATA_SCRIPT
 var is_steam_deck: bool
 
-const FROG_MAPS = ["res://Maps/FlareSiege.tscn", "res://Maps/TutorialMap.tscn", "res://Maps/DemoMap.tscn", "res://Maps/map_challange_T001.tscn"]
+static var FROG_MAPS = ["res://Maps/FlareSiege.tscn", "res://Maps/TutorialMap.tscn", "res://Maps/DemoMap.tscn", "res://Maps/map_challange_T001.tscn"]
 
 #var RESOLUTION := Vector2(ProjectSettings.get("display/window/size/width"), ProjectSettings.get("display/window/size/height"))
 
@@ -21,20 +21,20 @@ var ENEMY_COLLISION_LAYER: int
 var CAMERA_ZOOM := 8.0
 var PLAYER_LIMIT := 2
 
-const EXPLOSION = preload("res://Nodes/Effects/Explosion/Explosion.tscn")
+static var EXPLOSION = preload("res://Nodes/Effects/Explosion/Explosion.tscn")
 #const DAMAGE_NUMBER = preload("res://Nodes/UI/DamageNumber.tscn")
-const TITLE_SCENE = "res://Resources/Anarchy/Scenes/anarchy_main_menu.tscn"
+static var TITLE_SCENE = "res://Resources/Anarchy/Scenes/anarchy_main_menu.tscn"
 
-const MapNames = {DemoMap = "Blast from the Past", TrueBeginningMap = "Underground Survival", map_challange_T001 = "First Encounter", FlareSiege = "Flare Siege", TutorialMap = "Tutorial", FearMap = "Fear the Darkness"}
-const WinConditions = {waves = "Defeat All Waves", item = "Defeat All Waves", finish = "Reach Finish", time = "Survive Time", building = "Place Building", technology = "Research Tech", enemy = "Kill Enemy", genocide = "Kill All Enemies", score = "Reach Score", custom = "Custom"}
+static var MapNames = {DemoMap = "Blast from the Past", TrueBeginningMap = "Underground Survival", map_challange_T001 = "First Encounter", FlareSiege = "Flare Siege", TutorialMap = "Tutorial", FearMap = "Fear the Darkness"}
+static var WinConditions = {waves = "Defeat All Waves", item = "Defeat All Waves", finish = "Reach Finish", time = "Survive Time", building = "Place Building", technology = "Research Tech", enemy = "Kill Enemy", genocide = "Kill All Enemies", score = "Reach Score", custom = "Custom"}
 
 enum Difficulty { CASUAL, EASY, NORMAL, DIFFICULT }
-const DIFFICULTY_SCORE_MULTIPLIERS = [0.5, 0.85, 1, 1.3]
-const DIFFICULTY_RESOURCE_MULTIPLIERS = [2.0, 1.1, 1.0, 0.7]
-const DIFFICULTY_STARTING_RESOURCES = [1000, 300, 0, 0]
+static var DIFFICULTY_SCORE_MULTIPLIERS = [0.5, 0.85, 1, 1.3]
+static var DIFFICULTY_RESOURCE_MULTIPLIERS = [2.0, 1.1, 1.0, 0.7]
+static var DIFFICULTY_STARTING_RESOURCES = [1000, 300, 0, 0]
 
-const BASE_DEFENSE_MAPS = ["DemoMap", "TrueBeginningMap", "map_challange_T001"]
-const BOSS_ENEMIES = ["Crystal GRUBAS", "Turtle", "King"]
+static var BASE_DEFENSE_MAPS = ["DemoMap", "TrueBeginningMap", "map_challange_T001"]
+static var BOSS_ENEMIES = ["Crystal GRUBAS", "Turtle", "King"]
 
 var UI_MAIN_COLOR: Color
 var UI_ORIGINAL_MAIN_COLOR: Color
@@ -312,7 +312,7 @@ func _ready():
 	var material_colors_vector := PackedColorArray()
 	for i in range(255):
 		material_colors_vector.push_back(Const.MaterialColors.get(i,Color.TRANSPARENT))
-	Const.material_colors_texture= Utils.create_emission_mask_from_colors(material_colors_vector)
+	material_colors_texture = Utils.create_emission_mask_from_colors(material_colors_vector)
 	
 	var skip_preload := false
 	if get_override("FAST_LOAD"):
@@ -365,8 +365,8 @@ func _enter_tree() -> void:
 		if not "DISABLED" in over:
 			set_meta("override", load("res://override.gd"))
 	
-	if SteamAPI.singleton and SteamAPI.singleton.isSteamRunningOnSteamDeck():
-		is_steam_deck = true
+	#if SteamAPI.singleton and SteamAPI.singleton.isSteamRunningOnSteamDeck():
+	#	is_steam_deck = true
 	elif OS.has_feature("X11") and DisplayServer.screen_get_size() == Vector2i(1280, 800):
 		is_steam_deck = true
 	elif get_override("TEST_STEAM_DECK"):

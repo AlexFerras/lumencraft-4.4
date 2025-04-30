@@ -1,8 +1,8 @@
 extends AudioStreamPlayer2D
 
-@export var start_samples # (Array, AudioStream)
-@export var loop_samples # (Array, AudioStream)
-@export var end_samples # (Array, AudioStream)
+@export var start_samples:Array[AudioStream] # (Array, AudioStream)
+@export var loop_samples:Array[AudioStream] # (Array, AudioStream)
+@export var end_samples:Array[AudioStream] # (Array, AudioStream)
 
 var looping: bool
 
@@ -22,7 +22,7 @@ func start():
 	stream = start_samples[randi() % start_samples.size()]
 	play()
 
-func stop():
+func stop_looping():
 	if not looping:
 		return
 	

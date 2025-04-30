@@ -62,7 +62,7 @@ func _ready() -> void:
 
 func on_placed():
 	sprite.disabled = false
-	sprite.draw()
+	sprite.queue_redraw()
 	remove_meta("in_construction")
 	
 	var walls=get_tree().get_nodes_in_group("repair_my_pixels")

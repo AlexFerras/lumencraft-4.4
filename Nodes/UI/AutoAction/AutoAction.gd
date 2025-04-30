@@ -23,7 +23,7 @@ func _ready() -> void:
 	Utils.connect("joypad_updated", Callable(self, "refresh2"))
 	Utils.connect("coop_toggled", Callable(self, "update_coop"))
 	
-	base_path = filename.get_base_dir()
+	base_path = scene_file_path.get_base_dir()
 	use_joypad = Utils.is_using_joypad()
 	
 	if not action_name:
@@ -282,66 +282,66 @@ func get_keyboard(key: int) -> Texture2D:
 
 func get_joypad(button: int) -> Texture2D:
 	match button:
-		JOY_BUTTON_0:
+		JOY_BUTTON_A:
 			return get_image(JOYPAD, "A")
-		JOY_BUTTON_1:
+		JOY_BUTTON_B:
 			return get_image(JOYPAD, "B")
-		JOY_BUTTON_2:
+		JOY_BUTTON_X:
 			return get_image(JOYPAD, "X")
-		JOY_BUTTON_3:
+		JOY_BUTTON_Y:
 			return get_image(JOYPAD, "Y")
-		JOY_BUTTON_4:
+		JOY_BUTTON_LEFT_SHOULDER:
 			return get_image(JOYPAD, "LB")
-		JOY_BUTTON_5:
+		JOY_BUTTON_RIGHT_SHOULDER:
 			return get_image(JOYPAD, "RB")
-		JOY_BUTTON_6:
+		JOY_AXIS_TRIGGER_LEFT:
 			return get_image(JOYPAD, "LT")
-		JOY_BUTTON_7:
+		JOY_AXIS_TRIGGER_RIGHT:
 			return get_image(JOYPAD, "RT")
-		JOY_BUTTON_8:
+		JOY_BUTTON_LEFT_STICK:
 			return get_image(JOYPAD, "L")
-		JOY_BUTTON_9:
+		JOY_BUTTON_RIGHT_STICK:
 			return get_image(JOYPAD, "R")
-		JOY_BUTTON_10:
+		JOY_BUTTON_BACK:
 			return get_image(JOYPAD, "Select")
-		JOY_BUTTON_11:
+		JOY_BUTTON_START:
 			return get_image(JOYPAD, "Start")
-		JOY_BUTTON_12:
+		JOY_BUTTON_DPAD_UP:
 			return get_image(JOYPAD, "DPadUp")
-		JOY_BUTTON_13:
+		JOY_BUTTON_DPAD_DOWN:
 			return get_image(JOYPAD, "DPadDown")
-		JOY_BUTTON_14:
+		JOY_BUTTON_DPAD_LEFT:
 			return get_image(JOYPAD, "DPadLeft")
-		JOY_BUTTON_15:
+		JOY_BUTTON_DPAD_RIGHT:
 			return get_image(JOYPAD, "DPadRight")
-		JOY_BUTTON_17:
+		JOY_BUTTON_MISC1:
 			return get_image(JOYPAD, "Share")
 	return null
 
 func get_joypad_axis(axis: int, value: float) -> Texture2D:
 	match axis:
-		JOY_AXIS_0:
+		JOY_AXIS_LEFT_X:
 			if value < 0:
 				return get_image(JOYPAD, "LeftStickLeft")
 			elif value > 0:
 				return get_image(JOYPAD, "LeftStickRight")
 			else:
 				return get_image(JOYPAD, "LeftStick")
-		JOY_AXIS_1:
+		JOY_AXIS_LEFT_Y:
 			if value < 0:
 				return get_image(JOYPAD, "LeftStickUp")
 			elif value > 0:
 				return get_image(JOYPAD, "LeftStickDown")
 			else:
 				return get_image(JOYPAD, "LeftStick")
-		JOY_AXIS_2:
+		JOY_AXIS_RIGHT_X:
 			if value < 0:
 				return get_image(JOYPAD, "RightStickLeft")
 			elif value > 0:
 				return get_image(JOYPAD, "RightStickRight")
 			else:
 				return get_image(JOYPAD, "RightStick")
-		JOY_AXIS_3:
+		JOY_AXIS_RIGHT_Y:
 			if value < 0:
 				return get_image(JOYPAD, "RightStickUp")
 			elif value > 0:

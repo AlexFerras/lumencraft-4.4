@@ -32,7 +32,7 @@ func _configure(editor):
 func set_shape(idx: int):
 	object_data.shape = idx
 	config_dirty = true
-	update()
+	queue_redraw()
 	emit_signal("data_changed")
 
 func get_data() -> Dictionary:
@@ -64,7 +64,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 		for mat in Utils.editor.get_terrains():
 			event_terrain_list.add_item(mat.name)
 			event_terrain_list.set_item_metadata(event_terrain_list.get_item_count() - 1, mat.id)
-		editor.register_data("material", funcref(self, "set_selected_material"), funcref(event_terrain_list, "get_selected_metadata"))
+		editor.register_data("material", Callable(self, "set_selected_material"), Callable(event_terrain_list, "get_selected_metadata"))
 		return event_terrain_list
 	
 	return null

@@ -18,7 +18,8 @@ var enviro: WorldEnvironment
 func _ready() -> void:
 	if is_nan(get_viewport_rect().size.y):
 		return
-	viewport.get_texture().flags = Texture2D.FLAG_FILTER
+		# RECHECK
+	#viewport.get_texture().flags = Texture2D.FLAG_FILTER
 	viewport.size = get_viewport_rect().size
 	create_materials()
 
@@ -162,7 +163,7 @@ func update_light(light_source: LightSprite):
 		light_transform.origin = light_source.global_transform.origin
 		light.material.set_shader_parameter("global_transform", light_transform)
 
-func get_canvas_transform() -> Transform2D:
+func get_canvas_transform_custom() -> Transform2D:
 	if Engine.is_editor_hint():
 		return get_viewport().global_canvas_transform
 	else:

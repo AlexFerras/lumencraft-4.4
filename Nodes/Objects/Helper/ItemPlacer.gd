@@ -7,7 +7,7 @@ var items: Array
 
 func set_radius(rad):
 	radius=rad
-	update()
+	queue_redraw()
 
 func _draw() -> void:
 	if Engine.is_editor_hint():
@@ -29,7 +29,7 @@ func _ready() -> void:
 		elif item is Node2D:
 			node = item
 		else:
-			node = Pickup.instantiate(item.id)
+			node = Pickup.instance(item.id)
 			node.id = item.id
 			node.data = item.get("data")
 			node.amount = item.amount

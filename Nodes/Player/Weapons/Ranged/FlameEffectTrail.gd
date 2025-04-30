@@ -24,7 +24,7 @@ func _ready():
 
 func _physics_process(_delta):
 	if !finished:
-		add_point(Vector2.ZERO)
+		add_point_custom(Vector2.ZERO)
 		repair_tables()
 	var rand_vector := Vector2.RIGHT.rotated(randf_range(0, TAU))
 	gravity = Vector2.RIGHT * 60
@@ -35,7 +35,7 @@ func _physics_process(_delta):
 		points[p] += (gravity + (rand_vector * point_age[p]).limit_length(max_random))
 
 
-func add_point(point_pos: Vector2, at_pos := -1):
+func add_point_custom(point_pos: Vector2, at_pos := -1):
 	if len(points) > 1 and points[-2].distance_to(point_pos) < min_distance:
 		points[-1] = point_pos
 	else:

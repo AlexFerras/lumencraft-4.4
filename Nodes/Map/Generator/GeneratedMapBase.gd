@@ -1,13 +1,13 @@
 @tool
 extends Sprite2D
-@export var render=false: set = render
-@export var create_pixelmap=false: set = create_pixelmap
+@export var render_btn=false: set = render
+@export var create_pixelmap_btn=false: set = create_pixelmap
 @export var generate_rects =false: set = set_generate_rects
-@export var render_rects_pixelmap=false: set = render_rects_pixelmap
+@export var render_rects_pixelmap_btn=false: set = render_rects_pixelmap
 @export var ensure_walkability=false: set = set_ensure_walkability
-@export var render_rects=false: set = render_rects
+@export var render_rects_btn=false: set = render_rects
 @export var create_objects=false: set = create_objects_impl
-@export var clear_this_scene=false: set = clear_this_scene
+@export var clear_this_scene_btn=false: set = clear_this_scene
 @export var count_resources=false: set = set_count_resources
 @export var my_seed=0: set = set_seeds
 
@@ -428,7 +428,7 @@ signal pass_finished
 func create_pixelmap(nothing):
 	if nothing==false:
 		return
-	create_pixelmap=false
+	create_pixelmap_btn=false
 	var pixel_map: PixelMap = $"%NotPixelMap"
 	
 	#$"%Viewport".size = Vector2.ONE * owner.map_size
@@ -441,7 +441,7 @@ func create_pixelmap(nothing):
 func clear_this_scene(nothing):
 	if nothing==false:
 		return
-	clear_this_scene=false
+	clear_this_scene_btn=false
 	for i in get_children():
 		if i.is_class("Sprite2D"):
 			if i.material:
@@ -466,7 +466,7 @@ func clear_this_scene(nothing):
 func set_seeds(new_seed):
 	if new_seed==my_seed:
 		return
-	if not has_node(@"%generated_rects"):
+	if not has_node("%generated_rects"):
 		return
 	
 	refresh_scale()
@@ -494,7 +494,7 @@ signal render_done
 func render(newren):
 	if newren==false:
 		return
-	render=false
+	render_btn=false
 
 	refresh_scale()
 	var viewport=$"%SubViewport"
@@ -573,7 +573,7 @@ func render(newren):
 func render_rects(newren):
 	if newren==false:
 		return
-	render_rects=false
+	render_rects_btn=false
 	
 	
 	refresh_scale()
@@ -699,7 +699,7 @@ func set_count_resources(newren):
 func render_rects_pixelmap(newren):
 	if newren==false:
 		return
-	render_rects_pixelmap=false
+	render_rects_pixelmap_btn=false
 
 	var pixel_map: PixelMap = $"%NotPixelMap"
 	var rects=$"%generated_rects"
@@ -981,11 +981,11 @@ func _ready():
 	set_notify_transform(true)
 
 func refresh_scale():
-	if not has_node(@"%SubViewport"):
+	if not has_node("SubViewport"):
 		return
 	
-	$"%SubViewport".size=scale
-	$"%map".global_scale=Vector2.ONE
+	$SubViewport.size=scale
+	$map.global_scale=Vector2.ONE
 	for i in get_children():
 		if i.has_method("map_size_changed"):
 			i.map_size_changed(scale)
@@ -1023,7 +1023,7 @@ func create_object(type: String, object: String, pos: Vector2, data := {}, rot :
 	return dict
 
 func instance_object(dict: Dictionary):
-	EditorObject.instantiate(dict, self, {})
+	EditorObject.instance(dict, self, {})
 
 func add_editor_object(object: Node2D):
 	if object == null:

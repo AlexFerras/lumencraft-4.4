@@ -13,7 +13,8 @@ var pixel_map: PixelMap
 func _ready():
 	
 	sprite.texture = viewport_handle.get_texture()
-	sprite.texture.flags = Texture2D.FLAG_FILTER
+	# TODO
+	#sprite.texture.flags = Texture2D.FLAG_FILTER
 	
 	if Utils.game.map:
 		await Utils.game.map_changed

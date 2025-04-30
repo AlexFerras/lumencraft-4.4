@@ -51,7 +51,7 @@ func _physics_process(delta: float) -> void:
 			shoot_time -= delta
 			if !laser.working:
 				laser.set_working(true)
-				SteamAPI.unlock_achievement("FIRE_LASER")
+				SteamAPI2.unlock_achievement("FIRE_LASER")
 			if shoot_time<3.0:
 				sound_active.pitch_scale=1.8*(shoot_time+3.0)/6.0
 				sound_active.volume_db=linear_to_db(shoot_time/3.0)
@@ -66,7 +66,7 @@ func _physics_process(delta: float) -> void:
 
 func _get_save_data() -> Dictionary:
 
-	return Utils.merge_dicts(_get_save_data(), {head_rotation = body.global_rotation})
+	return Utils.merge_dicts(super._get_save_data(), {head_rotation = body.global_rotation})
 
 
 func _set_save_data(data: Dictionary):
@@ -100,6 +100,6 @@ func toggle_lock(update_only := false):
 		locked = not locked
 	
 	if locked:
-		$Body.mode = RigidBody2D.FREEZE_MODE_STATIC
+		$Body.freeze = true
 	else:
-		$Body.mode = RigidBody2D.MODE_RIGID
+		$Body.freeze = false

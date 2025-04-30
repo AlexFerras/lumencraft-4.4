@@ -37,7 +37,7 @@ func handle_pause(node: Node):
 			node.remove_meta("_where_play_")
 	elif node is AnimationPlayer:##
 		node.stop(false)
-	elif node is get_script():##
+	elif node.get_script() == get_script():##
 		node.pause_pauser()
 	else:
 		pass
@@ -53,9 +53,10 @@ func handle_unpause(node: Node):
 	elif node is AnimationPlayer:##
 		if node.current_animation:
 			node.play()
-	elif node is Tween:##
-		node.resume_all()
-	elif node is get_script():##
+	# RECHECK
+	#elif node is Tween:##
+		#node.resume_all()
+	elif get_script() == get_script():##
 		node.unpause_pauser()
 	else:
 		pass

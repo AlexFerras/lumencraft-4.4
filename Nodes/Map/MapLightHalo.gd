@@ -12,7 +12,7 @@ var editor_data: Dictionary
 var enviro: WorldEnvironment
 
 func _ready() -> void:
-	viewport.get_texture().flags = Texture2D.FLAG_FILTER
+	#viewport.get_texture().flags = Texture2D.FLAG_FILTER
 	viewport.size = get_viewport_rect().size
 	create_materials()
 
@@ -29,7 +29,7 @@ func _process(delta: float):
 	if Engine.is_editor_hint():
 		if not viewport:
 			viewport = $SubViewport
-			viewport.get_texture().flags = Texture2D.FLAG_FILTER | Texture2D.FLAG_MIPMAPS
+			#viewport.get_texture().flags = Texture2D.FLAG_FILTER | Texture2D.FLAG_MIPMAPS
 		if not enviro:
 			enviro = get_tree().edited_scene_root.get_node_or_null("WorldEnvironment")
 		if not static_material:
@@ -129,7 +129,7 @@ func update_light(halo: LightHalo):
 		light.hide()
 		return
 
-func get_canvas_transform() -> Transform2D:
+func get_canvas_transform_custom() -> Transform2D:
 	if Engine.is_editor_hint():
 		return get_viewport().global_canvas_transform
 	else:

@@ -23,7 +23,7 @@ func generate(size: Vector2):
 	texture = baker.texture
 	material = filter_material
 	
-	ready = true
+	is_ready = true
 
 func create_content(generator, pixel_map: PixelMap) -> Array:
 	return generic_create_content(generator, pixel_map)

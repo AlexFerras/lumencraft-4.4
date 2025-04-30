@@ -83,7 +83,7 @@ func _on_spawn_timer_timeout():
 					if mega_swarm.how_many == -1:
 						mega_swarm.how_many = 0
 					
-					var to_spawn := min(spawn_batch, total_monsters - spawn_counter)
+					var to_spawn :float= min(spawn_batch, total_monsters - spawn_counter)
 					to_spawn = min(to_spawn, max_monsters_at_once - live_counter)
 #					mega_swarm.how_many += to_spawn
 					spawn_tween = mega_swarm.spawn_in_radius_with_delay(global_position, 3, to_spawn, 0.01, 0.01)

@@ -1,16 +1,11 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=13 format=3 uid="uid://d6qa8rvrll26"]
 
-[ext_resource path="res://Nodes/Map/MapDarknessPostProcess.gd" type="Script" id=2]
-[ext_resource path="res://Nodes/Map/MapDarkness.gd" type="Script" id=3]
-[ext_resource path="res://Nodes/Map/MapDarkness.gdshader" type="Shader" id=4]
-[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=5]
+[ext_resource type="Script" uid="uid://fq05o6awan8h" path="res://Nodes/Map/MapDarknessPostProcess.gd" id="2"]
+[ext_resource type="Script" uid="uid://ctj8hlei7p5u" path="res://Nodes/Map/MapDarkness.gd" id="3"]
+[ext_resource type="Shader" uid="uid://bfq04qvo8514h" path="res://Nodes/Map/MapDarkness.gdshader" id="4"]
+[ext_resource type="PackedScene" path="res://Nodes/Map/ZIndexer.tscn" id="5"]
 
-[sub_resource type="Environment" id=3]
-
-[sub_resource type="World" id=4]
-environment = SubResource( 3 )
-
-[sub_resource type="Shader" id=31]
+[sub_resource type="Shader" id="31"]
 code = "shader_type canvas_item;
 render_mode blend_mix;
 
@@ -29,24 +24,24 @@ void fragment()
 //	COLOR = col;
 }"
 
-[sub_resource type="ShaderMaterial" id=32]
-shader = SubResource( 31 )
+[sub_resource type="ShaderMaterial" id="32"]
+shader = SubResource("31")
 
-[sub_resource type="ShaderMaterial" id=34]
+[sub_resource type="ShaderMaterial" id="34"]
 resource_local_to_scene = true
-shader = ExtResource( 4 )
-shader_param/global_transform = Transform2D( 2, 0, 0, 2, 1514, 276 )
-shader_param/light_exponent = 1.0
-shader_param/light_amplify = 1.0
-shader_param/fak_bedrock = false
+shader = ExtResource("4")
+shader_parameter/global_transform = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+shader_parameter/light_exponent = 1.0
+shader_parameter/light_amplify = 1.0
+shader_parameter/fak_bedrock = false
 
-[sub_resource type="ViewportTexture" id=36]
+[sub_resource type="ViewportTexture" id="36"]
 viewport_path = NodePath("ViewportLight")
 
-[sub_resource type="ViewportTexture" id=37]
+[sub_resource type="ViewportTexture" id="37"]
 viewport_path = NodePath("ViewportLight/ViewportShadow")
 
-[sub_resource type="GDScript" id=38]
+[sub_resource type="GDScript" id="38"]
 script/source = "extends Sprite2D
 
 var shock_data: PackedVector2Array
@@ -57,7 +52,7 @@ func _ready() -> void:
 	set_process(true)
 
 
-func get_canvas_transform() -> Transform2D:
+func get_canvas_transform_custom() -> Transform2D:
 	if Engine.is_editor_hint():
 		return get_viewport().global_canvas_transform
 	else:
@@ -92,13 +87,12 @@ func _process(delta):
 		return
 	global_position = Utils.game.camera.get_camera_screen_center() + Vector2(50,0)
 #	material.set_shader_param(\"global_transform\", get_global_transform())
-
 "
 
-[sub_resource type="ViewportTexture" id=41]
+[sub_resource type="ViewportTexture" id="41"]
 viewport_path = NodePath("ViewportLight")
 
-[sub_resource type="GDScript" id=40]
+[sub_resource type="GDScript" id="40"]
 script/source = "extends Sprite2D
 
 
@@ -122,72 +116,61 @@ func _process(delta):
 
 [node name="MapDarkness" type="Node2D"]
 z_index = 1000
-script = ExtResource( 3 )
-__meta__ = {
-"_edit_lock_": true
-}
-ambient_color = Color( 0.564706, 0.564706, 0.564706, 1 )
+script = ExtResource("3")
+ambient_color = Color(0.564706, 0.564706, 0.564706, 1)
 
 [node name="ViewportLight" type="SubViewport" parent="."]
-size = Vector2( 1924, 1084 )
-world = SubResource( 4 )
 handle_input_locally = false
-render_target_v_flip = true
-render_target_update_mode = 3
 gui_disable_input = true
+size = Vector2i(1924, 1084)
+render_target_update_mode = 3
 
 [node name="ViewportShadow" type="SubViewport" parent="ViewportLight"]
-size = Vector2( 1940, 1090 )
-world = SubResource( 4 )
+disable_3d = true
 transparent_bg = true
 handle_input_locally = false
-hdr = false
-disable_3d = true
-usage = 0
-render_target_v_flip = true
-render_target_update_mode = 3
 gui_disable_input = true
+size = Vector2i(1940, 1090)
+render_target_update_mode = 3
 
 [node name="Map" type="Sprite2D" parent="ViewportLight/ViewportShadow"]
-modulate = Color( 1, 1, 1, 0.941176 )
-material = SubResource( 32 )
+modulate = Color(1, 1, 1, 0.941176)
+material = SubResource("32")
 centered = false
 
 [node name="Camera2D" type="Camera2D" parent="ViewportLight/ViewportShadow"]
-position = Vector2( 962, 542 )
-current = true
+position = Vector2(962, 542)
 
 [node name="Ambient" type="ColorRect" parent="ViewportLight"]
 offset_right = 4404.0
 offset_bottom = 2360.0
-color = Color( 0.564706, 0.564706, 0.564706, 1 )
+color = Color(0.564706, 0.564706, 0.564706, 1)
 
 [node name="Camera2D" type="Camera2D" parent="ViewportLight"]
-position = Vector2( 1972.16, 1420.6 )
-current = true
+position = Vector2(1972.16, 1420.6)
 
 [node name="Darkness" type="Sprite2D" parent="."]
-material = SubResource( 34 )
-position = Vector2( 1514, 276 )
-scale = Vector2( 2, 2 )
 z_index = 2000
 z_as_relative = false
-texture = SubResource( 36 )
-script = ExtResource( 2 )
+material = SubResource("34")
+position = Vector2(1514, 276)
+scale = Vector2(2, 2)
+texture = SubResource("36")
+script = ExtResource("2")
 
-[node name="ZIndexer" parent="Darkness" instance=ExtResource( 5 )]
+[node name="ZIndexer" parent="Darkness" instance=ExtResource("5")]
 z_index = 2000
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false
-position = Vector2( 504, 0 )
-scale = Vector2( 0.25, 0.25 )
 z_index = 4096
-texture = SubResource( 37 )
-script = SubResource( 38 )
+position = Vector2(504, 0)
+scale = Vector2(0.25, 0.25)
+texture = SubResource("37")
+script = SubResource("38")
 
 [node name="Sprite2" type="Sprite2D" parent="."]
 visible = false
-scale = Vector2( 0.25, 0.25 )
-texture = SubResource( 41 )
-script = SubResource( 40 )
+scale = Vector2(0.25, 0.25)
+texture = SubResource("41")
+script = SubResource("40")

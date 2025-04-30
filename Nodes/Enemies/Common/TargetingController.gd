@@ -25,11 +25,12 @@ var target_vector    := Vector2.ZERO
 var target_distance  := 0.0
 var curret_targetting_flags:int = 0
 enum TargetOptions {PLAYER = 1 << 0, PET = 1 << 1, COMMON = 1 << 2, POWER_EXPANDER = 1 << 3, TURRET = 1 << 4, RESOURCE_MINE = 1 << 5}
-@export var TARGET_FLAGS =\ # (int, FLAGS, "Player", "Pet", "Common", "PowerExpander", "Turret", "ResourceMine")
-	TargetOptions.PLAYER | TargetOptions.PET | TargetOptions.COMMON | TargetOptions.POWER_EXPANDER | TargetOptions.TURRET | TargetOptions.RESOURCE_MINE
-
-@export var WAVE_TARGET_FLAGS =\ # (int, FLAGS, "Player", "Pet", "Common", "PowerExpander", "Turret", "ResourceMine")
-	TargetOptions.PLAYER | TargetOptions.PET | TargetOptions.COMMON | TargetOptions.POWER_EXPANDER | TargetOptions.TURRET | TargetOptions.RESOURCE_MINE
+# (int, FLAGS, "Player", "Pet", "Common", "PowerExpander", "Turret", "ResourceMine") 
+@export var TARGET_FLAGS = TargetOptions.PLAYER | TargetOptions.PET | TargetOptions.COMMON | TargetOptions.POWER_EXPANDER | TargetOptions.TURRET | TargetOptions.RESOURCE_MINE
+	
+# (int, FLAGS, "Player", "Pet", "Common", "PowerExpander", "Turret", "ResourceMine")
+@export var WAVE_TARGET_FLAGS = TargetOptions.PLAYER | TargetOptions.PET | TargetOptions.COMMON | TargetOptions.POWER_EXPANDER | TargetOptions.TURRET | TargetOptions.RESOURCE_MINE 
+	
 
 @export var target_persistance_duration := 5.0
 @export var target_focus_timeout := 10.0 # this must be mutiplayer of target_persistance_duration

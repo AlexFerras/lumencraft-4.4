@@ -1,15 +1,15 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=27 format=3 uid="uid://ukvd3vgr2ljk"]
 
-[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Insert_001.png" type="Texture2D" id=1]
-[ext_resource path="res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo.wav" type="AudioStream" id=2]
-[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Insert_001_emissive.png" type="Texture2D" id=3]
-[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Body_General.png" type="Texture2D" id=4]
-[ext_resource path="res://Nodes/Player/Weapons/Tools/Drill_Body_Emissive.png" type="Texture2D" id=5]
-[ext_resource path="res://Nodes/Buildings/Reactor/Smoke.png" type="Texture2D" id=6]
-[ext_resource path="res://Resources/Textures/spark_particle.png" type="Texture2D" id=7]
-[ext_resource path="res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo_drilling.wav" type="AudioStream" id=8]
+[ext_resource type="Texture2D" uid="uid://cvg08g58qvwtu" path="res://Nodes/Player/Weapons/Tools/Drill_Insert_001.png" id="1"]
+[ext_resource type="AudioStream" uid="uid://72wcmopuabve" path="res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo.wav" id="2"]
+[ext_resource type="Texture2D" uid="uid://b0oi5gmarbd1p" path="res://Nodes/Player/Weapons/Tools/Drill_Insert_001_emissive.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://ckvjh65xpruc1" path="res://Nodes/Player/Weapons/Tools/Drill_Body_General.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://b670g3rckkeu3" path="res://Nodes/Player/Weapons/Tools/Drill_Body_Emissive.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://blbe8exy165hh" path="res://Nodes/Buildings/Reactor/Smoke.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://cgthsj6uf0ehs" path="res://Resources/Textures/spark_particle.png" id="7"]
+[ext_resource type="AudioStream" uid="uid://c88fgcvcs2ouw" path="res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo_drilling.wav" id="8"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends Node2D
 
 const idle_sound := preload(\"res://SFX/Drill/MACHINE_Air_Compressor_100L_5_5HP_Run_loop_stereo.wav\")
@@ -23,19 +23,19 @@ const AUTO_DRILL_CLICKS = 3
 @onready var ray_left := $Drill_body/Drill_head/ray_left as Marker2D
 @onready var ray_right:= $Drill_body/Drill_head/ray_right as Marker2D
 
-@onready var animator := $AnimationPlayer as AnimationPlayer
-@onready var laser_animator := $AnimationPlayer2 as AnimationPlayer
-@onready var drill_sound_idle := $AudioStreamPlayer as AudioStreamPlayer
-@onready var drill_sound_working := $AudioStreamPlayer2 as AudioStreamPlayer
-@onready var emissive := $Drill_body/Drill_head/Drill_emissive as Sprite2D
-@onready var drill_body := $Drill_body/ as Sprite2D
-@onready var base_upgrade := $Drill_body/Drill_body_upgrade as Sprite2D
-@onready var attack_collider := $Area2D/CollisionShape2D as CollisionShape2D
-@onready var smoke := $Drill_body/Drill_head/Smoke as CPUParticles2D
-@onready var sparks := $Drill_body/Drill_head/Sparks as GPUParticles2D
-@onready var laser1 := $Drill_body/LaserSight as Line2D
-@onready var laser2 := $Drill_body/LaserSight2 as Line2D
-@onready var laser3 := $Drill_body/LaserSight3 as Line2D
+@onready var animator :AnimationPlayer= $AnimationPlayer
+@onready var laser_animator :AnimationPlayer= $AnimationPlayer2
+@onready var drill_sound_idle :AudioStreamPlayer= $AudioStreamPlayer
+@onready var drill_sound_working :AudioStreamPlayer= $AudioStreamPlayer2
+@onready var emissive :Sprite2D= $Drill_body/Drill_head/Drill_emissive
+@onready var drill_body :Sprite2D= $Drill_body
+@onready var base_upgrade :Sprite2D= $Drill_body/Drill_body_upgrade
+@onready var attack_collider :CollisionShape2D= $Area2D/CollisionShape2D
+@onready var smoke :CPUParticles2D= $Drill_body/Drill_head/Smoke 
+@onready var sparks :GPUParticles2D= $Drill_body/Drill_head/Sparks 
+@onready var laser1 :Line2D= $Drill_body/LaserSight
+@onready var laser2 :Line2D= $Drill_body/LaserSight2
+@onready var laser3 :Line2D= $Drill_body/LaserSight3
 
 var base_color:Color
 @onready var last_tip_position=sparks.global_position
@@ -278,223 +278,227 @@ func _exit_tree() -> void:
 #	draw_circle(debug_point2.rotated(-global_rotation)/global_scale, radius, color)
 "
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id="2"]
 length = 0.18
-loop = true
+loop_mode = 1
 step = 0.01
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Drill_body/Drill_head:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18 ),
-"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Area2D/CollisionShape2D:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 0.08, 0.1, 0.12, 0.18 ),
-"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.08, 0.1, 0.12, 0.18),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 1,
-"values": [ true, true, false, true, true ]
+"values": [true, true, false, true, true]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Drill_body/Drill_head/Drill_emissive:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18 ),
-"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Drill_body/Drill_head:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0, 0.08, 0.18 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.08, 0.18),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [ Vector2( 75, 0 ), Vector2( 80, 0 ), Vector2( 75, 0 ) ]
+"values": [Vector2(75, 0), Vector2(80, 0), Vector2(75, 0)]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id="3"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Drill_body/Drill_head:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0 ]
+"values": [0]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Area2D/CollisionShape2D:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ true ]
+"values": [true]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = false
 tracks/2/path = NodePath("Drill_body:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = false
 tracks/2/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 0, 0 ) ]
+"values": [Vector2(0, 0)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Drill_body/Drill_head:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 75, 0 ) ]
+"values": [Vector2(75, 0)]
 }
 
-[sub_resource type="Animation" id=19]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_71q4e"]
+_data = {
+&"Drill": SubResource("2"),
+&"RESET": SubResource("3")
+}
+
+[sub_resource type="Animation" id="19"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Drill_body/LaserSight:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 1, 1, 1, 1 ) ]
+"values": [Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="Animation" id=20]
+[sub_resource type="Animation" id="20"]
 resource_name = "drill"
 length = 0.2
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Drill_body/LaserSight:modulate:a")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.1 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ 1.0, 0.0 ]
+"values": [1.0, 0.0]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Drill_body/LaserSight2:modulate:a")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 0.1 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ 1.0, 0.0 ]
+"values": [1.0, 0.0]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Drill_body/LaserSight3:modulate:a")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0, 0.1 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ 1.0, 0.0 ]
+"values": [1.0, 0.0]
 }
 tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath(".")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
-"values": [ {
-"args": [  ],
-"method": "laser_randomize"
-} ]
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"laser_randomize"
+}]
 }
 
-[sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 19, 7 )
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_b87dg"]
+_data = {
+&"RESET": SubResource("19"),
+&"drill": SubResource("20")
+}
 
-[sub_resource type="CanvasItemMaterial" id=5]
+[sub_resource type="RectangleShape2D" id="4"]
+size = Vector2(38, 14)
+
+[sub_resource type="CanvasItemMaterial" id="5"]
 particles_animation = true
 particles_anim_h_frames = 5
 particles_anim_v_frames = 3
 particles_anim_loop = true
 
-[sub_resource type="Curve" id=6]
-_data = [ Vector2( 0, 0.366564 ), 0.0, 0.144172, 0, 1, Vector2( 1, 0.510736 ), 0.144172, 0.0, 1, 0 ]
+[sub_resource type="Curve" id="6"]
+_data = [Vector2(0, 0.366564), 0.0, 0.144172, 0, 1, Vector2(1, 0.510736), 0.144172, 0.0, 1, 0]
+point_count = 2
 
-[sub_resource type="Gradient" id=7]
-offsets = PackedFloat32Array( 0, 0.0598291, 0.150641, 0.709402 )
-colors = PackedColorArray( 0.74902, 0.74902, 0.74902, 0.352941, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
+[sub_resource type="Gradient" id="7"]
+offsets = PackedFloat32Array(0, 0.0598291, 0.150641, 0.709402)
+colors = PackedColorArray(0.74902, 0.74902, 0.74902, 0.352941, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
 
-[sub_resource type="Gradient" id=10]
-colors = PackedColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+[sub_resource type="Gradient" id="10"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
-[sub_resource type="GradientTexture2D" id=11]
-gradient = SubResource( 10 )
+[sub_resource type="GradientTexture2D" id="11"]
+gradient = SubResource("10")
 
-[sub_resource type="ParticleProcessMaterial" id=9]
+[sub_resource type="ParticleProcessMaterial" id="9"]
 lifetime_randomness = 1.0
 emission_shape = 1
 emission_sphere_radius = 10.0
-flag_disable_z = true
-direction = Vector3( -1, 0, 0 )
+direction = Vector3(-1, 0, 0)
 spread = 80.63
-gravity = Vector3( 0, 0, 0 )
-initial_velocity = 1000.0
-initial_velocity_random = 0.47
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-angle = 720.0
-angle_random = 1.0
-scale = 0.01
-scale_random = 0.02
-color = Color( 3, 3, 3, 1 )
-color_ramp = SubResource( 11 )
-hue_variation = 0.36
-hue_variation_random = 0.5
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 0.0
+color = Color(3, 3, 3, 1)
+color_ramp = SubResource("11")
 
-[sub_resource type="Shader" id=18]
+[sub_resource type="Shader" id="18"]
 code = "shader_type canvas_item;
 
 uniform vec4 laser_color:source_color = vec4(1.0, 0.0, 0.0, 1.0);
@@ -507,170 +511,149 @@ void fragment() {
 }
 "
 
-[sub_resource type="FastNoiseLite" id=13]
-period = 8.5
-persistence = 0.0
-lacunarity = 0.1
+[sub_resource type="FastNoiseLite" id="13"]
 
-[sub_resource type="NoiseTexture" id=14]
+[sub_resource type="NoiseTexture2D" id="14"]
 width = 128
 height = 128
 seamless = true
 bump_strength = 13.5
-noise = SubResource( 13 )
+noise = SubResource("13")
 
-[sub_resource type="ShaderMaterial" id=17]
-shader = SubResource( 18 )
-shader_param/laser_color = Color( 10, 5, 5, 1 )
-shader_param/noise = SubResource( 14 )
+[sub_resource type="ShaderMaterial" id="17"]
+shader = SubResource("18")
+shader_parameter/laser_color = Color(10, 5, 5, 1)
+shader_parameter/noise = SubResource("14")
 
 [node name="Drill" type="Node2D"]
 z_index = -1
-script = SubResource( 1 )
+script = SubResource("1")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+callback_mode_process = 0
+libraries = {
+&"": SubResource("AnimationLibrary_71q4e")
+}
 autoplay = "Drill"
-playback_process_mode = 0
-anims/Drill = SubResource( 2 )
-anims/RESET = SubResource( 3 )
 
 [node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
-anims/RESET = SubResource( 19 )
-anims/drill = SubResource( 20 )
+libraries = {
+&"": SubResource("AnimationLibrary_b87dg")
+}
 
 [node name="Area2D" type="Area2D" parent="."]
-position = Vector2( 1.90735e-06, 0 )
+position = Vector2(1.90735e-06, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2( -1, -1 )
-shape = SubResource( 4 )
+position = Vector2(-1, -1)
+shape = SubResource("4")
 disabled = true
 
 [node name="Drill_body" type="Sprite2D" parent="."]
-position = Vector2( -8, 0 )
-scale = Vector2( 0.1, 0.1 )
-texture = ExtResource( 4 )
+position = Vector2(-8, 0)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("4")
 
 [node name="Drill_head" type="Sprite2D" parent="Drill_body"]
 show_behind_parent = true
-position = Vector2( 75, 0 )
-scale = Vector2( 1.5, 1.5 )
-texture = ExtResource( 1 )
-offset = Vector2( 50, 0 )
+position = Vector2(75, 0)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("1")
+offset = Vector2(50, 0)
 hframes = 5
 vframes = 2
 
 [node name="ray_center" type="Marker2D" parent="Drill_body/Drill_head"]
-position = Vector2( -30, 0 )
+position = Vector2(-30, 0)
 
 [node name="ray_left" type="Marker2D" parent="Drill_body/Drill_head"]
-position = Vector2( -40, -102 )
+position = Vector2(-40, -102)
 
 [node name="ray_right" type="Marker2D" parent="Drill_body/Drill_head"]
-position = Vector2( -50, 44 )
+position = Vector2(-50, 44)
 
 [node name="ray_tip" type="Marker2D" parent="Drill_body/Drill_head"]
-position = Vector2( 140, 0 )
+position = Vector2(140, 0)
 
 [node name="ray_pushback" type="Marker2D" parent="Drill_body/Drill_head"]
-position = Vector2( 109.593, 0 )
+position = Vector2(109.593, 0)
 
 [node name="Drill_emissive" type="Sprite2D" parent="Drill_body/Drill_head"]
-texture = ExtResource( 3 )
-offset = Vector2( 50, 0 )
+texture = ExtResource("3")
+offset = Vector2(50, 0)
 hframes = 5
 vframes = 2
 
 [node name="Smoke" type="CPUParticles2D" parent="Drill_body/Drill_head"]
-material = SubResource( 5 )
-position = Vector2( 100, 0 )
-scale = Vector2( 6.66667, 6.66667 )
 z_index = 4096
+material = SubResource("5")
+position = Vector2(100, 0)
+scale = Vector2(6.66667, 6.66667)
 amount = 40
+texture = ExtResource("6")
 lifetime = 2.0
-local_coords = false
-texture = ExtResource( 6 )
 emission_shape = 1
 emission_sphere_radius = 3.38
-direction = Vector2( -1, 0 )
+direction = Vector2(-1, 0)
 spread = 180.0
-gravity = Vector2( 0, 0 )
-initial_velocity = 15.0
-angular_velocity = 78.7
-angular_velocity_random = 1.0
-angle = 720.0
-scale_amount = 0.2
-scale_amount_curve = SubResource( 6 )
-color = Color( 1, 1, 1, 0.32549 )
-color_ramp = SubResource( 7 )
-anim_offset = 1.0
-anim_offset_random = 1.0
+gravity = Vector2(0, 0)
+scale_amount_curve = SubResource("6")
+color = Color(1, 1, 1, 0.32549)
+color_ramp = SubResource("7")
 
 [node name="Sparks" type="GPUParticles2D" parent="Drill_body/Drill_head"]
-position = Vector2( 110, 0 )
 z_index = 4096
+position = Vector2(110, 0)
 emitting = false
 amount = 40
+texture = ExtResource("7")
 lifetime = 0.3
-local_coords = false
-process_material = SubResource( 9 )
-texture = ExtResource( 7 )
+process_material = SubResource("9")
 
 [node name="Drill_body_upgrade" type="Sprite2D" parent="Drill_body"]
 visible = false
-modulate = Color( 0, 6.32, 8, 1 )
-position = Vector2( 18.1576, 0.952034 )
-scale = Vector2( 0.8, 0.8 )
-texture = ExtResource( 5 )
+modulate = Color(0, 6.32, 8, 1)
+position = Vector2(18.1576, 0.952034)
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("5")
 
 [node name="LaserSight" type="Line2D" parent="Drill_body"]
 visible = false
 show_behind_parent = true
-material = SubResource( 17 )
-position = Vector2( 0, -6 )
-points = PackedVector2Array( 80, 40, 390, 30 )
-default_color = Color( 2, 2, 2, 1 )
+material = SubResource("17")
+position = Vector2(0, -6)
+points = PackedVector2Array(80, 40, 390, 30)
+default_color = Color(2, 2, 2, 1)
 texture_mode = 2
 begin_cap_mode = 2
-__meta__ = {
-"_editor_description_": ""
-}
 
 [node name="LaserSight2" type="Line2D" parent="Drill_body"]
 visible = false
 show_behind_parent = true
-material = SubResource( 17 )
-position = Vector2( 0, 3 )
-points = PackedVector2Array( 80, 0, 390, 0 )
-default_color = Color( 2, 2, 2, 1 )
+material = SubResource("17")
+position = Vector2(0, 3)
+points = PackedVector2Array(80, 0, 390, 0)
+default_color = Color(2, 2, 2, 1)
 texture_mode = 2
 begin_cap_mode = 2
-__meta__ = {
-"_editor_description_": ""
-}
 
 [node name="LaserSight3" type="Line2D" parent="Drill_body"]
 visible = false
 show_behind_parent = true
-material = SubResource( 17 )
-points = PackedVector2Array( 80, -30, 390, -20 )
-default_color = Color( 2, 2, 2, 1 )
+material = SubResource("17")
+points = PackedVector2Array(80, -30, 390, -20)
+default_color = Color(2, 2, 2, 1)
 texture_mode = 2
 begin_cap_mode = 2
-__meta__ = {
-"_editor_description_": ""
-}
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 2 )
+stream = ExtResource("2")
 volume_db = -5.0
 pitch_scale = 0.32
-bus = "SFX"
 
 [node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 8 )
+stream = ExtResource("8")
 volume_db = -5.0
 pitch_scale = 0.32
-bus = "SFX"
 
 [node name="Node" type="Node" parent="."]

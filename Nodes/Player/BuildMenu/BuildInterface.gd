@@ -494,7 +494,7 @@ class RotatedRect:
 		rotation = ro
 	
 	func has_area() -> bool:
-		return not Rect2(position, size).has_no_area()
+		return Rect2(position, size).has_area()
 	
 	func _to_string() -> String:
 		return str(Rect2(position, size), "r", rotation)

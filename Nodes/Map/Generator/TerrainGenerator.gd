@@ -21,15 +21,14 @@ signal bake_finished
 
 func _init() -> void:
 	if PIECE_DATA.is_empty():
-		var dir := DirAccess.new()
-		dir.open("res://Nodes/Map/Generator/TerrainPieces")
+		var dir = DirAccess.open("res://Nodes/Map/Generator/TerrainPieces")
 		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		
 		var file := dir.get_next()
 		while not file.is_empty():
 			if file.get_extension() == "import":
 				var piece := {}
-				piece.texture = load(dir.get_current_dir().plus_file(file.trim_suffix(".import")))
+				piece.texture = load(dir.get_current_dir().path_join(file.trim_suffix(".import")))
 				match file.substr(0, 1):
 					"A":
 						piece.exits = [Dir.L]
@@ -148,7 +147,8 @@ func bake() -> CanvasItem:
 	
 	var viewport := SubViewport.new()
 	viewport.size = full_size
-	viewport.usage = SubViewport.USAGE_2D
+	# RECHECK
+	#viewport.usage = SubViewport.USAGE_2D
 	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	viewport.transparent_bg = true
 	
@@ -157,7 +157,8 @@ func bake() -> CanvasItem:
 	
 	var viewport2 := SubViewport.new()
 	viewport2.size = full_size
-	viewport2.usage = SubViewport.USAGE_2D
+	# RECHECK
+	#viewport2.usage = SubViewport.USAGE_2D
 	viewport2.render_target_update_mode = SubViewport.UPDATE_ONCE
 	viewport.transparent_bg = true
 	

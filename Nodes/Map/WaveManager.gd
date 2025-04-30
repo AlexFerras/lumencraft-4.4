@@ -62,8 +62,8 @@ func next_wave():
 	launch_wave(wave)
 
 func launch_wave(wave: Dictionary):
-	SteamAPI.satisfy_achievement("WAVE_NO_ACTION")
-	SteamAPI.try_achievement("WAVE_STAY_IN_BASE")
+	SteamAPI2.satisfy_achievement("WAVE_NO_ACTION")
+	SteamAPI2.try_achievement("WAVE_STAY_IN_BASE")
 	
 	current_wave_number += 1
 	if current_repeat > 0:
@@ -143,7 +143,7 @@ func show_path_from_all_info_centers(selected_path: int) -> Vector2:
 	
 	if current_note>10:
 		if tim_er<3:
-			SteamAPI.unlock_achievement("RICK_ROLL")
+			SteamAPI2.unlock_achievement("RICK_ROLL")
 			tim_er=0
 		else:
 			current_note=0
@@ -197,7 +197,7 @@ func show_path_from_all_info_centers(selected_path: int) -> Vector2:
 		return from
 	var array := path.get_path()
 	if enemy_is_swarm:
-		array.invert()
+		array.reverse()
 
 	var acc_paths=[]
 	enemy_group["paths"]=acc_paths
@@ -272,7 +272,7 @@ func show_all_paths_from_all_info_centers():
 			continue
 		var array := path.get_path()
 		if enemy_is_swarm:
-			array.invert()
+			array.reverse()
 		
 		var acc_paths=[]
 		enemy_group["paths"]=acc_paths
@@ -317,7 +317,7 @@ func process(delta: float):
 			Utils.notify_event("wave_defeated", wave_notify)
 			
 			Utils.log_message("Wave defeated")
-			SteamAPI.try_achievement("WAVE_NO_ACTION")
+			SteamAPI2.try_achievement("WAVE_NO_ACTION")
 			
 			
 			if spawner_markers_visible:
@@ -345,7 +345,7 @@ func process(delta: float):
 			free_save()
 			started_spawning = false
 			emit_signal("spawn_fininished") ## czemu to się wysyła zaraz po wczytaniu ???
-			SteamAPI.satisfy_achievement("WAVE_STAY_IN_BASE")
+			SteamAPI2.satisfy_achievement("WAVE_STAY_IN_BASE")
 			
 	prev_living = living
 	if wave_to_launch.is_empty():
@@ -360,7 +360,7 @@ func process(delta: float):
 	if wave_countdown > 0:
 		wave_timer_label.visible = wave_countdown > 0 and not Utils.game.ui.is_ui_hidden() and not countdown_disabled
 		if not Utils.get_tree().paused and wave_timer_label.is_visible_in_tree():
-			var seconds := ceil(wave_countdown)
+			var seconds :int= ceil(wave_countdown)
 			
 			if not countdown_disabled:
 				wave_countdown -= delta

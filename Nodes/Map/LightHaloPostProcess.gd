@@ -4,7 +4,7 @@ extends Sprite2D
 func _ready() -> void:
 	add_to_group("dont_save")
 
-func get_canvas_transform() -> Transform2D:
+func get_canvas_transform_custom() -> Transform2D:
 	if Engine.is_editor_hint():
 		return get_viewport().global_canvas_transform
 	else:

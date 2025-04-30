@@ -47,7 +47,7 @@ func save_to_file(path: String):
 	
 	savegame_data.save = Save._get_save_data()
 	savegame_data.game = Utils.game._get_save_data()
-	savegame_data.achievements = SteamAPI.achievements._get_save_data()
+	#savegame_data.achievements = SteamAPI2.achievements._get_save_data()
 	
 	file.store_var(savegame_data, true)
 	file.store_var(map_data, true)

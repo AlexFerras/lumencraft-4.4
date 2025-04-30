@@ -2,7 +2,7 @@
 extends PixelMap
 
 @export var default_color: Color
-@export var textures # (Array, Resource)
+@export var textures:Array[Resource] # (Array, Resource)
 @export var layer: int = 1
 
 @export var apply_in_editor: bool: set = editor_apply
@@ -106,7 +106,7 @@ func hard_reload():
 	for i in textures.size():
 		var mat = textures[i]
 		if mat:
-			mat = ResourceLoader.load(mat.resource_path, "", true)
+			mat = ResourceLoader.load(mat.resource_path, "", 1)
 		
 		textures[i] = mat
 	

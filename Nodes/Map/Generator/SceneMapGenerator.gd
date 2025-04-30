@@ -31,7 +31,7 @@ func _ready() -> void:
 	hide()
 	$"%GeneratedMapBase".scale = Vector2.ONE * map_size
 	
-	await send_status("Generating seed").completed
+	await send_status("Generating seed")
 	
 	var seeed := forced_seed
 	if seeed == -1:
@@ -68,35 +68,35 @@ func _ready() -> void:
 		$"%GeneratedMapBase".soft_material = Const.Materials.DIRT
 		$"%GeneratedMapBase".hard_material = Const.Materials.CLAY
 	
-	await send_status("Generating tunnels").completed
+	await send_status("Generating tunnels")
 	
 	$"%caves_gen".my_seed = seeed
 	
-	await send_status("Generating base terrain").completed
+	await send_status("Generating base terrain")
 	
 	$"%GeneratedMapBase".render = true
 	await $"%GeneratedMapBase".render_done
 	
-	await send_status("Creating pixels").completed
+	await send_status("Creating pixels")
 	
 	$"%GeneratedMapBase".create_pixelmap = true
 	
-	await send_status("Generating areas of interest").completed
+	await send_status("Generating areas of interest")
 	
 	$"%GeneratedMapBase".generate_rects = true
 	
-	await send_status("Applying area pixels").completed
+	await send_status("Applying area pixels")
 	
 	$"%GeneratedMapBase".render_rects_pixelmap = true
 	await $"%GeneratedMapBase".pass_finished
 	
-	await send_status("Creating map file").completed
+	await send_status("Creating map file")
 	
 	map_file = MapFile.new()
 
 	# config
 	
-	await send_status("Configuring map").completed
+	await send_status("Configuring map")
 	
 	var biome = ["Cave", "Tundra", "Desert", "Forest"][map_biome]
 	biome = load("res://Nodes/Map/Generator/Biomes/%s.tres" % biome)
@@ -117,7 +117,7 @@ func _ready() -> void:
 	
 	# objects
 	
-	await send_status("Creating objects").completed
+	await send_status("Creating objects")
 	
 	$"%GeneratedMapBase".map_file = map_file
 	$"%GeneratedMapBase".create_objects = true
@@ -131,11 +131,11 @@ func _ready() -> void:
 	
 	# waves/objective
 	
-	await send_status("Creating objective").completed
+	await send_status("Creating objective")
 	
 	generate_objective()
 	
-	await send_status("Randomizing waves").completed
+	await send_status("Randomizing waves")
 	
 	var spawners: int
 	for object in map_file.objects:
@@ -160,7 +160,7 @@ func _ready() -> void:
 	
 	# floor
 	
-	await send_status("Generating floor").completed
+	await send_status("Generating floor")
 	
 	var baker = preload("res://Scripts/TextureBaker.gd").create(Vector2(1024, 1024))
 	baker.add_target(preload("res://Nodes/Map/Generator/Floor1_generator.tscn").instantiate())
@@ -248,7 +248,7 @@ func generate_objective():
 			var possible_containers: Array = generator.item_containers.duplicate()
 			generator.sort_position = $"%caves_gen".get_reactor_position()
 			possible_containers.sort_custom(Callable(generator, "sort_by_distance"))
-			possible_containers.invert()
+			possible_containers.reverse()
 			
 			while needed > 0:
 				for container in possible_containers:
@@ -264,7 +264,7 @@ func generate_objective():
 			var empty := pixel_map.getEmptyRegions(9)
 			generator.sort_position = $"%caves_gen".get_reactor_position()
 			empty.sort_custom(Callable(generator, "sort_by_distance_of_center"))
-			empty.invert()
+			empty.reverse()
 			
 			for space in empty:
 				if rng.randi() % int(6 - objective_difficulty) == 1:
@@ -313,7 +313,7 @@ func generate_objective():
 			var empty := pixel_map.getEmptyRegions(9)
 			generator.sort_position = $"%caves_gen".get_reactor_position()
 			empty.sort_custom(Callable(generator, "sort_by_distance_of_center"))
-			empty.invert()
+			empty.reverse()
 			
 			var placed: bool
 			for space in empty:

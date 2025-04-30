@@ -95,7 +95,6 @@ func _ready() -> void:
 	battle_timer.wait_time = 10
 	battle_timer.connect("timeout", Callable(self, "stop_battle"))
 	add_child(battle_timer)
-	
 	get_tree().set_auto_accept_quit(false)
 	
 	main_player = load("res://Nodes/Player/Player.tscn").instantiate()
@@ -108,7 +107,7 @@ func _ready() -> void:
 	camera.zoom = Vector2.ONE / Const.CAMERA_ZOOM
 	camera.current_zoom_index = 2
 	
-	second_viewport = get_node_or_null(@"%Viewport2")
+	second_viewport = get_node_or_null("Viewport2")
 	if get_second_viewport():
 		camera.set_target(main_player)
 		
@@ -168,11 +167,11 @@ func _physics_process(delta: float) -> void:
 		
 		Utils.log_message("Nodes in light group:%s, Nodes in shadow group:%s" % [Utils.game.map.darkness.get_light_node_count_2(), Utils.game.map.darkness.get_shadow_node_count_2()])
 		
-		SteamAPI.update_average_stat("AvgMetalPerHour", scraps_history[scraps_history.size()-1])
-		SteamAPI.update_average_stat("AvgLumenPerHour", lumens_history[lumens_history.size()-1])
+		SteamAPI2.update_average_stat("AvgMetalPerHour", scraps_history[scraps_history.size()-1])
+		SteamAPI2.update_average_stat("AvgLumenPerHour", lumens_history[lumens_history.size()-1])
 
-		SteamAPI.update_average_stat("AvgMetalPerMinute", scraps_history[scraps_history.size()-1], 1.0)
-		SteamAPI.update_average_stat("AvgLumenPerMinute", lumens_history[lumens_history.size()-1], 1.0)
+		SteamAPI2.update_average_stat("AvgMetalPerMinute", scraps_history[scraps_history.size()-1], 1.0)
+		SteamAPI2.update_average_stat("AvgLumenPerMinute", lumens_history[lumens_history.size()-1], 1.0)
 
 		scraps_history.append(0)
 		lumens_history.append(0)
@@ -346,8 +345,8 @@ func goto_map(map_name):
 		Save.current_map = map_name.loaded_path
 	else:
 		Save.current_map = map_name
-	
-	var map_file := File.new()
+	# RECHECK
+	#var map_file := File.new()
 	
 	loading_counter =  Time.get_ticks_msec()
 	var loader := preload("res://Scenes/Game/MapLoading.tscn").instantiate()
@@ -422,7 +421,7 @@ func change_map_to(map_instance: Map):
 	map.remainig_lumen = material_histogram[Const.Materials.LUMEN]
 #	map.remaing_metal = material_histogram[Const.Materials.WEAK_SCRAP] + material_histogram[Const.Materials.STRONG_SCRAP] + material_histogram[Const.Materials.ULTRA_SCRAP]
 	if map.remainig_lumen <=1:
-		SteamAPI.unlock_achievement("OCD")
+		SteamAPI2.unlock_achievement("OCD")
 	
 	if has_meta("disabled_buildings"):
 		map.start_config.disabled_buildings = get_meta("disabled_buildings")
@@ -531,14 +530,14 @@ func get_updated_average_opt(average:float, input:float):
 
 func update_resource_statistics():
 	if scraps_collected_per_second > 0:
-		SteamAPI.increment_stat("MetalCollected", scraps_collected_per_second)
+		SteamAPI2.increment_stat("MetalCollected", scraps_collected_per_second)
 	scraps_history[scraps_history.size()-1] += scraps_collected_per_second
 	scraps_average_per_minute = get_updated_average_opt(scraps_average_per_minute, scraps_collected_per_second*60)
 	scraps_collected_total += scraps_collected_per_second
 	scraps_collected_per_second = 0
 	
 	if lumens_collected_per_second > 0:
-		SteamAPI.increment_stat("LumenCollected", lumens_collected_per_second)
+		SteamAPI2.increment_stat("LumenCollected", lumens_collected_per_second)
 	lumens_history[scraps_history.size()-1] += lumens_collected_per_second
 	lumens_average_per_minute = get_updated_average_opt(lumens_average_per_minute, lumens_collected_per_second*60)
 	lumens_collected_total += lumens_collected_per_second
@@ -635,7 +634,7 @@ func process_screen_shake_all(delta):
 		process_screen_shake_single(i, delta)
 		if camera_shakes[i][1] > camera_shakes[i][2]:
 #			prints(camera_shakes[i][1], camera_shakes[i][2])
-			camera_shakes.remove(i)
+			camera_shakes.remove_at(i)
 			i -= 1
 		i += 1
 		
@@ -674,7 +673,7 @@ func old_process_screen_shake(delta):
 		if camera_shakes[i][1]<=0.0:
 			camera_shakes[i][0] -= 1
 			if camera_shakes[i][0] <= 0:
-				camera_shakes.remove(i)
+				camera_shakes.remove_at(i)
 				
 			else:
 				i += 1
@@ -710,7 +709,7 @@ func add_new_player(control_id := 1, player_id := 1):
 	if player_ui: ## nie powinno być potrzebne
 		player_ui.set_player(player)
 	Utils.log_message("Player %s joined. " % player_id)
-	SteamAPI.unlock_achievement("CO_OP_2")
+	SteamAPI2.unlock_achievement("CO_OP_2")
 	
 	if player_id == 1 and camera2:
 		camera2.set_target(player)
@@ -765,7 +764,7 @@ func set_camera_zoom(new_zoom:float = 1.0):
 	
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_QUIT_REQUEST:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		exit()
 	
 	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_UNPAUSED:
@@ -830,8 +829,8 @@ func win(message := "Map completed! Exit at any time to get score summary."):
 	ui.menu.get_node("%Finish").show()
 	
 	if not get_tree().paused: # Nie pokazuj podczas wczytywania mapy
-		SteamAPI.increment_stat("GlobalGamesWon")
-		SteamAPI.increment_stat("GamesWon")
+		SteamAPI2.increment_stat("GlobalGamesWon")
+		SteamAPI2.increment_stat("GamesWon")
 
 #	if enemy_test_stats:
 #		enemy_test_stats.process_test_stats()
@@ -891,8 +890,8 @@ func game_over(message: String):
 	result.set_death_message(message)
 
 	if not get_tree().paused: # Nie pokazuj podczas wczytywania mapy
-		SteamAPI.increment_stat("GlobalGamesLost")
-		SteamAPI.increment_stat("GamesLost")
+		SteamAPI2.increment_stat("GlobalGamesLost")
+		SteamAPI2.increment_stat("GamesLost")
 
 #	if enemy_test_stats:
 #		enemy_test_stats.process_test_stats()

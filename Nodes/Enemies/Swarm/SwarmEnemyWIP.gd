@@ -231,7 +231,7 @@ func state_bite_wall():
 
 			if target_distance < long_attack_distance and can_attack:
 				attack()
-				get_path()
+				get_path_custom()
 #			else:
 #				walk()
 	else:
@@ -260,7 +260,7 @@ func state_leader():
 			return true
 	else:
 		if not is_path_found:
-			get_path()
+			get_path_custom()
 	is_target_visible = is_position_visible(target.global_position, sight_range)
 
 	if is_target_visible:
@@ -285,7 +285,7 @@ func state_leader():
 
 			current_state = STATE.FOLLOWING_PATH
 			is_path_found = false
-			get_path()
+			get_path_custom()
 #		walk()
 
 func state_follow_leader():
@@ -366,7 +366,7 @@ func state_follow_path():
 				path_index += 1
 				path_waypoint = get_projected_waypoint(path[path_index])
 			else:
-				get_path()
+				get_path_custom()
 		destination = path_waypoint
 		selected_direction = global_position.direction_to(path_waypoint)
 		target_distance = global_position.distance_to(path_waypoint)
@@ -425,7 +425,7 @@ func update_angle(delta: float = 0.016) -> void:
 	heading = Vector2.RIGHT.rotated(angle)
 
 func update_velocity(delta: float = 0.016) -> void:
-	var heading_dot := abs(heading.dot(selected_direction))
+	var heading_dot:float = abs(heading.dot(selected_direction))
 	if target_distance <= arrival_distance:
 		current_speed = lerp(current_speed, 0.0, 0.25)
 	else:
@@ -535,7 +535,7 @@ func pick_leader():
 #				avoid_others_direction = Vector2.ZERO
 				return
 
-func get_path():
+func get_path_custom():
 	is_path_found = false
 	var path_data:PathfindingResultData
 
@@ -580,7 +580,7 @@ func validate_target() -> bool:
 func angle_difference( angle_1:float, angle_2:float ):
 	var angle_diference = fmod( angle_2 - angle_1 + PI, TAU ) - PI
 	if angle_diference < -PI:
-		 angle_diference += TAU
+		angle_diference += TAU
 	return angle_diference
 
 ### Helper methods
@@ -735,8 +735,8 @@ func _debug_enable():
 		debug_label.position = Vector2(-33, -14)
 		debug_label.size = Vector2(132, 14)
 		debug_label.scale = Vector2(0.2, 0.2)
-		debug_label.align = Label.ALIGNMENT_CENTER
-		debug_label.valign = Label.VALIGN_CENTER
+		#debug_label.align = Label.ALIGNMENT_CENTER
+		#debug_label.valign = Label.VALIGN_CENTER
 		add_child(debug_label)
 		set_meta("debug_label", debug_label)
 #	get_meta("debug_label").show()
@@ -775,9 +775,9 @@ func _debug_process():
 	if target:
 #		debug_log.text += "\nT: " +target.name
 		if is_target_visible:
-			 debug_log.text += "\nI see " +target.name
+			debug_log.text += "\nI see " +target.name
 		else:
-			 debug_log.text += "\nI no see " +target.name
+			debug_log.text += "\nI no see " +target.name
 
 	if attack_target:
 		debug_log.text += "\nAtacking: " +attack_target.name
@@ -785,7 +785,7 @@ func _debug_process():
 		debug_log.text += "\nis_attacking"
 #	if destination:
 #		debug_log.text += str(destination.round())+"\n"
-	update()
+	queue_redraw()
 
 func _debug_draw():
 #	draw_collisions()

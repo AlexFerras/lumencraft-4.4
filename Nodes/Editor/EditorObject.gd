@@ -63,7 +63,7 @@ func _init_data():
 	pass
 
 func _refresh():
-	update()
+	queue_redraw()
 
 func _configure(editor):
 	pass
@@ -243,7 +243,7 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 				object.name = load("res://Scenes/Editor/MapEditor.gd").COMPAT_OBJECTS.get(object.name)
 				building_data = Const.Buildings[object.name]
 			
-			await Utils.load_resource(building_data.scene, interactive).completed
+			await Utils.load_resource(building_data.scene, interactive)
 			var actual_building: Node2D = Utils.async_resource_loader.resource.instantiate()
 			actual_building.position = object.position
 			if object.data.get("ignored_by_enemies", false):
@@ -307,10 +307,10 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 				push_error("Unknown enemy: " + object.name)
 				return
 			
-			await Utils.load_resource(scene, interactive).completed
+			await Utils.load_resource(scene, interactive)
 			var actual_enemy: BaseEnemy = Utils.async_resource_loader.resource.instantiate()
 			actual_enemy.position = object.position
-			actual_enemy.set_rotation(object.rotation)
+			actual_enemy.set_rotation_custom(object.rotation)
 			actual_enemy.override_stats = object.data.overrides
 			if object.data.has("max_distance_from_spawn_position"):
 				actual_enemy.max_distance_from_spawn_position = object.data.max_distance_from_spawn_position
@@ -363,13 +363,13 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 							helper.pickables_to_spawn.append({position = object.position + Vector2(randf_range(-8, 8), randf_range(-8, 8)), type = id, scale = Vector2.ONE * 0.1, velocity = Vector2(randf_range(-8, 8), randf_range(-8, 8)), pointed = true})
 						map.add_editor_object(null)
 					else:
-						var pickup := Pickup.instantiate(id)
+						var pickup := Pickup.instance(id)
 						pickup.data = object.data.data
 						pickup.amount = object.data.amount
 						pickup.position = object.position
 						map.add_editor_object(pickup)
 				"Armored Box":
-					var box := Pickup.instantiate(Const.ItemIDs.ARMORED_BOX)
+					var box := Pickup.instance(Const.ItemIDs.ARMORED_BOX)
 					box.position = object.position
 					box.data = []
 					for item in object.data.items:
@@ -378,9 +378,9 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 					map.add_editor_object(box)
 				"Chest", "Rusty Chest":
 					if object.name == "Chest":
-						await Utils.load_resource("res://Nodes/Objects/Chest/Chest.tscn", interactive).completed
+						await Utils.load_resource("res://Nodes/Objects/Chest/Chest.tscn", interactive)
 					else:
-						await Utils.load_resource("res://Nodes/Objects/Chest/RustyChest.tscn", interactive).completed
+						await Utils.load_resource("res://Nodes/Objects/Chest/RustyChest.tscn", interactive)
 					var chest: PixelMapRigidBody = Utils.async_resource_loader.resource.instantiate()
 					chest.position = object.position
 					chest.rotation = object.rotation
@@ -400,7 +400,7 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 						placer.items.append(item)
 					map.add_editor_object(placer)
 				"Laptop":
-					await Utils.load_resource("res://Nodes/Objects/Deco/Laptop.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Objects/Deco/Laptop.tscn", interactive)
 					var laptop: Node2D = Utils.async_resource_loader.resource.instantiate() as Node2D
 					laptop.position = object.position
 					laptop.message = object.data.message
@@ -428,7 +428,7 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 					source.fluid_is_simulated = object.data.get("flowing", true)
 					map.add_editor_object(source)
 				"Monster Nest":
-					await Utils.load_resource("res://Nodes/Objects/AlienNest/AlienNest.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Objects/AlienNest/AlienNest.tscn", interactive)
 					var nest = Utils.async_resource_loader.resource.instantiate()
 					nest.max_spawn = object.data.max_enemy_count
 					nest.sprite = object.data.skin
@@ -447,7 +447,7 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 					
 					map.add_editor_object(nest)
 				"Hole Trap":
-					await Utils.load_resource("res://Nodes/Objects/Hole/Hole.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Objects/Hole/Hole.tscn", interactive)
 					var trap = Utils.async_resource_loader.resource.instantiate()
 					if object.data.enemy.begins_with("Swarm"):
 						trap.swarm_object = load(Const.Enemies[object.data.enemy.get_slice("/", 1)].scene)
@@ -462,7 +462,7 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 						trap.disable_trigger()
 					map.add_editor_object(trap)
 				"Stone Gate":
-					await Utils.load_resource("res://Nodes/Objects/StoneGate/StoneGate.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Objects/StoneGate/StoneGate.tscn", interactive)
 					var gate = Utils.async_resource_loader.resource.instantiate()
 					var merged_items: Dictionary
 					for item in object.data.items:
@@ -486,13 +486,13 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 						gate.opened = true
 					map.add_editor_object(gate)
 				"Technology Orb":
-					await Utils.load_resource("res://Nodes/Pickups/Orb/TechnologyOrb.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Pickups/Orb/TechnologyOrb.tscn", interactive)
 					var orb = Utils.async_resource_loader.resource.instantiate()
 					orb.data = object.data
 					orb.position = object.position
 					map.add_editor_object(orb)
 				"Metal Vein":
-					await Utils.load_resource("res://Nodes/Objects/OreVein/MetalVein.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Objects/OreVein/MetalVein.tscn", interactive)
 					var vein = Utils.async_resource_loader.resource.instantiate()
 					vein.count = object.data.get("metal_count", 3000)
 					vein.position = object.position
@@ -503,13 +503,13 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 						vein.miner.position = vein.position
 						map.add_child(vein.miner, true)
 				"Teleport Plate":
-					await Utils.load_resource("res://Nodes/Objects/Teleport/Teleport.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Objects/Teleport/Teleport.tscn", interactive)
 					var teleport = Utils.async_resource_loader.resource.instantiate()
 					teleport.position = object.position
 					teleport.color = object.data.color
 					map.add_editor_object(teleport)
 				"Lumen Mushroom":
-					await Utils.load_resource("res://Nodes/Objects/Mushrooms/Mushroom.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Objects/Mushrooms/Mushroom.tscn", interactive)
 					var shroom: Node2D = Utils.async_resource_loader.resource.instantiate() as Node2D
 					shroom.position = object.position
 					shroom.rotation = randf_range(0, TAU)
@@ -558,7 +558,7 @@ static func instance(object: Dictionary, map: Node2D, helper: Dictionary, intera
 					timer.autostart = object.data.autostart ## tak chyba nie?
 					map.add_editor_object(timer)
 				"Lumen Chunk":
-					await Utils.load_resource("res://Nodes/Unique/LumenChunk.tscn", interactive).completed
+					await Utils.load_resource("res://Nodes/Unique/LumenChunk.tscn", interactive)
 					var chunk = Utils.async_resource_loader.resource.instantiate()
 					chunk.position = object.position
 					map.add_editor_object(chunk)

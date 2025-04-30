@@ -1,7 +1,7 @@
 extends Area2D
 class_name ExplosiveBouble
 
-@export var patterns # (Array, ImageTexture)
+@export var patterns:Array[ImageTexture] # (Array, ImageTexture)
 
 @onready var colision_shape := $CollisionShape2D
 

@@ -124,7 +124,7 @@ func get_queue() -> Array:
 	
 	var q: Array = get_upcoming_wave().enemies.duplicate()
 	if current_path > -1:
-		q.remove(current_path)
+		q.erase(current_path)
 	return q
 
 func get_queue_icon(i: int) -> Texture2D:

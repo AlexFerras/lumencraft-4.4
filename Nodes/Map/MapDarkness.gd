@@ -31,8 +31,8 @@ func _ready() -> void:
 		return
 	
 	get_viewport().connect("size_changed", Callable(self, "on_window_resized"))
-	light_viewport.get_texture().flags = Texture2D.FLAG_FILTER
-	shadow_viewport.get_texture().flags = Texture2D.FLAG_FILTER
+	#light_viewport.get_texture().flags = Texture2D.FLAG_FILTER
+	#shadow_viewport.get_texture().flags = Texture2D.FLAG_FILTER
 	on_window_resized()
 	create_materials()
 	visible = true
@@ -81,11 +81,13 @@ func only_once():
 func only_in_editor():
 	if not light_viewport:
 		light_viewport = $ViewportLight
-		light_viewport.get_texture().flags = Texture2D.FLAG_FILTER | Texture2D.FLAG_MIPMAPS
+		# RECHECK
+		#light_viewport.get_texture().flags = Texture2D.FLAG_FILTER | Texture2D.FLAG_MIPMAPS
 		VP_light_camera = $ViewportLight/Camera2D
 	if not shadow_viewport:
 		shadow_viewport = $ViewportShadow
-		shadow_viewport.get_texture().flags = Texture2D.FLAG_FILTER | Texture2D.FLAG_MIPMAPS
+		# RECHECK
+		#shadow_viewport.get_texture().flags = Texture2D.FLAG_FILTER | Texture2D.FLAG_MIPMAPS
 		VP_shadow_camera = $ViewportShadow/Camera2D
 		# no mipmaps in Godot 3.4 yet
 
@@ -318,7 +320,7 @@ func update_shadow(shadow_source: Shadow):
 		shadow.hide()
 		return
 
-func get_canvas_transform() -> Transform2D:
+func get_canvas_transform_custom() -> Transform2D:
 	if Engine.is_editor_hint():
 		return get_viewport().global_canvas_transform
 	else:

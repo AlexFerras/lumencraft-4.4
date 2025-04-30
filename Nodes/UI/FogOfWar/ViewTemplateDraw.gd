@@ -29,7 +29,7 @@ func _lazy_process():
 		return 
 	get_parent().render_target_update_mode = SubViewport.UPDATE_ONCE 
 	fog_clear_strength+=Utils.get_lazy_delta()
-	update()
+	queue_redraw()
 
 func clear_fog( marker:Vector3, color:=Color.WHITE ) -> void:
 	clear_fog_markers.append( marker )

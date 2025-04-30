@@ -52,7 +52,7 @@ func generate():
 	remove_white(raw_terrain)
 	await self.terrain_generated
 	
-	var first_pass := raw_terrain.get_data()
+	var first_pass:Image = raw_terrain.get_image()
 	
 	# Second pass.
 	

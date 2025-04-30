@@ -2,7 +2,7 @@
 extends TextureRect
 
 var rng: RandomNumberGenerator
-var ready: bool
+var is_ready: bool
 
 @export var material_type= Const.Materials.DIRT # (Const.Materials)
 @export var mask = ~(0) # (int, LAYERS_3D_PHYSICS)

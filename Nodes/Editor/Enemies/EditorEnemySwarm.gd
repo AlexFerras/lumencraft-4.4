@@ -17,5 +17,5 @@ func _draw() -> void:
 		return
 	
 	var string := str(object_data.count)
-	draw_string(preload("res://Resources/Fonts/Font6.tres"), string, Vector2.LEFT * string.length() * 2, Color.RED)
+	draw_string(preload("res://Resources/Fonts/Font6.tres"),Vector2.LEFT * string.length() * 2, string, 0, -1, 16, Color.RED)
 	draw_arc(Vector2(), object_data.radius, 0, TAU, 32, Color.RED, 2)

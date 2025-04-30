@@ -23,7 +23,7 @@ func set_radius(r: float):
 	radius = r
 	
 	if Engine.is_editor_hint():
-		update()
+		queue_redraw()
 
 func _draw() -> void:
 	if Engine.is_editor_hint():

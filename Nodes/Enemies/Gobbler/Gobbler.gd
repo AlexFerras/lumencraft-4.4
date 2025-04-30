@@ -147,7 +147,7 @@ func state_charge(delta: float):
 		is_rotation_dissabled = true
 
 		if state_data.has("destination"):
-			var col = pixelmap.rayCastQTFromTo(global_position, state_data.destination, Utils.walkable_collision_mask)
+			var col:RayCastResultData = pixelmap.rayCastQTFromTo(global_position, state_data.destination, Utils.walkable_collision_mask)
 			if col :
 				state_data.destination = col.hit_position + heading * radius * 4
 			else:

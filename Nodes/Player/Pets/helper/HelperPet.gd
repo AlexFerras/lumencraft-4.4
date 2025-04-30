@@ -241,7 +241,7 @@ func shooting_at_things():
 func is_looking_at_target(minimal_angle := 0.035) -> bool:
 	return abs(heading.angle_to(target_position - global_position)) < minimal_angle
 
-func get_path():
+func get_path_custom():
 	path_data = PathFinding.get_path_from_params(global_position, player.global_position, ~Utils.walkable_collision_mask, PathFinding.material_cost, path_resolution, false)
 	if path_data:
 		is_path_found = true

@@ -22,14 +22,13 @@ signal bake_finished
 
 func _init() -> void:
 	if PIECE_DATA.is_empty():
-		var dir := DirAccess.new()
-		dir.open("res://Nodes/Map/Generator/MapPieces")
+		var dir = DirAccess.open("res://Nodes/Map/Generator/MapPieces")
 		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		
 		var file := dir.get_next()
 		while not file.is_empty():
 			if file.begins_with("Piece"):
-				PIECE_DATA.append(load(dir.get_current_dir().plus_file(file)))
+				PIECE_DATA.append(load(dir.get_current_dir().path_join(file)))
 			file = dir.get_next()
 
 func reset():
@@ -142,7 +141,7 @@ func bake() -> CanvasItem:
 	
 	var viewport := SubViewport.new()
 	viewport.size = size
-	viewport.usage = SubViewport.USAGE_2D
+	#viewport.usage = SubViewport.USAGE_2D
 	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	viewport.render_target_v_flip = true
 	viewport.own_world = true
@@ -154,7 +153,7 @@ func bake() -> CanvasItem:
 	
 	var viewport2 := SubViewport.new()
 	viewport2.size = size
-	viewport2.usage = SubViewport.USAGE_2D
+	#viewport2.usage = SubViewport.USAGE_2D
 	viewport2.render_target_update_mode = SubViewport.UPDATE_ONCE
 	viewport2.own_world = true
 	viewport.transparent_bg = true

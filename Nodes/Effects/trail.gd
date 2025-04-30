@@ -58,7 +58,7 @@ func stop():
 
 func _physics_process(_delta):
 	if !finished:
-		add_point(get_parent().global_position + offset.rotated(get_parent().rotation))
+		add_point_custom(get_parent().global_position + offset.rotated(get_parent().rotation))
 		repair_tables()
 	elif die_width_increase:
 		width+=die_width_increase
@@ -84,7 +84,7 @@ func _physics_process(_delta):
 				rand_vector = point_rand[p]
 				points[p] += (gravity + ((random_mul * rand_vector) * point_age[p]).limit_length(max_random))
 
-func add_point(point_pos: Vector2, at_pos := -1):
+func add_point_custom(point_pos: Vector2, at_pos := -1):
 	if len(points) > 1 and points[-2].distance_to(point_pos) < min_distance:
 			#points[0]-=point_pos-points[-2] #eliminates jumpy gradient when min distance is larger
 			points[-1] = point_pos

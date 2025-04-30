@@ -28,10 +28,10 @@ func add_shockwave(pos:Vector2, radius:float, col = Color(1,1,1,1)):
 	dirty=true
 	
 func remove_first():
-	shock_data.remove(0)
-	shock_data.remove(0)
-	shock_data.remove(0)
-	shock_data.remove(0)
+	shock_data.remove_at(0)
+	shock_data.remove_at(0)
+	shock_data.remove_at(0)
+	shock_data.remove_at(0)
 	dirty=true
 
 func get_viewport2() -> SubViewport:
@@ -40,7 +40,7 @@ func get_viewport2() -> SubViewport:
 	else:
 		return get_viewport()
 
-func get_canvas_transform() -> Transform2D:
+func get_canvas_transform_custom() -> Transform2D:
 	if Engine.is_editor_hint():
 		return get_tree().get_edited_scene_root().get_viewport().global_canvas_transform
 	else:

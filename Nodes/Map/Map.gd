@@ -113,7 +113,7 @@ func initialize_pixel_map(pxm: PixelMap):
 		if mat_res and mat_res.transparent:
 			material_occlusion_mask &= ~(1 << mat_id)
 	
-	update()
+	queue_redraw()
 
 func _enter_tree() -> void:
 	if Engine.is_editor_hint():
@@ -195,7 +195,7 @@ func _ready() -> void:
 		floor_data2_override = null
 	
 	if fog_data_override:
-		pixel_map.fog_of_war.draw_node.load_fog = RenderingServer.texture_create_from_image(fog_data_override, 0)
+		pixel_map.fog_of_war.draw_node.load_fog = ImageTexture.create_from_image(fog_data_override)
 		fog_data_override = null
 	
 	darkness = pixel_map.get_node_or_null("MapDarkness")
@@ -227,7 +227,7 @@ func _ready() -> void:
 				Utils.game.extra_turrets += 1
 	
 	if events and not from_save:
-		SteamAPI.achievements.start_map()
+		#SteamAPI.achievements.start_map()
 		events._enter_map()
 		events._config_map(start_config)
 	
@@ -254,7 +254,7 @@ func _ready() -> void:
 	if Save.current_map == "res://Maps/TrueBeginningMap.tscn" and not $"%Goal".is_connected("goal_entered", Callable(events, "exit_reached")): ## usunąć kiedyś
 		$"%Goal".connect("goal_entered", Callable(events, "exit_reached"))
 
-const MATERIALS_TO_CHECK = [Const.Materials.LUMEN, Const.Materials.DEAD_LUMEN, Const.Materials.CLAY, Const.Materials.DIRT, Const.Materials.STRONG_SCRAP, Const.Materials.WEAK_SCRAP, Const.Materials.ULTRA_SCRAP]
+@onready var MATERIALS_TO_CHECK = [Const.Materials.LUMEN, Const.Materials.DEAD_LUMEN, Const.Materials.CLAY, Const.Materials.DIRT, Const.Materials.STRONG_SCRAP, Const.Materials.WEAK_SCRAP, Const.Materials.ULTRA_SCRAP]
 
 func _exit_tree():
 	if Engine.is_editor_hint():
@@ -270,10 +270,10 @@ func _exit_tree():
 			break
 
 	if cleared:
-		SteamAPI.unlock_achievement("RIP")
+		SteamAPI2.unlock_achievement("RIP")
 	
-	if SteamAPI.singleton:
-		SteamAPI.singleton.storeStats()
+	if SteamAPI2.singleton:
+		SteamAPI2.singleton.storeStats()
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
@@ -343,7 +343,7 @@ func pixels_destroyed(pos: Vector2, mat: int, value: int):
 func test_OCD():
 	if Utils.explosion_accum.has(Const.Materials.LUMEN):
 		if remainig_lumen <= Utils.explosion_accum[Const.Materials.LUMEN]:
-			SteamAPI.unlock_achievement("OCD") 
+			SteamAPI2.unlock_achievement("OCD") 
 
 const LAVA_FX_THRESHOLD = 1
 

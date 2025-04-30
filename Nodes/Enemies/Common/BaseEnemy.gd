@@ -44,7 +44,7 @@ func _enter_tree() -> void:
 		return
 	
 	if base_scene.is_empty():
-		base_scene = filename
+		base_scene = scene_file_path
 	
 	if enemy_data.is_empty():
 		for enemy in Const.Enemies.values():
@@ -65,7 +65,7 @@ func _enter_tree() -> void:
 	threat = enemy_data.threat
 	initialized = true
 	
-	var sprite := get_node_or_null(@"Sprite2D") as Sprite2D
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
 	if sprite:
 		sprite.modulate = override_stats.get("color", Color.WHITE)
 
@@ -153,10 +153,10 @@ func take_damage_raw(data: Dictionary):
 		velocity_killed = data.get("velocity", Vector2())
 	if hp <= 0:
 		if data.has("owner") and data.owner.has_meta("isFlare"):
-			SteamAPI.unlock_achievement("KILL_FLARE")
-		SteamAPI.increment_stat("KilledBugs")
+			SteamAPI2.unlock_achievement("KILL_FLARE")
+		SteamAPI2.increment_stat("KilledBugs")
 		if data.has("monster"):
-			SteamAPI.unlock_achievement("MONSTER_ON_NOMSTER")
+			SteamAPI2.unlock_achievement("MONSTER_ON_NOMSTER")
 		_killed()
 	else:
 		Utils.game.start_battle()
@@ -327,7 +327,7 @@ func reset_loot():
 		drop.queue_free()
 	loot.clear()
 
-func set_rotation(rot: float):
+func set_rotation_custom(rot: float):
 	assert(false, "Zaimplementuj mnie ;_;")
 
 func _should_save() -> bool:

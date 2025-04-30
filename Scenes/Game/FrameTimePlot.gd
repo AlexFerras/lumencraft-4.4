@@ -22,10 +22,10 @@ func _ready():
 	
 func _process(delta):
 	if get_tree().paused:
-		msec_prev_time = OS.get_system_time_msecs()
+		msec_prev_time = Time.get_ticks_msec() * 1000
 		return
-	msec_time = OS.get_system_time_msecs()  - msec_prev_time
-	msec_prev_time = OS.get_system_time_msecs()
+	msec_time = Time.get_ticks_msec()  - msec_prev_time
+	msec_prev_time = Time.get_ticks_msec()
 	
 	rect.position = frame.position
 	data[idx] = msec_time
@@ -33,7 +33,7 @@ func _process(delta):
 	idx%=data_size
 
 func _physics_process(delta):
-	update()
+	queue_redraw()
 
 func _draw():
 	if Music.is_game_build():

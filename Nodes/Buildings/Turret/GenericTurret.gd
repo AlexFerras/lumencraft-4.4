@@ -201,7 +201,7 @@ func set_disabled(disabled: bool, force := false):
 		computer.set_disabled(disabled)
 
 func _get_save_data() -> Dictionary:
-	return Utils.merge_dicts(._get_save_data(), {start_upgrades = computer.get_upgrade_dict()})
+	return Utils.merge_dicts(super._get_save_data(), {start_upgrades = computer.get_upgrade_dict()})
 
 func _set_save_data(data: Dictionary):
 	super._set_save_data(data)

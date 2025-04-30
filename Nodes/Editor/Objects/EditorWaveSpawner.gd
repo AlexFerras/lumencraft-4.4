@@ -8,7 +8,7 @@ func _init_data():
 	defaults.radius = 100
 
 func _refresh():
-	update()
+	queue_redraw()
 
 func _configure(editor):
 	var label := Label.new()

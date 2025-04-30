@@ -49,7 +49,7 @@ var available_positions2: Array
 var original_scale: Vector2
 
 func _enter_tree() -> void:
-	if has_node(@"PreferredSize"):
+	if has_node("PreferredSize"):
 		await get_tree().idle_frame
 		
 		$PreferredSize.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -468,7 +468,7 @@ func _exit_tree() -> void:
 func reset_window(override_position := 0):
 	main_window.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	
-	if not preferred_rect.has_no_area():
+	if preferred_rect.has_area():
 		if override_position > 0:
 			assert(override_position < available_positions.size() + 1)
 			main_window.global_position = available_positions[override_position - 1].global_position
@@ -491,5 +491,5 @@ func add_custom_control(control: Control):
 
 func update_config():
 	scale = original_scale * Save.config.ui_scale
-	if has_node(@"$PreferredSize"):
+	if has_node("$PreferredSize"):
 		preferred_rect = Rect2($PreferredSize.global_position, $PreferredSize.size)

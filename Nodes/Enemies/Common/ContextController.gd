@@ -230,7 +230,7 @@ func navigate_z_faloo() -> Vector2:
 func angle_difference( angle_1:float, angle_2:float ):
 	var angle_diference = fmod( angle_2 - angle_1 + PI, TAU ) - PI
 	if angle_diference < -PI:
-		 angle_diference += TAU
+		angle_diference += TAU
 	return angle_diference
 	
 func get_desired_heading() -> Vector2:

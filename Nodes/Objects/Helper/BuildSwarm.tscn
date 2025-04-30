@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://ck3r107blbqa6"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends Node2D
 
 const BUILD_TIME = 5
@@ -74,7 +74,7 @@ func _physics_process(delta: float) -> void:
 		seq.tween_callback(Callable(blueprint, \"set_physics_process\").bind(false))
 		seq.tween_callback(Callable(self, \"finish\"))
 	
-	update()
+	queue_redraw()
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(target):
@@ -89,7 +89,7 @@ func _process(delta: float) -> void:
 		if not audio.playing:
 			Utils.play_sample(Utils.random_sound(\"res://SFX/Building/Construction/\"), audio, false, 1.2)
 	
-	update()
+	queue_redraw()
 
 func finish():
 	if not blueprint.can_build:
@@ -134,7 +134,7 @@ func _draw() -> void:
 		draw_texture_rect(preload(\"res://Nodes/Objects/Helper/BuildNanite.png\"), Rect2(nanite.position - NANITE_SIZE * 0.5, NANITE_SIZE), false, Color.WHITE.darkened(randf()))
 
 func get_target_position(i: int) -> Vector2:
-	var j := clamp(i * granulation + nanites[i].offset, 0, mask.size() - 1)
+	var j :float= clamp(i * granulation + nanites[i].offset, 0, mask.size() - 1)
 	return target.position + mask[j].rotated(target.rotation) + Vector2(randf_range(-1, 1), randf_range(-1, 1))
 
 class NaniteBuilder:
@@ -145,29 +145,24 @@ class NaniteBuilder:
 
 [node name="NaniteSwarm" type="Node2D" groups=["dont_save"]]
 z_index = 10
-script = SubResource( 1 )
+script = SubResource("1")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 max_distance = 500.0
 attenuation = 2.0
-bus = "SFX"
 
 [node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
 max_distance = 500.0
 attenuation = 2.0
-bus = "SFX"
 
 [node name="AudioStreamPlayer2D3" type="AudioStreamPlayer2D" parent="."]
 max_distance = 500.0
 attenuation = 2.0
-bus = "SFX"
 
 [node name="AudioStreamPlayer2D4" type="AudioStreamPlayer2D" parent="."]
 max_distance = 500.0
 attenuation = 2.0
-bus = "SFX"
 
 [node name="AudioStreamPlayer2D5" type="AudioStreamPlayer2D" parent="."]
 max_distance = 500.0
 attenuation = 2.0
-bus = "SFX"

@@ -449,8 +449,7 @@ func save_files(files: Array):
 	
 	for file in files:
 		print("[singleton] Cloud saving: ", file)
-		var f := File.new()
-		f.open(file, f.READ)
+		var f = FileAccess.open(file, FileAccess.READ)
 		var data := f.get_buffer(f.get_length())
 		print(singleton.fileWrite(ProjectSettings.globalize_path(file), data))
 #		singleton.fileWriteAsync(file, data)

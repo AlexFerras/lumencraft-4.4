@@ -54,7 +54,7 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	for foam in foams:
 		foam.draw_position = lerp(foam.draw_position, foam.position, 0.1)
-	update()
+	queue_redraw()
 
 func _draw() -> void:
 	for foam in foams:
@@ -75,7 +75,12 @@ class FoamBall:
 	func move(delta: float) -> bool:
 		var next_pos=position+(direction * SPEED + initial_velocity) * delta;
 		
-		if Utils.get_physics_world2d().intersect_point(next_pos, 1,  [],  Const.ENEMY_COLLISION_LAYER, true, true):
+		var params = PhysicsPointQueryParameters2D.new()
+		params.position = next_pos
+		params.collision_mask = Const.ENEMY_COLLISION_LAYER
+		params.collide_with_areas = true
+		params.collide_with_bodies = true
+		if Utils.get_physics_world2d().intersect_point(params, 1):
 			return false
 
 	

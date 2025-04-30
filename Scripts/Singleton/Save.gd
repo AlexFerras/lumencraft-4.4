@@ -127,8 +127,8 @@ func save_game(slot: String, silent := false):
 			data.player_data[i] = Utils.game.players[i]._get_save_data()
 	
 #	Utils.push_time_tracking_checkpoint("saving")
-	var dir := DirAccess.new()
-	if Utils.safe_open(dir, get_save_dir(slot)):
+	var dir:DirAccess = Utils.safe_open(Utils.DIR, get_save_dir(slot))
+	if dir:
 		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		var f := dir.get_next()
 		while not f.is_empty():
@@ -153,15 +153,15 @@ func save_game(slot: String, silent := false):
 	
 #	Utils.push_time_tracking_checkpoint("saving")
 	data.current_map = current_map
-	DirAccess.new().make_dir_recursive(get_save_dir(slot))
-	ResourceSaver.save(get_save_file(slot), data, ResourceSaver.FLAG_CHANGE_PATH)
+	DirAccess.open("user://").make_dir_recursive(get_save_dir(slot))
+	ResourceSaver.save(data, get_save_file(slot), ResourceSaver.FLAG_CHANGE_PATH)
 #	Utils.print_time_tracking_checkpoint("saving", "save data")
 	worker = preload("res://Scripts/ThreadedWorker.gd").create(map_save, "save_to_file", get_map_file(slot, current_map))
 	await worker.tree_exited
 #	Utils.print_time_tracking_checkpoint("saving", "save map")
 	
 	if campaign:
-		ResourceSaver.save(get_campaign_file(slot), campaign, ResourceSaver.FLAG_CHANGE_PATH)
+		ResourceSaver.save(campaign, get_campaign_file(slot), ResourceSaver.FLAG_CHANGE_PATH)
 	
 	saving.queue_free()
 	get_tree().paused = p
@@ -242,7 +242,7 @@ func get_slot_string(slot: String) -> Array:
 			save_data = load(Save.get_save_file(slot))
 		timestamp = save_data.timestamp
 		version = save_data.game_version
-		var time := Time.get_datetime_dict_from_system_from_unix_time(timestamp)
+		var time := Time.get_datetime_dict_from_unix_time(timestamp)
 		string += " [color=#%s]%02d/%02d/%02d %02d:%02d[/color] %s" % [Const.UI_SECONDARY_COLOR.to_html(false), int(str(time.year).substr(2)), time.month, time.day, time.hour, time.minute, save_data.slot_name]
 	
 	return [string, timestamp, version]
@@ -254,24 +254,24 @@ func get_unclocked_tech(s :String) -> int:
 	return data.unlocked_tech_number.get(s, 0)
 
 func set_unlocked_tech(s: String, num: int):
-	if SteamAPI.can_achieve():
+	if SteamAPI2.can_achieve():
 		if check_tech_max_level(Const.ItemIDs.DRILL):
-			SteamAPI.unlock_achievement("UPGRADE_DRILL_MAX")
+			SteamAPI2.unlock_achievement("UPGRADE_DRILL_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.MAGNUM) > 0:
 			if check_tech_max_level(Const.ItemIDs.MAGNUM):
-				SteamAPI.unlock_achievement("UPGRADE_PISTOL_MAX")
+				SteamAPI2.unlock_achievement("UPGRADE_PISTOL_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.SPEAR) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.SPEAR):
-				SteamAPI.unlock_achievement("UPGRADE_SPEAR_MAX")
+				SteamAPI2.unlock_achievement("UPGRADE_SPEAR_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.MACHINE_GUN) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.MACHINE_GUN):
-				SteamAPI.unlock_achievement("UPGRADE_MACHINEGUN_MAX")
+				SteamAPI2.unlock_achievement("UPGRADE_MACHINEGUN_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.SHOTGUN) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.SHOTGUN):
-				SteamAPI.unlock_achievement("UPGRADE_SHOTGUN_MAX")
+				SteamAPI2.unlock_achievement("UPGRADE_SHOTGUN_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.FLAMETHROWER) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.FLAMETHROWER):
-				SteamAPI.unlock_achievement("UPGRADE_FLAMER_MAX")
+				SteamAPI2.unlock_achievement("UPGRADE_FLAMER_MAX")
 
 #	if s.ends_with("drilling_power"):
 #		if num >= 5:

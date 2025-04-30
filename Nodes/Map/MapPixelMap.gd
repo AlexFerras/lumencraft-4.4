@@ -1,7 +1,7 @@
 @tool
 extends PixelMap
 
-@export var custom_materials # (Array, Resource)
+@export var custom_materials:Array[Resource] # (Array, Resource)
 var bedrock_compat_override: Resource
 
 @export var apply_in_editor: bool: set = editor_apply
@@ -240,7 +240,7 @@ func _get_save_data() -> Dictionary:
 	if bedrock_compat_override: #compat
 		data.bedrock_compat = bedrock_compat_override.resource_path
 	
-	var smoke_big_fog_lol = get_node_or_null(@"Smoke")
+	var smoke_big_fog_lol = get_node_or_null("Smoke")
 	if smoke_big_fog_lol:
 		data.smoke_big_for_color = smoke_big_fog_lol.modulate
 		data.darkness_color = $MapDarkness.modulate
@@ -271,7 +271,8 @@ class ModifiableTextureArray extends Texture2DArray:
 	var modified_by_pixelmap: PixelMap
 	
 	func modify_texture(idx: int, new_texture: Image, owner: PixelMap):
-		set_layer_data(new_texture, idx)
+		#set_layer_data(new_texture, idx)
+		update_layer(new_texture, idx)
 		modified_by_pixelmap = owner
 
 func get_default_terrain_texture():

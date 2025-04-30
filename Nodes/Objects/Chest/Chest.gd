@@ -36,12 +36,12 @@ func pixel_map_modified():
 		buried = false
 		pixel_map.disconnect("pixels_modifed", Callable(self, "pixel_map_modified"))
 
-var opened: bool
+var is_opened: bool
 
 func open():
-	if opened:
+	if is_opened:
 		return
-	opened = true
+	is_opened = true
 	collision_layer = 0
 	collision_mask = 0
 	
@@ -79,8 +79,7 @@ func _get_save_data() -> Dictionary:
 	var data: Dictionary
 	
 	data.items = pickups.duplicate()
-	data.static = mode == FREEZE_MODE_STATIC
-	
+	data.static = freeze
 	return data
 
 func _set_save_data(data):
@@ -91,10 +90,10 @@ func _set_save_data(data):
 		pickups.append(item)
 	
 	if data.get("static", false):
-		mode = RigidBody2D.FREEZE_MODE_STATIC
+		freeze = true
 
 func is_condition_met(condition: String, data: Dictionary) -> bool:
-	return opened
+	return is_opened
 
 func execute_action(action: String, data: Dictionary):
 	open()

@@ -19,14 +19,13 @@ var tunnel_size: Vector2
 
 func _init() -> void:
 	if PIECE_DATA.is_empty():
-		var dir := DirAccess.new()
-		dir.open("res://Nodes/Map/Generator/MapPieces")
+		var dir = DirAccess.open("res://Nodes/Map/Generator/MapPieces")
 		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		
 		var file := dir.get_next()
 		while not file.is_empty():
 			if file.begins_with("Piece"):
-				PIECE_DATA.append(load(dir.get_current_dir().plus_file(file)))
+				PIECE_DATA.append(load(dir.get_current_dir().path_join(file)))
 			file = dir.get_next()
 	
 	for piece in PIECE_DATA:
@@ -166,7 +165,7 @@ func bake():
 	
 	texture = baker.texture
 	material = preload("res://Nodes/Map/Generator/RemoveWhite.material")
-	ready = true
+	is_ready = true
 
 class Piece:
 	const PIECE_SIZE = Vector2(256, 256)

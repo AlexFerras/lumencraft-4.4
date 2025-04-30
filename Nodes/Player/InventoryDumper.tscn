@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://p4v3s5ac7uvn"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends Node2D
 
 var inventory: Array
@@ -26,7 +26,7 @@ func throw_resource(item: Dictionary):
 			Utils.game.map.pickables.spawn_pickable_nice(global_position, item.id, dir * randf_range(0.0,50))
 			dir = Vector2.RIGHT.rotated(randf() * TAU)
 	else:
-		var pickup := Pickup.instantiate(item.id)
+		var pickup := Pickup.instance(item.id)
 		pickup.data = item.data
 		pickup.amount = item.amount
 		item.amount = 0
@@ -39,4 +39,4 @@ func throw_resource(item: Dictionary):
 "
 
 [node name="Dumper" type="Node2D"]
-script = SubResource( 1 )
+script = SubResource("1")

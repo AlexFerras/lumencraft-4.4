@@ -1,299 +1,306 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=26 format=3 uid="uid://dhhs3mswk07aj"]
 
-[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
-[ext_resource path="res://Nodes/Buildings/Pylon/Pylon.gd" type="Script" id=2]
-[ext_resource path="res://Nodes/Lights/Textures/TexturedCircle_512.png" type="Texture2D" id=3]
-[ext_resource path="res://Nodes/Buildings/Pylon/PylonShadow.png" type="Texture2D" id=4]
-[ext_resource path="res://Nodes/Buildings/Pylon/Pylon.png" type="Texture2D" id=5]
-[ext_resource path="res://Nodes/Buildings/Common/HealthBar.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Nodes/Unique/FearBuilding.gd" type="Script" id=8]
-[ext_resource path="res://Nodes/Map/LavaChecks.gd" type="Script" id=10]
-[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Nodes/Buildings/Icons/IconPylon.tscn" type="PackedScene" id=12]
-[ext_resource path="res://Resources/Textures/lights_vfx/Lamp_light_Radial_main_T001.png" type="Texture2D" id=13]
-[ext_resource path="res://Resources/Textures/lights_vfx/radial_spot_light_001.png" type="Texture2D" id=14]
+[ext_resource type="Script" uid="uid://b7iwybyqv3h8d" path="res://Nodes/Lights/LightSprite.gd" id="1"]
+[ext_resource type="Script" uid="uid://c7jbf7ta0pv7k" path="res://Nodes/Buildings/Pylon/Pylon.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://b1v1nyacmj1n0" path="res://Nodes/Lights/Textures/TexturedCircle_512.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cnj6e02jgk0c3" path="res://Nodes/Buildings/Pylon/PylonShadow.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://cfum7mccnxfhi" path="res://Nodes/Buildings/Pylon/Pylon.png" id="5"]
+[ext_resource type="PackedScene" path="res://Nodes/Buildings/Common/HealthBar.tscn" id="6"]
+[ext_resource type="Script" uid="uid://bj6ljv1tesrmr" path="res://Nodes/Unique/FearBuilding.gd" id="8"]
+[ext_resource type="Script" uid="uid://chyr3v0wtpqta" path="res://Nodes/Map/LavaChecks.gd" id="10"]
+[ext_resource type="PackedScene" path="res://Nodes/Map/ZIndexer.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://Nodes/Buildings/Icons/IconPylon.tscn" id="12"]
+[ext_resource type="Texture2D" uid="uid://c83l0cutrliuh" path="res://Resources/Textures/lights_vfx/Lamp_light_Radial_main_T001.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://btd55vitltjj1" path="res://Resources/Textures/lights_vfx/radial_spot_light_001.png" id="14"]
 
-[sub_resource type="CircleShape2D" id=7]
+[sub_resource type="CircleShape2D" id="7"]
 radius = 5.2898
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id="11"]
 resource_name = "PowerOFF"
 length = 5.0
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Lights/Light2:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 2 ),
-"transitions": PackedFloat32Array( -2 ),
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(-2),
 "update": 3,
-"values": [ Color( 0.992157, 1, 0, 0 ) ]
+"values": [Color(0.992157, 1, 0, 0)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Lights/Light3D:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 5 ),
-"transitions": PackedFloat32Array( 2 ),
+"times": PackedFloat32Array(5),
+"transitions": PackedFloat32Array(2),
 "update": 3,
-"values": [ Color( 1, 0.886275, 0.690196, 0 ) ]
+"values": [Color(1, 0.886275, 0.690196, 0)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Lights/Light3D:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0, 5 ),
-"transitions": PackedFloat32Array( 0.5, 2 ),
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(0.5, 2),
 "update": 0,
-"values": [ Vector2( 0.25, 0.25 ), Vector2( 0.15, 0.15 ) ]
+"values": [Vector2(0.25, 0.25), Vector2(0.15, 0.15)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Lights/Light2:scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0, 2 ),
-"transitions": PackedFloat32Array( 0.5, 2 ),
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(0.5, 2),
 "update": 0,
-"values": [ Vector2( 0.15, 0.15 ), Vector2( 0.05, 0.05 ) ]
+"values": [Vector2(0.15, 0.15), Vector2(0.05, 0.05)]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("Lights/Light3D:is_static")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0, 5 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ false, true ]
+"values": [false, true]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("Lights/Light2:is_static")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 0, 5 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ false, true ]
+"values": [false, true]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id="10"]
 resource_name = "PowerON"
 length = 7.0
 step = 0.05
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Lights/Light2:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0.5, 0.6, 0.7, 0.85, 2 ),
-"transitions": PackedFloat32Array( 2, 2, 2, 2, 2 ),
+"times": PackedFloat32Array(0.5, 0.6, 0.7, 0.85, 2),
+"transitions": PackedFloat32Array(2, 2, 2, 2, 2),
 "update": 3,
-"values": [ Color( 0.992157, 1, 0, 1 ), Color( 0.992157, 1, 0, 0 ), Color( 0.992157, 1, 0, 0.666667 ), Color( 0.992157, 1, 0, 0.431373 ), Color( 2.34902, 2.77647, 2.99216, 0.596078 ) ]
+"values": [Color(0.992157, 1, 0, 1), Color(0.992157, 1, 0, 0), Color(0.992157, 1, 0, 0.666667), Color(0.992157, 1, 0, 0.431373), Color(2.34902, 2.77647, 2.99216, 0.596078)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Lights/Light3D:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 1.5, 7 ),
-"transitions": PackedFloat32Array( 2, 2 ),
+"times": PackedFloat32Array(1.5, 7),
+"transitions": PackedFloat32Array(2, 2),
 "update": 3,
-"values": [ Color( 1, 0.886275, 0.690196, 0 ), Color( 1, 0.886275, 0.690196, 1 ) ]
+"values": [Color(1, 0.886275, 0.690196, 0), Color(1, 0.886275, 0.690196, 1)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Lights/Light3D:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 1.5, 1.9, 1.94, 2, 2.06, 2.18, 2.22, 2.3, 2.38, 7 ),
-"transitions": PackedFloat32Array( 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ),
+"times": PackedFloat32Array(1.5, 1.9, 1.94, 2, 2.06, 2.18, 2.22, 2.3, 2.38, 7),
+"transitions": PackedFloat32Array(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
 "update": 1,
-"values": [ Vector2( 0, 0 ), Vector2( -0.551216, 0.629963 ), Vector2( -0.732323, 0.0944973 ), Vector2( 1.08406, 0.309734 ), Vector2( 1.20481, 0.18674 ), Vector2( 0.223115, -0.566214 ), Vector2( 0.139117, 0.137618 ), Vector2( -0.574841, 0.368978 ), Vector2( 0, 0 ), Vector2( 0, 0 ) ]
+"values": [Vector2(0, 0), Vector2(-0.551216, 0.629963), Vector2(-0.732323, 0.0944973), Vector2(1.08406, 0.309734), Vector2(1.20481, 0.18674), Vector2(0.223115, -0.566214), Vector2(0.139117, 0.137618), Vector2(-0.574841, 0.368978), Vector2(0, 0), Vector2(0, 0)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Lights/Light3D:rotation_degrees")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0, 1.88, 2.2, 2.58, 7 ),
-"transitions": PackedFloat32Array( -2, -2, -2, -2, 1 ),
+"times": PackedFloat32Array(0, 1.88, 2.2, 2.58, 7),
+"transitions": PackedFloat32Array(-2, -2, -2, -2, 1),
 "update": 0,
-"values": [ 0.0, -1.0, 1.0, -1.0, 0.0 ]
+"values": [0.0, -1.0, 1.0, -1.0, 0.0]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("Lights/Light3D:scale")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 1.5, 7 ),
-"transitions": PackedFloat32Array( 2, 2 ),
+"times": PackedFloat32Array(1.5, 7),
+"transitions": PackedFloat32Array(2, 2),
 "update": 0,
-"values": [ Vector2( 0.15, 0.15 ), Vector2( 0.25, 0.25 ) ]
+"values": [Vector2(0.15, 0.15), Vector2(0.25, 0.25)]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("Lights/Light2:scale")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 0, 2 ),
-"transitions": PackedFloat32Array( 2, 2 ),
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(2, 2),
 "update": 0,
-"values": [ Vector2( 0.05, 0.05 ), Vector2( 0.15, 0.15 ) ]
+"values": [Vector2(0.05, 0.05), Vector2(0.15, 0.15)]
 }
 tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
 tracks/6/path = NodePath("Lights/Light3D:is_static")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
 tracks/6/keys = {
-"times": PackedFloat32Array( 0, 7 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 7),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ false, true ]
+"values": [false, true]
 }
 tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
 tracks/7/path = NodePath("Lights/Light2:is_static")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
-tracks/7/imported = false
-tracks/7/enabled = true
 tracks/7/keys = {
-"times": PackedFloat32Array( 0, 7 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 7),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ false, true ]
+"values": [false, true]
 }
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id="9"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Lights/Light2:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 0.992157, 1, 0, 0 ) ]
+"values": [Color(0.992157, 1, 0, 0)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Lights/Light3D:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 1, 0.886275, 0.690196, 0 ) ]
+"values": [Color(1, 0.886275, 0.690196, 0)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Lights/Light3D:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 0, 0 ) ]
+"values": [Vector2(0, 0)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Lights/Light3D:rotation_degrees")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.0 ]
+"values": [0.0]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("Lights/Light3D:scale")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 0.25, 0.25 ) ]
+"values": [Vector2(0.25, 0.25)]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("Lights/Light2:scale")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 0.15, 0.15 ) ]
+"values": [Vector2(0.15, 0.15)]
 }
 tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
 tracks/6/path = NodePath("Lights/Light3D:is_static")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
 tracks/6/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ true ]
+"values": [true]
 }
 tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
 tracks/7/path = NodePath("Lights/Light2:is_static")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
-tracks/7/imported = false
-tracks/7/enabled = true
 tracks/7/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ true ]
+"values": [true]
 }
 
-[sub_resource type="GDScript" id=12]
-script/source = "tool
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qwhx2"]
+_data = {
+&"PowerOFF": SubResource("11"),
+&"PowerON": SubResource("10"),
+&"RESET": SubResource("9")
+}
+
+[sub_resource type="GDScript" id="12"]
+script/source = "@tool
 extends Node2D
 
 func _draw() -> void:
@@ -301,486 +308,491 @@ func _draw() -> void:
 		draw_arc(Vector2(), get_parent().RANGE, 0, TAU, 32, Color.YELLOW)
 "
 
-[sub_resource type="Animation" id=13]
+[sub_resource type="Animation" id="13"]
 resource_name = "AlarmLOOP"
 length = 3.5
-loop = true
+loop_mode = 1
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Light_Arround_Building:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 1.5, 3.5 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 1.5, 3.5),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [ Color( 1, 0, 0, 1 ), Color( 0.0196078, 0.4, 1, 1 ), Color( 1, 0, 0, 1 ) ]
+"values": [Color(1, 0, 0, 1), Color(0.0196078, 0.4, 1, 1), Color(1, 0, 0, 1)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Light_Arround_Building:scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 1.5, 3.5 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 1.5, 3.5),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [ Vector2( 0.36, 0.36 ), Vector2( 0.25, 0.25 ), Vector2( 0.36, 0.36 ) ]
+"values": [Vector2(0.36, 0.36), Vector2(0.25, 0.25), Vector2(0.36, 0.36)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Light_Arround_Building:is_static")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ false ]
+"values": [false]
 }
 
-[sub_resource type="Animation" id=14]
+[sub_resource type="Animation" id="14"]
 resource_name = "AlarmON"
 length = 3.0
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Light_Arround_Building:is_static")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.001 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 0.001),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ false, false ]
+"values": [false, false]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Light_Arround_Building:scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 3 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(3),
+"transitions": PackedFloat32Array(1),
 "update": 3,
-"values": [ Vector2( 0.36, 0.36 ) ]
+"values": [Vector2(0.36, 0.36)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Light_Arround_Building:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0.5, 1.5, 3 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0.5, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 3,
-"values": [ Color( 1, 0, 0, 1 ), Color( 0.0196078, 0.4, 1, 1 ), Color( 1, 0, 0, 1 ) ]
+"values": [Color(1, 0, 0, 1), Color(0.0196078, 0.4, 1, 1), Color(1, 0, 0, 1)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Light_Radial_Spot:modulate")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 1.1 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(1.1),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 2.34902, 2.77647, 2.99216, 0.196078 ) ]
+"values": [Color(2.34902, 2.77647, 2.99216, 0.196078)]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("Light_Radial_Spot:is_static")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0.1 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ false ]
+"values": [false]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("LampaHalo3:modulate")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 1.1 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(1.1),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+"values": [Color(1.86275, 1, 0.290196, 0)]
 }
 
-[sub_resource type="Animation" id=15]
+[sub_resource type="Animation" id="15"]
 length = 2.3
-loop = true
+loop_mode = 1
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("LampaHalo3:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.5, 1.1, 1.8, 2.3 ),
-"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.5, 1.1, 1.8, 2.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [ Color( 0.929412, 0.498039, 0.145098, 0.101961 ), Color( 0.929412, 0.498039, 0.145098, 0.137255 ), Color( 0.929412, 0.498039, 0.145098, 0.0823529 ), Color( 0.929412, 0.498039, 0.145098, 0.137255 ), Color( 0.929412, 0.498039, 0.145098, 0.101961 ) ]
+"values": [Color(0.929412, 0.498039, 0.145098, 0.101961), Color(0.929412, 0.498039, 0.145098, 0.137255), Color(0.929412, 0.498039, 0.145098, 0.0823529), Color(0.929412, 0.498039, 0.145098, 0.137255), Color(0.929412, 0.498039, 0.145098, 0.101961)]
 }
 
-[sub_resource type="Animation" id=16]
+[sub_resource type="Animation" id="16"]
 resource_name = "PowerOFF"
 length = 2.3
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("LampaHalo3:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 2.3 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(2.3),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+"values": [Color(1.86275, 1, 0.290196, 0)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Light_Arround_Building:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 2.3 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(2.3),
+"transitions": PackedFloat32Array(1),
 "update": 3,
-"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+"values": [Color(1.86275, 1, 0.290196, 0)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Light_Radial_Spot:is_static")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0, 2.3 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 2.3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ false, true ]
+"values": [false, true]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Light_Radial_Spot:modulate")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 2.3 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(2.3),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 2.34902, 2.77647, 2.99216, 0 ) ]
+"values": [Color(2.34902, 2.77647, 2.99216, 0)]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("Light_Arround_Building:is_static")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0, 2.3 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 2.3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ false, true ]
+"values": [false, true]
 }
 
-[sub_resource type="Animation" id=17]
+[sub_resource type="Animation" id="17"]
 resource_name = "PowerON"
 length = 3.0
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("LampaHalo3:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 1.4, 1.9, 3 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(1.4, 1.9, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 3,
-"values": [ Color( 1.86275, 1, 0.290196, 0.0835465 ), Color( 1.86275, 1, 0.290196, 0.054902 ), Color( 0.929412, 0.498039, 0.145098, 0.101961 ) ]
+"values": [Color(1.86275, 1, 0.290196, 0.0835465), Color(1.86275, 1, 0.290196, 0.054902), Color(0.929412, 0.498039, 0.145098, 0.101961)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Light_Radial_Spot:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 3 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(3),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 2.34902, 2.77647, 2.99216, 0.596078 ) ]
+"values": [Color(2.34902, 2.77647, 2.99216, 0.596078)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Light_Arround_Building:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 1.5, 3 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(1.5, 3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 3,
-"values": [ Vector2( 0.28, 0.244 ), Vector2( 0.281, 0.251 ) ]
+"values": [Vector2(0.28, 0.244), Vector2(0.281, 0.251)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Light_Radial_Spot:is_static")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0, 3 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ false, true ]
+"values": [false, true]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("Light_Arround_Building:modulate")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 3 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(3),
+"transitions": PackedFloat32Array(1),
 "update": 3,
-"values": [ Color( 0.94902, 0.67451, 0.470588, 0.278431 ) ]
+"values": [Color(0.94902, 0.67451, 0.470588, 0.278431)]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("Light_Arround_Building:is_static")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 0, 3 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ false, true ]
+"values": [false, true]
 }
 
-[sub_resource type="Animation" id=18]
+[sub_resource type="Animation" id="18"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Light_Radial_Spot:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 2.34902, 2.77647, 2.99216, 0 ) ]
+"values": [Color(2.34902, 2.77647, 2.99216, 0)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("LampaHalo3:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 1.86275, 1, 0.290196, 0 ) ]
+"values": [Color(1.86275, 1, 0.290196, 0)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Light_Radial_Spot:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 0.18041, 0.166872 ) ]
+"values": [Vector2(0.18041, 0.166872)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("Light_Radial_Spot:is_static")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ true ]
+"values": [true]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("Light_Arround_Building:modulate")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 2.34902, 2.77647, 2.99216, 0 ) ]
+"values": [Color(2.34902, 2.77647, 2.99216, 0)]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("Light_Arround_Building:is_static")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ true ]
+"values": [true]
 }
 tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
 tracks/6/path = NodePath("Light_Arround_Building:scale")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
 tracks/6/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 0.567217, 0.616237 ) ]
+"values": [Vector2(0.567217, 0.616237)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a8suq"]
+_data = {
+&"AlarmLOOP": SubResource("13"),
+&"AlarmON": SubResource("14"),
+&"Blinks": SubResource("15"),
+&"PowerOFF": SubResource("16"),
+&"PowerON": SubResource("17"),
+&"RESET": SubResource("18")
 }
 
 [node name="Pylon" type="Area2D" groups=["Light3D"]]
 z_index = 600
 z_as_relative = false
-script = ExtResource( 2 )
-__meta__ = {
-"range_expander_radius": 100.0
-}
+script = ExtResource("2")
 radius = 4.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
 z_index = 117
-shape = SubResource( 7 )
+shape = SubResource("7")
 
 [node name="Lights" type="Node2D" parent="."]
 
 [node name="Light3D" type="Node2D" parent="Lights"]
-modulate = Color( 1, 0.886275, 0.690196, 0 )
-scale = Vector2( 0.25, 0.25 )
-script = ExtResource( 1 )
-texture = ExtResource( 3 )
+modulate = Color(1, 0.886275, 0.690196, 0)
+scale = Vector2(0.25, 0.25)
+script = ExtResource("1")
+texture = ExtResource("3")
 is_static = true
 
 [node name="Light2" type="Node2D" parent="Lights"]
-modulate = Color( 0.992157, 1, 0, 0 )
-scale = Vector2( 0.15, 0.15 )
-script = ExtResource( 1 )
-texture = ExtResource( 14 )
+modulate = Color(0.992157, 1, 0, 0)
+scale = Vector2(0.15, 0.15)
+script = ExtResource("1")
+texture = ExtResource("14")
 is_static = true
 
 [node name="PylonShadow" type="Sprite2D" parent="."]
-scale = Vector2( 0.034, 0.034 )
 z_index = -2
-texture = ExtResource( 4 )
+scale = Vector2(0.034, 0.034)
+texture = ExtResource("4")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color( 1.69, 2.06, 2.75, 1 )
-scale = Vector2( 0.052, 0.052 )
+modulate = Color(1.69, 2.06, 2.75, 1)
 z_index = 10
-texture = ExtResource( 5 )
+scale = Vector2(0.052, 0.052)
+texture = ExtResource("5")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/PowerOFF = SubResource( 11 )
-anims/PowerON = SubResource( 10 )
-anims/RESET = SubResource( 9 )
+libraries = {
+&"": SubResource("AnimationLibrary_qwhx2")
+}
 
 [node name="LavaChecks" type="Node2D" parent="."]
 visible = false
-script = ExtResource( 10 )
+script = ExtResource("10")
 
 [node name="Marker2D" type="Marker2D" parent="LavaChecks"]
-position = Vector2( -0.306207, -6.40667 )
+position = Vector2(-0.306207, -6.40667)
 
 [node name="Position2D2" type="Marker2D" parent="LavaChecks"]
-position = Vector2( 6.7058, -0.264392 )
+position = Vector2(6.7058, -0.264392)
 
 [node name="Position2D3" type="Marker2D" parent="LavaChecks"]
-position = Vector2( 0.268827, 6.8243 )
+position = Vector2(0.268827, 6.8243)
 
 [node name="Position2D4" type="Marker2D" parent="LavaChecks"]
-position = Vector2( -7.00502, -0.0356937 )
+position = Vector2(-7.00502, -0.0356937)
 
-[node name="ZIndexer" parent="." instance=ExtResource( 11 )]
+[node name="ZIndexer" parent="." instance=ExtResource("11")]
 z_index = 600
 
-[node name="TerrainMask" parent="." instance=ExtResource( 12 )]
+[node name="TerrainMask" parent="." instance=ExtResource("12")]
 visible = false
 z_index = 107
 
 [node name="RangeDrawer" type="Node2D" parent="."]
-script = SubResource( 12 )
+script = SubResource("12")
 
-[node name="HealthBar" parent="." instance=ExtResource( 6 )]
-position = Vector2( 0, -5 )
-scale = Vector2( 0.4, 1 )
+[node name="HealthBar" parent="." instance=ExtResource("6")]
+position = Vector2(0, -5)
+scale = Vector2(0.4, 1)
 
 [node name="HealthBar" parent="HealthBar" index="0"]
+anchors_preset = 8
 offset_top = 10.0
 offset_bottom = 11.0
 
 [node name="FearBuilding" type="Node2D" parent="."]
-script = ExtResource( 8 )
+script = ExtResource("8")
 primary_animator = NodePath("../AnimationPlayer")
 secondary_animator = NodePath("LightSubsystem")
 
 [node name="LightSubsystem" type="AnimationPlayer" parent="FearBuilding"]
-anims/AlarmLOOP = SubResource( 13 )
-anims/AlarmON = SubResource( 14 )
-anims/Blinks = SubResource( 15 )
-anims/PowerOFF = SubResource( 16 )
-anims/PowerON = SubResource( 17 )
-anims/RESET = SubResource( 18 )
-next/AlarmON = "AlarmLOOP"
-next/PowerON = "Blinks"
+libraries = {
+&"": SubResource("AnimationLibrary_a8suq")
+}
+next/AlarmON = &"AlarmLOOP"
+next/PowerON = &"Blinks"
 
 [node name="Light_Radial_Spot" type="Node2D" parent="FearBuilding"]
 visible = false
-modulate = Color( 2.34902, 2.77647, 2.99216, 0 )
-position = Vector2( 3, 4 )
-scale = Vector2( 0.18041, 0.166872 )
-script = ExtResource( 1 )
-texture = ExtResource( 14 )
+modulate = Color(2.34902, 2.77647, 2.99216, 0)
+position = Vector2(3, 4)
+scale = Vector2(0.18041, 0.166872)
+script = ExtResource("1")
+texture = ExtResource("14")
 follow_rotation = true
 is_static = true
 
 [node name="Light_Arround_Building" type="Node2D" parent="FearBuilding"]
-modulate = Color( 2.34902, 2.77647, 2.99216, 0 )
-position = Vector2( 1, -1 )
-scale = Vector2( 0.567217, 0.616237 )
-script = ExtResource( 1 )
-texture = ExtResource( 13 )
+modulate = Color(2.34902, 2.77647, 2.99216, 0)
+position = Vector2(1, -1)
+scale = Vector2(0.567217, 0.616237)
+script = ExtResource("1")
+texture = ExtResource("13")
 follow_rotation = true
 is_static = true
 
 [node name="LampaHalo3" type="Sprite2D" parent="FearBuilding"]
-modulate = Color( 1.86275, 1, 0.290196, 0 )
-position = Vector2( -1, 1 )
-rotation = -3.14727
-scale = Vector2( 0.181501, -0.220792 )
+modulate = Color(1.86275, 1, 0.290196, 0)
 z_index = -3
-texture = ExtResource( 13 )
+position = Vector2(-1, 1)
+rotation = -3.14727
+scale = Vector2(0.181501, -0.220792)
+texture = ExtResource("13")
 
 [editable path="HealthBar"]

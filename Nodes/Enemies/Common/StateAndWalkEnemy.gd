@@ -1,8 +1,8 @@
 extends BaseEnemy
 class_name StateAndWalkEnemy
 
-@onready var sprite := get_node_or_null(@"Sprite2D")
-@onready var animator: AnimationPlayer = get_node_or_null(@"AnimationPlayer")
+@onready var sprite := get_node_or_null("Sprite2D")
+@onready var animator: AnimationPlayer = get_node_or_null("AnimationPlayer")
 
 # pathing
 @export var path_search_inverval := 10.0
@@ -117,5 +117,5 @@ func on_hit(data: Dictionary)->void:
 	Utils.get_audio_manager("gore_hit").play(global_position)
 	damaged = true
 
-func set_rotation(rot: float):
+func set_rotation_custom(rot: float):
 	heading = Vector2.RIGHT.rotated(rot)

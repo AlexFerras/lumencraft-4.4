@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 		
 		if i == enemy_queue.size():
 			return
-		enemy_queue.remove(i)
+		enemy_queue.remove_at(i)
 		
 		if enemy.has_meta("swarm"):
 			spawning_swarm = true
@@ -100,7 +100,7 @@ func set_radius(r: float):
 	radius = r
 	
 	if Engine.is_editor_hint():
-		update()
+		queue_redraw()
 
 func _draw() -> void:
 	if Engine.is_editor_hint():

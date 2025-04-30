@@ -22,17 +22,19 @@ signal exploded_terrain
 signal joypad_updated
 signal coop_toggled(enable)
 
-const walls_mask = (1 << Const.Materials.WALL | 1 << Const.Materials.WALL1 | 1 << Const.Materials.WALL2| 1 << Const.Materials.WALL3)
-const walls_and_gate_mask = (walls_mask | 1 << Const.Materials.GATE)
-const monster_base_attack_mask = (1<<Const.Materials.STOP | 1<<Const.Materials.LOW_BUILDING | walls_and_gate_mask | 1<<Const.Materials.FOAM | 1<<Const.Materials.FOAM2 )
-const item_placer_mask = ~(monster_base_attack_mask | 1 << Const.Materials.LAVA | 1 << Const.Materials.LUMEN | 1 << Const.Materials.DEAD_LUMEN| 1 << Const.Materials.TAR| 1 << Const.Materials.ROCK| 1 << Const.Materials.CONCRETE)
-const monster_attack_mask = (monster_base_attack_mask | 1<<Const.Materials.DIRT)
-const default_monster_path_mask = (monster_attack_mask | 1<<Const.Materials.TAR | 1<<Const.Materials.WATER | 1<<Const.Materials.LAVA)
-const monster_sight_mask = (1<<Const.Materials.STOP | 1<<Const.Materials.LOW_BUILDING | walls_and_gate_mask  ) | 1<<Const.Materials.TAR | 1<<Const.Materials.LAVA | 1<<Const.Materials.WATER
-const walkable_collision_mask = ~(1<<Const.Materials.LAVA | 1<<Const.Materials.TAR | 1<<Const.Materials.WATER)
-const turret_bullet_collision_mask = ~(1<<Const.Materials.TAR | walls_and_gate_mask | 1<<Const.Materials.LOW_BUILDING)
-const player_bullet_collision_mask = ~(1<<Const.Materials.TAR)
-const fire_resistant_mask = (1<<Const.Materials.FOAM2 | 1<<Const.Materials.WALL2| 1<<Const.Materials.WALL3 | 1<<Const.Materials.LAVA)
+const PConst = preload("res://Scripts/Singleton/Constants.gd")
+
+const walls_mask = (1 << PConst.Materials.WALL | 1 << PConst.Materials.WALL1 | 1 << PConst.Materials.WALL2| 1 << PConst.Materials.WALL3)
+const walls_and_gate_mask = (walls_mask | 1 << PConst.Materials.GATE)
+const monster_base_attack_mask = (1<<PConst.Materials.STOP | 1<<PConst.Materials.LOW_BUILDING | walls_and_gate_mask | 1<<PConst.Materials.FOAM | 1<<PConst.Materials.FOAM2 )
+const item_placer_mask = ~(monster_base_attack_mask | 1 << PConst.Materials.LAVA | 1 << PConst.Materials.LUMEN | 1 << PConst.Materials.DEAD_LUMEN| 1 << PConst.Materials.TAR| 1 << PConst.Materials.ROCK| 1 << PConst.Materials.CONCRETE)
+const monster_attack_mask = (monster_base_attack_mask | 1<<PConst.Materials.DIRT)
+const default_monster_path_mask = (monster_attack_mask | 1<<PConst.Materials.TAR | 1<<PConst.Materials.WATER | 1<<PConst.Materials.LAVA)
+const monster_sight_mask = (1<<PConst.Materials.STOP | 1<<PConst.Materials.LOW_BUILDING | walls_and_gate_mask  ) | 1<<PConst.Materials.TAR | 1<<PConst.Materials.LAVA | 1<<PConst.Materials.WATER
+const walkable_collision_mask = ~(1<<PConst.Materials.LAVA | 1<<PConst.Materials.TAR | 1<<PConst.Materials.WATER)
+const turret_bullet_collision_mask = ~(1<<PConst.Materials.TAR | walls_and_gate_mask | 1<<PConst.Materials.LOW_BUILDING)
+const player_bullet_collision_mask = ~(1<<PConst.Materials.TAR)
+const fire_resistant_mask = (1<<PConst.Materials.FOAM2 | 1<<PConst.Materials.WALL2| 1<<PConst.Materials.WALL3 | 1<<PConst.Materials.LAVA)
 #const walkable_mask= ~(1<<Const.Materials.LAVA | 1<<Const.Materials.TAR | 1<<Const.Materials.WATER)
 #const turret_bullet_mask=  ~(1<<Const.Materials.TAR | walls_mask | 1 << Const.Materials.GATE)
 #const player_bullet_mask=  ~(1<<Const.Materials.TAR)
@@ -501,6 +503,9 @@ var MIN_PARTICLE_EXPLOSION_RADIUS=18
 
 func explode(position: Vector2, radius: float, dmg: int, penetration: float ,threshold: float, mask = player_bullet_collision_mask, no_repel := false, pickable_spawn_mul=1.0,seismic=false):
 	call_deferred("true_explode", "update_damage_circle_penetrating_explosive", position, radius, dmg, penetration, threshold, mask, no_repel, pickable_spawn_mul,seismic)
+	
+func explode_cool(position: Vector2, radius: float, dmg: int, penetration: float ,threshold: float, mask = player_bullet_collision_mask, no_repel := false, pickable_spawn_mul=1.0,seismic=false):
+	call_deferred("true_explode", "update_damage_circle_penetrating_explosive", position, radius, dmg, penetration, threshold, mask, no_repel, pickable_spawn_mul,seismic)
 
 func explode_circle(position: Vector2, radius: float, dmg: int, hardness: float, threshold := 255,  mask=player_bullet_collision_mask, no_repel := false, pickable_spawn_mul=1.0,seismic=false):
 	call_deferred("true_explode", "update_damage_circle", position, radius, dmg, hardness, threshold,  mask, no_repel, pickable_spawn_mul,seismic)
@@ -585,7 +590,7 @@ func true_explode(method: String, position: Vector2, radius: float, dmg: int, ha
 	return true
 
 func is_pixel_buried(pos):
-	return (1<<game.map.pixel_map.get_pixel_at(pos).g8) & (Utils.walkable_collision_mask  & (~( 1<<Const.Materials.EMPTY |1<<Const.Materials.STOP )))
+	return (1<<game.map.pixel_map.get_pixel_at(pos).g8) and (Utils.walkable_collision_mask  and (~( 1<<Const.Materials.EMPTY |1<<Const.Materials.STOP )))
 
 func add_exploded_pixel(pos: Vector2, mat: int, value: int):
 	exploded_list.append(Vector3(pos.x, pos.y, mat))
@@ -602,7 +607,9 @@ func add_exploded_pixel(pos: Vector2, mat: int, value: int):
 		explosion_accum[mat] -= spawn_rate
 	if mat == Const.Materials.LUMEN:
 		if game.map.remainig_lumen <= Utils.explosion_accum[mat]:
-			SteamAPI.unlock_achievement("OCD") 
+			pass
+			# TODO STEAM
+			SteamAPI2.unlock_achievement("OCD") 
 
 func temp_instance(scene: PackedScene) -> Node:
 	var node := scene.instantiate()
@@ -789,7 +796,7 @@ func get_item_cost(data: Dictionary) -> Array:
 		if "technology" in data.data:
 			return [{id = Const.ItemIDs.LUMEN, amount = Const.Technology[data.data.technology].cost}]
 		elif "weapon_upgrade" in data.data:
-			var id := Const.ItemIDs.keys().find(data.data.weapon_upgrade.get_slice("/", 0))
+			var id :int= Const.ItemIDs.keys().find(data.data.weapon_upgrade.get_slice("/", 0))
 			var upgrade: String = data.data.weapon_upgrade.get_slice("/", 1)
 			var upgrade_data: Dictionary = Utils.get_weapon_upgrade_data(id, upgrade)
 			return upgrade_data.costs[0]
@@ -915,7 +922,7 @@ func play_sample(sample, source = null, follow := false, random_pitch := 1.0, pi
 		sample = load(sample)
 	elif sample is Array:
 		for s in sample:
-			await play_sample(s, source, follow, random_pitch)
+			play_sample(s, source, follow, random_pitch)
 		return
 	
 	assert(sample is AudioStream)
@@ -1208,8 +1215,7 @@ enum {UI_SELECT, UI_FAIL}
 func play_ui_sample(sample: int):
 	match sample:
 		UI_SELECT:
-			var player = await play_sample(preload("res://SFX/UI/CountPoint.wav"), null,false, 1.02,0.7)
-			player.volume_db = -8
+			play_sample(preload("res://SFX/UI/CountPoint.wav"), null,false, 1.02,0.7).volume_db = -8
 		UI_FAIL:
 			play_sample(preload("res://SFX/UI/OptionsFail.wav"), null,false, 1.02,0.7)
 

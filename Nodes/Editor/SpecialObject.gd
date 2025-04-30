@@ -25,7 +25,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			var text := TextEdit.new()
 			text.custom_minimum_size.y = 200
 			text.wrap_enabled = true
-			editor.register_data("message", funcref(text, "set_text"), funcref(text, "get_text"))
+			editor.register_data("message", Callable(text, "set_text"), Callable(text, "get_text"))
 			vb.add_child(text)
 			
 			var preview := RichTextLabel.new()
@@ -55,7 +55,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 		"display_objective":
 			var edit := LineEdit.new()
 			edit.placeholder_text = "Objective Text (Empty = Default)"
-			editor.register_data("objective", funcref(edit, "set_text"), funcref(edit, "get_text"))
+			editor.register_data("objective", Callable(edit, "set_text"), Callable(edit, "get_text"))
 			return edit
 		"win", "lose":
 			var vb := VBoxContainer.new()
@@ -64,13 +64,13 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			label.text = "Custom Message"
 			
 			var text := preload("res://Nodes/Editor/GUI/LineEditWithSetDisabled.gd").new()
-			editor.register_data("message", funcref(text, "set_text"), funcref(text, "get_text"))
+			editor.register_data("message", Callable(text, "set_text"), Callable(text, "get_text"))
 			
 			if condition_action == "win":
 				var checkbox := CheckBox.new()
 				checkbox.text = "Instant?"
 				checkbox.connect("toggled", Callable(text, "set_disabled"))
-				editor.register_data("instant", funcref(checkbox, "set_pressed"), funcref(checkbox, "is_pressed"))
+				editor.register_data("instant", Callable(checkbox, "set_pressed"), Callable(checkbox, "is_pressed"))
 				vb.add_child(checkbox)
 			
 			vb.add_child(label)
@@ -81,12 +81,12 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			var vb := VBoxContainer.new()
 			
 			var color := ColorPickerButton.new()
-			editor.register_data("color", funcref(color, "set_pick_color"), funcref(color, "get_pick_color"))
+			editor.register_data("color", Callable(color, "set_pick_color"), Callable(color, "get_pick_color"))
 			vb.add_child(color)
 			
 			var time := SpinBox.new()
 			time.suffix = "s"
-			editor.register_data("time", funcref(time, "set_value"), funcref(time, "get_value"))
+			editor.register_data("time", Callable(time, "set_value"), Callable(time, "get_value"))
 			vb.add_child(time)
 			
 			return vb
@@ -100,7 +100,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			var edit := SpinBox.new()
 			edit.step = 0.01
 			edit.value = 10
-			editor.register_data("attenuation", funcref(edit, "set_value"), funcref(edit, "get_value"))
+			editor.register_data("attenuation", Callable(edit, "set_value"), Callable(edit, "get_value"))
 			vb.add_child(edit)
 			
 			label = Label.new()
@@ -111,7 +111,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			edit.step = 0.01
 			edit.value = 0.5
 			edit.suffix = "s"
-			editor.register_data("duration", funcref(edit, "set_value"), funcref(edit, "get_value"))
+			editor.register_data("duration", Callable(edit, "set_value"), Callable(edit, "get_value"))
 			vb.add_child(edit)
 			
 			label = Label.new()
@@ -121,7 +121,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			edit = SpinBox.new()
 			edit.step = 0.01
 			edit.value = 30
-			editor.register_data("frequency", funcref(edit, "set_value"), funcref(edit, "get_value"))
+			editor.register_data("frequency", Callable(edit, "set_value"), Callable(edit, "get_value"))
 			vb.add_child(edit)
 			
 			label = Label.new()
@@ -132,14 +132,14 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			edit.step = 0.01
 			edit.max_value = 1
 			edit.value = 1
-			editor.register_data("randomness", funcref(edit, "set_value"), funcref(edit, "get_value"))
+			editor.register_data("randomness", Callable(edit, "set_value"), Callable(edit, "get_value"))
 			vb.add_child(edit)
 			
 			return vb
 		"launch_custom_wave":
 			var edit := preload("res://Nodes/Editor/GUI/WaveEdit.tscn").instantiate() as Control
 			edit.call_deferred("disable_moving")
-			editor.register_data("data", funcref(edit, "set_data"), funcref(edit, "get_data"))
+			editor.register_data("data", Callable(edit, "set_data"), Callable(edit, "get_data"))
 			return edit
 		"compare_custom_variable":
 			var vb := VBoxContainer.new()
@@ -149,7 +149,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			vb.add_child(label)
 			
 			var variable := LineEdit.new()
-			editor.register_data("variable", funcref(variable, "set_text"), funcref(variable, "get_text"))
+			editor.register_data("variable", Callable(variable, "set_text"), Callable(variable, "get_text"))
 			vb.add_child(variable)
 			
 			label = Label.new()
@@ -161,7 +161,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			operation.add_item("Not Equal To")
 			operation.add_item("Greater Than")
 			operation.add_item("Less Than")
-			editor.register_data("operation", funcref(operation, "select"), funcref(operation, "get_selected"))
+			editor.register_data("operation", Callable(operation, "select"), Callable(operation, "get_selected"))
 			vb.add_child(operation)
 			
 			label = Label.new()
@@ -171,7 +171,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			var value := SpinBox.new()
 			value.min_value = -999999
 			value.max_value = 999999
-			editor.register_data("value", funcref(value, "set_value"), funcref(value, "get_value"))
+			editor.register_data("value", Callable(value, "set_value"), Callable(value, "get_value"))
 			vb.add_child(value)
 			
 			return vb
@@ -183,7 +183,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			vb.add_child(label)
 			
 			var variable := LineEdit.new()
-			editor.register_data("variable", funcref(variable, "set_text"), funcref(variable, "get_text"))
+			editor.register_data("variable", Callable(variable, "set_text"), Callable(variable, "get_text"))
 			vb.add_child(variable)
 			
 			label = Label.new()
@@ -194,7 +194,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			operation.add_item("Set")
 			operation.add_item("Add")
 			operation.add_item("Subtract")
-			editor.register_data("operation", funcref(operation, "select"), funcref(operation, "get_selected"))
+			editor.register_data("operation", Callable(operation, "select"), Callable(operation, "get_selected"))
 			vb.add_child(operation)
 			
 			label = Label.new()
@@ -204,7 +204,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			var value := SpinBox.new()
 			value.min_value = -999999
 			value.max_value = 999999
-			editor.register_data("value", funcref(value, "set_value"), funcref(value, "get_value"))
+			editor.register_data("value", Callable(value, "set_value"), Callable(value, "get_value"))
 			vb.add_child(value)
 			
 			return vb
@@ -218,7 +218,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			var value := SpinBox.new()
 			value.min_value = 0
 			value.max_value = 999999
-			editor.register_data("number", funcref(value, "set_value"), funcref(value, "get_value"), 0)
+			editor.register_data("number", Callable(value, "set_value"), Callable(value, "get_value"), 0)
 			vb.add_child(value)
 			
 			return vb
@@ -230,20 +230,20 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			for item in Const.game_data.get_editor_pickup_list():
 				selected_item.add_item(Utils.get_item_name(item))
 				selected_item.set_item_metadata(selected_item.get_item_count() - 1, item)
-			editor.register_data("item", funcref(selected_item, "select_metadata"), funcref(selected_item, "get_selected_metadata"))
+			editor.register_data("item", Callable(selected_item, "select_metadata"), Callable(selected_item, "get_selected_metadata"))
 			vb.add_child(selected_item)
 			
 			var operation := OptionButton.new()
 			operation.add_item("Equal To")
 			operation.add_item("Greater Than")
 			operation.add_item("Less Than")
-			editor.register_data("operation", funcref(operation, "select"), funcref(operation, "get_selected"))
+			editor.register_data("operation", Callable(operation, "select"), Callable(operation, "get_selected"))
 			vb.add_child(operation)
 			
 			var value := SpinBox.new()
 			value.min_value = 0
 			value.max_value = 9999
-			editor.register_data("amount", funcref(value, "set_value"), funcref(value, "get_value"))
+			editor.register_data("amount", Callable(value, "set_value"), Callable(value, "get_value"))
 			vb.add_child(value)
 			
 			return vb
@@ -255,12 +255,12 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			for weapon in Const.game_data.upgradable_weapons:
 				selected_weapon.add_item(Utils.get_item_name({id = weapon}))
 				selected_weapon.set_item_metadata(selected_weapon.get_item_count() - 1, Const.ItemIDs.keys()[weapon])
-			editor.register_data("weapon", funcref(selected_weapon, "select_metadata"), funcref(selected_weapon, "get_selected_metadata"))
+			editor.register_data("weapon", Callable(selected_weapon, "select_metadata"), Callable(selected_weapon, "get_selected_metadata"))
 			vb.add_child(selected_weapon)
 			
 			selected_upgrade = OptionButton.new()
 			selected_upgrade.set_script(preload("res://Nodes/Editor/GUI/OptionButtonWithSelectMetadata.gd"))
-			editor.register_data("upgrade", funcref(selected_upgrade, "select_metadata"), funcref(selected_upgrade, "get_selected_metadata"))
+			editor.register_data("upgrade", Callable(selected_upgrade, "select_metadata"), Callable(selected_upgrade, "get_selected_metadata"))
 			vb.add_child(selected_upgrade)
 			
 			selected_weapon.set_meta("specref", self)
@@ -271,13 +271,13 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			operation.add_item("Equal To")
 			operation.add_item("Greater Than")
 			operation.add_item("Less Than")
-			editor.register_data("operation", funcref(operation, "select"), funcref(operation, "get_selected"))
+			editor.register_data("operation", Callable(operation, "select"), Callable(operation, "get_selected"))
 			vb.add_child(operation)
 			
 			var value := SpinBox.new()
 			value.min_value = 0
 			value.max_value = 5
-			editor.register_data("amount", funcref(value, "set_value"), funcref(value, "get_value"))
+			editor.register_data("amount", Callable(value, "set_value"), Callable(value, "get_value"))
 			vb.add_child(value)
 			
 			return vb
@@ -287,7 +287,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 			for tech in Const.Technology.values():
 				selected_tech.add_item(tech.name)
 				selected_tech.set_item_metadata(selected_tech.get_item_count() - 1, tech.tech)
-			editor.register_data("tech", funcref(selected_tech, "select_metadata"), funcref(selected_tech, "get_selected_metadata"))
+			editor.register_data("tech", Callable(selected_tech, "select_metadata"), Callable(selected_tech, "get_selected_metadata"))
 			return selected_tech
 	
 	return null

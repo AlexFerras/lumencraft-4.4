@@ -79,8 +79,8 @@ func save_to_file(path: String):
 func load_from_file(path: String):
 	loaded_path = path
 	
-	var file := File.new()
-	if file.open(path, file.READ) != OK:
+	var file = FileAccess.open(path, FileAccess.READ)
+	if not file:
 		error = "Can't open map file"
 		return
 	
@@ -182,8 +182,7 @@ func load_from_file(path: String):
 		error = "Map doesn't have a valid start point"
 
 func load_metadata(path: String):
-	var file := File.new()
-	file.open(path, file.READ)
+	var file =  FileAccess.open(path, FileAccess.READ)
 	
 	var version := file.get_32()
 	
@@ -202,7 +201,7 @@ func load_metadata(path: String):
 	
 	file.close()
 
-func get_file_value(file: File, method: String, default):
+func get_file_value(file: FileAccess, method: String, default):
 	var value = file.call(method)
 	if file.eof_reached():
 		error = "Map file invalid or corrupted"
@@ -212,7 +211,7 @@ func get_file_value(file: File, method: String, default):
 	
 	return value
 
-func upgrade_map(from_version: int, file: File):
+func upgrade_map(from_version: int, file: FileAccess):
 	if error:
 		return
 

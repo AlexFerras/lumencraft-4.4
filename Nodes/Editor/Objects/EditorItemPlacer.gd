@@ -34,7 +34,7 @@ func on_selected(idx: int):
 	emit_signal("data_changed")
 
 func _refresh():
-	update()
+	queue_redraw()
 
 func _draw() -> void:
 	if Utils.editor.hide_gizmos:

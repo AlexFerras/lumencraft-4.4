@@ -7,7 +7,7 @@ func export_data_impl(e):
 	if not e:
 		return
 	
-	var scene_name = filename.get_file().get_basename()
+	var scene_name = scene_file_path.get_file().get_basename()
 	var pixel_map = $PixelMap
 	var pixel_data = pixel_map.get_pixel_data()
 	for i in pixel_data.size() / 4:
@@ -27,8 +27,7 @@ func export_data_impl(e):
 	var pixel_image = Image.new()
 	pixel_image.create_from_data(pixel_map.get_texture().get_width(), pixel_map.get_texture().get_height(), false, Image.FORMAT_RGBA8, pixel_data)
 	
-	var f := File.new()
-	f.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + scene_name + "_pixels.bin", File.WRITE)
+	var f = FileAccess.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + scene_name + "_pixels.bin", FileAccess.WRITE)
 	f.store_var(pixel_image, true)
 	f.close()
 	
@@ -37,7 +36,7 @@ func export_data_impl(e):
 	var ps := PackedScene.new()
 	ps.pack(self)
 	
-	f.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + scene_name + "_nodes.bin", File.WRITE)
+	f = FileAccess.open("res://Nodes/Map/Generator/RectGenerators/CraftedRects/" + scene_name + "_nodes.bin", FileAccess.WRITE)
 	f.store_var(ps, true)
 	f.close()
 	

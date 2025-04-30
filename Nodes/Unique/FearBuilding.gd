@@ -1,7 +1,7 @@
 extends Node2D
 
-@export(NodePath) onready var primary_animator = get_node(primary_animator)
-@export(NodePath) onready var secondary_animator = get_node(secondary_animator)
+@export_node_path("Node") var primary_animator
+@export_node_path("Node") var secondary_animator
 
 var reactor_fuel:Node2D
 #var reactor_state :int = 1
@@ -57,4 +57,3 @@ func _primary_animation_finished(anim_name):
 		3:
 			secondary_animator.play("PowerON")
 			get_parent().regenerate = 2   
-

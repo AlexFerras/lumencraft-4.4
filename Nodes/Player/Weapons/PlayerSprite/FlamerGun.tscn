@@ -1,10 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://bieckyul4q35t"]
 
-[ext_resource path="res://Nodes/Player/Weapons/Ranged/FlameEffect.tscn" type="PackedScene" id=1]
-[ext_resource path="res://SFX/Weapons/Flamethrower2.wav" type="AudioStream" id=2]
-[ext_resource path="res://Nodes/Player/Weapons/Ranged/Flamethrower_0.5.png" type="Texture2D" id=3]
+[ext_resource type="PackedScene" path="res://Nodes/Player/Weapons/Ranged/FlameEffect.tscn" id="1"]
+[ext_resource type="AudioStream" uid="uid://crfvj0ws1ygr" path="res://SFX/Weapons/Flamethrower2.wav" id="2"]
+[ext_resource type="Texture2D" uid="uid://cq1fe17kqwl0r" path="res://Nodes/Player/Weapons/Ranged/Flamethrower_0.5.png" id="3"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends Node2D
 
 @onready var shoot_point := $Sprite2D/ShootPoint as Node2D
@@ -59,7 +59,7 @@ func deshoot():
 	is_shooting = false
 
 func set_player(player_new):
-	 player = player_new
+	player = player_new
 
 func _physics_process(delta):
 	prev_global = flame_effect.global_transform
@@ -112,25 +112,24 @@ func _exit_tree() -> void:
 "
 
 [node name="FlamerGun" type="Node2D"]
-script = SubResource( 1 )
+script = SubResource("1")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2( -2, 0 )
-scale = Vector2( 0.05, 0.05 )
-texture = ExtResource( 3 )
-offset = Vector2( 0, 60 )
+position = Vector2(-2, 0)
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("3")
+offset = Vector2(0, 60)
 
 [node name="ShootPoint" type="Node2D" parent="Sprite2D"]
-position = Vector2( 190, -20 )
+position = Vector2(190, -20)
 
-[node name="FlameEffect" parent="Sprite2D/ShootPoint" instance=ExtResource( 1 )]
+[node name="FlameEffect" parent="Sprite2D/ShootPoint" instance=ExtResource("1")]
 unique_name_in_owner = true
-position = Vector2( 200, -4 )
 z_index = -1
+position = Vector2(200, -4)
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource( 2 )
+stream = ExtResource("2")
 pitch_scale = 0.7
 max_distance = 500.0
 attenuation = 2.0
-bus = "SFX"

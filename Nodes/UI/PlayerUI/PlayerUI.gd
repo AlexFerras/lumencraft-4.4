@@ -50,7 +50,7 @@ func _ready() -> void:
 		inventory.raise()
 	
 	for slot in inventory.get_children():
-		slot.can_drag = funcref(self, "can_drag")
+		slot.can_drag = Callable(self, "can_drag")
 		slot.connect("clicked", Callable(self, "on_slot_clicked").bind(slot))
 		slot.connect("right_clicked", Callable(self, "on_slot_right_clicked").bind(slot))
 		slot.connect("swap", Callable(self, "swap_slots").bind(slot))
@@ -461,7 +461,7 @@ func play_use_orb(slot):
 	sprite.hframes = 8
 	
 	var tween := create_tween()
-	tween.tween_property(sprite, @"frame", 7, 0.5)
+	tween.tween_property(sprite, "frame", 7, 0.5)
 	tween.tween_interval(0.5 / 7)
 	tween.tween_callback(Callable(sprite, "queue_free"))
 

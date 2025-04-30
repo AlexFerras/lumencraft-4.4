@@ -35,7 +35,7 @@ func set_seed(newseed):
 					i.my_seed=last_seed
 
 func show_preview_rect(show_rects):
-	$preview.self_modulate=(Color.cornflower*Color(1.0,1.0,1.0,0.5)) if show_rects else Color.TRANSPARENT
+	$preview.self_modulate=(Color.CORNFLOWER_BLUE*Color(1.0,1.0,1.0,0.5)) if show_rects else Color.TRANSPARENT
 
 func set_size(s: Vector2):
 	size = s
@@ -46,7 +46,7 @@ func set_size(s: Vector2):
 	$preview.scale = size
 
 func rect_placed_randomizer():
-	var texture_rect = get_node_or_null(@"preview/TextureRect")
+	var texture_rect = get_node_or_null("preview/TextureRect")
 	if texture_rect:
 		texture_rect.size = size
 		texture_rect.scale = Vector2.ONE / size

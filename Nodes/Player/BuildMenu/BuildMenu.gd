@@ -244,7 +244,7 @@ func is_building_available(building: Dictionary) -> bool:
 		for req in building.requirements:
 			if not BaseBuilding.is_requirement_met(req):
 				if req == "turret:":
-					SteamAPI.unlock_achievement("MORE_PYLONS")
+					SteamAPI2.unlock_achievement("MORE_PYLONS")
 				return false
 	return true
 
@@ -268,7 +268,7 @@ class BuildCategory:
 		elements.append(item)
 		
 		var i = Sprite2D.new()
-		build_menu.add_pending_icon("res://Nodes/Buildings/Icons/BuildMenu".plus_file(item.entry.name) + ".png", i, "texture")
+		build_menu.add_pending_icon("res://Nodes/Buildings/Icons/BuildMenu".path_join(item.entry.name) + ".png", i, "texture")
 		i.scale = Vector2.ONE * 0.5
 		i.material = preload("res://Resources/Anarchy/Scenes/UIElements/pie_shader.tres")
 		item.icon = i
@@ -286,7 +286,7 @@ class BuildCategory:
 		return cat
 	
 	static func get_scale_for_size(size: Vector2) -> Vector2:
-		var size2 := max(size.x, size.y)
+		var size2 :float= max(size.x, size.y)
 		return Vector2.ONE * (120.0 / size2)
 
 func focus_changed(control):

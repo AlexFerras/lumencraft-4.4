@@ -41,7 +41,7 @@ func get_additional_config(editor, condition_action: String) -> Control:
 		object_list.add_item("Explosive Barrel")
 		object_list.add_item("Boulder")
 		object_list.add_item("Lumen Chunk")
-		editor.register_data("filter", funcref(self, "set_selected"), funcref(self, "get_selected"))
+		editor.register_data("filter", Callable(self, "set_selected"), Callable(self, "get_selected"))
 		
 		return vb
 	

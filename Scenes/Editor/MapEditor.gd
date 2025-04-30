@@ -119,9 +119,8 @@ var map_validated: bool
 
 func _init() -> void:
 	Utils.editor = self
-	
-	var file := File.new()
-	if Utils.safe_open(file, "user://editor_settings.txt", File.READ):
+	var file = Utils.safe_open(Utils.FILE, "user://editor_settings.txt", FileAccess.READ)
+	if file:
 		user_settings = str_to_var(file.get_as_text())
 
 func _enter_tree() -> void:
@@ -316,7 +315,8 @@ func _ready() -> void:
 	set_main_panel("Placeholder")
 	
 	if Utils.has_meta("editor_debug"):
-		load_dialog.mode = FileDialog.FILE_MODE_OPEN_FILE
+		# TODO
+		#load_dialog.mode = FileDialog.FILE_MODE_OPEN_FILE
 		on_file_selected(Utils.get_meta("editor_debug"))
 	
 	$"%SubViewportContainer".call_deferred("grab_focus")
@@ -408,7 +408,7 @@ func validate_map(strict: bool) -> bool:
 		errors.append(tr(current_error))
 	
 	if not errors.is_empty():
-		"\n".join(display_error(errors))
+		"\n".join(display_error(errors[0]))
 		return false
 	
 	return true
@@ -580,7 +580,7 @@ func on_accept_create():
 		await generated_terrain.bake_finished
 		
 		var source: Image = generated_terrain.final_image
-		var target := pixelmap.get_texture().get_data()
+		var target := pixelmap.get_texture().get_image()
 		
 		await get_tree().idle_frame
 		
@@ -637,7 +637,8 @@ func on_load_map() -> void:
 		load_dialog.current_dir = "res://Maps"
 	else:
 		load_dialog.current_dir = ProjectSettings.globalize_path("user://Maps")
-	load_dialog.mode = FileDialog.FILE_MODE_OPEN_FILE
+	# TODO
+	#load_dialog.mode = FileDialog.FILE_MODE_OPEN_FILE
 	load_dialog.popup_centered()
 
 func on_save() -> void:
@@ -646,7 +647,8 @@ func on_save() -> void:
 		load_dialog.current_dir = "res://Maps"
 	else:
 		load_dialog.current_dir = ProjectSettings.globalize_path("user://Maps")
-	load_dialog.mode = FileDialog.FILE_MODE_SAVE_FILE
+		# TODO
+	#load_dialog.mode = FileDialog.FILE_MODE_SAVE_FILE
 	load_dialog.current_file = map_path.get_file()
 	load_dialog.popup_centered()
 
@@ -795,8 +797,9 @@ func save_map(path: String):
 		map_file.objects.append(object)
 	
 	map_file.darkness_color = darkness_color.color
-	map_file.enable_fog = enable_fog.pressed
-	map_file.buildings_drop_resources = enable_salvage.pressed
+	# TODO
+	#map_file.enable_fog = enable_fog.pressed
+	#map_file.buildings_drop_resources = enable_salvage.pressed
 	map_file.extra_turret_limit = extra_turret_limit.value
 	map_file.resource_rate = resource_rate.value
 	map_file.objective_data = objective_settings.get_data()
@@ -1334,7 +1337,8 @@ func _input(event: InputEvent) -> void:
 			return
 		
 		if event.keycode == KEY_F4 and event.shift:
-			load_dialog.mode = FileDialog.FILE_MODE_OPEN_FILE
+			# TODO
+			#load_dialog.mode = FileDialog.FILE_MODE_OPEN_FILE
 			on_file_selected("user://temp.lcmap")
 			set_meta("debug", true)
 		if event.keycode == KEY_F5:
@@ -1718,7 +1722,7 @@ func set_camera_position(position: Vector2):
 	camera.position = camera.get_camera_screen_center()
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_QUIT_REQUEST:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if pixelmap.visible and unsaved and quitting == NONE:
 			confirm_quit(EXIT)
 		else:
@@ -1896,6 +1900,5 @@ func save_presets() -> void:
 	save_user_settings()
 	
 func save_user_settings():
-	var file := File.new()
-	file.open("user://editor_settings.txt", File.WRITE)
+	var file =  FileAccess.open("user://editor_settings.txt", FileAccess.WRITE)
 	file.store_string(var_to_str(user_settings))

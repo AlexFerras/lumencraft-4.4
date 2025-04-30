@@ -192,7 +192,7 @@ func next_item():
 	elif current_make_item.custom:
 		finished_pickup = current_make_item.custom.instantiate()
 	else:
-		finished_pickup = Pickup.instantiate(current_make_item.item)
+		finished_pickup = Pickup.instance(current_make_item.item)
 		finished_pickup.data = current_make_item.data
 		finished_pickup.amount = current_make_item.amount
 	
@@ -223,7 +223,7 @@ func finish_make():
 		conveyor_pickups[last_pickup_id] = finished_pickup
 		if finished_pickup is RigidBody2D:
 			finished_pickup.mode = RigidBody2D.FREEZE_MODE_STATIC
-		SteamAPI.increment_stat("FabricatedItems")
+		SteamAPI2.increment_stat("FabricatedItems")
 	elif finished_item:
 		Save.set_unlocked_tech(str(finished_item.upgrade.item, finished_item.upgrade.upgrade), finished_item.upgrade.level)
 		if finished_item.upgrade.item == Const.ItemIDs.DRILL:
@@ -269,10 +269,10 @@ func remove_pickup(id: int):
 	
 	var pickup: Node2D = conveyor_pickups[id]
 	if pickup is Pickup:
-		pickup.mode = RigidBody2D.MODE_CHARACTER
+		pickup.lock_rotation = true
 		pickup.linear_velocity = get_pickup_flow_direction() * 20
 	elif pickup is RigidBody2D:
-		pickup.mode = RigidBody2D.MODE_CHARACTER
+		pickup.lock_rotation = true
 		pickup.linear_velocity = get_pickup_flow_direction() * 20
 	
 	conveyor_pickups.erase(id)
@@ -347,7 +347,7 @@ func _get_save_data() -> Dictionary:
 	
 	data.make_queue = dict_queue
 	
-	return Utils.merge_dicts(._get_save_data(), data)
+	return Utils.merge_dicts(super._get_save_data(), data)
 
 func _set_save_data(data: Dictionary):
 	super._set_save_data(data)

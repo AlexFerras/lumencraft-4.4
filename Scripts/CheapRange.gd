@@ -6,7 +6,7 @@ var active: bool: set = set_active
 
 func set_active(a):
 	active = a
-	update()
+	queue_redraw()
 
 func _ready() -> void:
 	z_index = ZIndexer.Indexes.FLOOR + 1

@@ -93,7 +93,7 @@ func set_seed(newseed):
 				min_wave_spawn_area_radius = max(min_wave_spawn_area_radius - 1, 20)
 				set_min_wave_spawn_area_radius(min_wave_spawn_area_radius)
 	
-	update()
+	queue_redraw()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _draw():
@@ -108,5 +108,5 @@ func map_size_changed(new_size):
 	if Engine.is_editor_hint():
 		set_seed(my_seed)
 	
-	update()
+	queue_redraw()
 	print("size_poszedl")

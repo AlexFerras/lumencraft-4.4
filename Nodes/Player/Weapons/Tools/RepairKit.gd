@@ -97,8 +97,8 @@ func _physics_process(delta):
 		repair_radius= min(max_repair_radius,repair_radius+0.5)
 		particles.emitting=true
 		repair_sound.volume_db=linear_to_db(clamp(db_to_linear(repair_sound.volume_db)+0.2,0,3.0))
-
-		(particles.process_material as ParticleProcessMaterial).initial_velocity=125+2.0*player.linear_velocity.dot(Vector2.RIGHT.rotated(player.get_shoot_rotation()))
+		# RECHECK
+		(particles.process_material as ParticleProcessMaterial).initial_velocity.x=125+2.0*player.linear_velocity.dot(Vector2.RIGHT.rotated(player.get_shoot_rotation()))
 
 		for building in get_tree().get_nodes_in_group("repair_my_pixels"):
 			repair_cost+=building.repair_pixels(repair_point.global_position,repair_radius)*0.002*repair_cost_mul

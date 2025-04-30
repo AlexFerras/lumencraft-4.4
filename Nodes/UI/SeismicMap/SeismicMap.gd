@@ -31,13 +31,15 @@ func _ready():
 	sprite1.material.set_shader_parameter("resolution_inverse", Vector2.ONE/size)
 
 	sprite1.texture = viewport_2.get_texture()
-	viewport_2.get_texture().flags = Texture2D.FLAG_FILTER
+	# TODO
+	#viewport_2.get_texture().flags = Texture2D.FLAG_FILTER
 	
 	sprite2.material.set_shader_parameter("resolution", size)
 	sprite2.material.set_shader_parameter("resolution_inverse", Vector2.ONE/size)
 
 	sprite2.texture = viewport_1.get_texture()
-	viewport_1.get_texture().flags = Texture2D.FLAG_FILTER
+	# TODO RECHECK
+	#viewport_1.get_texture().flags = Texture2D.FLAG_FILTER
 	
 	indicator_array.resize(indicator_array_max_size)
 	if Utils.game.map:

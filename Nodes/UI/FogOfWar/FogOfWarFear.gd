@@ -9,7 +9,8 @@ func _ready():
 
 func parent_ready():
 	fear.texture = fear_viewport_handle.get_texture()
-	fear.texture.flags = Texture2D.FLAG_FILTER
+	# TODO RECHECK
+	#fear.texture.flags = Texture2D.FLAG_FILTER
 	darkness.texture = Utils.game.map.darkness.light_viewport.get_texture()
 	Utils.game.map.darkness.connect("viewports_resized", Callable(self, "update_darkness"))
 	sprite.visible = false

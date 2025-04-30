@@ -35,7 +35,7 @@ func _ready() -> void:
 		$MobileControls.hide()
 	
 	if Music.is_switch_build():
-		$MinimapToggle.set_joypad(JOY_BUTTON_9, -1)
+		$MinimapToggle.set_joypad(JOY_BUTTON_LEFT_SHOULDER, -1)
 		minimap_panel.hide()
 	else:
 		minimap_panel.show()
@@ -123,10 +123,10 @@ func _physics_process(delta: float) -> void:
 	if joypads_only and Input.is_action_just_pressed("p2_menu"):
 		menu.toggle(false)
 
-func evil_notify(text: String, time := 4.5, color := Const.UI_MAIN_COLOR):
+func evil_notify(text: String, time := 4.5, color :Color= Const.UI_MAIN_COLOR):
 	notify(text, time, color, true)
 
-func notify(text: String, time := 4.5, color := Const.UI_MAIN_COLOR, evil := false):
+func notify(text: String, time := 4.5, color :Color= Const.UI_MAIN_COLOR, evil := false):
 	if evil:
 		Utils.play_sample(preload("res://SFX/Misc/EvilNotification.wav"))
 	else:
@@ -276,7 +276,7 @@ func show_result(win: bool):
 		control.hide()
 	
 	if win:
-		SteamAPI.achievements.end_map()
+		SteamAPI2.achievements.end_map()
 	
 	var result := preload("res://Nodes/UI/Result.tscn").instantiate()
 	result.win = win

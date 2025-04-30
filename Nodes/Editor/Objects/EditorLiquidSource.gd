@@ -1,7 +1,7 @@
 @tool
 extends EditorObject
 
-const WATER_COLOR = Color.cornflower
+const WATER_COLOR = Color.CORNFLOWER_BLUE
 const LAVA_COLOR = Color.ORANGE_RED
 
 @export var color: Color
@@ -27,7 +27,7 @@ func set_icon(i: Sprite2D):
 			icon.texture = load("res://Nodes/Editor/Icons/LavaSource.png")
 
 func _refresh():
-	update()
+	queue_redraw()
 
 func _configure(editor):
 	create_checkbox(editor, "Is Flowing?", "flowing")

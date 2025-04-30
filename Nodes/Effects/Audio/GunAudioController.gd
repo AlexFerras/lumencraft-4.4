@@ -27,10 +27,9 @@ func update_shot_set():
 	first_shot = load(shot_path + "00_first_01.wav")
 	tail = load(shot_path + "00_tail_only_01.wav")
 	
-	var shot_tester := File.new()
 	for i in 1000:
 		var path := str(shot_path, str(i +1).pad_zeros(2), ".wav")
-		if shot_tester.file_exists(path + ".import"):
+		if FileAccess.file_exists(path + ".import"):
 			shots.append(load(path))
 		else:
 			break

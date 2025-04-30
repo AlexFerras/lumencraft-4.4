@@ -790,8 +790,8 @@ func _debug_enable():
 		debug_label.position = Vector2(-33, -14)
 		debug_label.size  = Vector2(132, 14)
 		debug_label.scale = Vector2(0.2, 0.2)
-		debug_label.align  = Label.ALIGNMENT_CENTER
-		debug_label.valign = Label.VALIGN_CENTER
+		#debug_label.align  = Label.ALIGNMENT_CENTER
+		#debug_label.valign = Label.VALIGN_CENTER
 		add_child(debug_label)
 		set_meta("debug_label", debug_label)
 	get_meta("debug_label").show() 

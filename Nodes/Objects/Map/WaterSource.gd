@@ -132,13 +132,13 @@ func update_fluid(update_pixelmap := true) -> FluidSourceParams:
 func _get_property_list() -> Array:
 	return [{name = "source_id", type = TYPE_INT, usage = PROPERTY_USAGE_STORAGE}]
 
-func _set(property: String, value):
+func _set(property: StringName, value):
 	if property == "source_id":
 		fluid_source_id = value
 		return true
 	return false
 
-func _get(property: String):
+func _get(property: StringName):
 	if property == "source_id":
 		return fluid_source_id
 	return null

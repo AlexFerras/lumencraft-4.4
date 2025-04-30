@@ -22,6 +22,7 @@ func get_falloff_damage():
 	
 
 func _ready() -> void:
+	#await get_tree().create_timer(5).timeout
 	Utils.play_sample(Utils.random_sound("res://SFX/Explosion/explosion_small"), self, false, 1.0, pitch)
 	if dmg==-1:
 		dmg = 120 * scale.x

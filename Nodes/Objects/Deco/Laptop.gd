@@ -1,6 +1,6 @@
 extends GenericInteractable
 
-@export var message # (String, MULTILINE)
+@export_multiline var message:String # (String, MULTILINE)
 @export var destructible: bool
 
 @onready var animator := $AnimationPlayer as AnimationPlayer
@@ -112,7 +112,7 @@ func _set_save_data(data: Dictionary):
 func set_player_overrides(override: bool):
 	if override:
 		for player in players_inside:
-			player.cancel_override = funcref(self, "close_screen")
+			player.cancel_override = Callable(self, "close_screen")
 	else:
 		for player in players_inside:
 			player.cancel_override = null

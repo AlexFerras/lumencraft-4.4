@@ -13,10 +13,10 @@ func _ready() -> void:
 				longest = tr(get_item_text(i)).substr(0, max_length)
 			else:
 				longest = tr(get_item_text(i))
-	
-	custom_minimum_size.x = get_font("font").get_string_size(longest).x
-	custom_minimum_size.x += get_stylebox("normal").get_minimum_size().x
-	custom_minimum_size.x += get_icon("arrow").get_width()
+	# TODO
+	#custom_minimum_size.x = get_font("font").get_string_size(longest).x
+	#custom_minimum_size.x += get_stylebox("normal").get_minimum_size().x
+	#custom_minimum_size.x += get_icon("arrow").get_width()
 	
 	if expand_icon:
 		custom_minimum_size.x += size.y
