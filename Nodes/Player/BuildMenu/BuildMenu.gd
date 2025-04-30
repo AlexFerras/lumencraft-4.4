@@ -244,7 +244,7 @@ func is_building_available(building: Dictionary) -> bool:
 		for req in building.requirements:
 			if not BaseBuilding.is_requirement_met(req):
 				if req == "turret:":
-					SteamAPI2.unlock_achievement("MORE_PYLONS")
+					SteamAPI.unlock_achievement("MORE_PYLONS")
 				return false
 	return true
 

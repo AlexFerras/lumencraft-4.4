@@ -276,7 +276,7 @@ func show_result(win: bool):
 		control.hide()
 	
 	if win:
-		SteamAPI2.achievements.end_map()
+		SteamAPI.achievements.end_map()
 	
 	var result := preload("res://Nodes/UI/Result.tscn").instantiate()
 	result.win = win

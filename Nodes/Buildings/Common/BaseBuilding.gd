@@ -122,13 +122,13 @@ func add_to_tracker():
 
 func build():
 	in_construction = false
-	if SteamAPI2.achievements.last_bulldozered == name:
-		SteamAPI2.unlock_achievement("HOME_MAKEOVER")
-	SteamAPI2.achievements.last_bulldozered = ""
+	if SteamAPI.achievements.last_bulldozered == name:
+		SteamAPI.unlock_achievement("HOME_MAKEOVER")
+	SteamAPI.achievements.last_bulldozered = ""
 	
 	if not get_tree().paused: # Nie pokazuj podczas wczytywania mapy
 		Utils.log_message("Building constructed: %s" % building_data.name)
-		SteamAPI2.increment_stat("BuildingsBuilt")
+		SteamAPI.increment_stat("BuildingsBuilt")
 	
 	if enemy_ignore:
 		max_hp = 99999
@@ -245,7 +245,7 @@ func damage(data: Dictionary):
 			damage = damager.get_falloff_damage()
 			if damager.get_meta("Rocket", false):
 				if hp-damage<=0:
-					SteamAPI2.unlock_achievement("UPS_1")
+					SteamAPI.unlock_achievement("UPS_1")
 	if "fortified" in data:
 		damage = damage * data.fortified
 		if damage==0:
@@ -299,16 +299,16 @@ func refresh_hp(bulldozer := false):
 	
 	if hp <= 0:
 		if bulldozer:
-			#SteamAPI2.achievements.last_bulldozered = name
+			#SteamAPI.achievements.last_bulldozered = name
 			Utils.game.ui.notify("Building demolished")
 		else:
 			Utils.game.ui.evil_notify("Building destroyed")
 		is_destroyed = true
 		destroy()
 		emit_signal("destroyed")
-		SteamAPI2.try_achievement("LOSE_BUILDINGS")
+		SteamAPI.try_achievement("LOSE_BUILDINGS")
 		if just_damaged_by_lava:
-			SteamAPI2.unlock_achievement("LOSE_LAVA")
+			SteamAPI.unlock_achievement("LOSE_LAVA")
 		
 		if Utils.game.sandbox_options.get("salvage_buildings", true):
 			var drop_multiplier = clamp(resource_ratio, 0.5, 0.8)

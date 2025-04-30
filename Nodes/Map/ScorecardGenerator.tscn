@@ -42,8 +42,8 @@ func _ready() -> void:
 			label.text = str(scoreboard[item])
 		$Scoreboard.add_child(label)
 	
-	if SteamAPI2.IS_ONLINE:
-		$Player/PlayerName.text = SteamAPI2.STEAM_NAME
+	if SteamAPI.IS_ONLINE:
+		$Player/PlayerName.text = SteamAPI.STEAM_NAME
 		#SteamAPI.singleton.connect(\"avatar_loaded\", Callable(self, \"on_avatar_loaded\"))
 		#SteamAPI.get_avatar(SteamAPI.STEAM_ID)
 	else:

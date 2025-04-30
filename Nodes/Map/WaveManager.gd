@@ -62,8 +62,8 @@ func next_wave():
 	launch_wave(wave)
 
 func launch_wave(wave: Dictionary):
-	SteamAPI2.satisfy_achievement("WAVE_NO_ACTION")
-	SteamAPI2.try_achievement("WAVE_STAY_IN_BASE")
+	SteamAPI.satisfy_achievement("WAVE_NO_ACTION")
+	SteamAPI.try_achievement("WAVE_STAY_IN_BASE")
 	
 	current_wave_number += 1
 	if current_repeat > 0:
@@ -143,7 +143,7 @@ func show_path_from_all_info_centers(selected_path: int) -> Vector2:
 	
 	if current_note>10:
 		if tim_er<3:
-			SteamAPI2.unlock_achievement("RICK_ROLL")
+			SteamAPI.unlock_achievement("RICK_ROLL")
 			tim_er=0
 		else:
 			current_note=0
@@ -317,7 +317,7 @@ func process(delta: float):
 			Utils.notify_event("wave_defeated", wave_notify)
 			
 			Utils.log_message("Wave defeated")
-			SteamAPI2.try_achievement("WAVE_NO_ACTION")
+			SteamAPI.try_achievement("WAVE_NO_ACTION")
 			
 			
 			if spawner_markers_visible:
@@ -345,7 +345,7 @@ func process(delta: float):
 			free_save()
 			started_spawning = false
 			emit_signal("spawn_fininished") ## czemu to się wysyła zaraz po wczytaniu ???
-			SteamAPI2.satisfy_achievement("WAVE_STAY_IN_BASE")
+			SteamAPI.satisfy_achievement("WAVE_STAY_IN_BASE")
 			
 	prev_living = living
 	if wave_to_launch.is_empty():

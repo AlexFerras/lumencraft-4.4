@@ -270,10 +270,10 @@ func _exit_tree():
 			break
 
 	if cleared:
-		SteamAPI2.unlock_achievement("RIP")
+		SteamAPI.unlock_achievement("RIP")
 	
-	if SteamAPI2.singleton:
-		SteamAPI2.singleton.storeStats()
+	if SteamAPI.singleton:
+		SteamAPI.singleton.storeStats()
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
@@ -343,7 +343,7 @@ func pixels_destroyed(pos: Vector2, mat: int, value: int):
 func test_OCD():
 	if Utils.explosion_accum.has(Const.Materials.LUMEN):
 		if remainig_lumen <= Utils.explosion_accum[Const.Materials.LUMEN]:
-			SteamAPI2.unlock_achievement("OCD") 
+			SteamAPI.unlock_achievement("OCD") 
 
 const LAVA_FX_THRESHOLD = 1
 

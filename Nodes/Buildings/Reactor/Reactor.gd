@@ -158,7 +158,7 @@ func destroy(explode := true):
 	if destructed:
 		return
 	destructed = true
-	SteamAPI2.unlock_achievement("LOSE_1")
+	SteamAPI.unlock_achievement("LOSE_1")
 
 	check_unhandled_exception_achievement()
 	if lumen_slots:
@@ -198,9 +198,9 @@ func check_unhandled_exception_achievement():
 		if units == 1:
 			if nodes.size() > 0:
 				if not (nodes[0].enemy_data.name in Const.BOSS_ENEMIES):
-					SteamAPI2.unlock_achievement("BUG")
+					SteamAPI.unlock_achievement("BUG")
 			else:
-				SteamAPI2.unlock_achievement("BUG")
+				SteamAPI.unlock_achievement("BUG")
 
 func play_explode():
 #	var explosion := Const.EXPLOSION.instance() as Node2D

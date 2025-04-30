@@ -1,72 +1,72 @@
-[gd_scene load_steps=101 format=2]
+[gd_scene load_steps=110 format=3 uid="uid://m6uvvo1ttget"]
 
-[ext_resource path="res://Resources/Anarchy/Textures/Icons/metal_64x64L.png" type="Texture2D" id=1]
-[ext_resource path="res://Scenes/Game/UI/SeismicMapNew.gd" type="Script" id=2]
-[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=3]
-[ext_resource path="res://Scenes/Game/UI/UI.gd" type="Script" id=4]
-[ext_resource path="res://Nodes/Map/MapMarker/DefaultMarker.png" type="Texture2D" id=5]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=7]
-[ext_resource path="res://Scenes/Game/UI/FullMap.gd" type="Script" id=8]
-[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png" type="Texture2D" id=9]
-[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_icon_playstation_0_75x75.png" type="Texture2D" id=10]
-[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_analog_axis_75x75.png" type="Texture2D" id=11]
-[ext_resource path="res://Resources/Anarchy/Textures/Icons/lumen_64x64L.png" type="Texture2D" id=12]
-[ext_resource path="res://Nodes/UI/SeismicMap/plus_pressed.png" type="Texture2D" id=13]
-[ext_resource path="res://Nodes/UI/SeismicMap/plus.png" type="Texture2D" id=14]
-[ext_resource path="res://Nodes/UI/SeismicMap/minus.png" type="Texture2D" id=15]
-[ext_resource path="res://Nodes/UI/Icons/IconEnemies.png" type="Texture2D" id=16]
-[ext_resource path="res://Scenes/Game/UI/Minimap_viewport_shader.tres" type="Material" id=17]
-[ext_resource path="res://Nodes/UI/Icons/IconObjective.png" type="Texture2D" id=18]
-[ext_resource path="res://Scenes/Game/UI/Minimap_terrain_shader.tres" type="Material" id=19]
-[ext_resource path="res://Nodes/UI/SeismicMap/minus_pressed.png" type="Texture2D" id=20]
-[ext_resource path="res://Nodes/UI/Icons/IconAutosave.png" type="Texture2D" id=21]
-[ext_resource path="res://Nodes/Player/LastDeathMarker.png" type="Texture2D" id=22]
-[ext_resource path="res://Nodes/Buildings/Turret/IconTurret.png" type="Texture2D" id=23]
-[ext_resource path="res://Resources/Materials/FogOfWar_minimap_clean.material" type="Material" id=24]
-[ext_resource path="res://Scenes/Game/UI/Minimap.gd" type="Script" id=25]
-[ext_resource path="res://Nodes/Map/MapMarker/WaveEnemyMarker.png" type="Texture2D" id=26]
-[ext_resource path="res://Resources/Fonts/Fent120.tres" type="FontFile" id=27]
-[ext_resource path="res://Nodes/Map/MapMarker/skull_marker.png" type="Texture2D" id=28]
-[ext_resource path="res://Nodes/Map/MapMarker/QuestionMark.png" type="Texture2D" id=29]
-[ext_resource path="res://Scenes/Game/UI/VisibilityRect.gd" type="Script" id=30]
-[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" type="Texture2D" id=31]
-[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" type="Texture2D" id=32]
-[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" type="Texture2D" id=33]
-[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" type="Texture2D" id=34]
-[ext_resource path="res://Nodes/UI/Mobile/Shoot.png" type="Texture2D" id=35]
-[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=36]
-[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=37]
-[ext_resource path="res://Resources/Anarchy/Scripts/tooltip.gd" type="Script" id=38]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/map_tech_window.tscn" type="PackedScene" id=39]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Controls/Gamepad/tooltip_gamepad_icon.tscn" type="PackedScene" id=40]
-[ext_resource path="res://Nodes/UI/PlayerUI/PlayerUI.tscn" type="PackedScene" id=41]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/warning_window.tscn" type="PackedScene" id=42]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_center.tscn" type="PackedScene" id=43]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_mini_map.tscn" type="PackedScene" id=44]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_left.tscn" type="PackedScene" id=45]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_center_message.tscn" type="PackedScene" id=46]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_score_coOp_resources.tscn" type="PackedScene" id=47]
-[ext_resource path="res://Nodes/UI/PlayerUI/PlayerUIMirrored.tscn" type="PackedScene" id=48]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Options.tscn" type="PackedScene" id=49]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/player_controls_window.tscn" type="PackedScene" id=50]
-[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bolditalic_minimal.tres" type="FontFile" id=51]
-[ext_resource path="res://Resources/Fonts/Font14Outline.tres" type="FontFile" id=52]
-[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_mainmenu.tres" type="FontFile" id=53]
-[ext_resource path="res://Resources/Fonts/Font80.tres" type="FontFile" id=54]
-[ext_resource path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" type="Script" id=55]
-[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_italic_minimal.tres" type="FontFile" id=56]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/icon_value.tscn" type="PackedScene" id=57]
-[ext_resource path="res://Nodes/UI/Mobile/Analog.png" type="Texture2D" id=58]
-[ext_resource path="res://Nodes/UI/Mobile/Dash.png" type="Texture2D" id=59]
-[ext_resource path="res://Nodes/UI/Mobile/AnalogDirection.png" type="Texture2D" id=60]
-[ext_resource path="res://Nodes/UI/Achievemen't.png" type="Texture2D" id=61]
-[ext_resource path="res://Nodes/UI/Mobile/Interact.png" type="Texture2D" id=62]
-[ext_resource path="res://Nodes/UI/Mobile/Build.png" type="Texture2D" id=63]
-[ext_resource path="res://Nodes/UI/Mobile/Menu.png" type="Texture2D" id=64]
-[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateButton.tscn" type="PackedScene" id=65]
+[ext_resource type="Texture2D" uid="uid://cy2u5luj2amn7" path="res://Resources/Anarchy/Textures/Icons/metal_64x64L.png" id="1"]
+[ext_resource type="Script" uid="uid://dlg28jqn0dlx8" path="res://Scenes/Game/UI/SeismicMapNew.gd" id="2"]
+[ext_resource type="Shader" path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" id="3"]
+[ext_resource type="Script" uid="uid://dyb50hwmocp1v" path="res://Scenes/Game/UI/UI.gd" id="4"]
+[ext_resource type="Texture2D" uid="uid://qckym0k0iotx" path="res://Nodes/Map/MapMarker/DefaultMarker.png" id="5"]
+[ext_resource type="PackedScene" uid="uid://b48kun3l0d4hm" path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" id="6"]
+[ext_resource type="Texture2D" uid="uid://bw00xaik2yt8n" path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" id="7"]
+[ext_resource type="Script" uid="uid://svgfjdjdbmkg" path="res://Scenes/Game/UI/FullMap.gd" id="8"]
+[ext_resource type="Texture2D" uid="uid://cfpviffq1unat" path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://dccuto874f61b" path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_icon_playstation_0_75x75.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://cmufc1jr6yfye" path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_analog_axis_75x75.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://4yfw4gbfn2wi" path="res://Resources/Anarchy/Textures/Icons/lumen_64x64L.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://cixf6sqe6lky4" path="res://Nodes/UI/SeismicMap/plus_pressed.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://fatuwrrjfd0j" path="res://Nodes/UI/SeismicMap/plus.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://1u3rc5j0cgen" path="res://Nodes/UI/SeismicMap/minus.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://cl6kibiw1jofy" path="res://Nodes/UI/Icons/IconEnemies.png" id="16"]
+[ext_resource type="Material" uid="uid://dd4q4wl5fbogd" path="res://Scenes/Game/UI/Minimap_viewport_shader.tres" id="17"]
+[ext_resource type="Texture2D" uid="uid://bgjvln1hirui8" path="res://Nodes/UI/Icons/IconObjective.png" id="18"]
+[ext_resource type="Material" uid="uid://cyxgomprhyy0m" path="res://Scenes/Game/UI/Minimap_terrain_shader.tres" id="19"]
+[ext_resource type="Texture2D" uid="uid://d3olakndwyj6q" path="res://Nodes/UI/SeismicMap/minus_pressed.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://3pekgk13k2r1" path="res://Nodes/UI/Icons/IconAutosave.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://drehfcyj35krj" path="res://Nodes/Player/LastDeathMarker.png" id="22"]
+[ext_resource type="Texture2D" uid="uid://dep3546hb4brm" path="res://Nodes/Buildings/Turret/IconTurret.png" id="23"]
+[ext_resource type="Material" path="res://Resources/Materials/FogOfWar_minimap_clean.material" id="24"]
+[ext_resource type="Script" uid="uid://bwejdyqm1o58i" path="res://Scenes/Game/UI/Minimap.gd" id="25"]
+[ext_resource type="Texture2D" uid="uid://dt8m1dld23aa3" path="res://Nodes/Map/MapMarker/WaveEnemyMarker.png" id="26"]
+[ext_resource type="FontFile" path="res://Resources/Fonts/Fent120.tres" id="27"]
+[ext_resource type="Texture2D" uid="uid://bpq3qq4sapiup" path="res://Nodes/Map/MapMarker/skull_marker.png" id="28"]
+[ext_resource type="Texture2D" uid="uid://b073uk6ye8ex8" path="res://Nodes/Map/MapMarker/QuestionMark.png" id="29"]
+[ext_resource type="Script" uid="uid://dou7py24um8aa" path="res://Scenes/Game/UI/VisibilityRect.gd" id="30"]
+[ext_resource type="Texture2D" uid="uid://fsdx48ofm8nv" path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" id="31"]
+[ext_resource type="Texture2D" uid="uid://dh7fqkw8h70y1" path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" id="32"]
+[ext_resource type="Texture2D" uid="uid://gi4tks1ia8u5" path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" id="33"]
+[ext_resource type="Texture2D" uid="uid://o81vqdpy3ram" path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" id="34"]
+[ext_resource type="Texture2D" uid="uid://oegyc18deihy" path="res://Nodes/UI/Mobile/Shoot.png" id="35"]
+[ext_resource type="FontFile" uid="uid://dl2s2xsnt11bf" path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" id="36"]
+[ext_resource type="FontFile" path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" id="37"]
+[ext_resource type="Script" uid="uid://dgbmvyf233kbg" path="res://Resources/Anarchy/Scripts/tooltip.gd" id="38"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/map_tech_window.tscn" id="39"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/Controls/Gamepad/tooltip_gamepad_icon.tscn" id="40"]
+[ext_resource type="PackedScene" path="res://Nodes/UI/PlayerUI/PlayerUI.tscn" id="41"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/warning_window.tscn" id="42"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_center.tscn" id="43"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/hud_mini_map.tscn" id="44"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_left.tscn" id="45"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/hud_messages_center_message.tscn" id="46"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/hud_score_coOp_resources.tscn" id="47"]
+[ext_resource type="PackedScene" path="res://Nodes/UI/PlayerUI/PlayerUIMirrored.tscn" id="48"]
+[ext_resource type="PackedScene" uid="uid://w3vgssijvy48" path="res://Resources/Anarchy/Scenes/UIElements/Options.tscn" id="49"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/player_controls_window.tscn" id="50"]
+[ext_resource type="FontFile" path="res://Resources/Anarchy/Fonts/spacemono_bolditalic_minimal.tres" id="51"]
+[ext_resource type="FontFile" path="res://Resources/Fonts/Font14Outline.tres" id="52"]
+[ext_resource type="FontFile" uid="uid://ddn4y4vqf21w1" path="res://Resources/Anarchy/Fonts/spacemono_bold_mainmenu.tres" id="53"]
+[ext_resource type="FontFile" path="res://Resources/Fonts/Font80.tres" id="54"]
+[ext_resource type="Script" uid="uid://dacw5p2hv4jxv" path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" id="55"]
+[ext_resource type="FontFile" path="res://Resources/Anarchy/Fonts/spacemono_italic_minimal.tres" id="56"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/icon_value.tscn" id="57"]
+[ext_resource type="Texture2D" uid="uid://dxun2c0ytum44" path="res://Nodes/UI/Mobile/Analog.png" id="58"]
+[ext_resource type="Texture2D" uid="uid://ct8nr4u7elao0" path="res://Nodes/UI/Mobile/Dash.png" id="59"]
+[ext_resource type="Texture2D" uid="uid://dxceijuwa6kmp" path="res://Nodes/UI/Mobile/AnalogDirection.png" id="60"]
+[ext_resource type="Texture2D" uid="uid://oumksadgquw4" path="res://Nodes/UI/Achievemen't.png" id="61"]
+[ext_resource type="Texture2D" uid="uid://cxpiav3h65xxy" path="res://Nodes/UI/Mobile/Interact.png" id="62"]
+[ext_resource type="Texture2D" uid="uid://cb7j7uh3t8w8s" path="res://Nodes/UI/Mobile/Build.png" id="63"]
+[ext_resource type="Texture2D" uid="uid://dfkc40snglcsa" path="res://Nodes/UI/Mobile/Menu.png" id="64"]
+[ext_resource type="PackedScene" uid="uid://cpyqih63u8tao" path="res://Resources/Anarchy/Scenes/UIElements/UltimateButton.tscn" id="65"]
 
-[sub_resource type="GDScript" id=85]
+[sub_resource type="GDScript" id="85"]
 script/source = "extends Control
 
 @onready var interact: TouchScreenButton = $\"%Interact\"
@@ -86,7 +86,7 @@ func _process(delta: float) -> void:
 	interact.visible = not build.visible
 "
 
-[sub_resource type="GDScript" id=90]
+[sub_resource type="GDScript" id="90"]
 script/source = "extends Control
 
 var index: int = -1
@@ -107,7 +107,7 @@ func _gui_input(event: InputEvent) -> void:
 		Utils.game.main_player.torso.rotation = Utils.game.main_player.get_local_mouse_position().angle()
 "
 
-[sub_resource type="GDScript" id=88]
+[sub_resource type="GDScript" id="88"]
 script/source = "extends Control
 
 func _gui_input(event: InputEvent) -> void:
@@ -118,7 +118,7 @@ func _gui_input(event: InputEvent) -> void:
 			Input.action_release(\"p1_cancel\")
 "
 
-[sub_resource type="GDScript" id=83]
+[sub_resource type="GDScript" id="83"]
 resource_name = "Analog"
 script/source = "extends TouchScreenButton
 
@@ -152,30 +152,33 @@ func _input(event: InputEvent) -> void:
 	
 	if event is InputEventScreenTouch or event is InputEventScreenDrag:
 		var epos := to_local(event.position)
-		if epos.length() <= normal.get_width() * 2:
-			touch_pos = epos
+		# TODO
+		#if epos.length() <= normal.get_width() * 2:
+			#touch_pos = epos
 
 func _process(delta: float) -> void:
-	var center := normal.get_size() * 0.5
-	var radius := normal.get_width() * 0.5
-	var move_vec := (touch_pos - center) / radius
-	move_vec = move_vec.limit_length()
+	pass
+	#TODO
+	#var center := normal.get_size() * 0.5
+	#var radius := normal.get_width() * 0.5
+	#var move_vec := (touch_pos - center) / radius
+	#move_vec = move_vec.limit_length()
+	#
+	#sprite.position = center + move_vec * radius
 	
-	sprite.position = center + move_vec * radius
-	
-	if move_vec.x < 0:
-		press_action(\"p1_left\", \"h\", abs(move_vec.x))
-	elif move_vec.x > 0:
-		press_action(\"p1_right\", \"h\", abs(move_vec.x))
-	else:
-		release_action(\"h\")
-	
-	if move_vec.y < 0:
-		press_action(\"p1_up\", \"v\", abs(move_vec.y))
-	elif move_vec.y > 0:
-		press_action(\"p1_down\", \"v\", abs(move_vec.y))
-	else:
-		release_action(\"v\")
+	#if move_vec.x < 0:
+		#press_action(\"p1_left\", \"h\", abs(move_vec.x))
+	#elif move_vec.x > 0:
+		#press_action(\"p1_right\", \"h\", abs(move_vec.x))
+	#else:
+		#release_action(\"h\")
+	#
+	#if move_vec.y < 0:
+		#press_action(\"p1_up\", \"v\", abs(move_vec.y))
+	#elif move_vec.y > 0:
+		#press_action(\"p1_down\", \"v\", abs(move_vec.y))
+	#else:
+		#release_action(\"v\")
 
 func press_action(action: String, hv: String, strength: float):
 	var action_name := hv + \"action\"
@@ -191,16 +194,16 @@ func release_action(hv: String):
 	set(action_name, \"\")
 "
 
-[sub_resource type="RectangleShape2D" id=86]
-extents = Vector2( 200, 100 )
+[sub_resource type="RectangleShape2D" id="86"]
+size = Vector2(400, 200)
 
-[sub_resource type="RectangleShape2D" id=87]
-extents = Vector2( 180, 180 )
+[sub_resource type="RectangleShape2D" id="87"]
+size = Vector2(360, 360)
 
-[sub_resource type="RectangleShape2D" id=89]
-extents = Vector2( 650, 60 )
+[sub_resource type="RectangleShape2D" id="89"]
+size = Vector2(1300, 120)
 
-[sub_resource type="GDScript" id=15]
+[sub_resource type="GDScript" id="15"]
 script/source = "extends SubViewport
 
 @onready var minimap := $Minimap as TextureRect
@@ -234,10 +237,10 @@ func update_view():
 #	seismic.rect_scale = fog_of_war.scale
 "
 
-[sub_resource type="AtlasTexture" id=9]
+[sub_resource type="AtlasTexture" id="9"]
 resource_local_to_scene = true
 
-[sub_resource type="GDScript" id=21]
+[sub_resource type="GDScript" id="21"]
 resource_name = "Overlay"
 script/source = "extends Control
 
@@ -391,7 +394,7 @@ func _physics_process(delta: float) -> void:
 		player_sprites[i].position = player.global_position * scale
 "
 
-[sub_resource type="GDScript" id=84]
+[sub_resource type="GDScript" id="84"]
 script/source = "extends TextureRect
 
 func _ready() -> void:
@@ -401,238 +404,250 @@ func update_status():
 	visible = SteamAPI.active and not SteamAPI.can_achieve()
 "
 
-[sub_resource type="Animation" id=17]
+[sub_resource type="Animation" id="17"]
 resource_name = "Bars"
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("ColorRect2:offset_top")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 1 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ 0.0, -100.0 ]
+"values": [0.0, -100.0]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("ColorRect:offset_bottom")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 1 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ 0, 100.0 ]
+"values": [0, 100.0]
 }
 
-[sub_resource type="Animation" id=18]
+[sub_resource type="Animation" id="18"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("ColorRect2:offset_bottom")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.0 ]
+"values": [0.0]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("ColorRect2:offset_top")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.0 ]
+"values": [0.0]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("ColorRect:offset_top")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.0 ]
+"values": [0.0]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("ColorRect:offset_bottom")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0 ]
+"values": [0]
 }
 
-[sub_resource type="ShaderMaterial" id=57]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2tb1f"]
+_data = {
+&"Bars": SubResource("17"),
+&"RESET": SubResource("18")
+}
 
-[sub_resource type="Animation" id=59]
+[sub_resource type="ShaderMaterial" id="57"]
+
+[sub_resource type="Animation" id="59"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("WaveNameUpper:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ false ]
+"values": [false]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("WaveNameUpper:percent_visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.0 ]
+"values": [0.0]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("WaveNameUpper:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ) ]
+"values": [Color(0.0499999, 1.2075, 2.61, 1)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("WaveNameLower:visible")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ false ]
+"values": [false]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("WaveNameLower:percent_visible")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.0 ]
+"values": [0.0]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("WaveNameLower:modulate")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ) ]
+"values": [Color(0.0499999, 1.2075, 2.61, 1)]
 }
 
-[sub_resource type="Animation" id=58]
+[sub_resource type="Animation" id="58"]
 resource_name = "ShowWave"
 length = 4.0
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("WaveNameUpper:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 4 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 4),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ true, false ]
+"values": [true, false]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("WaveNameUpper:percent_visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 0.5 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ 0.0, 1.0 ]
+"values": [0.0, 1.0]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("WaveNameUpper:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0, 3.5, 4 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 3.5, 4),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0509804, 1.20784, 2.61176, 0 ) ]
+"values": [Color(0.0499999, 1.2075, 2.61, 1), Color(0.0499999, 1.2075, 2.61, 1), Color(0.0509804, 1.20784, 2.61176, 0)]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("WaveNameLower:visible")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 1, 4 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(1, 4),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [ true, false ]
+"values": [true, false]
 }
 tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("WaveNameLower:percent_visible")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0, 1, 2 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [ 0.0, 0.0, 1.0 ]
+"values": [0.0, 0.0, 1.0]
 }
 tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
 tracks/5/path = NodePath("WaveNameLower:modulate")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
 tracks/5/keys = {
-"times": PackedFloat32Array( 0, 3.5, 4 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 3.5, 4),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [ Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0499999, 1.2075, 2.61, 1 ), Color( 0.0509804, 1.20784, 2.61176, 0 ) ]
+"values": [Color(0.0499999, 1.2075, 2.61, 1), Color(0.0499999, 1.2075, 2.61, 1), Color(0.0509804, 1.20784, 2.61176, 0)]
 }
 
-[sub_resource type="GDScript" id=67]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_accfh"]
+_data = {
+&"RESET": SubResource("59"),
+&"ShowWave": SubResource("58")
+}
+
+[sub_resource type="GDScript" id="67"]
 resource_name = "InfoMenu"
 script/source = "extends CanvasItem
 
@@ -754,13 +769,13 @@ func select_tech():
 		tech_list.get_child(0).grab_focus()
 "
 
-[sub_resource type="StyleBoxFlat" id=73]
-bg_color = Color( 0.188235, 0.188235, 0.188235, 0 )
+[sub_resource type="StyleBoxFlat" id="73"]
+bg_color = Color(0.188235, 0.188235, 0.188235, 0)
 border_width_left = 4
 border_width_right = 4
-border_color = Color( 1, 0.721569, 0, 0 )
+border_color = Color(1, 0.721569, 0, 0)
 
-[sub_resource type="Shader" id=80]
+[sub_resource type="Shader" id="80"]
 code = "shader_type canvas_item;
 
 uniform sampler2D fog_texture;
@@ -774,23 +789,108 @@ void fragment() {
 	COLOR = color;
 }"
 
-[sub_resource type="ShaderMaterial" id=71]
-shader = SubResource( 80 )
-shader_param/hide_fog = false
+[sub_resource type="ShaderMaterial" id="71"]
+shader = SubResource("80")
+shader_parameter/hide_fog = false
 
-[sub_resource type="StyleBoxEmpty" id=69]
+[sub_resource type="StyleBoxEmpty" id="69"]
 
-[sub_resource type="AtlasTexture" id=12]
+[sub_resource type="AtlasTexture" id="12"]
 resource_local_to_scene = true
 
-[sub_resource type="GDScript" id=68]
+[sub_resource type="GDScript" id="68"]
 script/source = "extends \"res://Scenes/Game/UI/Minimap.gd\"
 
 func get_view_scale() -> float:
 	return custom_minimum_size.y / texture.get_height()
 "
 
-[sub_resource type="GDScript" id=74]
+[sub_resource type="Animation" id="6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MarginContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/TabContainer:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/Tooltips:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="7"]
+resource_name = "show"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MarginContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.2, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/TabContainer:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/Tooltips:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5v436"]
+_data = {
+&"RESET": SubResource("6"),
+&"show": SubResource("7")
+}
+
+[sub_resource type="GDScript" id="74"]
 resource_name = "Menu"
 script/source = "extends Control
 
@@ -940,19 +1040,19 @@ func display_objective() -> void:
 	owner.on_screen_message.add_message(Const.CampaignLevels[Save.campaign.current_map].description)
 "
 
-[sub_resource type="StyleBoxFlat" id=81]
+[sub_resource type="StyleBoxFlat" id="81"]
 content_margin_left = 96.0
 content_margin_right = 96.0
-bg_color = Color( 0, 0, 0, 0 )
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color( 0.501961, 0.501961, 0.501961, 1 )
+border_color = Color(0.501961, 0.501961, 0.501961, 1)
 corner_radius_bottom_right = 32
 corner_detail = 1
 
-[sub_resource type="GDScript" id=38]
+[sub_resource type="GDScript" id="38"]
 resource_name = "SaveList"
 script/source = "extends \"res://Resources/Anarchy/Scripts/SaveLoadMenu.gd\"
 
@@ -969,7 +1069,7 @@ func click_slot(slot: String):
 		clicked = slot
 	else:
 		clicked = \"\"
-		back()
+		go_back()
 		owner.menu.toggle(true)
 		Save.save_game(slot)
 		await Save.saved
@@ -988,14 +1088,14 @@ func create_new_slot() -> void:
 			Utils.call_super_deferred(self, \"scroll_to_bottom\")
 			return
 		
-		if DirAccess.new().dir_exists(SAVE_DIRECTORY.plus_file(slot_name.text)):
+		if DirAccess.dir_exists_absolute(SAVE_DIRECTORY.path_join(slot_name.text)):
 			show_error(\"Slot name already exists.\")
 			Utils.call_super_deferred(self, \"scroll_to_bottom\")
 			return
 		
 		slot_name.hide()
 		$\"%NewSlot\".small_text = \"New Slot\"
-		back()
+		go_back()
 		owner.menu.toggle(true)
 		Save.save_game(slot_name.text)
 		await Save.saved
@@ -1009,7 +1109,7 @@ func show_error(error: String):
 	error_label.show()
 	error_label.text = error
 
-func back():
+func go_back():
 	emit_signal(\"back\")
 	error_label.hide()
 
@@ -1026,7 +1126,7 @@ func _notification(what: int) -> void:
 			clicked = \"\"
 "
 
-[sub_resource type="GDScript" id=82]
+[sub_resource type="GDScript" id="82"]
 resource_name = "LoadList"
 script/source = "extends \"res://Resources/Anarchy/Scripts/SaveLoadMenu.gd\"
 
@@ -1044,20 +1144,20 @@ func click_slot(slot: String):
 	Save.load_game(slot)
 	Utils.game.queue_free()
 
-func back():
+func go_back():
 	emit_signal(\"back\")
 
 func scroll_to_bottom():
 	$\"%LoadScroll\".scroll_vertical = 999999999
 "
 
-[sub_resource type="ShaderMaterial" id=2]
-shader = ExtResource( 3 )
-shader_param/cutoff = 0.0
-shader_param/smooth_size = 0.047
-shader_param/mask = ExtResource( 7 )
+[sub_resource type="ShaderMaterial" id="2"]
+shader = ExtResource("3")
+shader_parameter/cutoff = 0.0
+shader_parameter/smooth_size = 0.047
+shader_parameter/mask = ExtResource("7")
 
-[sub_resource type="GDScript" id=44]
+[sub_resource type="GDScript" id="44"]
 resource_name = "Co-op settings"
 script/source = "extends Control
 
@@ -1216,20 +1316,225 @@ func refresh_controllers(du = null, pa = null):
 		player.scheme = min(player.scheme, max_controllers)
 "
 
-[sub_resource type="StyleBoxFlat" id=75]
+[sub_resource type="Animation" id="11"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer/Header/MarginContainer/ValueHeaderTitle:percent_visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/Header:material:shader_param/cutoff")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/PanelContainer:material:shader_param/cutoff")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/Footer:self_modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VBoxContainer/Footer:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VBoxContainer/Header/ButtonExit:self_modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VBoxContainer/Header/ButtonExit/PadHint:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="10"]
+resource_name = "show"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer/Header/MarginContainer/ValueHeaderTitle:percent_visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/Header:material:shader_param/cutoff")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/PanelContainer:material:shader_param/cutoff")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/Footer:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, -90), Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VBoxContainer/Footer:self_modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VBoxContainer/Header/ButtonExit:self_modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VBoxContainer/Header/ButtonExit/PadHint:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_f6k22"]
+_data = {
+&"RESET": SubResource("11"),
+&"show": SubResource("10")
+}
+
+[sub_resource type="StyleBoxFlat" id="75"]
 content_margin_left = 64.0
-content_margin_right = 64.0
 content_margin_top = 64.0
+content_margin_right = 64.0
 content_margin_bottom = 64.0
-bg_color = Color( 0, 0, 0, 0.501961 )
-border_color = Color( 1, 0.721569, 0, 1 )
+bg_color = Color(0, 0, 0, 0.501961)
+border_color = Color(1, 0.721569, 0, 1)
 corner_radius_top_left = 32
 corner_radius_top_right = 32
 corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
 corner_detail = 1
 
-[sub_resource type="GDScript" id=76]
+[sub_resource type="GDScript" id="76"]
 resource_name = "OnScreenMessage"
 script/source = "extends PanelContainer
 
@@ -1297,8 +1602,9 @@ func _physics_process(delta: float) -> void:
 		current_message = \"\"
 		pop_queue()
 	
-	if visible and abs(Input.get_joy_axis(0, JOY_AXIS_3)) > 0.2:
-		rich_text_label.get_v_scroll().value += Input.get_joy_axis(0, JOY_AXIS_3) * 10
+	# TODO
+	#if visible and abs(Input.get_joy_axis(0, JOY_AXIS_3)) > 0.2:
+		#rich_text_label.get_v_scroll().value += Input.get_joy_axis(0, JOY_AXIS_3) * 10
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	if anim_name == \"Appear\":
@@ -1321,90 +1627,97 @@ func has_interacted() -> bool:
 	return false
 "
 
-[sub_resource type="Animation" id=77]
+[sub_resource type="Animation" id="77"]
 resource_name = "Appear"
 length = 0.5
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:size")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.5 ),
-"transitions": PackedFloat32Array( 2, 1 ),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(2, 1),
 "update": 0,
-"values": [ Vector2( 186, 128 ), Vector2( 1258, 866 ) ]
+"values": [Vector2(186, 128), Vector2(1258, 866)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath(".:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 0.5 ),
-"transitions": PackedFloat32Array( 2, 1 ),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(2, 1),
 "update": 0,
-"values": [ Vector2( 1827, 1016 ), Vector2( 1291, 647 ) ]
+"values": [Vector2(1827, 1016), Vector2(1291, 647)]
 }
 
-[sub_resource type="Animation" id=79]
+[sub_resource type="Animation" id="79"]
 resource_name = "Disappear"
 length = 0.5
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:size")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.5 ),
-"transitions": PackedFloat32Array( 0.5, 1 ),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(0.5, 1),
 "update": 0,
-"values": [ Vector2( 1258, 866 ), Vector2( 186, 128 ) ]
+"values": [Vector2(1258, 866), Vector2(186, 128)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath(".:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 0.5 ),
-"transitions": PackedFloat32Array( 0.5, 1 ),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(0.5, 1),
 "update": 0,
-"values": [ Vector2( 1291, 647 ), Vector2( 1827, 1016 ) ]
+"values": [Vector2(1291, 647), Vector2(1827, 1016)]
 }
 
-[sub_resource type="Animation" id=78]
+[sub_resource type="Animation" id="78"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:size")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 186, 128 ) ]
+"values": [Vector2(186, 128)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath(".:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Vector2( 1827, 1016 ) ]
+"values": [Vector2(1827, 1016)]
 }
 
-[sub_resource type="GDScript" id=62]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_88xtf"]
+_data = {
+&"Appear": SubResource("77"),
+&"Disappear": SubResource("79"),
+&"RESET": SubResource("78")
+}
+
+[sub_resource type="GDScript" id="62"]
 resource_name = "ControllerDisconnected"
 script/source = "extends ColorRect
 
@@ -1455,104 +1768,109 @@ func _input(event: InputEvent) -> void:
 [node name="UI" type="CanvasLayer"]
 process_mode = 3
 layer = 11
-script = ExtResource( 4 )
+script = ExtResource("4")
 
 [node name="VisibilityRects" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
 
 [node name="TopPanel" type="ReferenceRect" parent="VisibilityRects"]
+layout_mode = 0
 offset_left = 1360.0
 offset_top = 23.0
 offset_right = 2510.0
 offset_bottom = 448.0
-script = ExtResource( 30 )
+script = ExtResource("30")
 target_control = NodePath("../../TopPanel")
 
 [node name="Player1" type="ReferenceRect" parent="VisibilityRects"]
+layout_mode = 0
 offset_left = 13.0
 offset_top = 23.0
 offset_right = 816.0
 offset_bottom = 452.0
-script = ExtResource( 30 )
+script = ExtResource("30")
 target_control = NodePath("../../Player1")
 
 [node name="Player2" type="ReferenceRect" parent="VisibilityRects"]
+layout_mode = 0
 offset_left = 2991.0
 offset_top = 23.0
 offset_right = 3799.0
 offset_bottom = 452.0
-script = ExtResource( 30 )
+script = ExtResource("30")
 target_control = NodePath("../../Player2")
 
 [node name="InfoLabels" type="ReferenceRect" parent="VisibilityRects"]
+layout_mode = 0
 offset_left = 1186.0
 offset_top = 1729.0
 offset_right = 2644.0
 offset_bottom = 2154.0
-script = ExtResource( 30 )
+script = ExtResource("30")
 target_control = NodePath("../../InfoLabels")
 
 [node name="Notifications" type="ReferenceRect" parent="VisibilityRects"]
+layout_mode = 0
 offset_left = 18.0
 offset_top = 1643.0
 offset_right = 607.0
 offset_bottom = 2154.0
-script = ExtResource( 30 )
+script = ExtResource("30")
 target_control = NodePath("../../NotificationPanel")
 
 [node name="MinimapVisibler" type="ReferenceRect" parent="VisibilityRects"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 3139.0
 offset_top = 8.0
 offset_right = 3830.0
 offset_bottom = 764.0
-script = ExtResource( 30 )
+script = ExtResource("30")
 target_control = NodePath("../../MinimapPanel")
 
 [node name="MinimapVisibler2" type="ReferenceRect" parent="VisibilityRects"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 3039.0
 offset_top = 1475.0
 offset_right = 3830.0
 offset_bottom = 2144.0
-script = ExtResource( 30 )
+script = ExtResource("30")
 target_control = NodePath("../../MinimapPanel")
 
 [node name="MobileControls" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-script = SubResource( 85 )
-__meta__ = {
-"_edit_lock_": true
-}
+script = SubResource("85")
 
 [node name="Shoot" type="Control" parent="MobileControls"]
-modulate = Color( 0, 0.776471, 1, 1 )
+modulate = Color(0, 0.776471, 1, 1)
+anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = SubResource( 90 )
-__meta__ = {
-"_edit_lock_": true
-}
+script = SubResource("90")
 
 [node name="Cancel" type="Control" parent="MobileControls/Shoot"]
-modulate = Color( 0, 0.776471, 1, 1 )
+modulate = Color(0, 0.776471, 1, 1)
+anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 1
-script = SubResource( 88 )
-__meta__ = {
-"_edit_lock_": true
-}
+script = SubResource("88")
 
 [node name="Control2" type="Control" parent="MobileControls"]
+anchors_preset = 0
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 653.0
@@ -1561,26 +1879,28 @@ offset_right = 1099.0
 offset_bottom = -173.0
 
 [node name="Analog" type="TouchScreenButton" parent="MobileControls/Control2"]
-scale = Vector2( 2, 2 )
-normal = ExtResource( 58 )
-script = SubResource( 83 )
+scale = Vector2(2, 2)
+texture_normal = ExtResource("58")
+script = SubResource("83")
 
 [node name="Sprite2D" type="Sprite2D" parent="MobileControls/Control2/Analog"]
 visible = false
-position = Vector2( 112, 111 )
-texture = ExtResource( 60 )
+position = Vector2(112, 111)
+texture = ExtResource("60")
 
 [node name="Control3" type="Control" parent="MobileControls"]
+anchors_preset = 0
 offset_left = 21.0
 offset_top = 105.0
 offset_right = 147.0
 offset_bottom = 231.0
 
 [node name="Inventory" type="TouchScreenButton" parent="MobileControls/Control3"]
-shape = SubResource( 86 )
+shape = SubResource("86")
 action = "p1_inventory"
 
 [node name="Control4" type="Control" parent="MobileControls"]
+anchors_preset = 0
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -584.0
@@ -1589,22 +1909,23 @@ offset_right = -458.0
 offset_bottom = 139.0
 
 [node name="Map" type="TouchScreenButton" parent="MobileControls/Control4"]
-scale = Vector2( 1.575, 1.575 )
-shape = SubResource( 87 )
+scale = Vector2(1.575, 1.575)
+shape = SubResource("87")
 action = "p1_map"
 
 [node name="Menu" type="TouchScreenButton" parent="MobileControls/Control4"]
-position = Vector2( -2809, 2.86102e-06 )
-shape = SubResource( 89 )
+position = Vector2(-2809, 2.86102e-06)
+shape = SubResource("89")
 action = "p1_menu"
 
 [node name="Sprite2D" type="Sprite2D" parent="MobileControls/Control4/Menu"]
-position = Vector2( 1183, 19 )
-scale = Vector2( 0.787501, 0.787501 )
-texture = ExtResource( 64 )
+position = Vector2(1183, 19)
+scale = Vector2(0.787501, 0.787501)
+texture = ExtResource("64")
 centered = false
 
 [node name="Control" type="Control" parent="MobileControls"]
+anchors_preset = 0
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -1615,78 +1936,87 @@ offset_right = -386.0
 offset_bottom = -45.0
 
 [node name="Shoot" type="TouchScreenButton" parent="MobileControls/Control"]
-position = Vector2( -1, 140 )
-scale = Vector2( 3, 3 )
-normal = ExtResource( 35 )
+position = Vector2(-1, 140)
+scale = Vector2(3, 3)
+texture_normal = ExtResource("35")
 action = "p1_shoot"
 
 [node name="Interact" type="TouchScreenButton" parent="MobileControls/Control"]
 unique_name_in_owner = true
-position = Vector2( 296, 307 )
-scale = Vector2( 3, 3 )
-normal = ExtResource( 62 )
+position = Vector2(296, 307)
+scale = Vector2(3, 3)
+texture_normal = ExtResource("62")
 action = "p1_interact"
 
 [node name="Build" type="TouchScreenButton" parent="MobileControls/Control"]
 unique_name_in_owner = true
-position = Vector2( 296, 307 )
-scale = Vector2( 3, 3 )
-normal = ExtResource( 63 )
+position = Vector2(296, 307)
+scale = Vector2(3, 3)
+texture_normal = ExtResource("63")
 action = "p1_build"
 
 [node name="Dash" type="TouchScreenButton" parent="MobileControls/Control"]
-position = Vector2( 388, -1 )
-scale = Vector2( 3, 3 )
-normal = ExtResource( 59 )
+position = Vector2(388, -1)
+scale = Vector2(3, 3)
+texture_normal = ExtResource("59")
 action = "p1_run"
 
-[node name="Player1" parent="." instance=ExtResource( 41 )]
-__meta__ = {
-"_edit_lock_": true
-}
+[node name="Player1" parent="." instance=ExtResource("41")]
+layout_mode = 3
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Player2" parent="." instance=ExtResource( 48 )]
+[node name="Player2" parent="." instance=ExtResource("48")]
 visible = false
+layout_mode = 3
+anchors_preset = 1
 anchor_left = 1.0
 anchor_bottom = 0.0
 offset_left = -230.0
 offset_right = -230.0
-__meta__ = {
-"_edit_lock_": true,
-"_edit_vertical_guides_": [ 214.0 ]
-}
+grow_horizontal = 0
 
-[node name="Player3" parent="." instance=ExtResource( 41 )]
+[node name="Player3" parent="." instance=ExtResource("41")]
 visible = false
+layout_mode = 3
+anchors_preset = 15
 offset_left = 569.0
 offset_top = 128.0
 offset_right = 569.0
 offset_bottom = 128.0
-scale = Vector2( 0.75, 0.75 )
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
 
-[node name="Player4" parent="." instance=ExtResource( 48 )]
+[node name="Player4" parent="." instance=ExtResource("48")]
 visible = false
+layout_mode = 3
+anchors_preset = 1
 anchor_left = 1.0
 anchor_bottom = 0.0
 offset_left = -926.0
 offset_top = 127.0
 offset_right = -926.0
 offset_bottom = 127.0
-scale = Vector2( 0.75, 0.75 )
+grow_horizontal = 0
+scale = Vector2(0.75, 0.75)
 
-[node name="Player5" parent="." instance=ExtResource( 41 )]
+[node name="Player5" parent="." instance=ExtResource("41")]
 visible = false
+layout_mode = 3
+anchors_preset = 15
 offset_left = 1019.0
 offset_top = 409.0
 offset_right = 1019.0
 offset_bottom = 409.0
-scale = Vector2( 0.75, 0.75 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
 
-[node name="MinimapToggle" parent="." instance=ExtResource( 65 )]
+[node name="MinimapToggle" parent="." instance=ExtResource("65")]
 visible = false
+anchors_preset = 1
 anchor_left = 1.0
 anchor_bottom = 0.0
 offset_left = -98.0
@@ -1694,12 +2024,28 @@ offset_top = 23.0
 offset_right = -32.0
 offset_bottom = 98.0
 
-[node name="MinimapPanel" parent="." instance=ExtResource( 44 )]
+[node name="MinimapPanel" parent="." instance=ExtResource("44")]
 unique_name_in_owner = true
+anchors_preset = 1
 offset_bottom = 576.0
 
+[node name="Control" parent="MinimapPanel" index="0"]
+layout_mode = 2
+
+[node name="MiniMapFrames" parent="MinimapPanel/Control" index="0"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 512.0
+offset_bottom = 512.0
+
 [node name="SubViewportContainer" type="SubViewportContainer" parent="MinimapPanel/Control/MiniMapFrames" index="0"]
-material = ExtResource( 17 )
+material = ExtResource("17")
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -1707,288 +2053,515 @@ stretch = true
 stretch_shrink = 2
 
 [node name="SubViewport" type="SubViewport" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer"]
-size = Vector2( 256, 256 )
+disable_3d = true
 transparent_bg = true
 handle_input_locally = false
-disable_3d = true
-usage = 3
-render_target_update_mode = 3
 gui_disable_input = true
-script = SubResource( 15 )
+size = Vector2i(256, 256)
+render_target_update_mode = 4
+script = SubResource("15")
 
 [node name="Minimap" type="TextureRect" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport"]
 unique_name_in_owner = true
-material = ExtResource( 19 )
+material = ExtResource("19")
+clip_contents = true
 offset_right = 256.0
 offset_bottom = 256.0
-clip_contents = true
-texture = SubResource( 9 )
-expand = true
+texture = SubResource("9")
+expand_mode = 1
 stretch_mode = 6
-script = ExtResource( 25 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource("25")
 
 [node name="SeismicMap" type="Node2D" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport/Minimap"]
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="FogOfWar" type="Sprite2D" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport" groups=["fog_of_war"]]
-material = ExtResource( 24 )
-position = Vector2( 1660, 5 )
+material = ExtResource("24")
+position = Vector2(1660, 5)
 centered = false
 
 [node name="Overlay" type="Control" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/SubViewport"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 3
+anchors_preset = 0
 offset_right = 256.0
 offset_bottom = 256.0
-custom_minimum_size = Vector2( 256, 256 )
-script = SubResource( 21 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = SubResource("21")
 
 [node name="Buttons" type="HBoxContainer" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer"]
 visible = false
-anchor_top = 0.0273438
-anchor_right = 0.5
-anchor_bottom = 0.0273438
-offset_left = 19.0
-offset_top = 226.0
-offset_right = 109.0
-offset_bottom = 246.0
+layout_mode = 2
 size_flags_horizontal = 5
 alignment = 1
 
 [node name="Plus" type="TextureButton" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons"]
-offset_right = 20.0
-offset_bottom = 20.0
-custom_minimum_size = Vector2( 20, 20 )
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-texture_normal = ExtResource( 14 )
-texture_pressed = ExtResource( 13 )
-expand = true
+texture_normal = ExtResource("14")
+texture_pressed = ExtResource("13")
 
 [node name="Label" type="Label" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons"]
-offset_left = 24.0
-offset_right = 194.0
-offset_bottom = 20.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
-theme_override_fonts/font = ExtResource( 52 )
+theme_override_fonts/font = ExtResource("52")
 text = "x1"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Minus" type="TextureButton" parent="MinimapPanel/Control/MiniMapFrames/SubViewportContainer/Buttons"]
-offset_left = 198.0
-offset_right = 218.0
-offset_bottom = 20.0
-custom_minimum_size = Vector2( 20, 20 )
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-texture_normal = ExtResource( 15 )
-texture_pressed = ExtResource( 20 )
-expand = true
+texture_normal = ExtResource("15")
+texture_pressed = ExtResource("20")
+
+[node name="TooltipTextYellow" parent="MinimapPanel/Control" index="1"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 0.0
+theme_type_variation = &"TooltipKey"
+
+[node name="MarginContainer" parent="MinimapPanel/Control/TooltipTextYellow" index="0"]
+layout_mode = 2
 
 [node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow/MarginContainer" index="0"]
+layout_mode = 2
 text = "N"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TooltipTextYellow2" parent="MinimapPanel/Control" index="2"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 72.0
+theme_type_variation = &"TooltipKey"
+
+[node name="MarginContainer" parent="MinimapPanel/Control/TooltipTextYellow2" index="0"]
+layout_mode = 2
 
 [node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow2/MarginContainer" index="0"]
+layout_mode = 2
 text = "S"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TooltipTextYellow4" parent="MinimapPanel/Control" index="3"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 58.0
+offset_bottom = 72.0
+theme_type_variation = &"TooltipKey"
+
+[node name="MarginContainer" parent="MinimapPanel/Control/TooltipTextYellow4" index="0"]
+layout_mode = 2
 
 [node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow4/MarginContainer" index="0"]
+layout_mode = 2
 text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TooltipTextYellow3" parent="MinimapPanel/Control" index="4"]
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_type_variation = &"TooltipKey"
+
+[node name="MarginContainer" parent="MinimapPanel/Control/TooltipTextYellow3" index="0"]
+layout_mode = 2
 
 [node name="ValueKey" parent="MinimapPanel/Control/TooltipTextYellow3/MarginContainer" index="0"]
+layout_mode = 2
 text = "W"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="CanAchieve" type="TextureRect" parent="MinimapPanel/Control" index="5"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 440.0
 offset_top = 440.0
 offset_right = 529.0
 offset_bottom = 529.0
-texture = ExtResource( 61 )
-expand = true
+texture = ExtResource("61")
+expand_mode = 1
 stretch_mode = 6
-script = SubResource( 84 )
+script = SubResource("84")
 
-[node name="NotificationPanel" parent="." instance=ExtResource( 45 )]
+[node name="NotificationPanel" parent="." instance=ExtResource("45")]
+anchors_preset = 2
+
+[node name="PanelContainer" parent="NotificationPanel" index="0"]
+layout_mode = 2
+theme_type_variation = &"1000_brown_transp"
+
+[node name="VB" parent="NotificationPanel/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="MarginContainer2" parent="NotificationPanel/PanelContainer/VB" index="0"]
+layout_mode = 2
+
+[node name="NotificationContainer" parent="NotificationPanel/PanelContainer/VB/MarginContainer2" index="0"]
+layout_mode = 2
+
+[node name="Footer" parent="NotificationPanel/PanelContainer/VB" index="1"]
+layout_mode = 2
+theme_type_variation = &"Footer"
 
 [node name="Bars" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
 
 [node name="ColorRect" type="ColorRect" parent="Bars"]
+layout_mode = 0
 anchor_right = 1.0
-color = Color( 0, 0, 0, 1 )
+color = Color(0, 0, 0, 1)
 
 [node name="ColorRect2" type="ColorRect" parent="Bars"]
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_vertical = 0
-color = Color( 0, 0, 0, 1 )
+color = Color(0, 0, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Bars"]
-anims/Bars = SubResource( 17 )
-anims/RESET = SubResource( 18 )
+libraries = {
+&"": SubResource("AnimationLibrary_2tb1f")
+}
 
 [node name="WaveStuff" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="WaveNameUpper" type="Label" parent="WaveStuff"]
 visible = false
-modulate = Color( 0.0499999, 1.2075, 2.61, 1 )
-material = SubResource( 57 )
+modulate = Color(0.0499999, 1.2075, 2.61, 1)
+material = SubResource("57")
+layout_mode = 0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_top = 338.0
 offset_bottom = 458.0
-theme_override_colors/font_color = Color( 0.501961, 0.501961, 0.501961, 1 )
-theme_override_colors/font_outline_color = Color( 1, 1, 1, 1 )
-theme_override_fonts/font = ExtResource( 27 )
+theme_override_colors/font_color = Color(0.501961, 0.501961, 0.501961, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("27")
 text = "Wave 100"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 clip_text = true
-percent_visible = 0.0
 
 [node name="WaveNameLower" type="Label" parent="WaveStuff"]
 visible = false
-modulate = Color( 0.0499999, 1.2075, 2.61, 1 )
-material = SubResource( 57 )
+modulate = Color(0.0499999, 1.2075, 2.61, 1)
+material = SubResource("57")
+layout_mode = 0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_top = 467.0
 offset_bottom = 587.0
-theme_override_colors/font_color = Color( 0.501961, 0.501961, 0.501961, 1 )
-theme_override_colors/font_outline_color = Color( 1, 1, 1, 1 )
-theme_override_fonts/font = ExtResource( 27 )
+theme_override_colors/font_color = Color(0.501961, 0.501961, 0.501961, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("27")
 text = "Blelbeble"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 clip_text = true
-percent_visible = 0.0
 
 [node name="WaveAnimator" type="AnimationPlayer" parent="WaveStuff"]
-anims/RESET = SubResource( 59 )
-anims/ShowWave = SubResource( 58 )
+libraries = {
+&"": SubResource("AnimationLibrary_accfh")
+}
 
-[node name="InfoLabels" parent="." instance=ExtResource( 43 )]
-modulate = Color( 1, 1, 1, 0.878431 )
+[node name="InfoLabels" parent="." instance=ExtResource("43")]
+modulate = Color(1, 1, 1, 0.878431)
+anchors_preset = 12
 anchor_left = 0.0
 anchor_right = 1.0
 offset_left = 0.0
 offset_top = -456.0
 offset_right = 0.0
-theme_override_constants/margin_right = 32
 theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
 
 [node name="PanelContainer" parent="InfoLabels" index="0"]
-offset_left = 1259.0
-offset_top = 16.0
-offset_right = 2581.0
-offset_bottom = 424.0
+layout_mode = 2
+theme_type_variation = &"1100_brown_transp"
 
 [node name="VB" parent="InfoLabels/PanelContainer" index="0"]
-offset_right = 1322.0
-offset_bottom = 408.0
+layout_mode = 2
 
 [node name="MarginContainer2" parent="InfoLabels/PanelContainer/VB" index="0"]
-offset_right = 1322.0
-offset_bottom = 400.0
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_top = 8
+layout_mode = 2
 theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
 [node name="VBoxContainer" parent="InfoLabels/PanelContainer/VB/MarginContainer2" index="0"]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 1314.0
-offset_bottom = 392.0
+layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Autosave" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="0" instance=ExtResource( 46 )]
+[node name="Autosave" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="0" instance=ExtResource("46")]
 unique_name_in_owner = true
-icon = ExtResource( 21 )
-icon_modulate = Color( 0.807843, 1, 0.729412, 1 )
+layout_mode = 2
+icon = ExtResource("21")
+icon_modulate = Color(0.807843, 1, 0.729412, 1)
 
-[node name="SurviveTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="1" instance=ExtResource( 46 )]
+[node name="SurviveTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="1" instance=ExtResource("46")]
 unique_name_in_owner = true
-offset_top = 64.0
-offset_bottom = 128.0
-icon_modulate = Color( 0, 1, 0, 1 )
+layout_mode = 2
+icon_modulate = Color(0, 1, 0, 1)
 text = "Time Left: %02d:%02d"
 
-[node name="FailTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="2" instance=ExtResource( 46 )]
+[node name="FailTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="2" instance=ExtResource("46")]
 unique_name_in_owner = true
-offset_top = 128.0
-offset_bottom = 192.0
-icon_modulate = Color( 1, 0, 0, 1 )
+layout_mode = 2
+icon_modulate = Color(1, 0, 0, 1)
 text = "Time Limit: %02d:%02d"
 
-[node name="WaveCounter" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="3" instance=ExtResource( 46 )]
+[node name="WaveCounter" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="3" instance=ExtResource("46")]
 unique_name_in_owner = true
-offset_top = 192.0
-offset_bottom = 256.0
-icon = ExtResource( 16 )
-icon_modulate = Color( 1, 0, 0, 1 )
+layout_mode = 2
+icon = ExtResource("16")
+icon_modulate = Color(1, 0, 0, 1)
 text = "Wave %s / %s - Enemies remaining %s"
 
-[node name="WaveTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="4" instance=ExtResource( 46 )]
+[node name="WaveTimer" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="4" instance=ExtResource("46")]
 unique_name_in_owner = true
-offset_top = 256.0
-offset_bottom = 320.0
-icon_modulate = Color( 1, 0.721569, 0, 1 )
+layout_mode = 2
+icon_modulate = Color(1, 0.721569, 0, 1)
 text = "Wave %s in %02d:%02d"
 
-[node name="Objective" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="5" instance=ExtResource( 46 )]
+[node name="Objective" parent="InfoLabels/PanelContainer/VB/MarginContainer2/VBoxContainer" index="5" instance=ExtResource("46")]
 unique_name_in_owner = true
-offset_top = 320.0
-offset_bottom = 384.0
-icon = ExtResource( 18 )
+layout_mode = 2
+icon = ExtResource("18")
 
 [node name="Footer" parent="InfoLabels/PanelContainer/VB" index="1"]
-offset_top = 404.0
-offset_right = 1322.0
-offset_bottom = 408.0
+layout_mode = 2
+theme_type_variation = &"Footer"
 
-[node name="TopPanel" parent="." instance=ExtResource( 47 )]
+[node name="TopPanel" parent="." instance=ExtResource("47")]
+anchors_preset = 5
 offset_bottom = 424.0
 
 [node name="VBoxContainer" parent="TopPanel" index="0"]
-offset_bottom = 424.0
+layout_mode = 2
 alignment = 0
 
+[node name="PlayerScore" parent="TopPanel/VBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="Icon" parent="TopPanel/VBoxContainer/PlayerScore" index="0"]
+layout_mode = 2
+
+[node name="TextureRect" parent="TopPanel/VBoxContainer/PlayerScore/Icon" index="0"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 64.0
+offset_bottom = 64.0
+
+[node name="PanelContainer" parent="TopPanel/VBoxContainer/PlayerScore" index="1"]
+layout_mode = 2
+theme_type_variation = &"0000_brown_transp"
+
+[node name="MarginContainer" parent="TopPanel/VBoxContainer/PlayerScore/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="ScoreValue" parent="TopPanel/VBoxContainer/PlayerScore/PanelContainer/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="ResourcesPanel" parent="TopPanel/VBoxContainer" index="1"]
+layout_mode = 2
+theme_type_variation = &"1111_brown_yellow_border"
+
+[node name="MarginContainer2" parent="TopPanel/VBoxContainer/ResourcesPanel" index="0"]
+layout_mode = 2
+
+[node name="HBoxContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2" index="0"]
+layout_mode = 2
+
+[node name="ColorRect" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer" index="0"]
+layout_mode = 2
+theme_type_variation = &"1111_yellow"
+
+[node name="TextureRect" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/ColorRect" index="0"]
+layout_mode = 2
+expand_mode = 1
+
+[node name="VBoxContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="HBoxContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="GlobalLumen" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer" index="0"]
+layout_mode = 2
+
 [node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen" index="0"]
-self_modulate = Color( 0.819608, 0.109804, 0.427451, 1 )
+self_modulate = Color(0.819608, 0.109804, 0.427451, 1)
+layout_mode = 2
 
 [node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen/Icon" index="0"]
-texture = ExtResource( 12 )
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 64.0
+offset_bottom = 64.0
+texture = ExtResource("12")
+expand_mode = 1
+
+[node name="PanelContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen" index="1"]
+layout_mode = 2
+theme_type_variation = &"0000_brown_transp"
+
+[node name="MarginContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="Value" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen/PanelContainer/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="GlobalMetal" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer" index="1"]
+layout_mode = 2
 
 [node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal" index="0"]
-self_modulate = Color( 0.337255, 0.262745, 0.188235, 1 )
+self_modulate = Color(0.337255, 0.262745, 0.188235, 1)
+layout_mode = 2
 
 [node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal/Icon" index="0"]
-texture = ExtResource( 1 )
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 64.0
+offset_bottom = 64.0
+texture = ExtResource("1")
+expand_mode = 1
 
-[node name="Towers" parent="." instance=ExtResource( 57 )]
+[node name="PanelContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal" index="1"]
+layout_mode = 2
+theme_type_variation = &"0000_brown_transp"
+
+[node name="MarginContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="Value" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal/PanelContainer/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="HBoxContainer2" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="IconValue" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2" index="0"]
+layout_mode = 2
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue" index="0"]
+layout_mode = 2
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue/Icon" index="0"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 64.0
+offset_bottom = 64.0
+expand_mode = 1
+
+[node name="PanelContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue" index="1"]
+layout_mode = 2
+theme_type_variation = &"0000_brown_transp"
+
+[node name="MarginContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="Value" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue/PanelContainer/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="IconValue2" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2" index="1"]
+layout_mode = 2
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2" index="0"]
+layout_mode = 2
+
+[node name="Icon" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2/Icon" index="0"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 64.0
+offset_bottom = 64.0
+expand_mode = 1
+
+[node name="PanelContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2" index="1"]
+layout_mode = 2
+theme_type_variation = &"0000_brown_transp"
+
+[node name="MarginContainer" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="Value" parent="TopPanel/VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2/PanelContainer/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="Towers" parent="." instance=ExtResource("57")]
 unique_name_in_owner = true
 offset_left = 1371.0
 offset_top = 32.0
@@ -1996,90 +2569,132 @@ offset_right = 1606.0
 offset_bottom = 96.0
 
 [node name="Icon" parent="Towers" index="0"]
-self_modulate = Color( 0.337255, 0.262745, 0.188235, 1 )
+self_modulate = Color(0.337255, 0.262745, 0.188235, 1)
+layout_mode = 2
 
 [node name="Icon" parent="Towers/Icon" index="0"]
-texture = ExtResource( 23 )
-
-[node name="InfoMenu" type="CenterContainer" parent="."]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-script = SubResource( 67 )
-
-[node name="MapTechWindow" parent="InfoMenu" instance=ExtResource( 39 )]
+layout_mode = 0
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 299.0
-offset_top = 265.0
-offset_right = 3541.0
-offset_bottom = 1894.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 64.0
+offset_bottom = 64.0
+texture = ExtResource("23")
+expand_mode = 1
+
+[node name="PanelContainer" parent="Towers" index="1"]
+layout_mode = 2
+theme_type_variation = &"0000_brown_transp"
+
+[node name="MarginContainer" parent="Towers/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="Value" parent="Towers/PanelContainer/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="InfoMenu" type="CenterContainer" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource("67")
+
+[node name="MapTechWindow" parent="InfoMenu" instance=ExtResource("39")]
+layout_mode = 2
 
 [node name="VBoxContainer" parent="InfoMenu/MapTechWindow" index="0"]
-offset_right = 3382.0
-offset_bottom = 1639.0
+layout_mode = 2
 
 [node name="TabContainer" parent="InfoMenu/MapTechWindow/VBoxContainer" index="0"]
-offset_right = 3382.0
-offset_bottom = 1534.0
+layout_mode = 2
+theme_type_variation = &"theme_anarchy_tab_container"
+current_tab = 0
 
-[node name="Map" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer" index="0"]
+[node name="Map" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer" index="1"]
+layout_mode = 2
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_bottom = 0
+metadata/_tab_index = 0
 
 [node name="MapContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map" index="0"]
-offset_top = 0.0
-offset_right = 3310.0
-offset_bottom = 1430.0
+layout_mode = 2
 
 [node name="MarginContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer" index="0"]
-offset_bottom = 1430.0
+layout_mode = 2
 
 [node name="VBoxContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer" index="0"]
-offset_bottom = 1430.0
+layout_mode = 2
+
+[node name="Section" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="0"]
+layout_mode = 2
+theme_type_variation = &"MapTechPanel"
+
+[node name="MarginContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer/Section" index="0"]
+layout_mode = 2
+
+[node name="ValueKey" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer/Section/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Separator" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="1"]
+layout_mode = 2
 
 [node name="MapTechWindowMapItem" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="2"]
-icon = ExtResource( 26 )
+layout_mode = 2
+theme_type_variation = &"0010_grey"
+icon = ExtResource("26")
 description = "Wave Enemy"
 
 [node name="MapTechWindowMapItem2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="3"]
-icon = ExtResource( 28 )
+layout_mode = 2
+theme_type_variation = &"0010_grey"
+icon = ExtResource("28")
 description = "Upcoming Wave Spawner"
 
 [node name="MapTechWindowMapItem3" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="4"]
-icon = ExtResource( 29 )
+layout_mode = 2
+theme_type_variation = &"0010_grey"
+icon = ExtResource("29")
 description = "Upcoming Wave Spawner (random)"
 
 [node name="MapTechWindowMapItem4" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="5"]
-icon = ExtResource( 22 )
+layout_mode = 2
+theme_type_variation = &"0010_grey"
+icon = ExtResource("22")
 description = "Last Death Marker"
 
 [node name="MapTechWindowMapItem5" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="6"]
-icon = ExtResource( 5 )
+layout_mode = 2
+theme_type_variation = &"0010_grey"
+icon = ExtResource("5")
 description = "Objective"
 
 [node name="MapTechWindowMapItem6" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="7"]
 visible = false
+layout_mode = 2
+theme_type_variation = &"0010_grey"
 
 [node name="MapTechWindowMapItem7" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" index="8"]
 visible = false
+layout_mode = 2
+theme_type_variation = &"0010_grey"
 
 [node name="PanelContainer" type="PanelContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer" index="1"]
-offset_left = 904.0
-offset_right = 2342.0
-offset_bottom = 1430.0
-custom_minimum_size = Vector2( 1430, 1430 )
-theme_override_styles/panel = SubResource( 73 )
+custom_minimum_size = Vector2(1430, 1430)
+layout_mode = 2
+theme_override_styles/panel = SubResource("73")
 
 [node name="FullFogViewport" type="SubViewport" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer"]
 unique_name_in_owner = true
-size = Vector2( 1430, 1430 )
 handle_input_locally = false
-usage = 0
-render_target_update_mode = 3
 gui_disable_input = true
+size = Vector2i(1430, 1430)
+render_target_update_mode = 3
 
 [node name="ColorRect" type="ColorRect" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullFogViewport"]
 offset_right = 1430.0
@@ -2087,116 +2702,180 @@ offset_bottom = 1430.0
 
 [node name="FogOfWarFull" type="Sprite2D" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullFogViewport" groups=["fog_of_war"]]
 unique_name_in_owner = true
-material = ExtResource( 24 )
+material = ExtResource("24")
 centered = false
 region_enabled = true
 
 [node name="FullMapViewportContainer" type="SubViewportContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer"]
 unique_name_in_owner = true
-material = SubResource( 71 )
-offset_left = 4.0
-offset_right = 1434.0
-offset_bottom = 1430.0
+material = SubResource("71")
+layout_mode = 2
 
 [node name="FullMapViewport" type="SubViewport" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer"]
 unique_name_in_owner = true
-size = Vector2( 1430, 1430 )
 transparent_bg = true
 handle_input_locally = false
-usage = 0
-render_target_update_mode = 0
 gui_disable_input = true
+size = Vector2i(1430, 1430)
+render_target_update_mode = 0
 
 [node name="FullMap" type="PanelContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer/FullMapViewport"]
 unique_name_in_owner = true
 offset_right = 1430.0
 offset_bottom = 1430.0
-theme_override_styles/panel = SubResource( 69 )
-script = ExtResource( 8 )
+theme_override_styles/panel = SubResource("69")
+script = ExtResource("8")
 
 [node name="Minimap" type="TextureRect" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer/FullMapViewport/FullMap"]
-material = ExtResource( 19 )
-offset_right = 1430.0
-offset_bottom = 1430.0
-custom_minimum_size = Vector2( 1430, 1430 )
+material = ExtResource("19")
 clip_contents = true
-texture = SubResource( 12 )
-expand = true
+custom_minimum_size = Vector2(1430, 1430)
+layout_mode = 2
+texture = SubResource("12")
+expand_mode = 1
 stretch_mode = 6
-script = SubResource( 68 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = SubResource("68")
 overlay_path = NodePath("../../../../Overlay")
 no_zoom = true
 
 [node name="SeismicMap" type="Node2D" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer/FullMapViewportContainer/FullMapViewport/FullMap/Minimap"]
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="Overlay" type="Control" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/PanelContainer"]
-offset_left = 4.0
-offset_right = 1434.0
-offset_bottom = 1430.0
 clip_contents = true
-script = SubResource( 21 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+layout_mode = 2
+script = SubResource("21")
 custom_map_path = NodePath("../FullMapViewportContainer/FullMapViewport/FullMap/Minimap")
 full_view = true
 
 [node name="MarginContainer2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer" index="2"]
-offset_left = 2346.0
-offset_right = 3246.0
-offset_bottom = 1430.0
+layout_mode = 2
 
 [node name="VBoxContainer2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2" index="0"]
-offset_bottom = 1430.0
+layout_mode = 2
+
+[node name="Section" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="0"]
+layout_mode = 2
+theme_type_variation = &"MapTechPanel"
+
+[node name="MarginContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2/Section" index="0"]
+layout_mode = 2
+
+[node name="ValueKey" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2/Section/MarginContainer" index="0"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Separator" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="1"]
+layout_mode = 2
 
 [node name="MapTechWindowMapItemRight" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="2"]
-color = Color( 0.219608, 0.219608, 0.219608, 1 )
+layout_mode = 2
+theme_type_variation = &"0001_grey"
+color = Color(0.219608, 0.219608, 0.219608, 1)
 description = "Terrain"
 
 [node name="MapTechWindowMapItemRight2" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="3"]
-color = Color( 0.423529, 0.423529, 0.423529, 1 )
+layout_mode = 2
+theme_type_variation = &"0001_grey"
+color = Color(0.423529, 0.423529, 0.423529, 1)
 description = "Metal"
 
 [node name="MapTechWindowMapItemRight3" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="4"]
-color = Color( 0.843137, 0.207843, 0.34902, 1 )
+layout_mode = 2
+theme_type_variation = &"0001_grey"
+color = Color(0.843137, 0.207843, 0.34902, 1)
 description = "Lumen"
 
 [node name="MapTechWindowMapItemRight4" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="5"]
-color = Color( 0.164706, 0.341176, 0.517647, 1 )
+layout_mode = 2
+theme_type_variation = &"0001_grey"
+color = Color(0.164706, 0.341176, 0.517647, 1)
 description = "Eroded Lumen"
 
 [node name="MapTechWindowMapItemRight5" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="6"]
-color = Color( 0.0352941, 0.631373, 0.517647, 1 )
+layout_mode = 2
+theme_type_variation = &"0001_grey"
+color = Color(0.0352941, 0.631373, 0.517647, 1)
 description = "Buildings"
 
 [node name="MapTechWindowMapItemRight6" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="7"]
-color = Color( 1, 0.282353, 0, 1 )
+layout_mode = 2
+theme_type_variation = &"0001_grey"
+color = Color(1, 0.282353, 0, 1)
 description = "Lava"
 
 [node name="MapTechWindowMapItemRight7" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" index="8"]
-color = Color( 0.113725, 0.14902, 0.192157, 1 )
+layout_mode = 2
+theme_type_variation = &"0001_grey"
+color = Color(0.113725, 0.14902, 0.192157, 1)
 description = "Bedrock"
 
+[node name="Tech" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer" index="2"]
+layout_mode = 2
+metadata/_tab_index = 1
+
 [node name="VBoxContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Tech" index="0"]
-offset_right = 3310.0
-offset_bottom = 1366.0
+layout_mode = 2
+
+[node name="ScrollContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Tech/VBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="TechContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Tech/VBoxContainer/ScrollContainer" index="0"]
+layout_mode = 2
+
+[node name="HBoxContainer" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Tech/VBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="TechnologyName" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Tech/VBoxContainer/HBoxContainer" index="0"]
+layout_mode = 2
+theme_type_variation = &"YellowLabel"
+horizontal_alignment = 2
+
+[node name="TechnologyDescription" parent="InfoMenu/MapTechWindow/VBoxContainer/TabContainer/Tech/VBoxContainer/HBoxContainer" index="1"]
+layout_mode = 2
 
 [node name="Tooltips" parent="InfoMenu/MapTechWindow/VBoxContainer" index="1"]
-offset_left = 2958.0
-offset_top = 1540.0
-offset_right = 3382.0
-offset_bottom = 1639.0
+layout_mode = 2
+
+[node name="Dash" parent="InfoMenu/MapTechWindow/VBoxContainer/Tooltips" index="0"]
+layout_mode = 2
+
+[node name="ChangeTab" parent="InfoMenu/MapTechWindow/VBoxContainer/Tooltips" index="1"]
+layout_mode = 2
 
 [node name="MarginContainer" parent="InfoMenu/MapTechWindow" index="1"]
-offset_left = 3428.0
-offset_right = 3478.0
-offset_bottom = 1639.0
+layout_mode = 2
+
+[node name="Exit" parent="InfoMenu/MapTechWindow/MarginContainer" index="0"]
+layout_mode = 2
+theme_type_variation = &"Footer"
+
+[node name="ExitButton" parent="InfoMenu/MapTechWindow/MarginContainer/Exit" index="0"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 32.0
+offset_bottom = 50.0
+
+[node name="Exit" parent="InfoMenu/MapTechWindow/MarginContainer/Exit" index="1"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 204.0
+offset_bottom = 99.0
+
+[node name="AnimationPlayer" parent="InfoMenu/MapTechWindow" index="2"]
+libraries = {
+&"": SubResource("AnimationLibrary_5v436")
+}
 
 [node name="PauseMenu" type="MarginContainer" parent="."]
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2207,64 +2886,54 @@ offset_right = 576.5
 offset_bottom = 496.5
 grow_horizontal = 2
 grow_vertical = 2
-script = SubResource( 74 )
+script = SubResource("74")
 
 [node name="Primary" type="VBoxContainer" parent="PauseMenu"]
 unique_name_in_owner = true
-offset_right = 1000.0
-offset_bottom = 993.0
-custom_minimum_size = Vector2( 1000, 0 )
+custom_minimum_size = Vector2(1000, 0)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
 [node name="Header" type="HBoxContainer" parent="PauseMenu/Primary"]
-offset_right = 1000.0
-offset_bottom = 107.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="HeaderName" type="PanelContainer" parent="PauseMenu/Primary/Header"]
-offset_right = 602.0
-offset_bottom = 107.0
+layout_mode = 2
 size_flags_horizontal = 0
-theme_type_variation = "1000_yellow"
+theme_type_variation = &"1000_yellow"
 
 [node name="HaderText" type="Label" parent="PauseMenu/Primary/Header/HeaderName"]
-offset_left = 64.0
-offset_right = 538.0
-offset_bottom = 107.0
-theme_override_colors/font_color = Color( 0, 0, 0, 1 )
-theme_override_fonts/font = ExtResource( 53 )
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("53")
 text = "Game Paused"
 uppercase = true
 
 [node name="Spacing" type="Control" parent="PauseMenu/Primary/Header"]
-offset_left = 606.0
-offset_right = 889.0
-offset_bottom = 107.0
-custom_minimum_size = Vector2( 32, 0 )
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Exit" type="PanelContainer" parent="PauseMenu/Primary/Header"]
-offset_left = 893.0
-offset_right = 1000.0
-offset_bottom = 107.0
-custom_minimum_size = Vector2( 107, 107 )
-theme_type_variation = "ExitButton"
+custom_minimum_size = Vector2(107, 107)
+layout_mode = 2
+theme_type_variation = &"ExitButton"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PauseMenu/Primary/Header/Exit"]
-offset_right = 107.0
-offset_bottom = 107.0
+layout_mode = 2
 
 [node name="Tooltip" type="Control" parent="PauseMenu/Primary/Header/Exit/HBoxContainer"]
 visible = false
-offset_right = 107.0
-offset_bottom = 107.0
-custom_minimum_size = Vector2( 107, 107 )
+custom_minimum_size = Vector2(107, 107)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="TooltipGamepadIcon" parent="PauseMenu/Primary/Header/Exit/HBoxContainer/Tooltip" instance=ExtResource( 40 )]
+[node name="TooltipGamepadIcon" parent="PauseMenu/Primary/Header/Exit/HBoxContainer/Tooltip" instance=ExtResource("40")]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2275,13 +2944,14 @@ offset_right = 37.5
 offset_bottom = 37.5
 
 [node name="Exit" type="Control" parent="PauseMenu/Primary/Header/Exit/HBoxContainer"]
-offset_right = 107.0
-offset_bottom = 107.0
-custom_minimum_size = Vector2( 107, 107 )
+custom_minimum_size = Vector2(107, 107)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
 [node name="ExitButton" type="TextureButton" parent="PauseMenu/Primary/Header/Exit/HBoxContainer/Exit"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2290,311 +2960,255 @@ offset_left = -16.0
 offset_top = -16.0
 offset_right = 16.0
 offset_bottom = 16.0
-custom_minimum_size = Vector2( 32, 32 )
-focus_mode = 0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture_normal = ExtResource( 32 )
-texture_pressed = ExtResource( 33 )
-texture_hover = ExtResource( 31 )
-texture_disabled = ExtResource( 32 )
-texture_focused = ExtResource( 34 )
-expand = true
+focus_mode = 0
+texture_normal = ExtResource("32")
+texture_pressed = ExtResource("33")
+texture_hover = ExtResource("31")
+texture_disabled = ExtResource("32")
+texture_focused = ExtResource("34")
 stretch_mode = 5
 
 [node name="MenuContent" type="PanelContainer" parent="PauseMenu/Primary"]
 unique_name_in_owner = true
-offset_top = 107.0
-offset_right = 1000.0
-offset_bottom = 985.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_type_variation = "0001_yellow_only_border"
+theme_type_variation = &"0001_yellow_only_border"
 
 [node name="Main" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent"]
 unique_name_in_owner = true
-offset_left = 64.0
-offset_top = 64.0
-offset_right = 936.0
-offset_bottom = 814.0
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
 [node name="Continue" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
-offset_right = 872.0
-offset_bottom = 72.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Continue"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="ObjectiveButton" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
-offset_top = 84.0
-offset_right = 872.0
-offset_bottom = 156.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Objective"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Coop" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
-offset_top = 168.0
-offset_right = 872.0
-offset_bottom = 240.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Start Co-op"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Save" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
-offset_top = 252.0
-offset_right = 872.0
-offset_bottom = 324.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
-theme_override_styles/disabled = SubResource( 81 )
+theme_type_variation = &"PauseMenuButton"
+theme_override_styles/disabled = SubResource("81")
 text = "Save Game"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Load" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
-offset_top = 336.0
-offset_right = 872.0
-offset_bottom = 408.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
-theme_override_styles/disabled = SubResource( 81 )
+theme_type_variation = &"PauseMenuButton"
+theme_override_styles/disabled = SubResource("81")
 text = "Load Game"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Report" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
-offset_top = 420.0
-offset_right = 872.0
-offset_bottom = 492.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Report Bug"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Options" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
-offset_top = 504.0
-offset_right = 872.0
-offset_bottom = 576.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Options"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Quit" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
-offset_top = 588.0
-offset_right = 872.0
-offset_bottom = 660.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Quit"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Quit2" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
 visible = false
-offset_top = 672.0
-offset_right = 872.0
-offset_bottom = 744.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Quit to Menu"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Finish" type="Button" parent="PauseMenu/Primary/MenuContent/Main"]
 unique_name_in_owner = true
 visible = false
-offset_top = 756.0
-offset_right = 872.0
-offset_bottom = 828.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "Finish"
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="SaveMenu" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent"]
 unique_name_in_owner = true
 visible = false
-offset_left = 64.0
-offset_top = 64.0
-offset_right = 936.0
-offset_bottom = 814.0
-script = SubResource( 38 )
+layout_mode = 2
+script = SubResource("38")
 hide_autosave = true
 reverse_sort = true
 
 [node name="SaveScroll" type="ScrollContainer" parent="PauseMenu/Primary/MenuContent/SaveMenu"]
 unique_name_in_owner = true
-offset_right = 872.0
-offset_bottom = 750.0
+layout_mode = 2
 size_flags_vertical = 3
 follow_focus = true
-scroll_horizontal_enabled = false
 
 [node name="SaveList" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll"]
 unique_name_in_owner = true
-offset_right = 808.0
-offset_bottom = 148.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="SaveSlot" type="Button" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList"]
 unique_name_in_owner = true
-offset_right = 808.0
-offset_bottom = 72.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
-align = 0
+theme_type_variation = &"PauseMenuButton"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/SaveSlot"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
 offset_right = -8.0
 mouse_filter = 2
-theme_override_fonts/normal_font = ExtResource( 36 )
+theme_override_fonts/normal_font = ExtResource("36")
 bbcode_enabled = true
 scroll_active = false
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList"]
-offset_top = 76.0
-offset_right = 808.0
-offset_bottom = 148.0
+layout_mode = 2
 
 [node name="SlotName" type="LineEdit" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/HBoxContainer"]
 unique_name_in_owner = true
 visible = false
-offset_right = 564.0
-offset_bottom = 72.0
+layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = "SaveNameEdit"
-theme_override_fonts/font = ExtResource( 36 )
+theme_type_variation = &"SaveNameEdit"
+theme_override_fonts/font = ExtResource("36")
 
 [node name="NewSlot" type="Button" parent="PauseMenu/Primary/MenuContent/SaveMenu/SaveScroll/SaveList/HBoxContainer"]
 unique_name_in_owner = true
-offset_right = 240.0
-offset_bottom = 72.0
-custom_minimum_size = Vector2( 240, 0 )
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
+theme_type_variation = &"PauseMenuButton"
 text = "New Slot"
-align = 0
-script = ExtResource( 55 )
+script = ExtResource("55")
 
 [node name="Error" type="Label" parent="PauseMenu/Primary/MenuContent/SaveMenu"]
 unique_name_in_owner = true
 visible = false
-modulate = Color( 1, 0, 0, 1 )
-offset_top = 686.0
-offset_right = 872.0
-offset_bottom = 750.0
-theme_override_fonts/font = ExtResource( 36 )
+modulate = Color(1, 0, 0, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("36")
 
 [node name="LoadMenu" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent"]
 unique_name_in_owner = true
 visible = false
-offset_left = 64.0
-offset_top = 64.0
-offset_right = 936.0
-offset_bottom = 814.0
-script = SubResource( 82 )
-list_path = NodePath("LoadScroll/LoadList")
-slot_path = NodePath("LoadScroll/LoadList/LoadSlot")
+layout_mode = 2
+script = SubResource("82")
 
 [node name="LoadScroll" type="ScrollContainer" parent="PauseMenu/Primary/MenuContent/LoadMenu"]
 unique_name_in_owner = true
-offset_right = 872.0
-offset_bottom = 750.0
+layout_mode = 2
 size_flags_vertical = 3
 follow_focus = true
-scroll_horizontal_enabled = false
 
 [node name="LoadList" type="VBoxContainer" parent="PauseMenu/Primary/MenuContent/LoadMenu/LoadScroll"]
-offset_right = 808.0
-offset_bottom = 72.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="LoadSlot" type="Button" parent="PauseMenu/Primary/MenuContent/LoadMenu/LoadScroll/LoadList"]
 unique_name_in_owner = true
-offset_right = 808.0
-offset_bottom = 72.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_type_variation = "PauseMenuButton"
-align = 0
+theme_type_variation = &"PauseMenuButton"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PauseMenu/Primary/MenuContent/LoadMenu/LoadScroll/LoadList/LoadSlot"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
 offset_right = -8.0
 mouse_filter = 2
-theme_override_fonts/normal_font = ExtResource( 36 )
+theme_override_fonts/normal_font = ExtResource("36")
 bbcode_enabled = true
 scroll_active = false
 
 [node name="Separator" type="Control" parent="PauseMenu/Primary"]
-offset_top = 985.0
-offset_right = 1000.0
-offset_bottom = 993.0
-custom_minimum_size = Vector2( 0, 8 )
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
 
 [node name="TooltipStaticLeft5" type="PanelContainer" parent="PauseMenu/Primary"]
 visible = false
-material = SubResource( 2 )
-offset_top = 894.0
-offset_right = 214.0
-offset_bottom = 993.0
+material = SubResource("2")
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-theme_type_variation = "0001_yellow_border"
-script = ExtResource( 38 )
+theme_type_variation = &"0001_yellow_border"
+script = ExtResource("38")
 
 [node name="MarginContainer" type="MarginContainer" parent="PauseMenu/Primary/TooltipStaticLeft5"]
-offset_left = 24.0
-offset_top = 12.0
-offset_right = 190.0
-offset_bottom = 87.0
+layout_mode = 2
 size_flags_vertical = 4
 
 [node name="MainHB" type="HBoxContainer" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer"]
-offset_right = 166.0
-offset_bottom = 75.0
+layout_mode = 2
 size_flags_vertical = 5
 theme_override_constants/separation = 16
 alignment = 1
 
 [node name="TooltipGamepadIcon" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB"]
-self_modulate = Color( 0, 0, 0, 1 )
-offset_right = 75.0
-offset_bottom = 75.0
-custom_minimum_size = Vector2( 75, 75 )
+self_modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
 size_flags_vertical = 4
-texture = ExtResource( 11 )
+texture = ExtResource("11")
 
 [node name="AdditionalIcon" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon"]
 visible = false
-self_modulate = Color( 0, 0, 0, 1 )
+self_modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2603,10 +3217,11 @@ offset_left = -37.5
 offset_top = -37.5
 offset_right = 37.5
 offset_bottom = 37.5
-custom_minimum_size = Vector2( 75, 75 )
-texture = ExtResource( 10 )
+texture = ExtResource("10")
 
 [node name="AdditionalText" type="MarginContainer" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon"]
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2615,36 +3230,32 @@ offset_left = -37.5
 offset_top = -37.5
 offset_right = 37.5
 offset_bottom = 37.5
-custom_minimum_size = Vector2( 75, 75 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/margin_top = -9
 
 [node name="ValueText" type="Label" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon/AdditionalText"]
-offset_left = 24.0
-offset_top = 1.0
-offset_right = 50.0
-offset_bottom = 65.0
+layout_mode = 2
 size_flags_horizontal = 4
-theme_override_colors/font_color = Color( 0, 0, 0, 1 )
-theme_override_fonts/font = ExtResource( 36 )
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("36")
 text = "l"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 uppercase = true
 
 [node name="TooltipGamepadIcon2" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB"]
-self_modulate = Color( 0, 0, 0, 1 )
-offset_left = 91.0
-offset_right = 166.0
-offset_bottom = 75.0
-custom_minimum_size = Vector2( 75, 75 )
+self_modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
 size_flags_vertical = 4
-texture = ExtResource( 9 )
+texture = ExtResource("9")
 
 [node name="AdditionalIcon" type="TextureRect" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon2"]
 visible = false
-self_modulate = Color( 0, 0, 0, 1 )
+self_modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2653,10 +3264,11 @@ offset_left = -37.5
 offset_top = -37.5
 offset_right = 37.5
 offset_bottom = 37.5
-custom_minimum_size = Vector2( 75, 75 )
-texture = ExtResource( 10 )
+texture = ExtResource("10")
 
 [node name="AdditionalText" type="MarginContainer" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon2"]
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2665,85 +3277,155 @@ offset_left = -37.5
 offset_top = -37.5
 offset_right = 37.5
 offset_bottom = 37.5
-custom_minimum_size = Vector2( 75, 75 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ValueText" type="Label" parent="PauseMenu/Primary/TooltipStaticLeft5/MarginContainer/MainHB/TooltipGamepadIcon2/AdditionalText"]
-offset_left = 24.0
-offset_top = 5.0
-offset_right = 50.0
-offset_bottom = 69.0
+layout_mode = 2
 size_flags_horizontal = 4
-theme_override_colors/font_color = Color( 0, 0, 0, 1 )
-theme_override_fonts/font = ExtResource( 36 )
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("36")
 text = "a"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 uppercase = true
 
-[node name="Options" parent="PauseMenu" instance=ExtResource( 49 )]
+[node name="Options" parent="PauseMenu" instance=ExtResource("49")]
 visible = false
-offset_left = 0.0
-offset_top = -354.0
-offset_right = 2900.0
-offset_bottom = 1346.0
-custom_minimum_size = Vector2( 2900, 1700 )
+custom_minimum_size = Vector2(2900, 1700)
+layout_mode = 2
 
-[node name="CoopSettings" parent="PauseMenu" instance=ExtResource( 50 )]
+[node name="CoopSettings" parent="PauseMenu" instance=ExtResource("50")]
 unique_name_in_owner = true
 visible = false
+layout_mode = 2
+script = SubResource("44")
+
+[node name="VBoxContainer" parent="PauseMenu/CoopSettings" index="0"]
+layout_mode = 2
+
+[node name="Header" parent="PauseMenu/CoopSettings/VBoxContainer" index="0"]
+layout_mode = 2
+theme_type_variation = &"CoopHeader"
+
+[node name="MarginContainer" parent="PauseMenu/CoopSettings/VBoxContainer/Header" index="0"]
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+
+[node name="ValueHeaderTitle" parent="PauseMenu/CoopSettings/VBoxContainer/Header/MarginContainer" index="0"]
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="ButtonExit" parent="PauseMenu/CoopSettings/VBoxContainer/Header" index="1"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_right = 32.0
+
+[node name="PadHint" parent="PauseMenu/CoopSettings/VBoxContainer/Header/ButtonExit" index="0"]
+layout_mode = 0
+anchor_top = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 56.0
+offset_bottom = 75.0
+
+[node name="PanelContainer" parent="PauseMenu/CoopSettings/VBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="MarginContainer2" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="VBoxContainer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2" index="0"]
+layout_mode = 2
+
+[node name="Players" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="Player" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players" index="0"]
+layout_mode = 2
+
+[node name="ValuePlayer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="0"]
+layout_mode = 2
+theme_type_variation = &"YellowLabel"
+horizontal_alignment = 1
+
+[node name="ButtonUp" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="1"]
+layout_mode = 2
+
+[node name="ControlsNone" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="2"]
+layout_mode = 2
+
+[node name="Icon1" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsNone" index="0"]
+layout_mode = 2
+
+[node name="ControlsKeyboardMouse" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="3"]
+layout_mode = 2
+
+[node name="Icon1" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsKeyboardMouse" index="0"]
+layout_mode = 2
+
+[node name="Icon2" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsKeyboardMouse" index="1"]
+layout_mode = 2
+
+[node name="ControlsGamepad" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="4"]
+layout_mode = 2
+
+[node name="H" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad" index="0"]
+layout_mode = 2
+
+[node name="Icon1" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad/H" index="0"]
+layout_mode = 2
+
+[node name="L" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad/H" index="1"]
+layout_mode = 2
+
+[node name="V" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad/H/L" index="0"]
+layout_mode = 0
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 1153.0
-offset_bottom = 993.0
-script = SubResource( 44 )
+offset_right = 40.0
+offset_bottom = 64.0
+horizontal_alignment = 1
 
-[node name="VBoxContainer" parent="PauseMenu/CoopSettings" index="0"]
-offset_right = 1153.0
+[node name="L" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad" index="1"]
+layout_mode = 2
+horizontal_alignment = 1
 
-[node name="Header" parent="PauseMenu/CoopSettings/VBoxContainer" index="0"]
-offset_right = 1153.0
-
-[node name="ValueHeaderTitle" parent="PauseMenu/CoopSettings/VBoxContainer/Header/MarginContainer" index="0"]
-offset_right = 1121.0
-
-[node name="PanelContainer" parent="PauseMenu/CoopSettings/VBoxContainer" index="1"]
-offset_right = 1153.0
-
-[node name="MarginContainer2" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer" index="0"]
-offset_right = 1153.0
-
-[node name="VBoxContainer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2" index="0"]
-offset_right = 1121.0
-
-[node name="Players" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="0"]
-offset_right = 1089.0
-
-[node name="Player" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players" index="0"]
-offset_left = 277.0
-offset_right = 812.0
+[node name="ButtonDown" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="5"]
+layout_mode = 2
 
 [node name="Error" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="1"]
-offset_right = 1089.0
+layout_mode = 2
+horizontal_alignment = 1
 
 [node name="HBoxContainer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="2"]
-offset_right = 1089.0
+layout_mode = 2
 
 [node name="UltimateTooltip" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer" index="0"]
-offset_left = 885.0
-offset_right = 1089.0
+layout_mode = 2
 
 [node name="Footer" parent="PauseMenu/CoopSettings/VBoxContainer" index="2"]
-offset_right = 1153.0
+layout_mode = 2
+theme_type_variation = &"Footer"
+
+[node name="AnimationPlayer" parent="PauseMenu/CoopSettings" index="1"]
+libraries = {
+&"": SubResource("AnimationLibrary_f6k22")
+}
 
 [node name="OnScreenMessage" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2752,29 +3434,24 @@ offset_left = 1827.0
 offset_top = 1016.0
 offset_right = 2013.0
 offset_bottom = 1144.0
-theme_override_styles/panel = SubResource( 75 )
-script = SubResource( 76 )
+theme_override_styles/panel = SubResource("75")
+script = SubResource("76")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="OnScreenMessage"]
-offset_left = 64.0
-offset_top = 64.0
-offset_right = 122.0
-offset_bottom = 64.0
-theme_override_fonts/mono_font = ExtResource( 37 )
-theme_override_fonts/bold_italics_font = ExtResource( 51 )
-theme_override_fonts/italics_font = ExtResource( 56 )
-theme_override_fonts/bold_font = ExtResource( 36 )
-theme_override_fonts/normal_font = ExtResource( 37 )
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("37")
+theme_override_fonts/mono_font = ExtResource("37")
+theme_override_fonts/italics_font = ExtResource("56")
+theme_override_fonts/bold_italics_font = ExtResource("51")
+theme_override_fonts/bold_font = ExtResource("36")
 bbcode_enabled = true
 
 [node name="Control" type="Control" parent="OnScreenMessage"]
-offset_left = 64.0
-offset_top = 64.0
-offset_right = 122.0
-offset_bottom = 64.0
+layout_mode = 2
 mouse_filter = 2
 
-[node name="UltimateTooltip" parent="OnScreenMessage/Control" instance=ExtResource( 6 )]
+[node name="UltimateTooltip" parent="OnScreenMessage/Control" instance=ExtResource("6")]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -2786,31 +3463,31 @@ offset_bottom = 542.0
 action = "accept"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="OnScreenMessage"]
-anims/Appear = SubResource( 77 )
-anims/Disappear = SubResource( 79 )
-anims/RESET = SubResource( 78 )
+libraries = {
+&"": SubResource("AnimationLibrary_88xtf")
+}
 
 [node name="ControllerDisconnected" type="ColorRect" parent="."]
 visible = false
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.25098 )
-script = SubResource( 62 )
-__meta__ = {
-"_edit_lock_": true
-}
+color = Color(0, 0, 0, 0.25098)
+script = SubResource("62")
 
 [node name="Paused" type="Label" parent="ControllerDisconnected"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_fonts/font = ExtResource( 54 )
+theme_override_fonts/font = ExtResource("54")
 text = "Controller Disconnected"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="ConfirmQuit" parent="." instance=ExtResource( 42 )]
+[node name="ConfirmQuit" parent="." instance=ExtResource("42")]
 unique_name_in_owner = true
 visible = false
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5

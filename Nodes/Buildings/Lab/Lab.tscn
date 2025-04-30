@@ -139,10 +139,10 @@ func research_end():
 	if making != \"roll\":
 		Save.unlock_tech(making)
 		var researched_techs = Save.data.unlocked_tech.size()
-		if SteamAPI2.achievements and researched_techs > SteamAPI2.achievements.MaxResearch:
-			SteamAPI2.increment_stat(\"MaxResearch\", 1)
+		if SteamAPI.achievements and researched_techs > SteamAPI.achievements.MaxResearch:
+			SteamAPI.increment_stat(\"MaxResearch\", 1)
 		if researched_techs >= Const.techs_in_lab:
-			SteamAPI2.unlock_achievement(\"SCIENCE_ALL\")
+			SteamAPI.unlock_achievement(\"SCIENCE_ALL\")
 	else:
 		count = 0
 	

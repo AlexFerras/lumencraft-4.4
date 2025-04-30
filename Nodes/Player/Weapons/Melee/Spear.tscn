@@ -152,7 +152,7 @@ func _process(delta: float) -> void:
 func can_throw() -> bool:
 	if is_charged:
 		is_thrown = true
-		SteamAPI2.unlock_achievement(\"ST_JAVELIN\")
+		SteamAPI.unlock_achievement(\"ST_JAVELIN\")
 		return true
 	return false
 
@@ -177,7 +177,7 @@ func on_hit_combo( enemy ):
 		if shishkebab_combo == 5:
 			shishkebab_combo=0
 			shishkebab=[null,null,null,null,null]
-			SteamAPI2.unlock_achievement(\"SHISHKEBAB\")
+			SteamAPI.unlock_achievement(\"SHISHKEBAB\")
 			
 func throw()->void:
 	is_thrown = true

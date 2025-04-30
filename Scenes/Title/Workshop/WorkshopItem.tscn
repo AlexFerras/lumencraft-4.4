@@ -1,14 +1,14 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=11 format=3 uid="uid://cvmmelp40s8f5"]
 
-[ext_resource path="res://Scenes/Title/Workshop/Upvote.png" type="Texture2D" id=1]
-[ext_resource path="res://Scenes/Title/Workshop/Downvote.png" type="Texture2D" id=2]
-[ext_resource path="res://Scenes/Title/Workshop/Favorite.png" type="Texture2D" id=3]
-[ext_resource path="res://Scenes/Title/Workshop/NotFavorite.png" type="Texture2D" id=4]
-[ext_resource path="res://Scenes/Title/Workshop/NotUpvote.png" type="Texture2D" id=5]
-[ext_resource path="res://Scenes/Title/Workshop/NotDownvote.png" type="Texture2D" id=6]
-[ext_resource path="res://Resources/Fonts/Font20.tres" type="FontFile" id=7]
+[ext_resource type="Texture2D" uid="uid://dipu5x5ms6if7" path="res://Scenes/Title/Workshop/Upvote.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://c5n7q6fu5r615" path="res://Scenes/Title/Workshop/Downvote.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://c0baoygpyp7qv" path="res://Scenes/Title/Workshop/Favorite.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dj48lgkyolpj7" path="res://Scenes/Title/Workshop/NotFavorite.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://bjq1uu7sax5tj" path="res://Scenes/Title/Workshop/NotUpvote.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://w1maixd1d5p8" path="res://Scenes/Title/Workshop/NotDownvote.png" id="6"]
+[ext_resource type="FontFile" path="res://Resources/Fonts/Font20.tres" id="7"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends Control
 
 @export var style_normal: StyleBox
@@ -115,8 +115,8 @@ func set_item(data: Dictionary, preview_path: String, cached: bool):
 	subscribe_button.disabled = false
 	
 	if cached:
-		var f := File.new()
-		if Utils.safe_open(f, get_preview_path(), f.READ):
+		var f:FileAccess = Utils.safe_open(Utils.FILE, get_preview_path(), FileAccess.READ)
+		if f:
 			download_complete(-9999, 0, PackedStringArray(), PackedByteArray())
 			return
 	
@@ -205,185 +205,131 @@ func on_map_downloaded(map: Dictionary):
 		subscribe_button.disabled = false
 "
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id="2"]
 content_margin_left = 8.0
-content_margin_right = 8.0
 content_margin_top = 8.0
+content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color( 0.160784, 0.160784, 0.160784, 1 )
+bg_color = Color(0.160784, 0.160784, 0.160784, 1)
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id="3"]
 content_margin_left = 8.0
-content_margin_right = 8.0
 content_margin_top = 8.0
+content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color( 0.48, 0.48, 0.48, 1 )
+bg_color = Color(0.48, 0.48, 0.48, 1)
 
 [node name="WorkshopItem" type="PanelContainer"]
+custom_minimum_size = Vector2(600, 600)
 offset_right = 594.0
 offset_bottom = 600.0
-custom_minimum_size = Vector2( 600, 600 )
-script = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-style_normal = SubResource( 2 )
-style_selected = SubResource( 3 )
+script = SubResource("1")
+style_normal = SubResource("2")
+style_selected = SubResource("3")
 
 [node name="WorkshopItem" type="VBoxContainer" parent="."]
-offset_left = 7.0
-offset_top = 7.0
-offset_right = 593.0
-offset_bottom = 593.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+layout_mode = 2
 
 [node name="Title" type="Label" parent="WorkshopItem"]
-offset_right = 586.0
-offset_bottom = 23.0
-theme_override_fonts/font = ExtResource( 7 )
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7")
 text = "Name"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ColorRect" type="ColorRect" parent="WorkshopItem"]
-offset_top = 27.0
-offset_right = 586.0
-offset_bottom = 327.0
-custom_minimum_size = Vector2( 580, 300 )
-color = Color( 0.14, 0.14, 0.14, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+custom_minimum_size = Vector2(580, 300)
+layout_mode = 2
+color = Color(0.14, 0.14, 0.14, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="WorkshopItem/ColorRect"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_top = 10
 theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Preview" type="TextureRect" parent="WorkshopItem/ColorRect/MarginContainer"]
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 576.0
-offset_bottom = 290.0
-expand = true
+layout_mode = 2
+expand_mode = 1
 stretch_mode = 6
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="HBoxContainer" type="HBoxContainer" parent="WorkshopItem"]
-offset_top = 331.0
-offset_right = 586.0
-offset_bottom = 395.0
+layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Upvote" type="TextureButton" parent="WorkshopItem/HBoxContainer"]
-offset_left = 138.0
-offset_right = 164.0
-offset_bottom = 64.0
-custom_minimum_size = Vector2( 26, 0 )
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource( 5 )
-texture_pressed = ExtResource( 1 )
-expand = true
+texture_normal = ExtResource("5")
+texture_pressed = ExtResource("1")
 stretch_mode = 3
 
 [node name="UpvotesText" type="Label" parent="WorkshopItem/HBoxContainer"]
-offset_left = 184.0
-offset_right = 260.0
-offset_bottom = 64.0
+layout_mode = 2
 size_flags_vertical = 1
-theme_override_colors/font_color = Color( 0, 0.956863, 0.678431, 1 )
+theme_override_colors/font_color = Color(0, 0.956863, 0.678431, 1)
 text = "100"
-valign = 1
+vertical_alignment = 1
 
 [node name="Downvote" type="TextureButton" parent="WorkshopItem/HBoxContainer"]
-offset_left = 280.0
-offset_right = 306.0
-offset_bottom = 64.0
-custom_minimum_size = Vector2( 26, 0 )
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource( 6 )
-texture_pressed = ExtResource( 2 )
-expand = true
+texture_normal = ExtResource("6")
+texture_pressed = ExtResource("2")
 stretch_mode = 3
 
 [node name="DownvotesText" type="Label" parent="WorkshopItem/HBoxContainer"]
-offset_left = 326.0
-offset_right = 402.0
-offset_bottom = 64.0
+layout_mode = 2
 size_flags_vertical = 1
-theme_override_colors/font_color = Color( 1, 0.207843, 0, 1 )
+theme_override_colors/font_color = Color(1, 0.207843, 0, 1)
 text = "100"
-valign = 1
+vertical_alignment = 1
 
 [node name="Favorite" type="TextureButton" parent="WorkshopItem/HBoxContainer"]
-offset_left = 422.0
-offset_right = 448.0
-offset_bottom = 64.0
-custom_minimum_size = Vector2( 26, 0 )
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource( 4 )
-texture_pressed = ExtResource( 3 )
-expand = true
+texture_normal = ExtResource("4")
+texture_pressed = ExtResource("3")
 stretch_mode = 3
 
 [node name="Description" type="Label" parent="WorkshopItem"]
-offset_top = 399.0
-offset_right = 586.0
-offset_bottom = 522.0
+layout_mode = 2
 size_flags_vertical = 3
-theme_override_fonts/font = ExtResource( 7 )
+theme_override_fonts/font = ExtResource("7")
 text = "Description"
-autowrap = true
 
 [node name="Bottom" type="VBoxContainer" parent="WorkshopItem"]
-offset_top = 526.0
-offset_right = 586.0
-offset_bottom = 586.0
+layout_mode = 2
 theme_override_constants/separation = 2
 
 [node name="Subscribe" type="Button" parent="WorkshopItem/Bottom"]
-offset_left = 209.0
-offset_right = 376.0
-offset_bottom = 29.0
+layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource( 7 )
+theme_override_fonts/font = ExtResource("7")
 text = "Subscribe"
 
 [node name="OpenWorkshop" type="Button" parent="WorkshopItem/Bottom"]
-offset_left = 149.0
-offset_top = 31.0
-offset_right = 437.0
-offset_bottom = 60.0
+layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource( 7 )
+theme_override_fonts/font = ExtResource("7")
 text = "Open in Workshop"
 
 [node name="Download" type="HTTPRequest" parent="WorkshopItem"]
 
 [node name="Empty" type="Label" parent="."]
 visible = false
-offset_left = 7.0
-offset_top = 7.0
-offset_right = 607.0
-offset_bottom = 593.0
+layout_mode = 2
 size_flags_vertical = 1
 text = "Empty"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="toggled" from="WorkshopItem/HBoxContainer/Upvote" to="." method="vote_up"]
 [connection signal="toggled" from="WorkshopItem/HBoxContainer/Downvote" to="." method="vote_down"]

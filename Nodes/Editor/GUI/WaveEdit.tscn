@@ -1,14 +1,14 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=16 format=3 uid="uid://cqtxx0cdfv4wf"]
 
-[ext_resource path="res://Nodes/Editor/Icons/MoveDown.svg" type="Texture2D" id=1]
-[ext_resource path="res://Nodes/Editor/Icons/MoveUp.svg" type="Texture2D" id=2]
-[ext_resource path="res://Nodes/Editor/Icons/Remove.svg" type="Texture2D" id=3]
-[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_micro.tres" type="FontFile" id=4]
-[ext_resource path="res://Resources/Fonts/Font28Thin.tres" type="FontFile" id=5]
-[ext_resource path="res://Nodes/UI/SmartOptionButton.gd" type="Script" id=6]
-[ext_resource path="res://Nodes/Editor/GUI/Time.tscn" type="PackedScene" id=7]
+[ext_resource type="Texture2D" uid="uid://btwiu6ev37pnj" path="res://Nodes/Editor/Icons/MoveDown.svg" id="1"]
+[ext_resource type="Texture2D" uid="uid://blqxy5hyalre4" path="res://Nodes/Editor/Icons/MoveUp.svg" id="2"]
+[ext_resource type="Texture2D" uid="uid://byjij2ot84nxe" path="res://Nodes/Editor/Icons/Remove.svg" id="3"]
+[ext_resource type="FontFile" path="res://Resources/Anarchy/Fonts/spacemono_regular_micro.tres" id="4"]
+[ext_resource type="FontFile" path="res://Resources/Fonts/Font28Thin.tres" id="5"]
+[ext_resource type="Script" uid="uid://daawdiuxp2cq7" path="res://Nodes/UI/SmartOptionButton.gd" id="6"]
+[ext_resource type="PackedScene" uid="uid://cklxjyfct51qy" path="res://Nodes/Editor/GUI/Time.tscn" id="7"]
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id="5"]
 script/source = "extends Control
 
 @onready var id = $\"%ID\" as Label
@@ -96,7 +96,7 @@ func disable_moving():
 	remove_from_group(\"wave_items\")
 "
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id="3"]
 script/source = "extends HBoxContainer
 
 signal time_changed(time)
@@ -114,7 +114,7 @@ func set_time(time: float):
 func get_time() -> float:
 	return $SpinBox.value * 60 + $SpinBox2.value
 
-func time_changed(dupa) -> void:
+func time_change(dupa) -> void:
 	validate_time()
 	emit_signal(\"time_changed\", get_time())
 
@@ -126,13 +126,13 @@ func validate_time():
 		$SpinBox2.value = 1
 "
 
-[sub_resource type="Theme" id=107]
+[sub_resource type="Theme" id="107"]
 LineEdit/constants/minimum_spaces = 4
 
-[sub_resource type="Theme" id=108]
+[sub_resource type="Theme" id="108"]
 LineEdit/constants/minimum_spaces = 6
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id="2"]
 resource_name = "Encounter"
 script/source = "extends Control
 
@@ -270,252 +270,175 @@ func get_popup_focus(popup: PopupMenu, pos: Vector2) -> int:
 	return -1;
 "
 
-[sub_resource type="Theme" id=112]
+[sub_resource type="Theme" id="112"]
 LineEdit/constants/minimum_spaces = 4
 
-[sub_resource type="Theme" id=109]
+[sub_resource type="Theme" id="109"]
 LineEdit/constants/minimum_spaces = 7
 
-[sub_resource type="StyleBoxLine" id=86]
-color = Color( 1, 1, 0, 1 )
+[sub_resource type="StyleBoxLine" id="86"]
+color = Color(1, 1, 0, 1)
 thickness = 3
 
 [node name="WaveEdit" type="VBoxContainer" groups=["wave_items"]]
 offset_right = 676.0
 offset_bottom = 747.0
-script = SubResource( 5 )
+script = SubResource("5")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-offset_right = 676.0
-offset_bottom = 70.0
+layout_mode = 2
 
 [node name="MoveUp" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
-offset_right = 44.0
-offset_bottom = 70.0
-icon = ExtResource( 2 )
+layout_mode = 2
+icon = ExtResource("2")
 
 [node name="MoveDown" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
-offset_left = 48.0
-offset_right = 92.0
-offset_bottom = 70.0
-icon = ExtResource( 1 )
+layout_mode = 2
+icon = ExtResource("1")
 
 [node name="ID" type="Label" parent="HBoxContainer"]
 unique_name_in_owner = true
-modulate = Color( 1, 1, 0, 1 )
-offset_left = 96.0
-offset_top = 3.0
-offset_right = 612.0
-offset_bottom = 67.0
+modulate = Color(1, 1, 0, 1)
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Wave %s"
-align = 1
+horizontal_alignment = 1
 
 [node name="DeleteWave" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
-offset_left = 616.0
-offset_right = 676.0
-offset_bottom = 70.0
-icon = ExtResource( 3 )
+layout_mode = 2
+icon = ExtResource("3")
 
 [node name="WaveName" type="LineEdit" parent="."]
-offset_top = 74.0
-offset_right = 676.0
-offset_bottom = 148.0
+layout_mode = 2
 size_flags_horizontal = 3
-max_length = 24
 placeholder_text = "Wave Name"
+max_length = 24
 
 [node name="GridContainer" type="GridContainer" parent="."]
-offset_top = 152.0
-offset_right = 676.0
-offset_bottom = 450.0
+layout_mode = 2
 columns = 2
 
 [node name="Label" type="Label" parent="GridContainer"]
-offset_top = 5.0
-offset_right = 251.0
-offset_bottom = 69.0
+layout_mode = 2
 text = "Wait Time"
 
-[node name="Time" parent="GridContainer" instance=ExtResource( 7 )]
+[node name="Time" parent="GridContainer" instance=ExtResource("7")]
 unique_name_in_owner = true
-offset_left = 255.0
-offset_right = 536.0
-offset_bottom = 74.0
-script = SubResource( 3 )
+layout_mode = 2
+script = SubResource("3")
 
 [node name="Label3" type="Label" parent="GridContainer"]
-offset_top = 83.0
-offset_right = 251.0
-offset_bottom = 147.0
+layout_mode = 2
 text = "Repeat"
 
 [node name="Repeat" type="SpinBox" parent="GridContainer"]
 unique_name_in_owner = true
-offset_left = 255.0
-offset_top = 78.0
-offset_right = 536.0
-offset_bottom = 152.0
-theme = SubResource( 107 )
+layout_mode = 2
+theme = SubResource("107")
 min_value = -1.0
 max_value = 9999.0
-align = 2
 
 [node name="Label2" type="Label" parent="GridContainer"]
-offset_top = 161.0
-offset_right = 251.0
-offset_bottom = 225.0
+layout_mode = 2
 text = "Multiplier"
 
 [node name="Multiplier" type="SpinBox" parent="GridContainer"]
 unique_name_in_owner = true
-offset_left = 255.0
-offset_top = 156.0
-offset_right = 536.0
-offset_bottom = 230.0
-theme = SubResource( 108 )
+layout_mode = 2
+theme = SubResource("108")
 min_value = 0.01
 max_value = 10.0
 step = 0.01
 value = 1.0
-align = 2
 suffix = "x"
 
 [node name="Label4" type="Label" parent="GridContainer"]
-offset_top = 234.0
-offset_right = 251.0
-offset_bottom = 298.0
+layout_mode = 2
 text = "Target"
 
 [node name="Target" type="OptionButton" parent="GridContainer"]
 unique_name_in_owner = true
-offset_left = 255.0
-offset_top = 234.0
-offset_right = 536.0
-offset_bottom = 298.0
-theme_override_fonts/font = ExtResource( 5 )
-text = "Auto"
-items = [ "Auto", null, false, 1, null, "Player", null, false, 2, null ]
-selected = 0
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5")
 
 [node name="HSeparator2" type="HSeparator" parent="."]
-offset_top = 454.0
-offset_right = 676.0
-offset_bottom = 458.0
+layout_mode = 2
 
 [node name="Encounter" type="VBoxContainer" parent="."]
-offset_top = 462.0
-offset_right = 676.0
-offset_bottom = 764.0
-script = SubResource( 2 )
+layout_mode = 2
+script = SubResource("2")
 
 [node name="GridContainer" type="GridContainer" parent="Encounter"]
-offset_right = 676.0
-offset_bottom = 294.0
+layout_mode = 2
 columns = 2
 
 [node name="Enemies" type="OptionButton" parent="Encounter/GridContainer"]
-offset_right = 401.0
-offset_bottom = 74.0
+layout_mode = 2
 size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource( 5 )
+theme_override_fonts/font = ExtResource("5")
 expand_icon = true
-script = ExtResource( 6 )
+script = ExtResource("6")
 max_length = 13
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Encounter/GridContainer"]
-offset_left = 405.0
-offset_right = 676.0
-offset_bottom = 74.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="Encounter/GridContainer/HBoxContainer"]
-offset_top = 5.0
-offset_right = 26.0
-offset_bottom = 69.0
+layout_mode = 2
 text = "x"
 
 [node name="Amount" type="SpinBox" parent="Encounter/GridContainer/HBoxContainer"]
-offset_left = 30.0
-offset_right = 156.0
-offset_bottom = 74.0
-theme = SubResource( 112 )
+layout_mode = 2
+theme = SubResource("112")
 min_value = 1.0
 value = 1.0
-align = 2
 
 [node name="Delete" type="Button" parent="Encounter/GridContainer/HBoxContainer"]
-offset_left = 211.0
-offset_right = 271.0
-offset_bottom = 74.0
+layout_mode = 2
 size_flags_horizontal = 10
-icon = ExtResource( 3 )
+icon = ExtResource("3")
 
 [node name="Label2" type="Label" parent="Encounter/GridContainer"]
-offset_top = 81.0
-offset_right = 401.0
-offset_bottom = 145.0
+layout_mode = 2
 text = "Spawner"
 
 [node name="Spawner" type="OptionButton" parent="Encounter/GridContainer"]
-offset_left = 405.0
-offset_top = 78.0
-offset_right = 676.0
-offset_bottom = 148.0
+layout_mode = 2
 
 [node name="Label3" type="Label" parent="Encounter/GridContainer"]
-offset_top = 157.0
-offset_right = 401.0
-offset_bottom = 221.0
+layout_mode = 2
 text = "Delay"
 
 [node name="Delay" type="SpinBox" parent="Encounter/GridContainer"]
-offset_left = 405.0
-offset_top = 152.0
-offset_right = 606.0
-offset_bottom = 226.0
+layout_mode = 2
 size_flags_horizontal = 0
-theme = SubResource( 109 )
+theme = SubResource("109")
 max_value = 99.0
 step = 0.01
-align = 2
 suffix = "s"
 
 [node name="Label" type="Label" parent="Encounter/GridContainer"]
-offset_top = 230.0
-offset_right = 401.0
-offset_bottom = 294.0
+layout_mode = 2
 text = "Target"
 
 [node name="Target" type="OptionButton" parent="Encounter/GridContainer"]
-offset_left = 405.0
-offset_top = 230.0
-offset_right = 676.0
-offset_bottom = 294.0
-theme_override_fonts/font = ExtResource( 4 )
-text = "Same As Wave"
-items = [ "Same As Wave", null, false, 0, null, "Auto", null, false, 1, null, "Player", null, false, 2, null ]
-selected = 0
-script = ExtResource( 6 )
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4")
+script = ExtResource("6")
 
 [node name="HSeparator" type="HSeparator" parent="Encounter"]
-offset_top = 298.0
-offset_right = 676.0
-offset_bottom = 302.0
+layout_mode = 2
 
 [node name="Add" type="Button" parent="."]
-offset_top = 768.0
-offset_right = 676.0
-offset_bottom = 838.0
+layout_mode = 2
 text = "+"
 
 [node name="HSeparator" type="HSeparator" parent="."]
-offset_top = 842.0
-offset_right = 676.0
-offset_bottom = 846.0
-theme_override_styles/separator = SubResource( 86 )
+layout_mode = 2
+theme_override_styles/separator = SubResource("86")
 
 [connection signal="pressed" from="HBoxContainer/MoveUp" to="." method="move_up"]
 [connection signal="pressed" from="HBoxContainer/MoveDown" to="." method="move_down"]

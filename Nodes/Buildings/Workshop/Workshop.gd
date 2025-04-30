@@ -223,7 +223,7 @@ func finish_make():
 		conveyor_pickups[last_pickup_id] = finished_pickup
 		if finished_pickup is RigidBody2D:
 			finished_pickup.mode = RigidBody2D.FREEZE_MODE_STATIC
-		SteamAPI2.increment_stat("FabricatedItems")
+		SteamAPI.increment_stat("FabricatedItems")
 	elif finished_item:
 		Save.set_unlocked_tech(str(finished_item.upgrade.item, finished_item.upgrade.upgrade), finished_item.upgrade.level)
 		if finished_item.upgrade.item == Const.ItemIDs.DRILL:

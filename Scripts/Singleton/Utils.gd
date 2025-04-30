@@ -300,7 +300,7 @@ func _ready():
 	
 	
 #	add_child(preload("res://Tools/PreAlpha.tscn").instance())
-	DirAccess.make_dir_absolute("user://Maps")
+	DirAccess.make_dir_recursive_absolute("user://Maps")
 
 func _notification(what: int) -> void:
 	match what:
@@ -609,7 +609,7 @@ func add_exploded_pixel(pos: Vector2, mat: int, value: int):
 		if game.map.remainig_lumen <= Utils.explosion_accum[mat]:
 			pass
 			# TODO STEAM
-			SteamAPI2.unlock_achievement("OCD") 
+			SteamAPI.unlock_achievement("OCD") 
 
 func temp_instance(scene: PackedScene) -> Node:
 	var node := scene.instantiate()
@@ -1313,7 +1313,7 @@ func generate_scorecard(map_name: String, score: int, scoreboard: Dictionary, ma
 	
 	await generator.finished
 	
-	DirAccess.make_dir_absolute("user://scorecards")
+	DirAccess.make_dir_recursive_absolute("user://scorecards")
 	viewport.get_texture().get_data().save_png("user://scorecards/%s.png" % map_uid)
 	viewport.queue_free()
 

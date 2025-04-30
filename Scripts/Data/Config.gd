@@ -269,7 +269,7 @@ func apply_vieport_size():
 		previous_resolution = get_resolution()
 
 func apply_frame_cap():
-	Utils.Engine.target_fps = limit_fps
+	Engine.max_fps = limit_fps
 
 func apply_downsampling():
 	light_downsample = clamp(light_downsample, 1, 6)
@@ -304,7 +304,8 @@ func apply_environment():
 
 	enviro.glow_intensity = glow_intensity
 	enviro.glow_strength = glow_strength
-	enviro.glow_high_quality = glow_high_quality
+	# RECHECK
+	#enviro.glow_high_quality = glow_high_quality
 	
 	if enviro.glow_intensity <=0.01:
 		enviro.glow_enabled = false

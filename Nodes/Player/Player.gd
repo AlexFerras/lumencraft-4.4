@@ -329,7 +329,7 @@ func _process(delta: float) -> void:
 			if revive_timer >= 3:
 				revive_area.can_interact = false
 				revive_timer  = 0
-				SteamAPI2.unlock_achievement("CO_OP_REVIVE")
+				SteamAPI.unlock_achievement("CO_OP_REVIVE")
 				revive()
 			elif not reviver.is_action_pressed("interact") or reviver.dead or global_position.distance_squared_to(reviver.global_position) > 400:
 				revive_timer  = 0
@@ -424,7 +424,7 @@ func process_shooting(delta: float):
 	time_from_last_shoot += delta
 	
 	if shooting and (is_just_not_shooting() or build_menu):
-		SteamAPI2.fail_achievement("WAVE_NO_ACTION")
+		SteamAPI.fail_achievement("WAVE_NO_ACTION")
 		deshoot()
 	
 	if build_menu:
@@ -1161,7 +1161,7 @@ func shoot(weapon: Dictionary) -> bool:
 #				flame.damping += get_upgraded(data, "weapon_range") * 0.01
 		Const.ItemIDs.MEDPACK:
 			if min(hp + 59, get_max_hp()) >= 0.95*get_max_hp():
-				SteamAPI2.unlock_achievement("THE_CURE")
+				SteamAPI.unlock_achievement("THE_CURE")
 			heal(50 if Save.is_tech_unlocked("better_healing") else 20)
 		Const.ItemIDs.TECHNOLOGY_ORB:
 			Utils.play_sample(preload("res://SFX/Pickups/orb_use.wav"))
@@ -1170,7 +1170,7 @@ func shoot(weapon: Dictionary) -> bool:
 			particles.position=position
 			Utils.game.map.add_child(particles)
 			
-			SteamAPI2.increment_stat("Orbs")
+			SteamAPI.increment_stat("Orbs")
 			if "technology" in weapon.data:
 				Save.unlock_tech(weapon.data.technology)
 			elif "weapon_upgrade" in weapon.data:
@@ -1462,9 +1462,9 @@ func check_hp():
 	if hp <= 0:
 		inventory_select = 0
 		if just_damaged_by_lava:
-			SteamAPI2.unlock_achievement("DIE_GOLD_LAVA")
+			SteamAPI.unlock_achievement("DIE_GOLD_LAVA")
 		if just_damaged_by_gate:
-			SteamAPI2.unlock_achievement("DIE_GATE_CRUSH")
+			SteamAPI.unlock_achievement("DIE_GATE_CRUSH")
 		died()
 	just_damaged_by_lava = false
 	just_damaged_by_gate = false
@@ -1700,7 +1700,7 @@ func upgrade_speed():
 	var upgrade_number = Save.get_unclocked_tech("player" + str(player_id) + "speed_upgrade")
 	Save.set_unlocked_tech("player" + str(player_id) + "speed_upgrade", upgrade_number + 1)
 	if upgrade_number == 10:
-		SteamAPI2.unlock_achievement("UPGRADE_SPEED_11")
+		SteamAPI.unlock_achievement("UPGRADE_SPEED_11")
 	test_max_upgrade()
 
 func get_max_stamina(lvl := -1) -> float:
@@ -1745,7 +1745,7 @@ func test_max_upgrade():
 		if Save.get_unclocked_tech("player" + str(player_id)+"stamina_upgrade") >= 10:
 			if Save.get_unclocked_tech("player" + str(player_id) + "speed_upgrade") >= 10:
 				if Save.get_unclocked_tech("player" + str(player_id) + "hp_upgrade") >= 10:
-					SteamAPI2.unlock_achievement("UPGRADE_STATS_MAX")
+					SteamAPI.unlock_achievement("UPGRADE_STATS_MAX")
 
 func can_use(item: Dictionary) -> bool:
 	if item.id < Const.RESOURCE_COUNT:
@@ -1777,7 +1777,7 @@ func died():
 		Utils.play_sample(preload("res://SFX/Player/Die.wav"), hurt_audio)
 		Save.count_score("deaths")
 		if Utils.game.players.size() == 1:
-			SteamAPI2.increment_stat("Deaths")
+			SteamAPI.increment_stat("Deaths")
 		
 		linear_velocity = Vector2()
 		torso_animator.play("Dead")
@@ -1810,7 +1810,7 @@ func died():
 	interactable_icon.hide()
 	
 	if super_dead:
-		SteamAPI2.increment_stat("Deaths")
+		SteamAPI.increment_stat("Deaths")
 		var seq := create_tween()
 		seq.tween_property(torso, "modulate:a", 0.0, 1)
 		await seq.finished
@@ -1914,7 +1914,7 @@ func indicate_full():
 func process_animation():
 	var is_walking := linear_velocity.length_squared() > 0.1
 	if is_walking:
-		SteamAPI2.fail_achievement("WAVE_NO_ACTION")
+		SteamAPI.fail_achievement("WAVE_NO_ACTION")
 		legs_animator.play()
 		legs_animator.playback_speed = linear_velocity.length() / 2.0
 	else:
@@ -2043,7 +2043,7 @@ func shoot_attack(weapon: Dictionary, scene: String, rot := get_shoot_rotation()
 	
 	if gun_sprite and gun_sprite.has_method("shoot"):
 		gun_sprite.shoot(bullet)
-		SteamAPI2.fail_achievement("WIN_NO_GUNS")
+		SteamAPI.fail_achievement("WIN_NO_GUNS")
 		
 	bullet.rotation = rot + dispersion
 	
@@ -2576,7 +2576,7 @@ func is_same_in_2_hands():
 		return
 	
 	if item1.id == item2.id:
-		SteamAPI2.unlock_achievement("DUAL_WIELD")
+		SteamAPI.unlock_achievement("DUAL_WIELD")
 
 func update_listener(coop):
 	$AudioListener2D.current = Utils.game.main_player == self and not coop

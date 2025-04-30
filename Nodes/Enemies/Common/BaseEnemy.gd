@@ -153,10 +153,10 @@ func take_damage_raw(data: Dictionary):
 		velocity_killed = data.get("velocity", Vector2())
 	if hp <= 0:
 		if data.has("owner") and data.owner.has_meta("isFlare"):
-			SteamAPI2.unlock_achievement("KILL_FLARE")
-		SteamAPI2.increment_stat("KilledBugs")
+			SteamAPI.unlock_achievement("KILL_FLARE")
+		SteamAPI.increment_stat("KilledBugs")
 		if data.has("monster"):
-			SteamAPI2.unlock_achievement("MONSTER_ON_NOMSTER")
+			SteamAPI.unlock_achievement("MONSTER_ON_NOMSTER")
 		_killed()
 	else:
 		Utils.game.start_battle()

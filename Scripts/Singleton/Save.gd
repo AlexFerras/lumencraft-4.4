@@ -254,24 +254,24 @@ func get_unclocked_tech(s :String) -> int:
 	return data.unlocked_tech_number.get(s, 0)
 
 func set_unlocked_tech(s: String, num: int):
-	if SteamAPI2.can_achieve():
+	if SteamAPI.can_achieve():
 		if check_tech_max_level(Const.ItemIDs.DRILL):
-			SteamAPI2.unlock_achievement("UPGRADE_DRILL_MAX")
+			SteamAPI.unlock_achievement("UPGRADE_DRILL_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.MAGNUM) > 0:
 			if check_tech_max_level(Const.ItemIDs.MAGNUM):
-				SteamAPI2.unlock_achievement("UPGRADE_PISTOL_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_PISTOL_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.SPEAR) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.SPEAR):
-				SteamAPI2.unlock_achievement("UPGRADE_SPEAR_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_SPEAR_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.MACHINE_GUN) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.MACHINE_GUN):
-				SteamAPI2.unlock_achievement("UPGRADE_MACHINEGUN_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_MACHINEGUN_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.SHOTGUN) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.SHOTGUN):
-				SteamAPI2.unlock_achievement("UPGRADE_SHOTGUN_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_SHOTGUN_MAX")
 		if Utils.game.main_player.get_item_count(Const.ItemIDs.FLAMETHROWER) > 0:
 			if Save.check_tech_max_level(Const.ItemIDs.FLAMETHROWER):
-				SteamAPI2.unlock_achievement("UPGRADE_FLAMER_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_FLAMER_MAX")
 
 #	if s.ends_with("drilling_power"):
 #		if num >= 5:

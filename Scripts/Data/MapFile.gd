@@ -183,6 +183,8 @@ func load_from_file(path: String):
 
 func load_metadata(path: String):
 	var file =  FileAccess.open(path, FileAccess.READ)
+	if not file:
+		return
 	
 	var version := file.get_32()
 	

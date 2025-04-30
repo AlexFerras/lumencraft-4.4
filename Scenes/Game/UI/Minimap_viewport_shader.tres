@@ -1,8 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dd4q4wl5fbogd"]
 
-[ext_resource path="res://Nodes/UI/SeismicMap/raydar_noise512.png" type="Texture2D" id=1]
-
-[sub_resource type="Shader" id=7]
+[sub_resource type="Shader" id="7"]
 code = "shader_type canvas_item;
 uniform sampler2D background_texture;
 
@@ -92,15 +90,4 @@ void fragment() {
 "
 
 [resource]
-shader = SubResource( 7 )
-shader_param/show_curvature = true
-shader_param/curvature_x_amount = 3.0
-shader_param/curvature_y_amount = 4.0
-shader_param/show_horizontal_scan_lines = true
-shader_param/horizontal_scan_lines_amount = 100.0
-shader_param/horizontal_scan_lines_opacity = 0.3
-shader_param/show_vertical_scan_lines = false
-shader_param/vertical_scan_lines_amount = 128.0
-shader_param/vertical_scan_lines_opacity = 0.0
-shader_param/boost = 1.42
-shader_param/background_texture = ExtResource( 1 )
+shader = SubResource("7")

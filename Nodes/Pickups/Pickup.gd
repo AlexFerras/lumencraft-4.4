@@ -42,23 +42,23 @@ func collect():
 	match id:
 		Const.ItemIDs.MAGNUM:
 			if Save.check_tech_max_level(Const.ItemIDs.MAGNUM):
-				SteamAPI2.unlock_achievement("UPGRADE_PISTOL_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_PISTOL_MAX")
 		Const.ItemIDs.SPEAR:
 			if Save.check_tech_max_level(Const.ItemIDs.SPEAR):
-				SteamAPI2.unlock_achievement("UPGRADE_SPEAR_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_SPEAR_MAX")
 		Const.ItemIDs.MACHINE_GUN:
 			if Save.check_tech_max_level(Const.ItemIDs.MACHINE_GUN):
-				SteamAPI2.unlock_achievement("UPGRADE_MACHINEGUN_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_MACHINEGUN_MAX")
 		Const.ItemIDs.SHOTGUN:
 			if Save.check_tech_max_level(Const.ItemIDs.SHOTGUN):
-				SteamAPI2.unlock_achievement("UPGRADE_SHOTGUN_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_SHOTGUN_MAX")
 		Const.ItemIDs.FLAMETHROWER:
 			if Save.check_tech_max_level(Const.ItemIDs.FLAMETHROWER):
-				SteamAPI2.unlock_achievement("UPGRADE_FLAMER_MAX")
+				SteamAPI.unlock_achievement("UPGRADE_FLAMER_MAX")
 #			SteamAPI.unlock_achievement("GET_FLAMER")
 		Const.ItemIDs.DRILL:
 			if Utils.game.main_player.get_item_count(Const.ItemIDs.DRILL) > 1:
-				SteamAPI2.unlock_achievement("DONT_NEED_2_DRILLS")
+				SteamAPI.unlock_achievement("DONT_NEED_2_DRILLS")
 	Utils.game.delete_pickable(self)
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:

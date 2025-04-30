@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cyxgomprhyy0m"]
 
-[sub_resource type="Shader" id=20]
+[sub_resource type="Shader" id="20"]
 code = "shader_type canvas_item;
 uniform float zoom;
 uniform vec2 rect_size;
@@ -66,15 +66,15 @@ void fragment() {
 "
 
 [resource]
-shader = SubResource( 20 )
-shader_param/zoom = null
-shader_param/rect_size = null
-shader_param/screen_center_position = null
-shader_param/terrain_color = Color( 0.219608, 0.219608, 0.219608, 1 )
-shader_param/scrap_materials_color = Color( 0.423529, 0.423529, 0.423529, 1 )
-shader_param/lumen_material_color = Color( 0.843137, 0.207843, 0.34902, 1 )
-shader_param/transparent_color = Color( 0.101961, 0.101961, 0.101961, 1 )
-shader_param/dead_lumen_material_color = Color( 0.164706, 0.341176, 0.517647, 1 )
-shader_param/building_color = Color( 0.0352941, 0.631373, 0.517647, 1 )
-shader_param/lava_color = Color( 1, 0.282353, 0, 1 )
-shader_param/bedrock_color = Color( 0.113725, 0.14902, 0.192157, 1 )
+shader = SubResource("20")
+shader_parameter/zoom = 0.0
+shader_parameter/rect_size = Vector2(0, 0)
+shader_parameter/screen_center_position = Vector2(0, 0)
+shader_parameter/terrain_color = Color(0.219608, 0.219608, 0.219608, 1)
+shader_parameter/scrap_materials_color = Color(0.423529, 0.423529, 0.423529, 1)
+shader_parameter/lumen_material_color = Color(0.843137, 0.207843, 0.34902, 1)
+shader_parameter/transparent_color = Color(0.101961, 0.101961, 0.101961, 1)
+shader_parameter/dead_lumen_material_color = Color(0.164706, 0.341176, 0.517647, 1)
+shader_parameter/building_color = Color(0.0352941, 0.631373, 0.517647, 1)
+shader_parameter/lava_color = Color(1, 0.282353, 0, 1)
+shader_parameter/bedrock_color = Color(0.113725, 0.14902, 0.192157, 1)
