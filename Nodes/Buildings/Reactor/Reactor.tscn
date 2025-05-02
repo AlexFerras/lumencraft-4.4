@@ -1,6 +1,6 @@
 [gd_scene load_steps=92 format=3 uid="uid://bjbmagecijmuj"]
 
-[ext_resource type="Material" uid="uid://cv5g01sg1xdrv" path="res://Resources/Materials/Hologram.tres" id="1"]
+[ext_resource type="Material" uid="uid://bdtek31c6o45h" path="res://Resources/Materials/Hologram.tres" id="1"]
 [ext_resource type="Texture2D" uid="uid://b6n8o2hn5uh07" path="res://Nodes/Buildings/Reactor/emp_icon.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://b3hiwab0noqi0" path="res://Nodes/Buildings/Reactor/range_icon.png" id="3"]
 [ext_resource type="AudioStream" uid="uid://di3g84tirnl82" path="res://SFX/Explosion/Explosion Classic_01.wav" id="4"]

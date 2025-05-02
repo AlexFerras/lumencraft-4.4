@@ -146,7 +146,8 @@ uniform float color_pow=1.0;
 
 void fragment()
 {
-	COLOR=texture(TEXTURE,UV)*MODULATE;
+	// RECHECK
+	COLOR=texture(TEXTURE,UV);//*MODULATE;
 	COLOR=pow(COLOR,vec4(vec3(color_pow),alpha_pow));
 }
 "

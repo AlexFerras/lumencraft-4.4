@@ -3,6 +3,7 @@ shader_type canvas_item;
 uniform sampler2D fog_texture;
 uniform bool hide_fog = false;
 uniform float cutoff = 1.5;
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
 
 void fragment() {
 	vec4 color = texture(TEXTURE, UV);

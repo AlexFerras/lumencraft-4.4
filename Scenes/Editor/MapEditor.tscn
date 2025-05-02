@@ -71,7 +71,7 @@
 [ext_resource type="Texture2D" uid="uid://higsrbql4rd8" path="res://Resources/Terrain/Images/FloorBiomass.png" id="69"]
 [ext_resource type="Texture2D" uid="uid://cfhye53wbq4f6" path="res://Resources/Terrain/Images/FloorGlowingBiomass.png" id="70"]
 [ext_resource type="Texture2D" uid="uid://bsdg08lj3cb0s" path="res://Resources/Terrain/Images/FloorFungus.png" id="71"]
-[ext_resource type="FontFile" uid="uid://c0u8xlyn5rjd1" path="res://Resources/Anarchy/Fonts/spacemono_bold_header.tres" id="72"]
+[ext_resource type="FontFile" uid="uid://cxvyic2xsngil" path="res://Resources/Anarchy/Fonts/spacemono_bold_header.tres" id="72"]
 [ext_resource type="Texture2D" uid="uid://oju35kvj6ni6" path="res://Nodes/Editor/GUI/Icons/Expand.svg" id="73"]
 [ext_resource type="Texture2D" uid="uid://b6ji6ajga37kq" path="res://Nodes/UI/AutoAction/Keyboard/R.png" id="74"]
 [ext_resource type="Texture2D" uid="uid://c6hqfukt3iuvj" path="res://Nodes/Editor/GUI/Icons/Map.svg" id="75"]

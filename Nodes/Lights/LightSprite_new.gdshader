@@ -29,7 +29,8 @@ void vertex()
 //	global_position = (global_transform * vec4(VERTEX, 1.0, 1.0)).xy;
 //	VERTEX = (EXTRA_MATRIX * (WORLD_MATRIX * vec4(VERTEX, 1.0, 1.0))).xy;
 //	blur_center = (global_transform * vec4(light_position,1.0,1.0)).xy;
-	blur_center = (EXTRA_MATRIX * (MODEL_MATRIX * vec4(light_position,1.0,1.0))).xy;
+// TODO
+	//blur_center = (EXTRA_MATRIX * (MODEL_MATRIX * vec4(light_position,1.0,1.0))).xy;
 
 }
 

@@ -33,6 +33,7 @@ void vertex()
 {
 	
 global_position=(global_transform * vec4(VERTEX, 1.0, 1.0)).xy;
+// TODO
 	//VERTEX = (EXTRA_MATRIX * (WORLD_MATRIX * vec4(VERTEX, 1.0, 1.0))).xy;
 // VERTEX=(WORLD_MATRIX*vec4(VERTEX,1.0,1.0)).xy;
 

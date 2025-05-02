@@ -289,7 +289,7 @@ var HINTS := []
 
 var techs_in_lab: int
 
-const _CACHE = []
+static var _CACHE = []
 var  cached_images = {}
 var technology_by_tag: Dictionary
 
@@ -353,6 +353,7 @@ func cache_directory(path: String):
 			if file.get_file() == "TrailerPlayer.tscn": ## :/
 				file = dir.get_next()
 				continue
+			print("Caching file: ", file.get_file())
 			_CACHE.append(load(path + "/" + file))
 		elif dir.dir_exists(file):
 			cache_directory(path + "/" + file)

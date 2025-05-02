@@ -6,7 +6,8 @@
 code = "shader_type canvas_item;
 
 void fragment() {
-	MODULATE;
+	// RECHECK
+	//MODULATE;
 	COLOR = texture(TEXTURE, UV);
 }"
 

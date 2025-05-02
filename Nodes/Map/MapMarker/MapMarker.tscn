@@ -1,11 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://cb216dj4xhvhx"]
 
-[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.gd" type="Script" id=1]
-[ext_resource path="res://Nodes/Map/MapMarker/DefaultMarker.png" type="Texture2D" id=2]
-[ext_resource path="res://Nodes/Map/MapMarker/DefaultArrow.png" type="Texture2D" id=3]
+[ext_resource type="Script" uid="uid://cyplm7dlojn1g" path="res://Nodes/Map/MapMarker/MapMarker.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://qckym0k0iotx" path="res://Nodes/Map/MapMarker/DefaultMarker.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://c6lsnk6ipkpuq" path="res://Nodes/Map/MapMarker/DefaultArrow.png" id="3"]
 
 [node name="Marker" type="Node2D" groups=["MapMarker"]]
-modulate = Color( 1, 0.364706, 0, 1 )
-script = ExtResource( 1 )
-texture = ExtResource( 2 )
-arrow = ExtResource( 3 )
+modulate = Color(1, 0.364706, 0, 1)
+script = ExtResource("1")
+texture = ExtResource("2")
+arrow = ExtResource("3")

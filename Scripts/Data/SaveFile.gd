@@ -158,8 +158,8 @@ func load_map_node(map: Map, node_name: String):
 
 ### Serialize map
 
-const SKIP_PROPERTIES = ["script", "material", "process_mode", "_import_path", "process_priority", "show_behind_parent", "light_mask", "use_parent_material", "z_as_relative", "__meta__", "angle"]
-const ADDITIONAL_PROPERTIES = ["data", "frame_this_cycle"]
+static var SKIP_PROPERTIES = ["script", "material", "process_mode", "_import_path", "process_priority", "show_behind_parent", "light_mask", "use_parent_material", "z_as_relative", "__meta__", "angle"]
+static var ADDITIONAL_PROPERTIES = ["data", "frame_this_cycle"]
 var SKIP_TYPES = ["PixelMap", "Nodes2DTrackerMultiLvl", "WorldEnvironment"]
 var SKIP_NODES = []
 

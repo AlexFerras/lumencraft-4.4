@@ -14,7 +14,7 @@ Issues: https://github.com/hiulit/Godot-3-2D-CRT-Shader/issues
 License: MIT https://github.com/hiulit/Godot-3-2D-CRT-Shader/blob/master/LICENSE
 */
 
-const float PI = 3.14159265359;
+//const float PI = 3.14159265359;
 
 
 uniform bool show_curvature = true;
@@ -91,3 +91,13 @@ void fragment() {
 
 [resource]
 shader = SubResource("7")
+shader_parameter/show_curvature = true
+shader_parameter/curvature_x_amount = 6.0
+shader_parameter/curvature_y_amount = 4.0
+shader_parameter/show_horizontal_scan_lines = true
+shader_parameter/horizontal_scan_lines_amount = 1000.0
+shader_parameter/horizontal_scan_lines_opacity = 1.0
+shader_parameter/show_vertical_scan_lines = false
+shader_parameter/vertical_scan_lines_amount = 320.0
+shader_parameter/vertical_scan_lines_opacity = 1.0
+shader_parameter/boost = 1.2

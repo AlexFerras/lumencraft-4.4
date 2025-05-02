@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://e8e5j8qy1fbv" path="res://Nodes/Buildings/Storage/storage_container_T001_progress_open.png" id="11"]
 [ext_resource type="Texture2D" uid="uid://c5de4isp3lm1b" path="res://Nodes/Buildings/Storage/storage_container_T001_progress2.png" id="12"]
 [ext_resource type="Script" uid="uid://b7iwybyqv3h8d" path="res://Nodes/Lights/LightSprite.gd" id="13"]
-[ext_resource type="Material" uid="uid://cv5g01sg1xdrv" path="res://Resources/Materials/Hologram.tres" id="14"]
+[ext_resource type="Material" uid="uid://bdtek31c6o45h" path="res://Resources/Materials/Hologram.tres" id="14"]
 [ext_resource type="Texture2D" uid="uid://dgyiu337h6puc" path="res://Nodes/Map/Objects/JustDisplay.png" id="15"]
 [ext_resource type="FontFile" path="res://Resources/Fonts/Font80.tres" id="16"]
 [ext_resource type="Script" uid="uid://c4fvw2jy3yoy5" path="res://Nodes/Buildings/Storage/StorageComputer.gd" id="17"]

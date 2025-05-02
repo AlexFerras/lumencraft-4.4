@@ -45,7 +45,8 @@ void vertex()
 {
 	mat4 glo=global_transform;
 	mat2 ddd = mat2(glo);
-    global_position=(EXTRA_MATRIX *glo * vec4(VERTEX, 0.0, 1.0)).xy;
+	// TODO
+    //global_position=(EXTRA_MATRIX *glo * vec4(VERTEX, 0.0, 1.0)).xy;
 	//VERTEX = (EXTRA_MATRIX * (WORLD_MATRIX * vec4(VERTEX, 1.0, 1.0))).xy;
 }
 
@@ -70,7 +71,8 @@ void vertex()
 {
 	mat4 glo=global_transform;
 	mat2 ddd = mat2(glo);
-    global_position=(EXTRA_MATRIX *glo * vec4(VERTEX, 0.0, 1.0)).xy;
+	// TODO
+    //global_position=(EXTRA_MATRIX *glo * vec4(VERTEX, 0.0, 1.0)).xy;
 	//VERTEX = (EXTRA_MATRIX * (WORLD_MATRIX * vec4(VERTEX, 1.0, 1.0))).xy;
 }
 

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://bvny43q0432v"]
 
-[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
-[ext_resource path="res://Nodes/Lights/Textures/SmoothCircle.png" type="Texture2D" id=2]
+[ext_resource type="Script" uid="uid://b7iwybyqv3h8d" path="res://Nodes/Lights/LightSprite.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://byg4ev6hkhqbu" path="res://Nodes/Lights/Textures/SmoothCircle.png" id="2"]
 
 [node name="LightSprite" type="Node2D"]
-script = ExtResource( 1 )
-texture = ExtResource( 2 )
+script = ExtResource("1")
+texture = ExtResource("2")
 drop_shadow = true

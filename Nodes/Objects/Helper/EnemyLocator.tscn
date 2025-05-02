@@ -1,9 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://damlv5ff028w5"]
 
-[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Nodes/Map/MapMarker/WaveEnemyMarker.png" type="Texture2D" id=2]
+[ext_resource type="PackedScene" uid="uid://cb216dj4xhvhx" path="res://Nodes/Map/MapMarker/MapMarker.tscn" id="1"]
+[ext_resource type="Texture2D" uid="uid://dt8m1dld23aa3" path="res://Nodes/Map/MapMarker/WaveEnemyMarker.png" id="2"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends Timer
 
 @onready var marker: Node2D = $Marker
@@ -76,11 +76,11 @@ func find_enemy():
 
 [node name="EnemyLocator" type="Timer" groups=["dont_save"]]
 autostart = true
-script = SubResource( 1 )
+script = SubResource("1")
 
-[node name="Marker" parent="." instance=ExtResource( 1 )]
-modulate = Color( 2, 0, 0, 1 )
-texture = ExtResource( 2 )
-arrow = ExtResource( 2 )
+[node name="Marker" parent="." instance=ExtResource("1")]
+modulate = Color(2, 0, 0, 1)
+texture = ExtResource("2")
+arrow = ExtResource("2")
 max_radius = 999999.0
 rotate_arrow = false

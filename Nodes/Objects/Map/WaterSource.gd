@@ -1,4 +1,7 @@
-@tool
+
+
+# TODO This was @Tool. It was causing stack overflow while exporting to web.
+#@tool
 extends Node2D
 
 var fluid_source_id = -1

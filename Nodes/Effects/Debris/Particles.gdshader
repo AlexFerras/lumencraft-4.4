@@ -48,10 +48,11 @@ uniform int spawn2 = 0;
 uniform sampler2D map_texture;
 uniform float radius = 10.0;
 uniform float angle_jump = 0.1;
-const float PI = 3.14159265358979323846;
 
 uniform sampler2D repelers_positions : hint_default_black;
 uniform int repelers_positions_count;
+
+// Globals
 
 const float material_collision[33] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
 									1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -135,10 +136,11 @@ float when_lt(float x, float y) {
   return max(sign(y - x), 0.0);
 }
 
-void vertex() {
+
+void process() {
 	uint base_number = NUMBER / uint(trail_divisor);
 	uint alt_seed = hash(base_number + uint(1) + RANDOM_SEED);
-	float rand_my=random(vec2(float(INDEX+1)));
+	float rand_my=random(vec2(float(INDEX+(uint(1)))));
 	float angle_rand = rand_from_seed(alt_seed);
 	float scale_rand = rand_from_seed(alt_seed);
 	float hue_rot_rand = rand_from_seed(alt_seed);
@@ -146,7 +148,7 @@ void vertex() {
 	float pi = 3.14159;
 	float degree_to_rad = pi / 180.0;
 
-	int point = INDEX - spawn2;
+	int point = int(INDEX - uint(spawn2));
 	ivec2 emission_tex_size = textureSize(emission_texture_points, 0);
 	ivec2 emission_tex_ofs = ivec2(point % emission_tex_size.x, point / emission_tex_size.x);
 	bool restart = false;
@@ -157,12 +159,12 @@ void vertex() {
 		tv = 1.0;
 	}*/
 
-	if (INDEX >= spawn) {
+	if (INDEX >= uint(spawn)) {
 		VELOCITY = vec3(0);
 		TRANSFORM[3].xy = vec2(-1000.0, -1000.0);
 	}
 
-	if (int(pos.z) == 0 && INDEX >= spawn2 && INDEX < spawn) {
+	if (int(pos.z) == 0 && INDEX >= uint(spawn2) && INDEX < uint(spawn)) {
 		TRANSFORM[3].z = 1.0;
 		restart=true;
 	}

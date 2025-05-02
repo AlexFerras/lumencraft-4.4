@@ -68,7 +68,7 @@ uint hash(uint x) {
 	return x;
 }
 
-void vertex() {
+void process() {
 	uint base_number = NUMBER / uint(trail_divisor);
 	uint alt_seed = hash(base_number + uint(1) + RANDOM_SEED);
 	float angle_rand = rand_from_seed(alt_seed);
@@ -82,16 +82,16 @@ void vertex() {
 	float tv = 0.0;
 	vec3 pos = TRANSFORM[3].xyz;
 
-	int point = INDEX - spawn2;
+	int point = int(INDEX - uint(spawn2));
 	ivec2 emission_tex_size = textureSize(emission_texture_points, 0);
 	ivec2 emission_tex_ofs = ivec2(point % emission_tex_size.x, point / emission_tex_size.x);
 
-	if (INDEX >= spawn) {
+	if (INDEX >= uint(spawn)) {
 		VELOCITY = vec3(0);
 		TRANSFORM[3].xy = vec2(-1000.0, -1000.0);
 	}
 
-	if (int(pos.z) == 0 && INDEX >= spawn2 && INDEX < spawn) {
+	if (int(pos.z) == 0 && INDEX >= uint(spawn2) && INDEX < uint(spawn)) {
 		TRANSFORM[3].z = 1.0;
 		restart=true;
 	}

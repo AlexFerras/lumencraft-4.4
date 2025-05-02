@@ -21,7 +21,8 @@ void vertex()
 {
 	map_inverse_size=1.0/vec2(textureSize(map_texture,0));
 	global_position=(global_transform * vec4(VERTEX, 1.0, 1.0)).xy;
-	VERTEX = (EXTRA_MATRIX * (MODEL_MATRIX * vec4(VERTEX, 1.0, 1.0))).xy;
+	// TODO
+	//VERTEX = (EXTRA_MATRIX * (MODEL_MATRIX * vec4(VERTEX, 1.0, 1.0))).xy;
 
     blur_center = (global_transform*vec4(light_position,1.0,1.0)).xy;
 	

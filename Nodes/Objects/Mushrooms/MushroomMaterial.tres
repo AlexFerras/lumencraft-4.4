@@ -11,7 +11,8 @@ uniform float kicked_time=0.0;
 void vertex() {
 	mat4 glo = global_transform;
 	mat2 ddd = mat2(glo);
-	global_position = (EXTRA_MATRIX * glo * vec4(VERTEX, 0.0, 1.0)).xy;
+	// TODO
+	// global_position = (EXTRA_MATRIX * glo * vec4(VERTEX, 0.0, 1.0)).xy;
 }
 
 void fragment() {
@@ -25,3 +26,5 @@ void fragment() {
 
 [resource]
 shader = SubResource("19")
+shader_parameter/global_transform = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+shader_parameter/kicked_time = 0.0
