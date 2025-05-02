@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Terrain/TerrainTextures/TerrainTexture.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Terrain/Images/WallQuartz.png" type="Image" id=2]
+
+[resource]
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+durability = 3.0
+debris_color = Color( 0.8, 0.639216, 0.498039, 1 )
+hit_sound = "Crystal/Glass item Breaks"
+break_sound = "crystal_audio"
+transparent = false

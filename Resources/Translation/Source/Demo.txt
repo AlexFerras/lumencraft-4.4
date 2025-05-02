@@ -1,0 +1,22 @@
+THANK YOU!
+Thanks for supporting us and playing [color=#a000ff]Lumencraft[/color] during Early Access!\n\nWe believe our game will give you [color=#a000ff]a lot of fun[/color] for a long, long time. We are still working on it, so please forgive us some [color=#ff8080]random bugs[/color] and [color=#ff8080]report them[/color]. We plan to listen to our community and release updates frequently, at least once per month.\n\nJoin our [color=#a000ff]Discord[/color] to be updated.
+If you experience graphical problems, try pressing Alt+Enter to switch window mode or Ctrl+Shift+R to reset your config.
+
+Thank you for playing the demo!
+In the future you can expect full campaign, more maps, more enemies, more weapons and destruction. We hope to see you back!
+Buy the full version to get access to more content, including full 10 hours of campaign, procedurally generated maps and player-created missions.
+WISHLIST NOW!
+Leave\nFeedback
+Leave Feedback
+
+Early Access build.%s
+
+Demo Maps
+Play Game
+Not available
+Not available in demo
+Buy Now!
+Later
+
+NOTICE
+The editor in demo is [color=red]preview only[/color]. You can [color=yellow]create[/color], [color=yellow]edit[/color] and [color=yellow]play[/color] a map, but you [b]can't[/b] save, publish nor load any files, which means that [b]whatever you create will be lost[/b]. No other functionality is disabled, so you can test the editor's capabilities.

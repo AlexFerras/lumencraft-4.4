@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://Resources/Materials/GeneratedShadow.gdshader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/im_size = Vector2( 1920, 1080 )
+shader_param/shadow_size = 1.75
+shader_param/shadow_param_1 = 2.0
+shader_param/shadow_param_2 = 2.5
+shader_param/shadow_param_3 = 3.0

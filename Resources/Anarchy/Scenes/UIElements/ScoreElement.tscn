@@ -1,0 +1,159 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/flag_64x64.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/clock_64x64.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/SmartIcon.gd" type="Script" id=4]
+
+[sub_resource type="StyleBoxFlat" id=44]
+bg_color = Color( 0.164706, 0.164706, 0.164706, 1 )
+corner_radius_bottom_right = 32
+corner_detail = 1
+
+[sub_resource type="GDScript" id=45]
+script/source = "extends PanelContainer
+
+func clear():
+	set_score(\"?\", null, \"--\", \"--\", \"-:--:--\", false)
+
+func set_score(number: String, avatar: Texture2D, _name: String, score: String, time: String, finished: bool):
+	$\"%Number\".text = number
+	$\"%Avatar\".texture = avatar
+	$\"%Name\".text = _name
+	$\"%Score\".text = score
+	$\"%Time\".text = time
+	$\"%FlagIcon\".visible = finished
+"
+
+[node name="ScoreElement" type="PanelContainer"]
+unique_name_in_owner = true
+offset_right = 2812.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 0, 96 )
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource( 44 )
+script = SubResource( 45 )
+
+[node name="H" type="HBoxContainer" parent="."]
+offset_right = 2812.0
+offset_bottom = 96.0
+size_flags_horizontal = 5
+size_flags_vertical = 7
+theme_override_constants/separation = 32
+
+[node name="Number" type="Label" parent="H"]
+unique_name_in_owner = true
+offset_top = 16.0
+offset_right = 200.0
+offset_bottom = 80.0
+custom_minimum_size = Vector2( 200, 0 )
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource( 1 )
+text = "1"
+align = 2
+
+[node name="Avatar" type="TextureRect" parent="H"]
+unique_name_in_owner = true
+offset_left = 232.0
+offset_right = 322.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2( 90, 90 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+expand = true
+
+[node name="NameSlot" type="Control" parent="H"]
+offset_left = 354.0
+offset_right = 1505.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 1151, 0 )
+size_flags_horizontal = 0
+
+[node name="Name" type="Label" parent="H/NameSlot"]
+unique_name_in_owner = true
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 651.0
+offset_bottom = 32.0
+theme_type_variation = "YellowLabel"
+theme_override_fonts/font = ExtResource( 1 )
+text = "Player Name Long Long Long Long Long Long Long"
+
+[node name="Spacing" type="Control" parent="H"]
+offset_left = 1537.0
+offset_right = 1601.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 64, 0 )
+size_flags_horizontal = 0
+
+[node name="ScoreSlot" type="Control" parent="H"]
+offset_left = 1633.0
+offset_right = 2133.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 500, 0 )
+size_flags_horizontal = 0
+
+[node name="Score" type="Label" parent="H/ScoreSlot"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.5
+offset_top = -32.0
+offset_right = 150.5
+offset_bottom = 32.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource( 1 )
+text = "999999999999999"
+align = 1
+
+[node name="Spacing2" type="Control" parent="H"]
+offset_left = 2165.0
+offset_right = 2229.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 64, 0 )
+size_flags_horizontal = 0
+
+[node name="TimeScore" type="HBoxContainer" parent="H"]
+offset_left = 2261.0
+offset_right = 2608.0
+offset_bottom = 96.0
+size_flags_horizontal = 0
+theme_override_constants/separation = 16
+
+[node name="TimeIcon" type="TextureRect" parent="H/TimeScore" groups=["config_observers"]]
+self_modulate = Color( 1, 0.721569, 0, 1 )
+offset_right = 64.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 64, 64 )
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
+script = ExtResource( 4 )
+
+[node name="Time" type="Label" parent="H/TimeScore"]
+unique_name_in_owner = true
+offset_left = 80.0
+offset_top = 16.0
+offset_right = 281.0
+offset_bottom = 80.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "99:00:00"
+align = 1
+
+[node name="FlagIcon" type="TextureRect" parent="H/TimeScore" groups=["config_observers"]]
+unique_name_in_owner = true
+self_modulate = Color( 1, 0.721569, 0, 1 )
+offset_left = 297.0
+offset_top = 23.0
+offset_right = 347.0
+offset_bottom = 73.0
+custom_minimum_size = Vector2( 50, 50 )
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
+script = ExtResource( 4 )

@@ -1,0 +1,54 @@
+Buggy
+Small spider enemy.
+Pider
+Bigger spider enemy.
+Scorpio
+(WIP)
+Tentacruel
+Attacks with a rising spike attack.
+Arthoma
+Agile monster that attacks with swift dashes.
+Acidoma
+Attacks with a lingering acid spit.
+Suicidoma
+Rams at target and explodes in a suicidal manner.
+Suicacidoma
+Rams at target and explodes in a suicacidal manner.
+Gobbler
+A monster with ferocious rolling attack.
+
+GRUBAS
+Greatly Rampaging Ultra Big Assault Specimen
+Crystal GRUBAS
+Dangerous boss enemy with multitude of attacks.
+Turtle
+Walking ram.
+King
+Ugly tentacled monster that spawns small flying creatures.
+Frog
+It's wednesday my dudes!
+
+Spider Swarm
+Big number of spiders at once.
+Lumen Spider Swarm
+Swarm of spiders that ate too much Lumen.
+Strong Spider Swarm
+Big number of big spiders at once.
+Black Spider Swarm
+Swarm of extremely dangerous black widows.
+Worm Swarm
+Creepy worms attacking in swarm. They will eat your defenses really quickly.
+Strong Worm Swarm
+Bigger and stronger worms.
+Flying Swarm
+Swarm of winged creatures that can fly over walls.
+Strong Flying Swarm
+Bigger wings mean more flapping power.
+Slow Swarm
+Killer baby turtles.
+Explosive Swarm
+Swarm of creatures that explode into sticky goo.
+Shooting Swarm
+Swarm of scorpions with a ranged attack.
+Flying Shooting Swarm
+Swarm of dragonflies attacking from range. Death from above!

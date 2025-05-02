@@ -1,0 +1,428 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=4]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/map_tech_window_map_item_right.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=6]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" type="Texture2D" id=7]
+[ext_resource path="res://Resources/Anarchy/Scripts/UppercaseTabContainer.gd" type="Script" id=8]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/map_tech_window_map_item.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Resources/Anarchy/Fonts/map_tech_window_font.tres" type="FontFile" id=11]
+
+[sub_resource type="Animation" id=6]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("MarginContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("VBoxContainer/TabContainer:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("VBoxContainer/Tooltips:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "show"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("MarginContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0.2, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("VBoxContainer/TabContainer:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("VBoxContainer/Tooltips:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0.1, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[node name="MapTechWindow" type="HBoxContainer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 2282.0
+offset_bottom = 1089.0
+custom_minimum_size = Vector2( 3242, 1629 )
+theme_override_constants/separation = 46
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_right = 3146.0
+offset_bottom = 1629.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_right = 3146.0
+offset_bottom = 1524.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = "theme_anarchy_tab_container"
+tab_alignment = 0
+script = ExtResource( 8 )
+
+[node name="Map" type="MarginContainer" parent="VBoxContainer/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 100.0
+offset_right = -4.0
+offset_bottom = -4.0
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_top = 64
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_bottom = 64
+
+[node name="MapContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Map"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 3074.0
+offset_bottom = 1356.0
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TabContainer/Map/MapContainer"]
+offset_right = 900.0
+offset_bottom = 1292.0
+theme_override_constants/margin_top = 64
+theme_override_constants/margin_bottom = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer"]
+offset_top = 64.0
+offset_right = 900.0
+offset_bottom = 1292.0
+custom_minimum_size = Vector2( 900, 0 )
+theme_override_constants/separation = 4
+
+[node name="Section" type="PanelContainer" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer"]
+offset_right = 258.0
+offset_bottom = 72.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_type_variation = "MapTechPanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer/Section"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 254.0
+offset_bottom = 68.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_left = 12
+
+[node name="ValueKey" type="Label" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer/Section/MarginContainer"]
+offset_left = 12.0
+offset_right = 238.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 4 )
+text = "Map Items"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="Separator" type="Control" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer"]
+offset_top = 76.0
+offset_right = 900.0
+offset_bottom = 108.0
+custom_minimum_size = Vector2( 0, 32 )
+
+[node name="MapTechWindowMapItem" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" instance=ExtResource( 9 )]
+
+[node name="MapTechWindowMapItem2" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" instance=ExtResource( 9 )]
+offset_top = 271.0
+offset_bottom = 426.0
+
+[node name="MapTechWindowMapItem3" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" instance=ExtResource( 9 )]
+offset_top = 430.0
+offset_bottom = 585.0
+
+[node name="MapTechWindowMapItem4" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" instance=ExtResource( 9 )]
+offset_top = 589.0
+offset_bottom = 744.0
+
+[node name="MapTechWindowMapItem5" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" instance=ExtResource( 9 )]
+offset_top = 748.0
+offset_bottom = 903.0
+
+[node name="MapTechWindowMapItem6" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" instance=ExtResource( 9 )]
+offset_top = 907.0
+offset_bottom = 1062.0
+
+[node name="MapTechWindowMapItem7" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer/VBoxContainer" instance=ExtResource( 9 )]
+offset_top = 1066.0
+offset_bottom = 1221.0
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/TabContainer/Map/MapContainer"]
+offset_left = 904.0
+offset_right = 1804.0
+offset_bottom = 1292.0
+theme_override_constants/margin_top = 64
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2"]
+offset_top = 64.0
+offset_right = 900.0
+offset_bottom = 1292.0
+custom_minimum_size = Vector2( 900, 0 )
+theme_override_constants/separation = 4
+
+[node name="Section" type="PanelContainer" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2"]
+offset_left = 617.0
+offset_right = 900.0
+offset_bottom = 72.0
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_type_variation = "MapTechPanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2/Section"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 279.0
+offset_bottom = 68.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_left = 12
+
+[node name="ValueKey" type="Label" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2/Section/MarginContainer"]
+offset_left = 12.0
+offset_right = 263.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 4 )
+text = "Map Colors"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="Separator" type="Control" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2"]
+offset_top = 76.0
+offset_right = 900.0
+offset_bottom = 108.0
+custom_minimum_size = Vector2( 0, 32 )
+
+[node name="MapTechWindowMapItemRight" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" instance=ExtResource( 5 )]
+
+[node name="MapTechWindowMapItemRight2" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" instance=ExtResource( 5 )]
+offset_top = 271.0
+offset_bottom = 426.0
+
+[node name="MapTechWindowMapItemRight3" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" instance=ExtResource( 5 )]
+offset_top = 430.0
+offset_bottom = 585.0
+
+[node name="MapTechWindowMapItemRight4" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" instance=ExtResource( 5 )]
+offset_top = 589.0
+offset_bottom = 744.0
+
+[node name="MapTechWindowMapItemRight5" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" instance=ExtResource( 5 )]
+offset_top = 748.0
+offset_bottom = 903.0
+
+[node name="MapTechWindowMapItemRight6" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" instance=ExtResource( 5 )]
+offset_top = 907.0
+offset_bottom = 1062.0
+
+[node name="MapTechWindowMapItemRight7" parent="VBoxContainer/TabContainer/Map/MapContainer/MarginContainer2/VBoxContainer2" instance=ExtResource( 5 )]
+offset_top = 1066.0
+offset_bottom = 1221.0
+
+[node name="Tech" type="MarginContainer" parent="VBoxContainer/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 100.0
+offset_right = -4.0
+offset_bottom = -4.0
+size_flags_horizontal = 3
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_top = 64
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_bottom = 64
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/Tech"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 3074.0
+offset_bottom = 1356.0
+theme_override_constants/separation = 64
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/Tech/VBoxContainer"]
+offset_right = 3010.0
+offset_bottom = 1115.0
+custom_minimum_size = Vector2( 0, 1090 )
+size_flags_vertical = 3
+follow_focus = true
+scroll_horizontal_enabled = false
+
+[node name="TechContainer" type="GridContainer" parent="VBoxContainer/TabContainer/Tech/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+offset_bottom = 1115.0
+size_flags_vertical = 3
+theme_override_constants/v_separation = 16
+theme_override_constants/h_separation = 16
+columns = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Tech/VBoxContainer"]
+offset_top = 1179.0
+offset_right = 3010.0
+offset_bottom = 1292.0
+theme_override_constants/separation = 32
+alignment = 2
+
+[node name="TechnologyName" type="Label" parent="VBoxContainer/TabContainer/Tech/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 378.0
+offset_right = 1178.0
+offset_bottom = 113.0
+custom_minimum_size = Vector2( 800, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_type_variation = "YellowLabel"
+theme_override_fonts/font = ExtResource( 11 )
+text = "Item Name
+Long Long Two lines:"
+align = 2
+autowrap = true
+
+[node name="TechnologyDescription" type="Label" parent="VBoxContainer/TabContainer/Tech/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 1210.0
+offset_right = 3010.0
+offset_bottom = 113.0
+custom_minimum_size = Vector2( 1800, 0 )
+size_flags_vertical = 3
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 6 )
+text = "Long ESTABLISHED fact that a reader will be distracted by the readable content. Long ESTABLISHED fact that a reader will be distracted."
+autowrap = true
+
+[node name="Tooltips" type="HBoxContainer" parent="VBoxContainer"]
+offset_left = 2722.0
+offset_top = 1530.0
+offset_right = 3146.0
+offset_bottom = 1629.0
+grow_horizontal = 0
+size_flags_horizontal = 8
+theme_override_constants/separation = 16
+
+[node name="Dash" parent="VBoxContainer/Tooltips" instance=ExtResource( 10 )]
+offset_bottom = 99.0
+action = "move"
+text = "Select"
+
+[node name="ChangeTab" parent="VBoxContainer/Tooltips" instance=ExtResource( 10 )]
+offset_left = 220.0
+offset_right = 424.0
+offset_bottom = 99.0
+action = "run"
+text = "Change Tab"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_left = 3192.0
+offset_right = 3242.0
+offset_bottom = 1629.0
+theme_override_constants/margin_top = 95
+
+[node name="Exit" type="Panel" parent="MarginContainer"]
+offset_top = 95.0
+offset_right = 50.0
+offset_bottom = 145.0
+custom_minimum_size = Vector2( 50, 50 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "Footer"
+
+[node name="ExitButton" type="TextureButton" parent="MarginContainer/Exit"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -25.0
+offset_right = 16.0
+offset_bottom = 25.0
+custom_minimum_size = Vector2( 32, 32 )
+size_flags_vertical = 4
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 1 )
+texture_hover = ExtResource( 3 )
+texture_disabled = ExtResource( 2 )
+texture_focused = ExtResource( 7 )
+expand = true
+stretch_mode = 5
+
+[node name="Exit" parent="MarginContainer/Exit" instance=ExtResource( 10 )]
+offset_left = -43.0
+offset_top = 70.0
+offset_right = 161.0
+offset_bottom = 169.0
+action = "map"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 6 )
+anims/show = SubResource( 7 )

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/Lights/LightSprite.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Textures/lights_vfx/radial_spot_light_001.png" type="Texture2D" id=2]
+
+[node name="Light_Radial_Spot" type="Node2D"]
+modulate = Color( 2.34902, 2.77647, 2.99216, 0.596078 )
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+follow_rotation = true
+is_static = true

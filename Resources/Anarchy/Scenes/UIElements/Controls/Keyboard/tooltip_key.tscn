@@ -1,0 +1,80 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Scripts/tooltip_key.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/tooltip_joypad_button.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/keyboard/tooltip_button_64x64.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/types/mouse_167x223.png" type="Texture2D" id=5]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[node name="TooltipKey" type="PanelContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -3774.0
+offset_bottom = -2085.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource( 1 )
+script = ExtResource( 2 )
+
+[node name="TooltipKey" type="NinePatchRect" parent="."]
+unique_name_in_owner = true
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 66, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 4 )
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 24
+
+[node name="TooltipButton" type="NinePatchRect" parent="."]
+unique_name_in_owner = true
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 66, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 3 )
+patch_margin_left = 15
+patch_margin_top = 14
+patch_margin_right = 15
+patch_margin_bottom = 14
+
+[node name="TooltipMouse" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+texture = ExtResource( 5 )
+expand = true
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 66.0
+offset_bottom = 75.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_left = 12
+
+[node name="ValueKey" type="Label" parent="MarginContainer"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_right = 46.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "e"
+align = 1
+valign = 1
+uppercase = true

@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Textures/lights_vfx/radial_long_spot_light_T001.png" type="Texture2D" id=1]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Blink"
+length = 3.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.7, 1.5, 2, 3 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1.23, 1.77, 1.92, 0.32 ), Color( 1.23137, 1.76863, 1.92157, 0.509804 ), Color( 1.23, 1.77, 1.92, 0.32 ), Color( 1.23137, 1.76863, 1.92157, 0.509804 ), Color( 1.23, 1.77, 1.92, 0.32 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ -151.68 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1.86275, 1, 0.290196, 0.254902 ) ]
+}
+
+[node name="Long_Spotlight_Rotate_001" type="Sprite2D"]
+modulate = Color( 1.86275, 1, 0.290196, 0.254902 )
+self_modulate = Color( 1.78824, 1.9098, 1.32157, 0.760784 )
+position = Vector2( -29, 10 )
+rotation = -2.64732
+scale = Vector2( 0.22393, -0.201833 )
+z_index = 4096
+texture = ExtResource( 1 )
+offset = Vector2( -2.04173, 241.139 )
+
+[node name="Anim_Light_" type="AnimationPlayer" parent="."]
+autoplay = "Blink"
+anims/Blink = SubResource( 1 )
+anims/RESET = SubResource( 2 )

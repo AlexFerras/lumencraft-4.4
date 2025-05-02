@@ -1,0 +1,192 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/icon_value.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=2]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=3]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/star_64x64.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_workshop.png" type="Texture2D" id=6]
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = ExtResource( 3 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 16
+corner_detail = 1
+
+[node name="HudScoreCoOpResources" type="MarginContainer"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -841.0
+offset_right = 842.0
+offset_bottom = 264.0
+theme_override_constants/margin_top = 128
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 510.0
+offset_top = 128.0
+offset_right = 1172.0
+offset_bottom = 352.0
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PlayerScore" type="HBoxContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_left = 131.0
+offset_right = 531.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 400, 0 )
+size_flags_horizontal = 4
+theme_override_constants/separation = 0
+
+[node name="Icon" type="Panel" parent="VBoxContainer/PlayerScore"]
+self_modulate = Color( 0, 0.558716, 0.777344, 1 )
+material = SubResource( 12 )
+offset_right = 70.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 70, 64 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource( 7 )
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PlayerScore/Icon"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+texture = ExtResource( 5 )
+stretch_mode = 4
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PlayerScore"]
+offset_left = 70.0
+offset_right = 400.0
+offset_bottom = 64.0
+size_flags_horizontal = 3
+theme_type_variation = "0000_brown_transp"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PlayerScore/PanelContainer"]
+offset_right = 330.0
+offset_bottom = 64.0
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 48
+
+[node name="ScoreValue" type="Label" parent="VBoxContainer/PlayerScore/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 48.0
+offset_right = 314.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource( 2 )
+text = "9999999999"
+align = 2
+
+[node name="ResourcesPanel" type="PanelContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 80.0
+offset_right = 662.0
+offset_bottom = 224.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_type_variation = "1111_brown_yellow_border"
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/ResourcesPanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 658.0
+offset_bottom = 140.0
+grow_horizontal = 2
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ResourcesPanel/MarginContainer2"]
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 622.0
+offset_bottom = 104.0
+theme_override_constants/separation = 32
+
+[node name="ColorRect" type="PanelContainer" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer"]
+offset_right = 72.0
+offset_bottom = 72.0
+custom_minimum_size = Vector2( 72, 72 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = "1111_yellow"
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/ColorRect"]
+self_modulate = Color( 0.117647, 0.105882, 0.0823529, 0.937255 )
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 64.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 56, 56 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer"]
+offset_left = 104.0
+offset_right = 590.0
+offset_bottom = 72.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer"]
+offset_top = 4.0
+offset_right = 486.0
+offset_bottom = 68.0
+theme_override_constants/separation = 16
+
+[node name="GlobalLumen" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 1 )]
+unique_name_in_owner = true
+offset_right = 235.0
+
+[node name="Icon" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen" index="0"]
+self_modulate = Color( 0.862745, 0.176471, 0.329412, 1 )
+
+[node name="GlobalMetal" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 1 )]
+unique_name_in_owner = true
+offset_left = 251.0
+offset_right = 486.0
+
+[node name="Icon" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal" index="0"]
+self_modulate = Color( 1, 0.721569, 0, 1 )
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer"]
+visible = false
+offset_top = 80.0
+offset_right = 486.0
+offset_bottom = 144.0
+theme_override_constants/separation = 16
+
+[node name="IconValue" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2" instance=ExtResource( 1 )]
+offset_right = 235.0
+
+[node name="Icon" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue" index="0"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+
+[node name="IconValue2" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2" instance=ExtResource( 1 )]
+offset_left = 251.0
+offset_right = 486.0
+
+[node name="Icon" parent="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2" index="0"]
+self_modulate = Color( 1, 0.721569, 0, 1 )
+
+[editable path="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalLumen"]
+[editable path="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer/GlobalMetal"]
+[editable path="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue"]
+[editable path="VBoxContainer/ResourcesPanel/MarginContainer2/HBoxContainer/VBoxContainer/HBoxContainer2/IconValue2"]

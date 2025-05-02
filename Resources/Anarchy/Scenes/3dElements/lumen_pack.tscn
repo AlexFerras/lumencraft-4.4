@@ -1,0 +1,11 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Materials/lumen_003.tres" type="Material" id=1]
+[ext_resource path="res://Resources/Anarchy/3d/lumen_pack_A_Low_Poly_Rock_Mesh016.mesh" type="ArrayMesh" id=2]
+[ext_resource path="res://Resources/Anarchy/Scripts/lumen_pack.gd" type="Script" id=3]
+
+[node name="LumenPack" type="MeshInstance3D"]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.712691, -0.348764, -1.82175 )
+mesh = ExtResource( 2 )
+material/0 = ExtResource( 1 )
+script = ExtResource( 3 )

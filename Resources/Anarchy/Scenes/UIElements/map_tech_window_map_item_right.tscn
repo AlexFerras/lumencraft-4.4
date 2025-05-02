@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends PanelContainer
+
+@export var color: Color
+@export var description: String
+
+func _ready() -> void:
+	$\"%Color\".color = color
+	$\"%Description\".text = description
+"
+
+[node name="MapTechWindowMapItemRight" type="PanelContainer"]
+offset_top = 112.0
+offset_right = 900.0
+offset_bottom = 267.0
+size_flags_horizontal = 3
+theme_type_variation = "0001_grey"
+script = SubResource( 1 )
+
+[node name="Container" type="HBoxContainer" parent="."]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 876.0
+offset_bottom = 143.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="Color" type="ColorRect" parent="Container"]
+unique_name_in_owner = true
+offset_top = 33.0
+offset_right = 64.0
+offset_bottom = 97.0
+custom_minimum_size = Vector2( 64, 64 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+color = Color( 0.639216, 0.658824, 0.278431, 1 )
+
+[node name="Description" type="Label" parent="Container"]
+unique_name_in_owner = true
+offset_left = 96.0
+offset_right = 852.0
+offset_bottom = 131.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "Item descripttion There are many variations of passages."
+valign = 1
+autowrap = true

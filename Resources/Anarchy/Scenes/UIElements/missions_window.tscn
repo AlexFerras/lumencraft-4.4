@@ -1,0 +1,1235 @@
+[gd_scene load_steps=29 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/missions_requirement.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" type="Texture2D" id=6]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/missions_grid_node.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Resources/Anarchy/Textures/Missions/missions_pattern_1_192x192.png" type="Texture2D" id=9]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Resources/Anarchy/Scripts/missions_window.gd" type="Script" id=11]
+[ext_resource path="res://Resources/Anarchy/Textures/Missions/missions_line2d_1_64x64.png" type="Texture2D" id=12]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Controls/Gamepad/tooltip_gamepad_icon.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_mainmenu.tres" type="FontFile" id=14]
+[ext_resource path="res://Resources/Anarchy/Textures/Missions/missions_stones_1_256x256.png" type="Texture2D" id=15]
+[ext_resource path="res://Resources/Anarchy/Textures/Missions/missions_landscape_1_1984x320.png" type="Texture2D" id=16]
+[ext_resource path="res://Resources/Anarchy/Textures/Missions/missions_line2d_3_64x64.png" type="Texture2D" id=17]
+[ext_resource path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" type="Script" id=18]
+[ext_resource path="res://Resources/Anarchy/Scripts/ExitButton.gd" type="Script" id=19]
+[ext_resource path="res://Resources/Anarchy/Textures/Missions/missions_line2d_2_64x64.png" type="Texture2D" id=20]
+
+[sub_resource type="InputEventAction" id=71]
+action = "ui_cancel"
+
+[sub_resource type="Shortcut" id=72]
+shortcut = SubResource( 71 )
+
+[sub_resource type="Gradient" id=78]
+colors = PackedColorArray( 0, 0, 0, 0, 0.0253, 0.23, 0.192472, 1 )
+
+[sub_resource type="GradientTexture2D" id=79]
+gradient = SubResource( 78 )
+width = 256
+height = 256
+fill_to = Vector2( 0, 1 )
+
+[sub_resource type="Shader" id=75]
+code = "/*
+Godot 3 2D CRT Shader.
+A 2D shader for Godot 3 simulating a CRT..
+
+Author: hiulit
+Repository: https://github.com/hiulit/Godot-3-2D-CRT-Shader
+Issues: https://github.com/hiulit/Godot-3-2D-CRT-Shader/issues
+License: MIT https://github.com/hiulit/Godot-3-2D-CRT-Shader/blob/master/LICENSE
+*/
+
+shader_type canvas_item;
+
+//const float PI = 3.14159265359;
+
+uniform vec2 screen_size = vec2(320.0, 180.0);
+uniform bool show_curvature = true;
+uniform float curvature_x_amount : hint_range(3.0, 15.0, 0.01) = float(6.0); 
+uniform float curvature_y_amount : hint_range(3.0, 15.0, 0.01) = float(4.0);
+uniform vec4 corner_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform bool show_vignette = true;
+uniform float vignette_opacity : hint_range(0.0, 1.0, 0.01) = 0.2;
+uniform bool show_horizontal_scan_lines = true;
+uniform float horizontal_scan_lines_amount : hint_range(0.0, 1000.0, 0.1) = 1000.0;
+uniform float horizontal_scan_lines_opacity : hint_range(0.0, 1.0, 0.01) = 1.0;
+uniform bool show_vertical_scan_lines = false;
+uniform float vertical_scan_lines_amount : hint_range(0.0, 320.0, 0.1) = 320.0;
+uniform float vertical_scan_lines_opacity : hint_range(0.0, 1.0, 0.01) = 1.0;
+uniform float boost : hint_range(1.0, 2.0, 0.01) = 1.2;
+uniform float aberration_amount : hint_range(0.0, 10.0, 0.01) = 0.0;
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+
+vec2 uv_curve(vec2 uv) {
+	if (show_curvature) {
+		uv = uv * 2.0 - 1.0;
+		vec2 offset = abs(uv.yx) / vec2(curvature_x_amount, curvature_y_amount);
+		uv = uv + uv * offset * offset;
+		uv = uv * 0.5 + 0.5;
+	}
+
+	return uv;
+}
+
+
+void fragment() {
+	vec2 uv = uv_curve(UV);
+	vec2 screen_uv = uv_curve(SCREEN_UV);
+	vec3 color = texture(SCREEN_TEXTURE, screen_uv).rgb;
+
+	if (aberration_amount > 0.0) {
+		float adjusted_amount = aberration_amount / screen_size.x;
+		color.r = texture(SCREEN_TEXTURE, vec2(screen_uv.x + adjusted_amount, screen_uv.y)).r;
+		color.g = texture(SCREEN_TEXTURE, screen_uv).g;
+		color.b = texture(SCREEN_TEXTURE, vec2(screen_uv.x - adjusted_amount, screen_uv.y)).b;
+	}
+
+	if (show_vignette) {
+		float vignette = uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
+		vignette = clamp(pow((screen_size.x / 4.0) * vignette, vignette_opacity), 0.0, 1.0);
+		color *= vignette;
+	}
+
+	if (show_horizontal_scan_lines) {
+		float s = sin(screen_uv.y * horizontal_scan_lines_amount * PI * 2.0);
+		s = (s * 0.5 + 0.5) * 0.9 + 0.1;
+		vec4 scan_line = vec4(vec3(pow(s, horizontal_scan_lines_opacity)), 1.0);
+		color *= scan_line.rgb;
+	}
+
+	if (show_vertical_scan_lines) {
+		float s = sin(screen_uv.x * vertical_scan_lines_amount * PI * 2.0);
+		s = (s * 0.5 + 0.5) * 0.9 + 0.1;
+		vec4 scan_line = vec4(vec3(pow(s, vertical_scan_lines_opacity)), 1.0);
+		color *= scan_line.rgb;
+	}
+
+	if (show_horizontal_scan_lines || show_vertical_scan_lines) {
+		color *= boost;
+	}
+
+	// Fill the blank space of the corners, left by the curvature, with black.
+	if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+		color = corner_color.rgb;
+	}
+
+	COLOR = vec4(color, 1.0);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=76]
+shader = SubResource( 75 )
+shader_param/screen_size = Vector2( 1000, 100 )
+shader_param/show_curvature = false
+shader_param/curvature_x_amount = 15.0
+shader_param/curvature_y_amount = 15.0
+shader_param/corner_color = Color( 0, 0, 0, 1 )
+shader_param/show_vignette = true
+shader_param/vignette_opacity = 0.32
+shader_param/show_horizontal_scan_lines = true
+shader_param/horizontal_scan_lines_amount = 220.0
+shader_param/horizontal_scan_lines_opacity = 0.14
+shader_param/show_vertical_scan_lines = true
+shader_param/vertical_scan_lines_amount = 320.0
+shader_param/vertical_scan_lines_opacity = 0.03
+shader_param/boost = 1.08
+shader_param/aberration_amount = 0.28
+
+[sub_resource type="StyleBoxEmpty" id=73]
+
+[sub_resource type="GDScript" id=77]
+resource_name = "RightScroll"
+script/source = "extends ScrollContainer
+
+func _ready() -> void:
+	set_process(is_visible_in_tree())
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_process(is_visible_in_tree())
+
+func _process(delta: float) -> void:
+	if Input.is_action_pressed(\"p1_look_up\"):
+		scroll_vertical -= 500 * delta
+	elif Input.is_action_pressed(\"p1_look_down\"):
+		scroll_vertical += 500 * delta
+"
+
+[sub_resource type="GDScript" id=54]
+resource_name = "HideWhenNotJoypad"
+script/source = "extends HBoxContainer
+
+func _ready() -> void:
+	Utils.connect(\"joypad_updated\", Callable(self, \"update_visible\"))
+	update_visible()
+
+func update_visible():
+	modulate.a = float(Utils.is_using_joypad())
+"
+
+[node name="Missions" type="VBoxContainer"]
+offset_right = 3586.0
+offset_bottom = 2020.0
+custom_minimum_size = Vector2( 0, 1700 )
+pivot_offset = Vector2( -3650, 4022 )
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+script = ExtResource( 11 )
+
+[node name="Header" type="HBoxContainer" parent="."]
+offset_right = 3586.0
+offset_bottom = 107.0
+size_flags_horizontal = 3
+
+[node name="HeaderName" type="PanelContainer" parent="Header"]
+offset_right = 1118.0
+offset_bottom = 107.0
+size_flags_horizontal = 0
+theme_type_variation = "1000_yellow"
+
+[node name="HaderText" type="Label" parent="Header/HeaderName"]
+offset_left = 64.0
+offset_right = 1054.0
+offset_bottom = 107.0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 14 )
+text = "Choose Your Destination"
+uppercase = true
+
+[node name="Spacing" type="Control" parent="Header"]
+offset_left = 1122.0
+offset_right = 3475.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 32, 0 )
+size_flags_horizontal = 3
+
+[node name="Exit" type="PanelContainer" parent="Header"]
+offset_left = 3479.0
+offset_right = 3586.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+theme_type_variation = "ExitButton"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Header/Exit"]
+offset_right = 107.0
+offset_bottom = 107.0
+
+[node name="Tooltip" type="Control" parent="Header/Exit/HBoxContainer"]
+visible = false
+offset_right = 107.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TooltipGamepadIcon" parent="Header/Exit/HBoxContainer/Tooltip" instance=ExtResource( 13 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+
+[node name="Exit" type="Control" parent="Header/Exit/HBoxContainer"]
+offset_right = 107.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="ExitButton" type="TextureButton" parent="Header/Exit/HBoxContainer/Exit"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+custom_minimum_size = Vector2( 32, 32 )
+focus_mode = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+shortcut = SubResource( 72 )
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 3 )
+texture_hover = ExtResource( 5 )
+texture_disabled = ExtResource( 4 )
+texture_focused = ExtResource( 6 )
+expand = true
+stretch_mode = 5
+script = ExtResource( 19 )
+
+[node name="Content" type="PanelContainer" parent="."]
+offset_top = 107.0
+offset_right = 3586.0
+offset_bottom = 1913.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = "0001_yellow_only_border"
+
+[node name="hbox" type="HBoxContainer" parent="Content"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 3522.0
+offset_bottom = 1742.0
+size_flags_horizontal = 3
+theme_override_constants/separation = 32
+
+[node name="left" type="PanelContainer" parent="Content/hbox"]
+offset_right = 2208.0
+offset_bottom = 1678.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = "0001_yellow_only_border"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Content/hbox/left"]
+unique_name_in_owner = true
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 2144.0
+offset_bottom = 1614.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+follow_focus = true
+scroll_horizontal_enabled = false
+scroll_vertical = 100
+
+[node name="Backdrop" type="VBoxContainer" parent="Content/hbox/left/ScrollContainer"]
+offset_top = -100.0
+offset_right = 1984.0
+offset_bottom = 3516.0
+theme_override_constants/separation = 0
+
+[node name="stones" type="TextureRect" parent="Content/hbox/left/ScrollContainer/Backdrop"]
+self_modulate = Color( 0.0196078, 0.141176, 0.117647, 0.388235 )
+offset_right = 1984.0
+offset_bottom = 1200.0
+custom_minimum_size = Vector2( 1984, 1200 )
+mouse_filter = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+texture = ExtResource( 15 )
+expand = true
+stretch_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Content/hbox/left/ScrollContainer/Backdrop"]
+offset_top = 1200.0
+offset_right = 1984.0
+offset_bottom = 3616.0
+custom_minimum_size = Vector2( 0, 2416 )
+texture = SubResource( 79 )
+stretch_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content/hbox/left/ScrollContainer"]
+offset_top = -100.0
+offset_right = 1984.0
+offset_bottom = 3516.0
+size_flags_horizontal = 5
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="landscape" type="TextureRect" parent="Content/hbox/left/ScrollContainer/VBoxContainer"]
+self_modulate = Color( 0.0666667, 0.588235, 0.490196, 1 )
+offset_right = 1984.0
+offset_bottom = 320.0
+size_flags_vertical = 0
+texture = ExtResource( 16 )
+
+[node name="Control" type="Control" parent="Content/hbox/left/ScrollContainer/VBoxContainer"]
+offset_top = 320.0
+offset_right = 1984.0
+offset_bottom = 576.0
+custom_minimum_size = Vector2( 0, 256 )
+
+[node name="nodes" type="GridContainer" parent="Content/hbox/left/ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+offset_left = 176.0
+offset_top = 576.0
+offset_right = 1808.0
+offset_bottom = 3488.0
+size_flags_horizontal = 4
+theme_override_constants/v_separation = 160
+theme_override_constants/h_separation = 160
+columns = 7
+
+[node name="missions_grid_node" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+
+[node name="missions_grid_node2" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_right = 352.0
+
+[node name="missions_grid_node3" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_right = 608.0
+
+[node name="missions_grid_node4" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_right = 864.0
+map_id = "dig_100"
+connects_to = 1
+
+[node name="missions_grid_node5" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_right = 1120.0
+
+[node name="missions_grid_node6" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_right = 1376.0
+
+[node name="missions_grid_node38" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_right = 1632.0
+
+[node name="missions_grid_node39" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 256.0
+offset_bottom = 352.0
+
+[node name="missions_grid_node40" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 256.0
+offset_right = 352.0
+offset_bottom = 352.0
+
+[node name="missions_grid_node41" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 256.0
+offset_right = 608.0
+offset_bottom = 352.0
+map_id = "power"
+
+[node name="missions_grid_node42" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 256.0
+offset_right = 864.0
+offset_bottom = 352.0
+map_id = "spearman"
+connects_to = 7
+
+[node name="missions_grid_node43" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 256.0
+offset_right = 1120.0
+offset_bottom = 352.0
+map_id = "armored_box"
+connects_to = 4
+
+[node name="missions_grid_node44" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 256.0
+offset_right = 1376.0
+offset_bottom = 352.0
+map_id = "stand"
+
+[node name="missions_grid_node45" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 256.0
+offset_right = 1632.0
+offset_bottom = 352.0
+
+[node name="missions_grid_node7" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 512.0
+offset_bottom = 608.0
+
+[node name="missions_grid_node8" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 512.0
+offset_right = 352.0
+offset_bottom = 608.0
+
+[node name="missions_grid_node9" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 512.0
+offset_right = 608.0
+offset_bottom = 608.0
+map_id = "info_center_map"
+
+[node name="missions_grid_node10" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 512.0
+offset_right = 864.0
+offset_bottom = 608.0
+map_id = "something_something_wall"
+connects_to = 7
+
+[node name="missions_grid_node11" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 512.0
+offset_right = 1120.0
+offset_bottom = 608.0
+map_id = "lumen_beams"
+
+[node name="missions_grid_node12" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 512.0
+offset_right = 1376.0
+offset_bottom = 608.0
+
+[node name="missions_grid_node13" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 512.0
+offset_right = 1632.0
+offset_bottom = 608.0
+
+[node name="missions_grid_node14" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 768.0
+offset_bottom = 864.0
+
+[node name="missions_grid_node15" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 768.0
+offset_right = 352.0
+offset_bottom = 864.0
+
+[node name="missions_grid_node16" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 768.0
+offset_right = 608.0
+offset_bottom = 864.0
+
+[node name="missions_grid_node17" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 768.0
+offset_right = 864.0
+offset_bottom = 864.0
+map_id = "drillupgrad"
+connects_to = 1
+
+[node name="missions_grid_node25" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 768.0
+offset_right = 1120.0
+offset_bottom = 864.0
+
+[node name="missions_grid_node26" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 768.0
+offset_right = 1376.0
+offset_bottom = 864.0
+
+[node name="missions_grid_node27" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 768.0
+offset_right = 1632.0
+offset_bottom = 864.0
+
+[node name="missions_grid_node28" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 1024.0
+offset_bottom = 1120.0
+
+[node name="missions_grid_node29" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 1024.0
+offset_right = 352.0
+offset_bottom = 1120.0
+
+[node name="missions_grid_node30" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 1024.0
+offset_right = 608.0
+offset_bottom = 1120.0
+map_id = "death"
+
+[node name="missions_grid_node31" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 1024.0
+offset_right = 864.0
+offset_bottom = 1120.0
+map_id = "random1"
+connects_to = 7
+big = true
+
+[node name="missions_grid_node32" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 1024.0
+offset_right = 1120.0
+offset_bottom = 1120.0
+map_id = "erosion"
+
+[node name="missions_grid_node33" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 1024.0
+offset_right = 1376.0
+offset_bottom = 1120.0
+
+[node name="missions_grid_node34" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 1024.0
+offset_right = 1632.0
+offset_bottom = 1120.0
+
+[node name="missions_grid_node35" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 1280.0
+offset_bottom = 1376.0
+
+[node name="missions_grid_node36" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 1280.0
+offset_right = 352.0
+offset_bottom = 1376.0
+
+[node name="missions_grid_node37" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 1280.0
+offset_right = 608.0
+offset_bottom = 1376.0
+map_id = "storaget"
+
+[node name="missions_grid_node18" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 1280.0
+offset_right = 864.0
+offset_bottom = 1376.0
+map_id = "boss_is_coming"
+connects_to = 7
+
+[node name="missions_grid_node19" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 1280.0
+offset_right = 1120.0
+offset_bottom = 1376.0
+map_id = "utility"
+connects_to = 4
+
+[node name="missions_grid_node20" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 1280.0
+offset_right = 1376.0
+offset_bottom = 1376.0
+map_id = "floor_is_lava"
+
+[node name="missions_grid_node21" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 1280.0
+offset_right = 1632.0
+offset_bottom = 1376.0
+
+[node name="missions_grid_node46" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 1536.0
+offset_bottom = 1632.0
+
+[node name="missions_grid_node47" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 1536.0
+offset_right = 352.0
+offset_bottom = 1632.0
+
+[node name="missions_grid_node48" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 1536.0
+offset_right = 608.0
+offset_bottom = 1632.0
+
+[node name="missions_grid_node22" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 1536.0
+offset_right = 864.0
+offset_bottom = 1632.0
+map_id = "random2"
+connects_to = 5
+big = true
+
+[node name="missions_grid_node23" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 1536.0
+offset_right = 1120.0
+offset_bottom = 1632.0
+map_id = "offdef"
+
+[node name="missions_grid_node24" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 1536.0
+offset_right = 1376.0
+offset_bottom = 1632.0
+
+[node name="missions_grid_node49" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 1536.0
+offset_right = 1632.0
+offset_bottom = 1632.0
+
+[node name="missions_grid_node50" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 1792.0
+offset_bottom = 1888.0
+
+[node name="missions_grid_node51" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 1792.0
+offset_right = 352.0
+offset_bottom = 1888.0
+
+[node name="missions_grid_node52" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 1792.0
+offset_right = 608.0
+offset_bottom = 1888.0
+map_id = "barrles_will_save_you"
+
+[node name="missions_grid_node53" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 1792.0
+offset_right = 864.0
+offset_bottom = 1888.0
+map_id = "explosive_win"
+connects_to = 7
+
+[node name="missions_grid_node54" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 1792.0
+offset_right = 1120.0
+offset_bottom = 1888.0
+map_id = "item_detector"
+
+[node name="missions_grid_node55" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 1792.0
+offset_right = 1376.0
+offset_bottom = 1888.0
+
+[node name="missions_grid_node56" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 1792.0
+offset_right = 1632.0
+offset_bottom = 1888.0
+
+[node name="missions_grid_node57" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 2048.0
+offset_bottom = 2144.0
+
+[node name="missions_grid_node58" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 2048.0
+offset_right = 352.0
+offset_bottom = 2144.0
+
+[node name="missions_grid_node59" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 2048.0
+offset_right = 608.0
+offset_bottom = 2144.0
+
+[node name="missions_grid_node60" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 2048.0
+offset_right = 864.0
+offset_bottom = 2144.0
+map_id = "random3"
+connects_to = 5
+big = true
+
+[node name="missions_grid_node61" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 2048.0
+offset_right = 1120.0
+offset_bottom = 2144.0
+map_id = "digga_nigga"
+
+[node name="missions_grid_node62" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 2048.0
+offset_right = 1376.0
+offset_bottom = 2144.0
+
+[node name="missions_grid_node63" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 2048.0
+offset_right = 1632.0
+offset_bottom = 2144.0
+
+[node name="missions_grid_node64" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 2304.0
+offset_bottom = 2400.0
+
+[node name="missions_grid_node65" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 2304.0
+offset_right = 352.0
+offset_bottom = 2400.0
+
+[node name="missions_grid_node66" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 2304.0
+offset_right = 608.0
+offset_bottom = 2400.0
+map_id = "bombastic"
+
+[node name="missions_grid_node67" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 2304.0
+offset_right = 864.0
+offset_bottom = 2400.0
+map_id = "random4"
+connects_to = 3
+big = true
+
+[node name="missions_grid_node68" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 2304.0
+offset_right = 1120.0
+offset_bottom = 2400.0
+
+[node name="missions_grid_node69" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 2304.0
+offset_right = 1376.0
+offset_bottom = 2400.0
+
+[node name="missions_grid_node70" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 2304.0
+offset_right = 1632.0
+offset_bottom = 2400.0
+
+[node name="missions_grid_node71" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 2560.0
+offset_bottom = 2656.0
+
+[node name="missions_grid_node72" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 2560.0
+offset_right = 352.0
+offset_bottom = 2656.0
+
+[node name="missions_grid_node73" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 2560.0
+offset_right = 608.0
+offset_bottom = 2656.0
+
+[node name="missions_grid_node74" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 2560.0
+offset_right = 864.0
+offset_bottom = 2656.0
+map_id = "farmission"
+connects_to = 1
+
+[node name="missions_grid_node75" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 2560.0
+offset_right = 1120.0
+offset_bottom = 2656.0
+
+[node name="missions_grid_node76" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 2560.0
+offset_right = 1376.0
+offset_bottom = 2656.0
+
+[node name="missions_grid_node77" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 2560.0
+offset_right = 1632.0
+offset_bottom = 2656.0
+
+[node name="missions_grid_node78" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_top = 2816.0
+offset_bottom = 2912.0
+
+[node name="missions_grid_node79" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 256.0
+offset_top = 2816.0
+offset_right = 352.0
+offset_bottom = 2912.0
+
+[node name="missions_grid_node80" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 512.0
+offset_top = 2816.0
+offset_right = 608.0
+offset_bottom = 2912.0
+
+[node name="missions_grid_node81" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 768.0
+offset_top = 2816.0
+offset_right = 864.0
+offset_bottom = 2912.0
+map_id = "endless"
+big = true
+
+[node name="missions_grid_node82" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1024.0
+offset_top = 2816.0
+offset_right = 1120.0
+offset_bottom = 2912.0
+
+[node name="missions_grid_node83" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1280.0
+offset_top = 2816.0
+offset_right = 1376.0
+offset_bottom = 2912.0
+
+[node name="missions_grid_node84" parent="Content/hbox/left/ScrollContainer/VBoxContainer/nodes" instance=ExtResource( 7 )]
+offset_left = 1536.0
+offset_top = 2816.0
+offset_right = 1632.0
+offset_bottom = 2912.0
+
+[node name="Control2" type="Control" parent="Content/hbox/left/ScrollContainer/VBoxContainer"]
+offset_top = 3488.0
+offset_right = 1984.0
+offset_bottom = 3616.0
+custom_minimum_size = Vector2( 0, 128 )
+
+[node name="grid2" type="TextureRect" parent="Content/hbox/left"]
+self_modulate = Color( 0.0196078, 0.141176, 0.117647, 1 )
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 2048.0
+offset_bottom = 1614.0
+custom_minimum_size = Vector2( 1984, 0 )
+mouse_filter = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+texture = ExtResource( 9 )
+expand = true
+stretch_mode = 2
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CRT" type="ColorRect" parent="Content/hbox/left"]
+material = SubResource( 76 )
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 2048.0
+offset_bottom = 1614.0
+custom_minimum_size = Vector2( 1984, 0 )
+mouse_filter = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="right" type="PanelContainer" parent="Content/hbox"]
+offset_left = 2240.0
+offset_right = 3458.0
+offset_bottom = 1678.0
+custom_minimum_size = Vector2( 1218, 0 )
+theme_override_styles/panel = SubResource( 73 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content/hbox/right"]
+offset_right = 1218.0
+offset_bottom = 1678.0
+theme_override_constants/separation = 16
+
+[node name="mission_name_and_description" type="VBoxContainer" parent="Content/hbox/right/VBoxContainer"]
+offset_right = 1218.0
+offset_bottom = 946.0
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="mission_name" type="PanelContainer" parent="Content/hbox/right/VBoxContainer/mission_name_and_description"]
+offset_right = 618.0
+offset_bottom = 64.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_type_variation = "1000_yellow"
+
+[node name="MarginContainer" type="MarginContainer" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_name"]
+offset_left = 64.0
+offset_right = 554.0
+offset_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_left = 32
+
+[node name="Title" type="Label" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_name/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_right = 458.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "Mission Name Long"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="mission_description" type="PanelContainer" parent="Content/hbox/right/VBoxContainer/mission_name_and_description"]
+offset_top = 64.0
+offset_right = 1218.0
+offset_bottom = 946.0
+size_flags_vertical = 3
+theme_type_variation = "0001_yellow_only_border"
+
+[node name="MarginContainer" type="MarginContainer" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_description"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 1154.0
+offset_bottom = 818.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_description/MarginContainer"]
+offset_right = 1090.0
+offset_bottom = 754.0
+script = SubResource( 77 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_description/MarginContainer/ScrollContainer"]
+offset_right = 1026.0
+offset_bottom = 332.0
+size_flags_horizontal = 3
+
+[node name="Description" type="Label" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_description/MarginContainer/ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+offset_right = 1026.0
+offset_bottom = 332.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 1 )
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent diam neque, placerat eget hendrerit sit amet, faucibus non elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. "
+autowrap = true
+
+[node name="Randomly" type="Label" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_description/MarginContainer/ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+offset_top = 336.0
+offset_right = 1026.0
+offset_bottom = 400.0
+theme_override_colors/font_color = Color( 1, 0.42, 0.44, 1 )
+text = "Randomly Generated Map"
+align = 1
+
+[node name="Depth" type="Label" parent="Content/hbox/right/VBoxContainer/mission_name_and_description/mission_description/MarginContainer"]
+unique_name_in_owner = true
+offset_top = 690.0
+offset_right = 1090.0
+offset_bottom = 754.0
+size_flags_vertical = 8
+text = "Depth: %d"
+
+[node name="requirements" type="VBoxContainer" parent="Content/hbox/right/VBoxContainer"]
+visible = false
+offset_top = 610.0
+offset_right = 1218.0
+offset_bottom = 1018.0
+theme_override_constants/separation = 0
+
+[node name="Section2" type="PanelContainer" parent="Content/hbox/right/VBoxContainer/requirements"]
+offset_right = 453.0
+offset_bottom = 64.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_type_variation = "1000_cyan"
+
+[node name="MarginContainer" type="MarginContainer" parent="Content/hbox/right/VBoxContainer/requirements/Section2"]
+offset_left = 64.0
+offset_right = 389.0
+offset_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_left = 12
+
+[node name="ValueKey" type="Label" parent="Content/hbox/right/VBoxContainer/requirements/Section2/MarginContainer"]
+offset_left = 12.0
+offset_right = 313.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "Requirements"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PanelContainer2" type="PanelContainer" parent="Content/hbox/right/VBoxContainer/requirements"]
+offset_top = 64.0
+offset_right = 1218.0
+offset_bottom = 408.0
+theme_type_variation = "RequirementsRewards"
+
+[node name="Requirements" type="VBoxContainer" parent="Content/hbox/right/VBoxContainer/requirements/PanelContainer2"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 1186.0
+offset_bottom = 312.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="missions_requirement" parent="Content/hbox/right/VBoxContainer/requirements/PanelContainer2/Requirements" instance=ExtResource( 2 )]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1154.0
+offset_bottom = 88.0
+
+[node name="missions_requirement2" parent="Content/hbox/right/VBoxContainer/requirements/PanelContainer2/Requirements" instance=ExtResource( 2 )]
+offset_left = 0.0
+offset_top = 96.0
+offset_right = 1154.0
+offset_bottom = 184.0
+
+[node name="missions_requirement3" parent="Content/hbox/right/VBoxContainer/requirements/PanelContainer2/Requirements" instance=ExtResource( 2 )]
+offset_left = 0.0
+offset_top = 192.0
+offset_right = 1154.0
+offset_bottom = 280.0
+
+[node name="rewards" type="VBoxContainer" parent="Content/hbox/right/VBoxContainer"]
+offset_top = 962.0
+offset_right = 1218.0
+offset_bottom = 1514.0
+theme_override_constants/separation = 0
+
+[node name="Section2" type="PanelContainer" parent="Content/hbox/right/VBoxContainer/rewards"]
+offset_right = 328.0
+offset_bottom = 64.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_type_variation = "1000_cyan"
+
+[node name="MarginContainer" type="MarginContainer" parent="Content/hbox/right/VBoxContainer/rewards/Section2"]
+offset_left = 64.0
+offset_right = 264.0
+offset_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_left = 12
+
+[node name="ValueKey" type="Label" parent="Content/hbox/right/VBoxContainer/rewards/Section2/MarginContainer"]
+offset_left = 12.0
+offset_right = 188.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 1 )
+text = "Rewards"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PanelContainer2" type="PanelContainer" parent="Content/hbox/right/VBoxContainer/rewards"]
+offset_top = 64.0
+offset_right = 1218.0
+offset_bottom = 552.0
+theme_type_variation = "RequirementsRewards"
+
+[node name="Rewards" type="VBoxContainer" parent="Content/hbox/right/VBoxContainer/rewards/PanelContainer2"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 1186.0
+offset_bottom = 456.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="missions_requirement" parent="Content/hbox/right/VBoxContainer/rewards/PanelContainer2/Rewards" instance=ExtResource( 2 )]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1154.0
+offset_bottom = 88.0
+
+[node name="missions_requirement2" parent="Content/hbox/right/VBoxContainer/rewards/PanelContainer2/Rewards" instance=ExtResource( 2 )]
+offset_left = 0.0
+offset_top = 96.0
+offset_right = 1154.0
+offset_bottom = 184.0
+
+[node name="missions_requirement3" parent="Content/hbox/right/VBoxContainer/rewards/PanelContainer2/Rewards" instance=ExtResource( 2 )]
+offset_left = 0.0
+offset_top = 192.0
+offset_right = 1154.0
+offset_bottom = 280.0
+
+[node name="Claimed" type="Label" parent="Content/hbox/right/VBoxContainer/rewards/PanelContainer2/Rewards"]
+unique_name_in_owner = true
+offset_top = 288.0
+offset_right = 1154.0
+offset_bottom = 352.0
+text = "Claimed"
+align = 1
+
+[node name="BestScore" type="Label" parent="Content/hbox/right/VBoxContainer/rewards/PanelContainer2/Rewards"]
+unique_name_in_owner = true
+offset_top = 360.0
+offset_right = 1154.0
+offset_bottom = 424.0
+text = "Best Score"
+align = 1
+
+[node name="space" type="Control" parent="Content/hbox/right/VBoxContainer"]
+offset_top = 1530.0
+offset_right = 1218.0
+offset_bottom = 1562.0
+custom_minimum_size = Vector2( 0, 32 )
+
+[node name="StartGame" type="Button" parent="Content/hbox/right/VBoxContainer"]
+unique_name_in_owner = true
+offset_left = 409.0
+offset_top = 1578.0
+offset_right = 809.0
+offset_bottom = 1678.0
+custom_minimum_size = Vector2( 400, 100 )
+focus_mode = 1
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_type_variation = "main_menu_button"
+theme_override_fonts/font = ExtResource( 1 )
+text = "Start"
+script = ExtResource( 18 )
+
+[node name="ConnectionFinished" type="Line2D" parent="Content"]
+unique_name_in_owner = true
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+width = 20.0
+default_color = Color( 1, 1, 1, 1 )
+texture = ExtResource( 12 )
+texture_mode = 2
+
+[node name="ConnectionUnfinished" type="Line2D" parent="Content"]
+unique_name_in_owner = true
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+width = 20.0
+default_color = Color( 1, 1, 1, 1 )
+texture = ExtResource( 20 )
+texture_mode = 1
+
+[node name="Line2D3" type="Line2D" parent="Content"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+width = 40.0
+default_color = Color( 1, 1, 1, 1 )
+texture = ExtResource( 17 )
+texture_mode = 1
+
+[node name="Separator" type="Control" parent="."]
+offset_top = 1913.0
+offset_right = 3586.0
+offset_bottom = 1921.0
+custom_minimum_size = Vector2( 0, 8 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+offset_top = 1921.0
+offset_right = 3586.0
+offset_bottom = 2020.0
+script = SubResource( 54 )
+
+[node name="UltimateTooltip" parent="HBoxContainer" instance=ExtResource( 10 )]
+offset_bottom = 99.0
+size_flags_horizontal = 0
+action = "move"
+
+[node name="UltimateTooltip2" parent="HBoxContainer" instance=ExtResource( 10 )]
+offset_left = 208.0
+offset_right = 412.0
+offset_bottom = 99.0
+size_flags_horizontal = 0
+action = "accept"

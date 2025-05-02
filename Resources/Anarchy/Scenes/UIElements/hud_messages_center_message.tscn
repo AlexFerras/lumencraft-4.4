@@ -1,0 +1,64 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/clock_64x64.png" type="Texture2D" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends HBoxContainer
+
+@export var icon: Texture2D
+@export var icon_modulate: Color = Color.WHITE
+@export var text: String: set = set_text
+
+@onready var value_message_text: Label = $ValueMessageText
+@onready var icon_node: TextureRect = $Icon
+
+var themed: bool
+
+func _ready() -> void:
+	icon_node.texture = icon
+	themed = icon_modulate == Const.UI_ORIGINAL_MAIN_COLOR
+	if themed:
+		icon_node.modulate = Const.UI_MAIN_COLOR
+	else:
+		icon_node.modulate = icon_modulate
+
+func set_text(t: String):
+	text = t
+	
+	if not value_message_text:
+		await self.ready
+	
+	value_message_text.text = t
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_THEME_CHANGED:
+		if themed:
+			icon_node.modulate = Const.UI_MAIN_COLOR
+"
+
+[node name="HudMessagesCenterMessage" type="HBoxContainer"]
+offset_right = 1306.0
+offset_bottom = 64.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+alignment = 1
+script = SubResource( 1 )
+icon = ExtResource( 2 )
+
+[node name="Icon" type="TextureRect" parent="."]
+offset_right = 64.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 64, 0 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
+
+[node name="ValueMessageText" type="Label" parent="."]
+offset_left = 80.0
+offset_right = 1306.0
+offset_bottom = 64.0
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Message text as long as a snake's ass on a train."

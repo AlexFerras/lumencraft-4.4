@@ -1,0 +1,455 @@
+[gd_scene load_steps=7 format=3 uid="uid://rq23120w57tf"]
+
+[ext_resource type="PackedScene" uid="uid://dtmi1woj8mrtr" path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" id="1"]
+[ext_resource type="FontFile" uid="uid://dl2s2xsnt11bf" path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" id="2"]
+[ext_resource type="Theme" uid="uid://dicboyikjrh6e" path="res://Resources/Anarchy/Themes/theme_anarchy.tres" id="7"]
+[ext_resource type="Script" uid="uid://dacw5p2hv4jxv" path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" id="18"]
+
+[sub_resource type="GDScript" id="46"]
+script/source = "extends Control
+
+const KeyboardActions = [\"up\", \"down\", \"left\", \"right\", \"run\",
+	\"throw_item\", \"build\", \"next_slot\", \"prev_slot\", \"interact\",
+	\"menu\", \"inventory\", \"map\", \"auto_walk\", \"slot1\", \"slot2\", \"slot3\", \"slot4\", \"respawn\"
+]
+
+const JoypadActions = [\"run\", \"shoot\", \"shoot2\", \"throw_item\", \"build\", \"interact\", \"menu\", \"inventory\", \"map\"]
+
+const IgnoredDupes = [\"auto_walk\", \"respawn\", \"next_slot\", \"prev_slot\"]
+#
+#onready var options := get_parent()
+#onready var change_controls := $\"%PressKey\"
+#onready var conflicting_controls := $\"%Conflicting\"
+@onready var action_container := $ActionContainer
+
+const ReservedJoypadButtons = [JOY_BUTTON_BACK, JOY_BUTTON_DPAD_DOWN, JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT, JOY_BUTTON_MISC1]
+
+var edit_action: String
+var current_action_list: Array
+var current_controls: Resource
+var current_scheme: int
+var current_action
+#var control_select := -1
+
+## TODO: przycisk reset
+## TODO: anulowanie przypisywania
+## TODO: wykrywanie konfliktów
+
+var bind_prefab: PackedScene
+
+func _ready() -> void:
+	if Music.is_switch_build():
+		$\"%Keyboard\".hide()
+	
+	$\"%Joypad\".small_text = tr($\"%Joypad\".small_text) % 1
+	$\"%Joypad2\".small_text= tr($\"%Joypad2\".small_text) % 2
+	# TODO
+	#$\"%Joypad\".group.connect(\"pressed\", Callable(self, \"change_control\"))
+	
+	bind_prefab = Prefab.create($\"%SingleActionBind\")
+	
+	var all_actions: Array = preload(\"res://Scripts/Data/ControlsRemap.gd\").ACTION_LIST
+#	var all_actions := KeyboardActions.duplicate()
+#	for action in JoypadActions:
+#		if not action in all_actions:
+#			all_actions.append(action)
+	
+	for action in all_actions:
+		var new_bind= bind_prefab.instantiate()
+		new_bind.setup(action)
+		new_bind.get_node(\"BindThisAction\").connect(\"pressed\", Callable(self, \"do_edit_action\").bind(new_bind))
+		action_container.add_child(new_bind)
+	
+#		action_container.add_child(action_edit)
+#		action_edit.get_node(\"Label\").connect(\"pressed\", self, \"do_edit_action\", [action_edit])
+#		connect_buttons(action_edit)
+#
+	setup(0)
+#	set_process_input(false)
+#	set_process(false)
+#
+func refresh_controls():
+#	var dupes: Array = current_controls.find_duplicates()
+#	conflicting_controls.visible = false
+#
+#	var nobody_cares: Array
+#	for dupe in dupes:
+#		if dupe[0] in IgnoredDupes or dupe[1] in IgnoredDupes:
+#			nobody_cares.append(dupe)
+#
+#	for option in action_container.get_children():
+#		var is_dupe: bool
+#		for dupe in dupes:
+#			if not dupe in nobody_cares and (option.name == dupe[0] or option.name == dupe[1]):
+#				option.get_child(0).modulate = Color.red
+#				conflicting_controls.visible = true
+#				is_dupe = true
+#				break
+#
+#		if not is_dupe:
+#			option.get_child(0).modulate = Color.white
+
+	action_container.propagate_call(\"refresh\")
+
+#func _process(delta: float) -> void:
+#	if control_select < 0 or not edit_action.empty():
+#		return
+#
+#	if Input.is_action_just_pressed(\"ui_up\"):
+#		control_select = max(control_select - action_container.columns, 0)
+#		refresh_select()
+#	elif Input.is_action_just_pressed(\"ui_down\"):
+#		control_select = min(control_select + action_container.columns, current_action_list.size() - 1)
+#		refresh_select()
+#	elif Input.is_action_just_pressed(\"ui_right\"):
+#		control_select = min(control_select + 1, current_action_list.size() - 1)
+#		refresh_select()
+#	elif Input.is_action_just_pressed(\"ui_left\"):
+#		control_select = max(control_select - 1, 0)
+#		refresh_select()
+#
+func _input(event: InputEvent) -> void:
+	if edit_action.is_empty():
+		return
+
+	if event is InputEventKey and event.pressed:
+		if current_controls.set_action_key(edit_action, event) or event.keycode == KEY_ESCAPE:
+			refresh_controls()
+			current_controls.create_remap()
+			Save.config.apply()
+			dupadupa()
+			set_process_input(false)
+			get_viewport().set_input_as_handled()
+#			change_controls.hide()
+			return
+#
+	if event is InputEventJoypadButton and event.pressed:
+		if not event.button_index in ReservedJoypadButtons and current_controls.set_action_button(edit_action, event):
+			refresh_controls()
+			current_controls.create_remap()
+			Save.config.apply()
+			dupadupa()
+			set_process_input(false)
+			get_viewport().set_input_as_handled()
+#			change_controls.hide()
+			return
+
+	if event.is_pressed():
+		Utils.play_ui_sample(Utils.UI_FAIL)
+#
+func dupadupa():
+	current_action.stop()
+	current_action = null
+	get_tree().create_timer(0.1).connect(\"timeout\", Callable(self, \"set\").bind(\"edit_action\", \"\"))
+#
+#func _menu_option(option: String):
+#	if control_select > -1 and option != \"Confirm\" and option != \"Cancel\" and option != \"Reset\":
+#		do_edit_action(action_container.get_node(current_action_list[control_select]))
+#		return
+#
+#	if not edit_action.empty():
+#		return
+#
+#	match option:
+#		\"Confirm\":
+#			Save.config.controls1.create_remap()
+#			Save.config.controls2.create_remap()
+#			Save.config.controls3.create_remap()
+#			Save.config.apply()
+#			options.highlight_override = null
+#			set_process(false)
+#			get_parent().goto_submenu(\"Main\", \"Controls\")
+#		\"Cancel\":
+#			Save.config.controls1.restore_cloned_remap()
+#			Save.config.controls2.restore_cloned_remap()
+#			Save.config.controls3.restore_cloned_remap()
+#			Save.config.controls1.apply_remap()
+#			Save.config.controls2.apply_remap()
+#			Save.config.controls3.apply_remap()
+#			set_process(false)
+#			get_parent().goto_submenu(\"Main\", \"Controls\")
+#		\"Reset\":
+#			current_controls.restore_default_controls()
+#			current_controls.create_remap()
+#			refresh_controls()
+#		\"What\":
+#			setup((current_scheme + 1) % 3)
+#			control_select = -1
+#
+func setup(scheme: int):
+	current_scheme = scheme
+
+	match scheme:
+		0:
+			action_container.propagate_call(\"set_input_player\", [FakePlayer.new(2, false)])
+			current_action_list = KeyboardActions
+			current_controls = Save.config.controls1
+		#	change_controls.text = \"Press key\"
+		#	$What.text = \"Keyboard\"
+		1:
+			action_container.propagate_call(\"set_input_player\", [FakePlayer.new(3, true)])
+			current_action_list = JoypadActions
+			current_controls = Save.config.controls2
+		#	change_controls.text = \"Press controller button\"
+		#	$What.text = tr(\"Controller %s\") % 1
+		2:
+			action_container.propagate_call(\"set_input_player\", [FakePlayer.new(4, true)])
+			current_action_list = JoypadActions
+			current_controls = Save.config.controls3
+		#	change_controls.text = \"Press controller button\"
+		#	$What.text = tr(\"Controller %s\") % 2
+
+	for control in action_container.get_children():
+		control.visible = control.name in current_action_list
+
+	set_process(true)
+	current_controls.clone_remap()
+	call_deferred(\"refresh_controls\")
+
+func do_edit_action(action: Control):
+	if not edit_action.is_empty():
+		return
+#
+	edit_action = action.name
+	action.show_edit(current_scheme)
+	current_action = action
+#	action.get_node(\"Label\").modulate = Color.yellow
+	set_process_input(true)
+#	change_controls.show()
+#
+#func select_next() -> bool:
+#	if control_select > -1:
+#		if control_select == current_action_list.size() - 1:
+#			control_select = -1
+#			refresh_select()
+#		return true
+#
+#	return false
+#
+#func select_prev() -> bool:
+#	if control_select > -1:
+#		return true
+#
+#	if options.active_option == $What:
+#		control_select = current_action_list.size() - 1
+#		refresh_select()
+#		return true
+#
+#	return false
+#
+#func refresh_select():
+#	if control_select > -1:
+#		options.highlight_override = action_container.get_node(current_action_list[control_select])
+#	else:
+#		options.highlight_override = null
+
+class FakePlayer:
+	var control_id: int
+	var joypad: bool
+	
+	func _init(id: int, joy: bool) -> void:
+		control_id = id
+		joypad = joy
+	
+	func using_joypad():
+		return joypad
+
+func back() -> void:
+	owner.close_controls()
+
+func change_control(button):
+	current_scheme = button.get_index()
+	setup(current_scheme)
+
+func reset_to_default() -> void:
+	current_controls.restore_default_controls()
+	current_controls.create_remap()
+	Save.config.controls1.create_remap()
+	Save.config.apply()
+	refresh_controls()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED and not is_visible_in_tree() and not edit_action.is_empty():
+		edit_action = \"\"
+		set_process_input(false)
+		current_action.stop()
+		current_action = null
+
+func get_first_control():
+	return $\"%Keyboard\"
+"
+
+[sub_resource type="GDScript" id="47"]
+resource_name = "SingleBind"
+script/source = "extends HBoxContainer
+
+func setup(action: String):
+	
+	name = action
+	$OptionName.text=get_action_name(action)
+	$UltimateTooltip.action=action
+#	set_meta(\"label\", $Label)
+#
+#	yield(self, \"ready\")
+#	$Keyboard.action_name = action
+##	$Keyboard.favor_mouse = action != \"next_slot\" and action != \"prev_slot\"
+#	$Joypad.action_name = action
+#
+#func _notification(what: int) -> void:
+#	if what == NOTIFICATION_TRANSLATION_CHANGED:
+#		$Label.text = get_action_name(name)
+
+func get_action_name(action: String) -> String:
+	match action:
+		\"shoot\":
+			return \"Attack\"
+		\"shoot2\":
+			return \"Alt Attack\"
+		\"throw_item\":
+			return \"Drop Item\"
+		\"slot1\", \"slot2\", \"slot3\", \"slot4\":
+			return tr(\"Slot %s\") % int(action)
+		_:
+			return action.capitalize()
+
+func show_edit(scheme: int):
+	if scheme == 0:
+		$Press.text = \"Press key\"
+	else:
+		$Press.text = \"Press controller button\"
+	$Press.show()
+
+func stop():
+	$Press.hide()
+
+#
+#func set_joypad(joypad: bool):
+#	$Keyboard.visible = not joypad
+#	$Joypad.visible = joypad
+"
+
+[node name="VBoxContainer" type="VBoxContainer"]
+offset_right = 2748.0
+offset_bottom = 3851.0
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+script = SubResource("46")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Keyboard" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("7")
+theme_type_variation = &"button_cyan"
+theme_override_fonts/font = ExtResource("2")
+toggle_mode = true
+text = "Keyboard"
+script = ExtResource("18")
+
+[node name="Joypad" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("7")
+theme_type_variation = &"button_cyan"
+theme_override_fonts/font = ExtResource("2")
+toggle_mode = true
+text = "Controller %s"
+script = ExtResource("18")
+
+[node name="Joypad2" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("7")
+theme_type_variation = &"button_cyan"
+theme_override_fonts/font = ExtResource("2")
+toggle_mode = true
+text = "Controller %s"
+script = ExtResource("18")
+
+[node name="ActionContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="SingleActionBind" type="HBoxContainer" parent="ActionContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 30
+script = SubResource("47")
+
+[node name="OptionName" type="Label" parent="ActionContainer/SingleActionBind"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource("2")
+text = "KEY NAME"
+vertical_alignment = 1
+uppercase = true
+
+[node name="Press" type="Label" parent="ActionContainer/SingleActionBind"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource("2")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="UltimateTooltip" parent="ActionContainer/SingleActionBind" instance=ExtResource("1")]
+layout_mode = 2
+theme_type_variation = &"0010_yellow_border"
+action = "run"
+
+[node name="BindThisAction" type="Button" parent="ActionContainer/SingleActionBind"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 6
+theme = ExtResource("7")
+theme_type_variation = &"button_cyan"
+theme_override_fonts/font = ExtResource("2")
+text = "Change"
+script = ExtResource("18")
+
+[node name="Reset" type="Button" parent="ActionContainer/SingleActionBind"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 6
+theme = ExtResource("7")
+theme_type_variation = &"button_cyan"
+theme_override_fonts/font = ExtResource("2")
+text = "Reset"
+script = ExtResource("18")
+
+[node name="NormalButton" type="Button" parent="."]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme = ExtResource("7")
+theme_type_variation = &"button_cyan"
+theme_override_fonts/font = ExtResource("2")
+text = "Reset to Default"
+script = ExtResource("18")
+
+[node name="Back" type="Button" parent="."]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("7")
+theme_type_variation = &"button_cyan"
+theme_override_fonts/font = ExtResource("2")
+toggle_mode = true
+text = "Back"
+script = ExtResource("18")
+
+[connection signal="pressed" from="NormalButton" to="." method="reset_to_default"]
+[connection signal="pressed" from="Back" to="." method="back"]

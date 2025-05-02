@@ -1,0 +1,204 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=2]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=3]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/lumen_64x64L.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/metal_64x64L.png" type="Texture2D" id=6]
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = ExtResource( 2 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 16
+corner_detail = 1
+
+[node name="PieMenuMessageBox" type="PanelContainer"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -685.0
+offset_top = -523.0
+offset_right = 685.0
+offset_bottom = -258.0
+grow_horizontal = 2
+custom_minimum_size = Vector2( 1370, 0 )
+size_flags_horizontal = 4
+theme_type_variation = "1100_brown_transp"
+
+[node name="Header" type="PanelContainer" parent="."]
+offset_right = 1370.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 0
+custom_minimum_size = Vector2( 1370, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_type_variation = "1111_yellow"
+
+[node name="Name" type="Label" parent="Header"]
+unique_name_in_owner = true
+offset_right = 1370.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 5
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "Item Name Long Long"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+offset_right = 1370.0
+offset_bottom = 265.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 68
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer2"]
+offset_left = 32.0
+offset_top = 68.0
+offset_right = 1338.0
+offset_bottom = 249.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Description" type="Label" parent="MarginContainer2/VBoxContainer"]
+unique_name_in_owner = true
+offset_right = 1306.0
+offset_bottom = 113.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource( 1 )
+text = "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. "
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/VBoxContainer"]
+offset_left = 335.0
+offset_top = 117.0
+offset_right = 971.0
+offset_bottom = 181.0
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_constants/separation = 16
+
+[node name="Cost1Container" type="HBoxContainer" parent="MarginContainer2/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_right = 310.0
+offset_bottom = 64.0
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="Icon" type="Panel" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost1Container"]
+self_modulate = Color( 0.337255, 0.262745, 0.188235, 1 )
+material = SubResource( 12 )
+offset_right = 70.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 70, 64 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource( 7 )
+
+[node name="Icon" type="TextureRect" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost1Container/Icon"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+custom_minimum_size = Vector2( 64, 64 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost1Container"]
+offset_left = 70.0
+offset_right = 310.0
+offset_bottom = 64.0
+theme_type_variation = "0000_brown_transp"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost1Container/PanelContainer"]
+offset_right = 240.0
+offset_bottom = 64.0
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 48
+
+[node name="Cost1" type="Label" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost1Container/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 48.0
+offset_right = 224.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource( 3 )
+text = "999/999"
+align = 2
+
+[node name="Cost2Container" type="HBoxContainer" parent="MarginContainer2/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 326.0
+offset_right = 636.0
+offset_bottom = 64.0
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="Icon" type="Panel" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost2Container"]
+self_modulate = Color( 0.819608, 0.109804, 0.427451, 1 )
+material = SubResource( 12 )
+offset_right = 70.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 70, 64 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource( 7 )
+
+[node name="Icon" type="TextureRect" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost2Container/Icon"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+custom_minimum_size = Vector2( 64, 64 )
+texture = ExtResource( 5 )
+expand = true
+stretch_mode = 6
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost2Container"]
+offset_left = 70.0
+offset_right = 310.0
+offset_bottom = 64.0
+theme_type_variation = "0000_brown_transp"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost2Container/PanelContainer"]
+offset_right = 240.0
+offset_bottom = 64.0
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 48
+
+[node name="Cost2" type="Label" parent="MarginContainer2/VBoxContainer/HBoxContainer/Cost2Container/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 48.0
+offset_right = 224.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource( 3 )
+text = "999/999"
+align = 2

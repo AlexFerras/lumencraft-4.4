@@ -1,0 +1,113 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/MiniMap/mini_map_frames_512x512.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/tooltip_text_yellow.tscn" type="PackedScene" id=4]
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends TextureRect
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_ENTER_TREE or what == NOTIFICATION_THEME_CHANGED:
+		self_modulate = Const.UI_MAIN_COLOR
+"
+
+[node name="HudMiniMap" type="MarginContainer"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -544.0
+offset_bottom = 544.0
+custom_minimum_size = Vector2( 512, 512 )
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="Control" type="Control" parent="."]
+offset_top = 32.0
+offset_right = 512.0
+offset_bottom = 544.0
+custom_minimum_size = Vector2( 512, 512 )
+
+[node name="MiniMapFrames" type="TextureRect" parent="Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -256.0
+offset_right = 256.0
+offset_bottom = 256.0
+texture = ExtResource( 2 )
+script = SubResource( 4 )
+
+[node name="TooltipTextYellow" parent="Control" instance=ExtResource( 4 )]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -29.0
+offset_top = -16.0
+offset_right = 29.0
+offset_bottom = -456.0
+size_flags_horizontal = 4
+
+[node name="MarginContainer" parent="Control/TooltipTextYellow" index="0"]
+offset_right = 54.0
+offset_bottom = 68.0
+
+[node name="ValueKey" parent="Control/TooltipTextYellow/MarginContainer" index="0"]
+offset_left = 12.0
+offset_right = 38.0
+text = "n"
+
+[node name="TooltipTextYellow2" parent="Control" instance=ExtResource( 4 )]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -29.0
+offset_top = -56.0
+offset_right = 29.0
+offset_bottom = 16.0
+
+[node name="MarginContainer" parent="Control/TooltipTextYellow2" index="0"]
+offset_right = 54.0
+offset_bottom = 68.0
+
+[node name="ValueKey" parent="Control/TooltipTextYellow2/MarginContainer" index="0"]
+offset_left = 12.0
+offset_right = 38.0
+text = "s"
+
+[node name="TooltipTextYellow4" parent="Control" instance=ExtResource( 4 )]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -42.0
+offset_top = -36.0
+offset_right = 16.0
+offset_bottom = 36.0
+
+[node name="MarginContainer" parent="Control/TooltipTextYellow4" index="0"]
+offset_right = 54.0
+offset_bottom = 68.0
+
+[node name="ValueKey" parent="Control/TooltipTextYellow4/MarginContainer" index="0"]
+offset_left = 12.0
+offset_right = 38.0
+
+[node name="TooltipTextYellow3" parent="Control" instance=ExtResource( 4 )]
+offset_left = -16.0
+offset_top = 220.0
+offset_right = -470.0
+offset_bottom = -220.0
+
+[node name="MarginContainer" parent="Control/TooltipTextYellow3" index="0"]
+offset_right = 54.0
+offset_bottom = 68.0
+
+[node name="ValueKey" parent="Control/TooltipTextYellow3/MarginContainer" index="0"]
+offset_left = 12.0
+offset_right = 38.0
+text = "w"
+
+[editable path="Control/TooltipTextYellow"]
+[editable path="Control/TooltipTextYellow2"]
+[editable path="Control/TooltipTextYellow4"]
+[editable path="Control/TooltipTextYellow3"]

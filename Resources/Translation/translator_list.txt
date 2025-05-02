@@ -1,0 +1,14 @@
+Provides power to connected buildings and increases building range.
+Interact with the cannons to start them.
+Upgrade your Drill to be able to drill through harder terrain.
+Reach the target point.
+Use the orb in the inventory.
+Autostart?
+Is Shooting
+Copy Selected
+Map needs to be saved first.
+N
+S
+E
+W
+Use Item

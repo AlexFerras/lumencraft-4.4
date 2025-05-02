@@ -1,0 +1,41 @@
+[gd_resource type="ShaderMaterial" load_steps=10 format=2]
+
+[ext_resource path="res://Resources/Terrain/WallTexture.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Textures/Cracks.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Textures/WaterNoise.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Textures/Magma.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Textures/Noise.jpg" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Materials/PixelMapShader.gdshader" type="Shader" id=6]
+[ext_resource path="res://Resources/Textures/NoiseRGB.png" type="Texture2D" id=7]
+[ext_resource path="res://Resources/Textures/Caustics.jpg" type="Texture2D" id=8]
+[ext_resource path="res://Resources/Terrain/Lumen.png" type="Texture2D" id=10]
+
+[resource]
+shader = ExtResource( 6 )
+shader_param/global_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+shader_param/random_blur = 0.5
+shader_param/shuffle_tile_border = 4.0
+shader_param/blur_amount = 1.5
+shader_param/random_blur_border = 4.0
+shader_param/random_noise_mul = 2.0
+shader_param/dirt_tile_mul = 8.077
+shader_param/crack_tile_mul = 14.0
+shader_param/noise_tile_mul = 6.841
+shader_param/wall_mul = 1.0
+shader_param/show_hidden = 0.0
+shader_param/magma_color = Color( 2.89, 1.16, 0, 1 )
+shader_param/water_color = Color( 0.8, 1.2, 2.4, 1 )
+shader_param/caustics_mul = 15.0
+shader_param/lumen_color = Plane( 2.002, 1.492, 3.048, 1 )
+shader_param/lumen_glitter_color = Plane( 3.582, 1.676, 1.405, 1 )
+shader_param/lumen_mul = 29.0
+shader_param/lumen_glitter_power = 6.285
+shader_param/lava_data_count = 0
+shader_param/crack_tiled = ExtResource( 2 )
+shader_param/noise_tiled = ExtResource( 5 )
+shader_param/random_noise = ExtResource( 7 )
+shader_param/wall_texture = ExtResource( 1 )
+shader_param/lumen_texture = ExtResource( 10 )
+shader_param/magma = ExtResource( 4 )
+shader_param/water_noise = ExtResource( 3 )
+shader_param/caustics = ExtResource( 8 )

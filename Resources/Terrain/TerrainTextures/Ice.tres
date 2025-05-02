@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Terrain/TerrainTextures/TerrainTexture.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Terrain/Images/WallIce.png" type="Image" id=2]
+
+[resource]
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+durability = 1.0
+debris_color = Color( 0.721569, 0.835294, 0.815686, 1 )
+hit_sound = "Crystal/Glass item Breaks"
+break_sound = "crystal_audio"
+transparent = true
+attackable_by_monsters = true

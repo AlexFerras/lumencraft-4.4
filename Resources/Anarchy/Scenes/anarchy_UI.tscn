@@ -1,0 +1,53 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/TestingBackgrounds/ui_testing_background_00.jpg" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Scripts/anarchy_UI.gd" type="Script" id=3]
+[ext_resource path="res://Resources/Anarchy/Textures/TestingBackgrounds/ui_testing_background_01.jpg" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Anarchy/Scripts/anarchy_debug.gd" type="Script" id=15]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/missions_window.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Resources/Misc/MapEnvironment.tres" type="Environment" id=42]
+
+[node name="AnarchyUI" type="CanvasLayer"]
+process_mode = 3
+layer = 11
+script = ExtResource( 3 )
+
+[node name="AnarchyDebug" type="Node" parent="."]
+script = ExtResource( 15 )
+
+[node name="TestBackground1" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource( 4 )
+
+[node name="TestBackground0" type="TextureRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource( 2 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+offset_right = 3872.0
+offset_bottom = 2183.0
+color = Color( 0, 0.505882, 0.14902, 1 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 42 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 1920, 1070 )
+
+[node name="Missions" parent="." instance=ExtResource( 17 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1789.0
+offset_top = -1010.0
+offset_right = 1773.0
+offset_bottom = 1010.0

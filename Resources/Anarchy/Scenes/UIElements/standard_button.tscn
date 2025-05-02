@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/controls/mouse/tooltip_lmb_56x75.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Scripts/standard_button.gd" type="Script" id=3]
+
+[node name="StandardButton" type="Button"]
+offset_right = 198.0
+offset_bottom = 91.0
+focus_neighbor_left = NodePath("../ButtonCancel")
+focus_neighbor_top = NodePath("../../../../../Header/ButtonExit")
+focus_neighbor_right = NodePath("../ButtonCancel")
+focus_neighbor_bottom = NodePath("../../../../../Header/ButtonExit")
+focus_next = NodePath("../ButtonCancel")
+focus_previous = NodePath("../../../../../Header/ButtonExit")
+theme_type_variation = "theme_anarchy_standard_button"
+text = " OK"
+icon = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[connection signal="focus_entered" from="." to="." method="_on_StandardButton_focus_entered"]
+[connection signal="focus_exited" from="." to="." method="_on_StandardButton_focus_exited"]
+[connection signal="mouse_entered" from="." to="." method="_on_StandardButton_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_StandardButton_mouse_exited"]
+[connection signal="pressed" from="." to="." method="_on_StandardButton_pressed"]

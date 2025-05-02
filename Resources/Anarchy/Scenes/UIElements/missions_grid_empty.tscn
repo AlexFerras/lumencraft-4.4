@@ -1,0 +1,8 @@
+[gd_scene format=2]
+
+[node name="missions_grid_empty" type="Control"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+offset_right = 96.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+mouse_filter = 2

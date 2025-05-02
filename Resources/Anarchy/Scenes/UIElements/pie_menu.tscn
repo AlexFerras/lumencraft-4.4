@@ -1,0 +1,578 @@
+[gd_scene load_steps=70 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/pie_button.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_002_mask.png" type="BitMap" id=3]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_003_mask.png" type="BitMap" id=4]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_004_mask.png" type="BitMap" id=5]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_center_mask.png" type="BitMap" id=6]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_001_mask.png" type="BitMap" id=7]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_002_mask.png" type="BitMap" id=8]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_003_mask.png" type="BitMap" id=9]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_004_mask.png" type="BitMap" id=10]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_005_mask.png" type="BitMap" id=11]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_006_mask.png" type="BitMap" id=12]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_011_select_normal.png" type="Texture2D" id=13]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_009_mask.png" type="BitMap" id=14]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_008_mask.png" type="BitMap" id=15]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_011_mask.png" type="BitMap" id=16]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_012_mask.png" type="BitMap" id=17]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_007_mask.png" type="BitMap" id=18]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_010_mask.png" type="BitMap" id=19]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_003_select_normal.png" type="Texture2D" id=20]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_003_bck_hover.png" type="Texture2D" id=21]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_008_select_normal.png" type="Texture2D" id=22]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_center_normal.png" type="Texture2D" id=23]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_001_bck_normal.png" type="Texture2D" id=24]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_004_bck_hover.png" type="Texture2D" id=25]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_001_bck_hover.png" type="Texture2D" id=26]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_004_select_normal.png" type="Texture2D" id=27]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_004_bck_normal.png" type="Texture2D" id=28]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_002_bck_hover.png" type="Texture2D" id=29]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_002_bck_normal.png" type="Texture2D" id=30]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_003_bck_normal.png" type="Texture2D" id=31]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_002_bck_hover.png" type="Texture2D" id=32]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_003_bck_normal.png" type="Texture2D" id=33]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_006_bck_normal.png" type="Texture2D" id=34]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_006_bck_hover.png" type="Texture2D" id=35]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_010_bck_normal.png" type="Texture2D" id=36]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_009_bck_hover.png" type="Texture2D" id=37]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_011_bck_hover.png" type="Texture2D" id=38]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_010_bck_hover.png" type="Texture2D" id=39]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_009_bck_normal.png" type="Texture2D" id=40]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_004_bck_hover.png" type="Texture2D" id=41]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_008_bck_normal.png" type="Texture2D" id=42]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_012_bck_normal.png" type="Texture2D" id=43]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_007_bck_hover.png" type="Texture2D" id=44]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_007_bck_normal.png" type="Texture2D" id=45]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_004_bck_normal.png" type="Texture2D" id=46]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_005_bck_normal.png" type="Texture2D" id=47]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_008_bck_hover.png" type="Texture2D" id=48]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_011_bck_normal.png" type="Texture2D" id=49]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_012_bck_hover.png" type="Texture2D" id=50]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_003_bck_hover.png" type="Texture2D" id=51]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_002_bck_normal.png" type="Texture2D" id=52]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_005_bck_hover.png" type="Texture2D" id=53]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_012_select_normal.png" type="Texture2D" id=54]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_005_select_normal.png" type="Texture2D" id=55]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_007_select_normal.png" type="Texture2D" id=56]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_010_select_normal.png" type="Texture2D" id=57]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_009_select_normal.png" type="Texture2D" id=58]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_006_select_normal.png" type="Texture2D" id=59]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_002_select_normal.png" type="Texture2D" id=60]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row2_001_select_normal.png" type="Texture2D" id=61]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_003_select_normal.png" type="Texture2D" id=62]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_004_select_normal.png" type="Texture2D" id=63]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_row1_002_select_normal.png" type="Texture2D" id=64]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_defense.png" type="Texture2D" id=65]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_utils.png" type="Texture2D" id=66]
+[ext_resource path="res://Resources/Anarchy/Textures/pie/pie_workshop.png" type="Texture2D" id=67]
+
+[sub_resource type="ButtonGroup" id=1]
+
+[sub_resource type="ButtonGroup" id=2]
+
+[node name="PieMenu" type="Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+
+[node name="Row1" type="Control" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+
+[node name="PieMaster1" type="Control" parent="Row1"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+
+[node name="Upgrades" parent="Row1/PieMaster1" instance=ExtResource( 2 )]
+unique_name_in_owner = true
+offset_left = -220.0
+offset_top = -314.5
+offset_right = 222.0
+offset_bottom = -100.5
+group = SubResource( 1 )
+
+[node name="Select" parent="Row1/PieMaster1/Upgrades" index="0"]
+offset_top = -141.0
+offset_bottom = -25.0
+
+[node name="PieMaster2" type="Control" parent="Row1"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+
+[node name="Utils" parent="Row1/PieMaster2" instance=ExtResource( 2 )]
+unique_name_in_owner = true
+offset_left = 104.0
+offset_top = -219.5
+offset_right = 318.0
+offset_bottom = 221.5
+group = SubResource( 1 )
+texture_normal = ExtResource( 30 )
+texture_pressed = ExtResource( 29 )
+texture_hover = ExtResource( 29 )
+texture_focused = ExtResource( 29 )
+texture_click_mask = ExtResource( 3 )
+
+[node name="Select" parent="Row1/PieMaster2/Utils" index="0"]
+offset_left = 24.0
+offset_top = -243.0
+offset_right = 139.0
+offset_bottom = 244.0
+texture = ExtResource( 64 )
+
+[node name="Icon" parent="Row1/PieMaster2/Utils" index="1"]
+offset_left = -46.0
+offset_top = -54.0
+offset_right = 70.0
+offset_bottom = 54.0
+texture = ExtResource( 66 )
+
+[node name="PieMaster3" type="Control" parent="Row1"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+
+[node name="Workshop" parent="Row1/PieMaster3" instance=ExtResource( 2 )]
+unique_name_in_owner = true
+offset_left = -220.5
+offset_top = 104.0
+offset_right = 221.5
+offset_bottom = 319.0
+group = SubResource( 1 )
+texture_normal = ExtResource( 31 )
+texture_pressed = ExtResource( 21 )
+texture_hover = ExtResource( 21 )
+texture_focused = ExtResource( 21 )
+texture_click_mask = ExtResource( 4 )
+
+[node name="Select" parent="Row1/PieMaster3/Workshop" index="0"]
+offset_top = 24.0
+offset_bottom = 140.0
+texture = ExtResource( 62 )
+
+[node name="Icon" parent="Row1/PieMaster3/Workshop" index="1"]
+offset_left = -61.0
+offset_top = -43.0
+offset_right = 61.0
+offset_bottom = 67.0
+texture = ExtResource( 67 )
+
+[node name="PieMaster4" type="Control" parent="Row1"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+
+[node name="Defense" parent="Row1/PieMaster4" instance=ExtResource( 2 )]
+unique_name_in_owner = true
+offset_left = -316.5
+offset_top = -219.0
+offset_right = -102.5
+offset_bottom = 222.0
+group = SubResource( 1 )
+texture_normal = ExtResource( 28 )
+texture_pressed = ExtResource( 25 )
+texture_hover = ExtResource( 25 )
+texture_focused = ExtResource( 25 )
+texture_click_mask = ExtResource( 5 )
+
+[node name="Select" parent="Row1/PieMaster4/Defense" index="0"]
+offset_left = -140.0
+offset_top = -244.0
+offset_right = -25.0
+offset_bottom = 243.0
+texture = ExtResource( 63 )
+
+[node name="Icon" parent="Row1/PieMaster4/Defense" index="1"]
+offset_left = -68.0
+offset_top = -60.5
+offset_right = 38.0
+offset_bottom = 60.5
+texture = ExtResource( 65 )
+
+[node name="PieCenter" parent="Row1" instance=ExtResource( 2 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -132.0
+offset_top = -130.0
+offset_right = 131.0
+offset_bottom = 133.0
+group = SubResource( 1 )
+texture_normal = ExtResource( 23 )
+texture_pressed = ExtResource( 23 )
+texture_hover = ExtResource( 23 )
+texture_focused = ExtResource( 23 )
+texture_click_mask = ExtResource( 6 )
+
+[node name="Select" parent="Row1/PieCenter" index="0"]
+visible = false
+
+[node name="Icon" parent="Row1/PieCenter" index="1"]
+visible = false
+
+[node name="Category" type="Label" parent="Row1/PieCenter"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.5
+offset_top = -32.0
+offset_right = 125.5
+offset_bottom = 32.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "longname"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="Row2" type="Control" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+
+[node name="PieButton" parent="Row2" instance=ExtResource( 2 )]
+offset_left = -124.5
+offset_top = -497.5
+offset_right = 123.5
+offset_bottom = -346.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 24 )
+texture_pressed = ExtResource( 26 )
+texture_hover = ExtResource( 26 )
+texture_focused = ExtResource( 26 )
+texture_click_mask = ExtResource( 7 )
+
+[node name="Select" parent="Row2/PieButton" index="0"]
+offset_left = -133.0
+offset_top = -108.5
+offset_right = 133.0
+offset_bottom = -68.5
+texture = ExtResource( 61 )
+
+[node name="Icon" parent="Row2/PieButton" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton2" parent="Row2" instance=ExtResource( 2 )]
+offset_left = 96.5
+offset_top = -477.5
+offset_right = 348.5
+offset_bottom = -254.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 52 )
+texture_pressed = ExtResource( 32 )
+texture_hover = ExtResource( 32 )
+texture_focused = ExtResource( 32 )
+texture_click_mask = ExtResource( 8 )
+
+[node name="Select" parent="Row2/PieButton2" index="0"]
+offset_left = -87.0
+offset_top = -143.5
+offset_right = 149.0
+offset_bottom = 5.5
+texture = ExtResource( 60 )
+
+[node name="Icon" parent="Row2/PieButton2" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton3" parent="Row2" instance=ExtResource( 2 )]
+offset_left = 257.5
+offset_top = -346.5
+offset_right = 480.5
+offset_bottom = -94.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 33 )
+texture_pressed = ExtResource( 51 )
+texture_hover = ExtResource( 51 )
+texture_focused = ExtResource( 51 )
+texture_click_mask = ExtResource( 9 )
+
+[node name="Select" parent="Row2/PieButton3" index="0"]
+offset_left = -5.5
+offset_top = -148.0
+offset_right = 143.5
+offset_bottom = 88.0
+texture = ExtResource( 20 )
+
+[node name="Icon" parent="Row2/PieButton3" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton4" parent="Row2" instance=ExtResource( 2 )]
+offset_left = 349.5
+offset_top = -122.5
+offset_right = 500.5
+offset_bottom = 125.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 46 )
+texture_pressed = ExtResource( 41 )
+texture_hover = ExtResource( 41 )
+texture_focused = ExtResource( 41 )
+texture_click_mask = ExtResource( 10 )
+
+[node name="Select" parent="Row2/PieButton4" index="0"]
+offset_left = 69.5
+offset_top = -133.0
+offset_right = 109.5
+offset_bottom = 133.0
+texture = ExtResource( 27 )
+
+[node name="Icon" parent="Row2/PieButton4" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton5" parent="Row2" instance=ExtResource( 2 )]
+offset_left = 258.5
+offset_top = 97.5
+offset_right = 481.5
+offset_bottom = 349.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 47 )
+texture_pressed = ExtResource( 53 )
+texture_hover = ExtResource( 53 )
+texture_focused = ExtResource( 53 )
+texture_click_mask = ExtResource( 11 )
+
+[node name="Select" parent="Row2/PieButton5" index="0"]
+offset_left = -4.5
+offset_top = -87.0
+offset_right = 144.5
+offset_bottom = 149.0
+texture = ExtResource( 55 )
+
+[node name="Icon" parent="Row2/PieButton5" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton6" parent="Row2" instance=ExtResource( 2 )]
+offset_left = 97.5
+offset_top = 258.5
+offset_right = 349.5
+offset_bottom = 481.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 34 )
+texture_pressed = ExtResource( 35 )
+texture_hover = ExtResource( 35 )
+texture_focused = ExtResource( 35 )
+texture_click_mask = ExtResource( 12 )
+
+[node name="Select" parent="Row2/PieButton6" index="0"]
+offset_left = -86.0
+offset_top = -5.5
+offset_right = 150.0
+offset_bottom = 143.5
+texture = ExtResource( 59 )
+
+[node name="Icon" parent="Row2/PieButton6" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton7" parent="Row2" instance=ExtResource( 2 )]
+offset_left = -123.5
+offset_top = 349.5
+offset_right = 124.5
+offset_bottom = 500.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 45 )
+texture_pressed = ExtResource( 44 )
+texture_hover = ExtResource( 44 )
+texture_focused = ExtResource( 44 )
+texture_click_mask = ExtResource( 18 )
+
+[node name="Select" parent="Row2/PieButton7" index="0"]
+offset_left = -133.0
+offset_top = 70.5
+offset_right = 133.0
+offset_bottom = 110.5
+texture = ExtResource( 56 )
+
+[node name="Icon" parent="Row2/PieButton7" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton8" parent="Row2" instance=ExtResource( 2 )]
+offset_left = -348.5
+offset_top = 258.5
+offset_right = -96.5
+offset_bottom = 481.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 42 )
+texture_pressed = ExtResource( 48 )
+texture_hover = ExtResource( 48 )
+texture_focused = ExtResource( 48 )
+texture_click_mask = ExtResource( 15 )
+
+[node name="Select" parent="Row2/PieButton8" index="0"]
+offset_left = -149.0
+offset_top = -3.5
+offset_right = 87.0
+offset_bottom = 145.5
+texture = ExtResource( 22 )
+
+[node name="Icon" parent="Row2/PieButton8" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton9" parent="Row2" instance=ExtResource( 2 )]
+offset_left = -479.5
+offset_top = 99.5
+offset_right = -256.5
+offset_bottom = 351.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 40 )
+texture_pressed = ExtResource( 37 )
+texture_hover = ExtResource( 37 )
+texture_focused = ExtResource( 37 )
+texture_click_mask = ExtResource( 14 )
+
+[node name="Select" parent="Row2/PieButton9" index="0"]
+offset_left = -144.5
+offset_top = -87.0
+offset_right = 4.5
+offset_bottom = 149.0
+texture = ExtResource( 58 )
+
+[node name="Icon" parent="Row2/PieButton9" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton10" parent="Row2" instance=ExtResource( 2 )]
+offset_left = -499.5
+offset_top = -124.5
+offset_right = -348.5
+offset_bottom = 123.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 36 )
+texture_pressed = ExtResource( 39 )
+texture_hover = ExtResource( 39 )
+texture_focused = ExtResource( 39 )
+texture_click_mask = ExtResource( 19 )
+
+[node name="Select" parent="Row2/PieButton10" index="0"]
+offset_left = -110.5
+offset_top = -132.0
+offset_right = -70.5
+offset_bottom = 134.0
+texture = ExtResource( 57 )
+
+[node name="Icon" parent="Row2/PieButton10" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton11" parent="Row2" instance=ExtResource( 2 )]
+offset_left = -481.5
+offset_top = -348.5
+offset_right = -258.5
+offset_bottom = -96.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 49 )
+texture_pressed = ExtResource( 38 )
+texture_hover = ExtResource( 38 )
+texture_focused = ExtResource( 38 )
+texture_click_mask = ExtResource( 16 )
+
+[node name="Select" parent="Row2/PieButton11" index="0"]
+offset_left = -143.5
+offset_top = -148.0
+offset_right = 5.5
+offset_bottom = 88.0
+texture = ExtResource( 13 )
+
+[node name="Icon" parent="Row2/PieButton11" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[node name="PieButton12" parent="Row2" instance=ExtResource( 2 )]
+offset_left = -347.5
+offset_top = -479.5
+offset_right = -95.5
+offset_bottom = -227.5
+group = SubResource( 2 )
+texture_normal = ExtResource( 43 )
+texture_pressed = ExtResource( 50 )
+texture_hover = ExtResource( 50 )
+texture_focused = ExtResource( 50 )
+texture_click_mask = ExtResource( 17 )
+
+[node name="Select" parent="Row2/PieButton12" index="0"]
+offset_left = -150.0
+offset_top = -158.0
+offset_right = 86.0
+offset_bottom = -9.0
+texture = ExtResource( 54 )
+
+[node name="Icon" parent="Row2/PieButton12" index="1"]
+visible = false
+offset_top = -54.0
+offset_bottom = 54.0
+
+[editable path="Row1/PieMaster1/Upgrades"]
+[editable path="Row1/PieMaster2/Utils"]
+[editable path="Row1/PieMaster3/Workshop"]
+[editable path="Row1/PieMaster4/Defense"]
+[editable path="Row1/PieCenter"]
+[editable path="Row2/PieButton"]
+[editable path="Row2/PieButton2"]
+[editable path="Row2/PieButton3"]
+[editable path="Row2/PieButton4"]
+[editable path="Row2/PieButton5"]
+[editable path="Row2/PieButton6"]
+[editable path="Row2/PieButton7"]
+[editable path="Row2/PieButton8"]
+[editable path="Row2/PieButton9"]
+[editable path="Row2/PieButton10"]
+[editable path="Row2/PieButton11"]
+[editable path="Row2/PieButton12"]

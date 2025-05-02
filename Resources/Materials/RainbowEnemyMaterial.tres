@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://Resources/Materials/RainbowEnemyMaterial.gdshader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/hue = 0.0
+shader_param/saturation = 0.0
+shader_param/value = 0.0
+shader_param/position = Vector2( 0, 0 )

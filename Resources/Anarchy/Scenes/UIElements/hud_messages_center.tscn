@@ -1,0 +1,59 @@
+[gd_scene format=2]
+
+[node name="HudMessagesCenter" type="MarginContainer"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -841.0
+offset_top = -152.0
+offset_right = 842.0
+grow_vertical = 0
+size_flags_vertical = 8
+theme_override_constants/margin_bottom = 32
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_left = 809.0
+offset_top = 48.0
+offset_right = 873.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_type_variation = "1100_brown_transp"
+
+[node name="VB" type="VBoxContainer" parent="PanelContainer"]
+offset_right = 64.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+
+[node name="MarginContainer2" type="MarginContainer" parent="PanelContainer/VB"]
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VB/MarginContainer2"]
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 32.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Footer" type="Panel" parent="PanelContainer/VB"]
+offset_top = 68.0
+offset_right = 64.0
+offset_bottom = 72.0
+custom_minimum_size = Vector2( 0, 4 )
+theme_type_variation = "Footer"

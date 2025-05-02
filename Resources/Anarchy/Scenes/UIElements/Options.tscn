@@ -1,0 +1,2222 @@
+[gd_scene load_steps=39 format=3 uid="uid://dtqq50uehvawp"]
+
+[ext_resource type="Script" uid="uid://c2pgrm1xr3cm3" path="res://Resources/Anarchy/Scripts/MenuOnOff.gd" id="1"]
+[ext_resource type="Script" uid="uid://buw25hewiumfo" path="res://Resources/Anarchy/Scripts/ColorSlider.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://gi4tks1ia8u5" path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dh7fqkw8h70y1" path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://fsdx48ofm8nv" path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://o81vqdpy3ram" path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" id="6"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/warning_window.tscn" id="8"]
+[ext_resource type="Script" uid="uid://b67d18b30g68f" path="res://Resources/Anarchy/Scripts/UppercaseTabContainer.gd" id="9"]
+[ext_resource type="PackedScene" uid="uid://dtmi1woj8mrtr" path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" id="10"]
+[ext_resource type="Script" uid="uid://bvieds154itav" path="res://Resources/Anarchy/Scripts/MenuListButton.gd" id="11"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/Controls/Gamepad/tooltip_gamepad_icon.tscn" id="13"]
+[ext_resource type="FontFile" uid="uid://bbjiqd54pwcbm" path="res://Resources/Anarchy/Fonts/spacemono_bold_mainmenu.tres" id="14"]
+[ext_resource type="Script" uid="uid://0t6xj52yck8l" path="res://Resources/Anarchy/Scripts/MenuInteractiveSlider.gd" id="15"]
+[ext_resource type="AudioStream" uid="uid://c1f7q5pnjcqbs" path="res://SFX/UI/InventoryChange.wav" id="16"]
+[ext_resource type="Texture2D" uid="uid://d0vs0jmgxg3ux" path="res://Resources/Translation/Flags/en.png" id="17"]
+[ext_resource type="Script" uid="uid://dacw5p2hv4jxv" path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" id="18"]
+[ext_resource type="Script" uid="uid://duysmhm30n352" path="res://Resources/Anarchy/Scripts/ExitButton.gd" id="19"]
+[ext_resource type="PackedScene" uid="uid://rq23120w57tf" path="res://Resources/Anarchy/Scenes/UIElements/KeyBindingsOptions.tscn" id="20"]
+
+[sub_resource type="GDScript" id="44"]
+script/source = "extends VBoxContainer
+
+static var RESOLUTIONS = [
+#	Vector2(1024, 768), # 4:3
+	Vector2(1280, 720), # 16:9 
+	Vector2(1280, 800), # 16:10   X
+	Vector2(1366, 768), # 16:9    X
+	Vector2(1440, 900), # 16:10   X
+	Vector2(1920, 1080), # 16:9   X
+	Vector2(1920, 1200), # 16:10
+	Vector2(1920, 1440), # 4:3    X
+	Vector2(2560, 1080), # 21:9
+	Vector2(2560, 1440), # 16:9   X
+	Vector2(2560, 1600), # 16:10
+	Vector2(3440, 1440), # 21:9
+	Vector2(3840, 2160), # 16:9   X
+]
+
+static var FRAME_CAP = [0, 30, 45, 59, 60, 72, 90, 120, 144, 165]
+
+const LANGUAGE_LIST = [\"en\", \"pl\", \"fr\", \"es\", \"de\", \"ja\", \"zh\", \"ko\", \"uk\", \"ru\", \"da\", \"id\", \"hu\", \"it\", \"nl\", \"pt_BR\", \"pt_PT\", \"ro\", \"sk\" ,\"sv\", \"tr\",
+\"es\", \"cs\", \"el\", \"vi\", \"bg\", \"fi\", \"nb\"]
+
+var sliders_list := []
+var buttons_list := []
+var toggles_list := []
+var groups_list  := []
+var resolutions_group_list  := []
+var previous_focus: Control
+
+var confirm_setting: String
+var confirm_previous
+
+func _ready() -> void:
+	set_process(is_visible_in_tree())
+	
+	if Music.is_switch_build():
+		$\"%Display\".queue_free()
+		$\"%Singlep\".queue_free()
+		$\"%Relat\".queue_free()
+		$\"%MuteWhenUnfocused\".hide()
+	
+	if not DisplayServer.screen_get_size() in RESOLUTIONS:
+		RESOLUTIONS.append(DisplayServer.screen_get_size())
+	
+	# wiem Kobe. Wszystko do wyjebania.
+	var base_button = $\"%Resolution\"
+	for index in RESOLUTIONS.size() - 1:
+		var new_resolution_button = base_button.duplicate()
+		new_resolution_button.text = stringify_resolution(RESOLUTIONS[index+1])
+		$\"%Resolutions\".add_child(new_resolution_button)
+	# --------------------------------
+		
+	
+	if not DisplayServer.screen_get_refresh_rate() in FRAME_CAP:
+		FRAME_CAP.append(DisplayServer.screen_get_refresh_rate())
+	# TODO
+	#bind_group_option($\"%ScreenMode\".group, \"screenmode\")
+	#if Save.config.screenmode == Config.WINDOWED:
+		#bind_resolution_group_option($\"%Resolution\".group, \"windowed_resolution\")
+	#else:
+		#bind_resolution_group_option($\"%Resolution\".group, \"fullscreen_resolution\")
+		
+	update_resolutions()
+	bind_toggle_option($\"%VSync\", \"vsync\")
+	bind_list_option($\"%LimitFPS\", \"limit_fps\", FRAME_CAP, PackedStringArray(Utils.array_map(FRAME_CAP, Callable(self, \"stringify_frame\"))))
+	bind_slider_option($\"%ViewportSize\", \"light_downsample\", 1, 5, 1, \"light_downsample\")
+	bind_slider_option($\"%Raytrace\", \"shadow_render_steps\", 2, 10)#, 1, \"shadow_render_steps\")
+	bind_toggle_option($\"%HighQualityGlow\", \"glow_high_quality\")
+	bind_list_option($\"%GlowType\", \"glow_type\", [1, 2], [\"1\", \"2\"])
+	bind_slider_option($\"%GlowIntensity\", \"glow_intensity\", 0, 2, 0.05, \"intensity\")
+	
+	bind_slider_toggle_option($\"%SoundVolume\", \"sound_volume\", \"sound_enabled\", 0, 1, 0.01, \"audio\")
+	bind_slider_toggle_option($\"%MusicVolume\", \"music_volume\", \"music_enabled\", 0, 1, 0.01, \"audio\")
+	bind_toggle_option($\"%MuteUnfocused\", \"mute_when_unfocused\")
+	
+	bind_list_option($\"%Language\", \"language\", LANGUAGE_LIST, PackedStringArray(Utils.array_map(LANGUAGE_LIST, Callable(self, \"english\"))))
+	bind_slider_option($\"%UIScale\", \"ui_scale\", 0.7, 1, 0.01, \"percent\")
+	bind_toggle_option($\"%AutoSave\", \"enable_autosave\")
+	bind_toggle_option($\"%HealthBars\", \"show_enemy_health\")
+	bind_toggle_option($\"%DamageNumbers\", \"show_damage_numbers\")
+	bind_toggle_option($\"%LowHealthAlarm\", \"low_health_alarm\")
+	bind_toggle_option($\"%AlternateMovement\", \"alternate_movement\")
+	bind_toggle_option($\"%ControlTooltips\", \"show_control_tooltips\")
+	#TODO
+	#bind_group_option($\"%SPControls\".group, \"single_player_controls\")
+	
+	bind_slider_option($\"%Vibrations\", \"joypad_vibrations\", 0, 1, 0.05)
+	bind_slider_option($\"%ScreenShake\", \"screenshake\", 0, 1, 0.05)
+	bind_slider_option($\"%CursorScale\", \"cursor_scale\", 0, 2, 0.01)
+	bind_toggle_option($\"%DoubleZoom\", \"additional_zoom\")
+	bind_toggle_option($\"%AimHack\", \"aim_hack\")
+
+func bind_toggle_option(button: Button, option: String):
+	button.button_pressed = Save.config.get(option)
+	button.connect(\"toggled\", Callable(self, \"set_setting\").bind(option))
+	toggles_list.append([button, option])
+
+func bind_group_option(group: ButtonGroup, option: String):
+	var container = group.get_buttons().front().get_parent()
+	assert(container.get_child_count() == group.get_buttons().size())
+	container.get_child(Save.config.get(option)).button_pressed = true
+	group.connect(\"pressed\", Callable(self, \"handle_group\").bind(option))
+	groups_list.append([container, option])
+
+func bind_resolution_group_option(group: ButtonGroup, option: String):
+	var container = group.get_buttons().front().get_parent()
+	assert(container.get_child_count() == group.get_buttons().size())
+	var i = RESOLUTIONS.find(Save.config.get(option))
+	if i > -1:
+		container.get_child( i ).button_pressed = true
+	group.connect(\"pressed\", Callable(self, \"handle_resolution_group\").bind(option))
+	resolutions_group_list.append([container, option])
+
+func bind_list_option(button: Button, option: String, options: Array, strings: PackedStringArray):
+	button.strings = strings
+	button.options = options
+	button.current_option = options.find(Save.config.get(option))
+	button.connect(\"option_selected\", Callable(self, \"set_setting\").bind(option))
+	buttons_list.append([button, options, option])
+
+func bind_slider_option(slider: ProgressBar, option: String, minimum: float, maximum: float, step: float = 1, display_func := \"\"):
+	slider.min_value = minimum
+	slider.max_value = maximum
+	slider.step = step
+	slider.display_func = display_func
+	slider.value = randf() # tak trzeba. Nie pytaj
+	slider.value = Save.config.get(option)
+	slider.connect(\"value_changed\", Callable(self, \"set_setting\").bind(option))
+	sliders_list.append([slider, option])
+
+func bind_slider_toggle_option(slider: ProgressBar, option: String, toggle: String, minimum: float, maximum: float, step: float = 1, display_func := \"\"):
+	## chyba TODO
+	bind_slider_option(slider, option, minimum, maximum, step, display_func)
+
+func set_setting(value, setting: String):
+	confirm_previous = Save.config.get(setting)
+	
+	Save.config.set(setting, value)
+	
+	if need_confirm(setting):
+		confirm_setting = setting
+		previous_focus = get_viewport().gui_get_focus_owner()
+		$\"%ConfirmOptions\".get_parent().show()
+		$\"%ConfirmOptions\".showme()
+		$\"%ConfirmOptions/%ButtonCancel\".grab_focus()
+
+	match setting:
+		\"light_downsample\":
+			Save.config.apply_downsampling()
+			pass
+		\"shadow_render_steps\":
+			Save.config.apply_shadow_steps()
+			pass
+		\"fullscreen_resolution\":
+			request_viewport_resize()
+		\"windowed_resolution\":
+			Save.config.request_refresh_display()
+			request_viewport_resize()
+		\"screenmode\":
+			Save.config.request_refresh_display()
+			update_resolutions()
+			request_viewport_resize(1.2)
+	Save.config.apply()
+
+func handle_group(button: Button, option: String):
+	set_setting(button.get_index(), option)
+
+func handle_resolution_group(button: Button, option: String):
+	set_setting(RESOLUTIONS[button.get_index()], option)
+
+func stringify_resolution(res: Vector2) -> String:
+	return str(res.x, \" x \", res.y)
+
+func stringify_frame(f: int) -> String:
+	return \"OFF\" if f == 0 else str(f)
+
+func english(lang: String) -> String:
+	return \"English\"
+
+var requested_viewport_resize := 0.5
+func request_viewport_resize(time := 0.5):
+	set_physics_process(true)
+	requested_viewport_resize = time
+
+func _physics_process(delta):
+	if requested_viewport_resize > 0:
+		requested_viewport_resize -= delta
+		if requested_viewport_resize <= 0:
+			Save.config.apply_vieport_size()
+			set_physics_process(false)
+
+func update_resolutions():
+	resolutions_group_list = []
+	# TODO
+	#if $\"%Resolution\".group.is_connected(\"pressed\", Callable(self, \"handle_resolution_group\")):
+	#	$\"%Resolution\".group.disconnect(\"pressed\", Callable(self, \"handle_resolution_group\"))
+
+	#if Save.config.screenmode == Config.WINDOWED:
+		#$\"%ResolutionName\".text = \"Window Resolution\"
+		#bind_resolution_group_option($\"%Resolution\".group, \"windowed_resolution\")
+	#else:
+		#$\"%ResolutionName\".text = \"Fullscreen Resolution\"
+		#bind_resolution_group_option($\"%Resolution\".group, \"fullscreen_resolution\")
+
+	refresh_selected_resolutions()
+
+func connect_close(object: Object, method: String):
+	$\"%ExitButton\".connect(\"pressed\", Callable(object, method))
+
+func get_first_control():
+	if has_node(\"%ScreenMode\"):
+		return $\"%ScreenMode\"
+	else:
+		return $\"%SoundVolume\"
+
+func change_controls() -> void:
+	$\"%MainOptions\".hide()
+	$\"%ControlOptionsParent\".show()
+	$\"%ControlOptions\".get_first_control().call_deferred(\"grab_focus\")
+
+func close_controls():
+	$\"%ControlOptionsParent\".hide()
+	$\"%MainOptions\".show()
+	get_first_control().call_deferred(\"grab_focus\")
+
+func reset_options():
+	Save.reset_config()
+	refresh_selected_options()
+
+func refresh_selected_options():
+	for toggle_option in toggles_list:
+		toggle_option[0].button_pressed = Save.config.get(toggle_option[1])
+	
+	for group_option in groups_list:
+		group_option[0].get_child(Save.config.get(group_option[1])).button_pressed = true
+	
+	refresh_selected_resolutions()
+	
+	for button_option in buttons_list:
+		button_option[0].current_option = button_option[1].find(Save.config.get(button_option[2]))
+	
+	for slider_option in sliders_list:
+		slider_option[0].value = Save.config.get(slider_option[1])
+
+func refresh_selected_resolutions():
+	for group_option in resolutions_group_list:
+		var i = RESOLUTIONS.find(Save.config.get(group_option[1]))
+		if i > -1:
+			group_option[0].get_child(i).button_pressed = true
+
+func need_confirm(setting: String) -> bool:
+	return setting in [\"screenmode\", \"windowed_resolution\", \"fullscreen_resolution\"]
+
+func on_change_confirm() -> void:
+	previous_focus.grab_focus()
+	previous_focus = null
+	$\"%ConfirmOptions\".hideme()
+
+func on_change_cancel() -> void:
+	if not previous_focus or $\"%ConfirmOptions\".is_visible_in_tree():
+		return
+	
+	previous_focus.grab_focus()
+	$\"%ConfirmOptions\".hideme()
+	Save.config.set(confirm_setting, confirm_previous)
+	if confirm_setting == \"screenmode\" or confirm_setting == \"windowed_resolution\":
+		Save.config.request_refresh_display()
+	Save.config.apply()
+	refresh_selected_options()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_process(is_visible_in_tree())
+
+func _process(delta: float) -> void:
+	var tabs = $\"%TabContainer\"
+	if Input.is_action_just_pressed(\"next_tab\"):
+		tabs.current_tab = posmod(tabs.current_tab + 1, tabs.get_tab_count())
+		tabs.get_tab_control(tabs.current_tab).get_child(0).find_next_valid_focus().call_deferred(\"grab_focus\")
+	elif Input.is_action_just_pressed(\"prev_tab\"):
+		tabs.current_tab = posmod(tabs.current_tab - 1, tabs.get_tab_count())
+		tabs.get_tab_control(tabs.current_tab).get_child(0).find_next_valid_focus().call_deferred(\"grab_focus\")
+"
+
+[sub_resource type="Shortcut" id="72"]
+
+[sub_resource type="Gradient" id="56"]
+offsets = PackedFloat32Array(0, 0.16, 0.32, 0.48, 0.64, 0.8, 1)
+colors = PackedColorArray(1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="55"]
+gradient = SubResource("56")
+
+[sub_resource type="Gradient" id="61"]
+offsets = PackedFloat32Array(0.173038, 0.509054, 0.78672)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="62"]
+gradient = SubResource("61")
+
+[sub_resource type="Gradient" id="67"]
+
+[sub_resource type="GradientTexture2D" id="63"]
+gradient = SubResource("67")
+
+[sub_resource type="Gradient" id="68"]
+
+[sub_resource type="GradientTexture2D" id="64"]
+gradient = SubResource("68")
+
+[sub_resource type="Gradient" id="69"]
+
+[sub_resource type="GradientTexture2D" id="65"]
+gradient = SubResource("69")
+
+[sub_resource type="Gradient" id="70"]
+
+[sub_resource type="GradientTexture2D" id="66"]
+gradient = SubResource("70")
+
+[sub_resource type="GDScript" id="47"]
+script/source = "extends HBoxContainer
+
+func _ready() -> void:
+	queue_free() ## TODO: kiedyś
+"
+
+[sub_resource type="GDScript" id="51"]
+resource_name = "Confirm"
+script/source = "extends \"res://Resources/Anarchy/Scripts/warning_window.gd\"
+
+@onready var message = $\"%Message\".text
+
+var timer: float
+
+func _ready() -> void:
+	set_physics_process(false)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_physics_process(is_visible_in_tree())
+		timer = 9
+
+func _physics_process(delta: float) -> void:
+	timer -= delta
+	$\"%Message\".text = tr(message) % ceil(timer)
+	
+	if timer <= 0:
+		hide()
+"
+
+[sub_resource type="Animation" id="11"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer/ButtonCancel:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/Header/ButtonExit/PadHint:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/Header/ButtonExit:self_modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/Footer:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VBoxContainer/Footer:self_modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer/ButtonOk:self_modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Message:percent_visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("VBoxContainer/PanelContainer:material:shader_param/cutoff")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("VBoxContainer/Header:material:shader_param/cutoff")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("VBoxContainer/Header/MarginContainer/ValueHeaderTitle:percent_visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="10"]
+resource_name = "show"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer/ButtonCancel:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/Header/ButtonExit/PadHint:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/Header/ButtonExit:self_modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/Footer:self_modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VBoxContainer/Footer:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, -90), Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer/ButtonOk:self_modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Message:percent_visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("VBoxContainer/PanelContainer:material:shader_param/cutoff")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("VBoxContainer/Header:material:shader_param/cutoff")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("VBoxContainer/Header/MarginContainer/ValueHeaderTitle:percent_visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0pkkv"]
+_data = {
+&"RESET": SubResource("11"),
+&"show": SubResource("10")
+}
+
+[sub_resource type="GDScript" id="54"]
+resource_name = "HideWhenNotJoypad"
+script/source = "extends HBoxContainer
+
+func _ready() -> void:
+	Utils.connect(\"joypad_updated\", Callable(self, \"update_visible\"))
+	update_visible()
+
+func update_visible():
+	visible = Utils.is_using_joypad()
+"
+
+[node name="Options" type="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 1700)
+offset_left = 641.0
+offset_top = -1706.0
+offset_right = 3581.0
+offset_bottom = -6.0
+pivot_offset = Vector2(-3650, 4022)
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+script = SubResource("44")
+
+[node name="Header" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeaderName" type="PanelContainer" parent="Header"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_type_variation = &"1000_yellow"
+
+[node name="HaderText" type="Label" parent="Header/HeaderName"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("14")
+text = "Options"
+uppercase = true
+
+[node name="Spacing" type="Control" parent="Header"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Exit" type="PanelContainer" parent="Header"]
+custom_minimum_size = Vector2(107, 107)
+layout_mode = 2
+theme_type_variation = &"ExitButton"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Header/Exit"]
+layout_mode = 2
+
+[node name="Tooltip" type="Control" parent="Header/Exit/HBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(107, 107)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TooltipGamepadIcon" parent="Header/Exit/HBoxContainer/Tooltip" instance=ExtResource("13")]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+
+[node name="Exit" type="Control" parent="Header/Exit/HBoxContainer"]
+custom_minimum_size = Vector2(107, 107)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="ExitButton" type="TextureButton" parent="Header/Exit/HBoxContainer/Exit"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+shortcut = SubResource("72")
+texture_normal = ExtResource("4")
+texture_pressed = ExtResource("3")
+texture_hover = ExtResource("5")
+texture_disabled = ExtResource("4")
+texture_focused = ExtResource("6")
+stretch_mode = 5
+script = ExtResource("19")
+
+[node name="Content" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = &"0001_yellow_only_border"
+
+[node name="ContainerContainer" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainOptions" type="VBoxContainer" parent="Content/ContainerContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="TabContainer" type="TabContainer" parent="Content/ContainerContainer/MainOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"OptionsTabs"
+current_tab = 0
+script = ExtResource("9")
+
+[node name="Display" type="ScrollContainer" parent="Content/ContainerContainer/MainOptions/TabContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+follow_focus = true
+metadata/_tab_index = 0
+
+[node name="Display" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="OptionsLineNormal" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal/OptionNameZone"]
+layout_mode = 0
+offset_right = 276.0
+offset_bottom = 64.0
+text = "Screen Mode"
+uppercase = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal"]
+layout_mode = 2
+
+[node name="ScreenMode" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "Windowed"
+script = ExtResource("18")
+
+[node name="ScreenMode2" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal/VBoxContainer"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "Borderless Fullscreen"
+script = ExtResource("18")
+
+[node name="ScreenMode3" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal/VBoxContainer"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "Exclusive Fullscreen"
+script = ExtResource("18")
+
+[node name="OptionsLineNormal2" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal2"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ResolutionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal2/OptionNameZone"]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "RESOLUTION"
+uppercase = true
+
+[node name="Resolutions" type="GridContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal2"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 3
+
+[node name="Resolution" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal2/Resolutions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(398, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan_resolution"
+toggle_mode = true
+text = "1280 x 720"
+script = ExtResource("18")
+
+[node name="OptionsLineToggle" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineToggle"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineToggle/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "VSync"
+uppercase = true
+
+[node name="VSync" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineToggle"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineNormal3" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal3"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal3/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Limit FPS"
+uppercase = true
+
+[node name="LimitFPS" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineNormal3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+text = "OPTION OR TOGGLE MANY STATES NAME"
+script = ExtResource("11")
+
+[node name="OptionsLineSlider" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Light3D SubViewport Size"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="ViewportSize" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+min_value = 2.0
+max_value = 6.0
+step = 1.0
+value = 4.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider/OverButton/ViewportSize"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="OptionsLineSlider2" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider2"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider2/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Shadow Raytrace Steps"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider2"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="Raytrace" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider2/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+min_value = 2.0
+max_value = 12.0
+step = 1.0
+value = 8.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider2/OverButton/Raytrace"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="OptionsLineToggle2" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineToggle2"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineToggle2/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "High Quality Glow"
+uppercase = true
+
+[node name="HighQualityGlow" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineToggle2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineSlider3" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider3"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider3/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Glow Type"
+uppercase = true
+
+[node name="GlowType" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+text = "OPTION OR TOGGLE MANY STATES NAME"
+script = ExtResource("11")
+
+[node name="OptionsLineSlider4" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider4"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider4/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Glow Intensity"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider4"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="GlowIntensity" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider4/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+value = 70.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Display/Display/OptionsLineSlider4/OverButton/GlowIntensity"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="Audio" type="ScrollContainer" parent="Content/ContainerContainer/MainOptions/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Audio" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="OptionsLineSlider5" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider5"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider5/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Sounds"
+uppercase = true
+
+[node name="SoundButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider5"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="SoundVolume" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider5/SoundButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+value = 70.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider5/SoundButton/SoundVolume"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="TestAudio" type="AudioStreamPlayer" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider5/SoundButton/SoundVolume"]
+unique_name_in_owner = true
+stream = ExtResource("16")
+
+[node name="OptionsLineSlider6" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider6"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider6/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Music"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider6"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="MusicVolume" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider6/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+value = 70.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/OptionsLineSlider6/OverButton/MusicVolume"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="MuteWhenUnfocused" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/MuteWhenUnfocused"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/MuteWhenUnfocused/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Mute Game When Unfocused"
+uppercase = true
+
+[node name="MuteUnfocused" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Audio/Audio/MuteWhenUnfocused"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="Game Options" type="ScrollContainer" parent="Content/ContainerContainer/MainOptions/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Game Options" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="OptionsLineNormal4" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineNormal4"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineNormal4/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Language"
+uppercase = true
+
+[node name="Language" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineNormal4"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+text = "OPTION OR TOGGLE MANY STATES NAME"
+icon = ExtResource("17")
+expand_icon = true
+script = ExtResource("11")
+
+[node name="OptionsLineToggle4" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle4"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle4/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "UI Scale"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle4"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"SliderButton"
+
+[node name="UIScale" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle4/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+value = 70.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle4/OverButton/UIScale"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="OptionsLineToggle10" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle10"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle10/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Autosave"
+uppercase = true
+
+[node name="AutoSave" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle10"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineToggle5" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle5"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle5/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Enemy Health Bars"
+uppercase = true
+
+[node name="HealthBars" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle5"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineToggle6" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle6"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle6/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Damage Numbers"
+uppercase = true
+
+[node name="DamageNumbers" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle6"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineToggle7" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle7"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle7/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Low Health Alarm"
+uppercase = true
+
+[node name="LowHealthAlarm" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle7"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineToggle9" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle9"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle9/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Control Tooltips"
+uppercase = true
+
+[node name="ControlTooltips" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle9"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineToggle11" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11/OptionNameZone"]
+layout_mode = 0
+offset_top = -5.0
+offset_right = 326.0
+offset_bottom = 59.0
+text = "Main UI Color"
+uppercase = true
+
+[node name="MainColor" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11"]
+layout_mode = 2
+
+[node name="Hue" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11/MainColor"]
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = &"OptionsSlider"
+texture = SubResource("55")
+expand_mode = 1
+script = ExtResource("2")
+color_name = "UI_MAIN_COLOR"
+
+[node name="Where" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11/MainColor/Hue"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 0
+anchor_bottom = 1.0
+texture = SubResource("62")
+expand_mode = 1
+
+[node name="Saturation" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11/MainColor"]
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = &"OptionsSlider"
+texture = SubResource("63")
+expand_mode = 1
+script = ExtResource("2")
+color_name = "UI_MAIN_COLOR"
+component = 1
+
+[node name="Where" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11/MainColor/Saturation"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 0
+anchor_bottom = 1.0
+texture = SubResource("62")
+expand_mode = 1
+
+[node name="Value" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11/MainColor"]
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = &"OptionsSlider"
+texture = SubResource("64")
+expand_mode = 1
+script = ExtResource("2")
+color_name = "UI_MAIN_COLOR"
+component = 2
+
+[node name="Where" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle11/MainColor/Value"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 0
+anchor_bottom = 1.0
+texture = SubResource("62")
+expand_mode = 1
+
+[node name="OptionsLineToggle12" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12/OptionNameZone"]
+layout_mode = 0
+offset_top = -5.0
+offset_right = 326.0
+offset_bottom = 59.0
+text = "Secondary UI Color"
+uppercase = true
+
+[node name="SecondaryColor" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12"]
+layout_mode = 2
+
+[node name="Hue" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12/SecondaryColor"]
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = &"OptionsSlider"
+texture = SubResource("55")
+expand_mode = 1
+script = ExtResource("2")
+color_name = "UI_SECONDARY_COLOR"
+
+[node name="Where" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12/SecondaryColor/Hue"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 0
+anchor_bottom = 1.0
+texture = SubResource("62")
+expand_mode = 1
+
+[node name="Saturation" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12/SecondaryColor"]
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = &"OptionsSlider"
+texture = SubResource("65")
+expand_mode = 1
+script = ExtResource("2")
+color_name = "UI_SECONDARY_COLOR"
+component = 1
+
+[node name="Where" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12/SecondaryColor/Saturation"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 0
+anchor_bottom = 1.0
+texture = SubResource("62")
+expand_mode = 1
+
+[node name="Value" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12/SecondaryColor"]
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = &"OptionsSlider"
+texture = SubResource("66")
+expand_mode = 1
+script = ExtResource("2")
+color_name = "UI_SECONDARY_COLOR"
+component = 2
+
+[node name="Where" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle12/SecondaryColor/Value"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 0
+anchor_bottom = 1.0
+texture = SubResource("62")
+expand_mode = 1
+
+[node name="OptionsLineToggle13" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle13"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle13/OptionNameZone"]
+layout_mode = 0
+offset_top = -5.0
+offset_right = 326.0
+offset_bottom = 59.0
+text = "Blood Color"
+uppercase = true
+
+[node name="BloodColor" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle13"]
+layout_mode = 2
+
+[node name="Hue" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle13/BloodColor"]
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = &"OptionsSlider"
+texture = SubResource("55")
+expand_mode = 1
+script = ExtResource("2")
+color_name = "BLOOD_COLOR"
+
+[node name="Where" type="TextureRect" parent="Content/ContainerContainer/MainOptions/TabContainer/Game Options/Game Options/OptionsLineToggle13/BloodColor/Hue"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 0
+anchor_bottom = 1.0
+texture = SubResource("62")
+expand_mode = 1
+
+[node name="Controls" type="ScrollContainer" parent="Content/ContainerContainer/MainOptions/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="Controls" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="OptionsLineNormal5" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls"]
+visible = false
+layout_mode = 2
+script = SubResource("47")
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/OptionsLineNormal5"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/OptionsLineNormal5/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "control type"
+uppercase = true
+
+[node name="NormalButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/OptionsLineNormal5"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+text = "OPTION OR TOGGLE MANY STATES NAME"
+
+[node name="OptionsLineNormal6" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/OptionsLineNormal6"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NormalButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/OptionsLineNormal6"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+text = "Change Controls"
+script = ExtResource("18")
+
+[node name="Singlep" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Singlep"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Singlep/OptionNameZone"]
+layout_mode = 0
+offset_right = 276.0
+offset_bottom = 64.0
+text = "Single Player Controls"
+uppercase = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Singlep"]
+layout_mode = 2
+
+[node name="SPControls" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Singlep/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "Auto-Detect"
+script = ExtResource("18")
+
+[node name="SPControls2" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Singlep/VBoxContainer"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "Keyboard + Mouse"
+script = ExtResource("18")
+
+[node name="SPControls3" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Singlep/VBoxContainer"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "Controller"
+script = ExtResource("18")
+
+[node name="SPControls4" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Singlep/VBoxContainer"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "All"
+script = ExtResource("18")
+
+[node name="Relat" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Relat"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Relat/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Relative WSAD Movement"
+uppercase = true
+
+[node name="AlternateMovement" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/Relat"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="Accessibility" type="ScrollContainer" parent="Content/ContainerContainer/MainOptions/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 4
+
+[node name="Accessibility" type="VBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="OptionsLineSlider7" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider7"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider7/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Vibrations"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider7"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="Vibrations" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider7/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+value = 70.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider7/OverButton/Vibrations"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="OptionsLineSlider8" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider8"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider8/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Screen Shake"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider8"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="ScreenShake" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider8/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+value = 70.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider8/OverButton/ScreenShake"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="OptionsLineSlider9" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider9"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider9/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Cursor Scale"
+uppercase = true
+
+[node name="OverButton" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider9"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"SliderButton"
+
+[node name="CursorScale" type="ProgressBar" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider9/OverButton"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 54)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -590.0
+offset_top = -27.0
+offset_right = 590.0
+offset_bottom = 27.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_type_variation = &"OptionsSlider"
+value = 70.0
+script = ExtResource("15")
+
+[node name="Value" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineSlider9/OverButton/CursorScale"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 7
+text = "70/100"
+horizontal_alignment = 1
+
+[node name="OptionsLineToggle10" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineToggle10"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineToggle10/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Extra Zoom"
+uppercase = true
+
+[node name="DoubleZoom" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineToggle10"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineToggle11" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineToggle11"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineToggle11/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Aim Assist"
+uppercase = true
+
+[node name="AimHack" type="Button" parent="Content/ContainerContainer/MainOptions/TabContainer/Accessibility/Accessibility/OptionsLineToggle11"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+toggle_mode = true
+text = "TOGGLE TWO STATES NAME"
+script = ExtResource("1")
+
+[node name="OptionsLineSlider10" type="HBoxContainer" parent="Content/ContainerContainer/MainOptions"]
+layout_mode = 2
+
+[node name="OptionNameZone" type="Control" parent="Content/ContainerContainer/MainOptions/OptionsLineSlider10"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionName" type="Label" parent="Content/ContainerContainer/MainOptions/OptionsLineSlider10/OptionNameZone"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 276.0
+offset_bottom = 32.0
+text = "Reset to Defaults"
+uppercase = true
+
+[node name="NormalButton" type="Button" parent="Content/ContainerContainer/MainOptions/OptionsLineSlider10"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"button_cyan"
+text = "Reset Settings"
+script = ExtResource("18")
+
+[node name="ControlOptionsParent" type="ScrollContainer" parent="Content/ContainerContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+
+[node name="ControlOptions" parent="Content/ContainerContainer/ControlOptionsParent" instance=ExtResource("20")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Separator" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="InputAnihilator" type="Control" parent="Separator"]
+visible = false
+anchors_preset = 0
+offset_left = -11454.0
+offset_top = -12585.0
+offset_right = 12001.0
+offset_bottom = 7672.0
+
+[node name="ConfirmOptions" parent="Separator/InputAnihilator" instance=ExtResource("8")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 503.5
+offset_top = 1504.5
+offset_right = 1237.5
+offset_bottom = 1846.5
+script = SubResource("51")
+
+[node name="VBoxContainer" parent="Separator/InputAnihilator/ConfirmOptions" index="0"]
+layout_mode = 2
+
+[node name="Header" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer" index="0"]
+layout_mode = 2
+theme_type_variation = &"CoopHeader"
+
+[node name="MarginContainer" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/Header" index="0"]
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+
+[node name="ValueHeaderTitle" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/Header/MarginContainer" index="0"]
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="ButtonExit" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/Header" index="1"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_right = 32.0
+
+[node name="PadHint" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/Header/ButtonExit" index="0"]
+layout_mode = 0
+anchor_top = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 56.0
+offset_bottom = 75.0
+
+[node name="PanelContainer" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="MarginContainer2" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/PanelContainer" index="0"]
+layout_mode = 2
+
+[node name="VBoxContainer" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/PanelContainer/MarginContainer2" index="0"]
+layout_mode = 2
+
+[node name="Message" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="0"]
+layout_mode = 2
+text = "Keep these settings? (%s)"
+
+[node name="HBoxContainer" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="ButtonOk" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer" index="0"]
+layout_mode = 2
+theme_type_variation = &"theme_anarchy_standard_button"
+
+[node name="ButtonCancel" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer" index="1"]
+layout_mode = 2
+theme_type_variation = &"theme_anarchy_standard_button"
+
+[node name="Footer" parent="Separator/InputAnihilator/ConfirmOptions/VBoxContainer" index="2"]
+layout_mode = 2
+theme_type_variation = &"Footer"
+
+[node name="AnimationPlayer" parent="Separator/InputAnihilator/ConfirmOptions" index="1"]
+libraries = {
+&"": SubResource("AnimationLibrary_0pkkv")
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+script = SubResource("54")
+
+[node name="UltimateTooltip" parent="HBoxContainer" instance=ExtResource("10")]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_type_variation = &"0010_yellow_border"
+action = "left_trigger"
+
+[node name="UltimateTooltip2" parent="HBoxContainer" instance=ExtResource("10")]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_type_variation = &"0010_yellow_border"
+action = "right_trigger"
+
+[connection signal="pressed" from="Content/ContainerContainer/MainOptions/TabContainer/Controls/Controls/OptionsLineNormal6/NormalButton" to="." method="change_controls"]
+[connection signal="pressed" from="Content/ContainerContainer/MainOptions/OptionsLineSlider10/NormalButton" to="." method="reset_options"]
+[connection signal="confirmed" from="Separator/InputAnihilator/ConfirmOptions" to="." method="on_change_confirm"]
+[connection signal="visibility_changed" from="Separator/InputAnihilator/ConfirmOptions" to="." method="on_change_cancel"]
+
+[editable path="Separator/InputAnihilator/ConfirmOptions"]

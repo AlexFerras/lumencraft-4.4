@@ -1,0 +1,49 @@
+Empty
+Lumen
+Bullets
+Rockets
+Put it in your weapon.
+Armored Box
+Lumen Clump
+Deposit of Lumen that can be extracted in Shredder.
+Metal Nugget
+Deposit of Metal that can be extracted in Shredder.
+Spear
+Melee weapon useful for skewering.
+Hammer
+Melee weapon useful for smashing.
+Repair Gun
+Repairs damaged buildings and structures.
+Napalm
+Combustible liquid that can be poured on ground and set on fire.
+Pistol
+Very strong revolver.
+Shotgun
+Firearm with a high burst damage.
+Machine Gun
+Shoots lots of bullets to kill many enemies.
+Rocket Launcher
+Shoots destructive rockets that explode on impact.
+Flamethrower
+Uses napalm to bathe your enemies in fire.
+Lumenal Discharger
+Uses Lumens to shoot powerful lightning beam that jumps between enemies. Automatically targets the closest enemy in range.
+Mine
+Explodes when enemy is in proximity.
+Grenade
+Explosive grenade for throwing.
+Dynamite
+Kind of more explosive grenade.
+Flare
+Quick and portable source of light.
+Drill
+Allows to dig in the terrain.
+Hook
+Allows to move around some objects.
+Foam Gun
+Sprays a special foam that hardens on contact.
+Medpack
+Use it to restore 20 health.
+Unlocks specified technology when used.
+Opens special stone gates.
+Generic valuable item. Has no use outside special objectives and events.

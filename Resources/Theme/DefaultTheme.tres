@@ -1,0 +1,228 @@
+[gd_resource type="Theme" load_steps=49 format=3 uid="uid://btumksfl0b22e"]
+
+[ext_resource type="FontFile" path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" id="1"]
+[ext_resource type="Texture2D" uid="uid://clc025ttr0pwv" path="res://Nodes/Editor/GUI/Icons/Unchecked.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cfk5dm74oponb" path="res://Nodes/Editor/GUI/Icons/Checked.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://biw7umoifaywg" path="res://Nodes/Editor/GUI/Icons/CheckedDisabled.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://b02yw4xmr5qea" path="res://Nodes/Editor/GUI/Icons/UncheckedDisabled.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://bhvv368miffb7" path="res://Nodes/Editor/GUI/Icons/UpDown.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://jgofnb2op3ud" path="res://Nodes/Editor/GUI/Icons/ScrollGrabber.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://cakqxubjhb26x" path="res://Nodes/Editor/GUI/Icons/ScrollGrabberHighlight.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://do54oht7xoml" path="res://Nodes/Editor/GUI/Icons/ScrollTexture.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://cxhmblxtnym5i" path="res://Nodes/Editor/GUI/Icons/ScrollGrabberPressed.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://qaprwrcq35h8" path="res://Nodes/Editor/GUI/Icons/SliderGrabberDisabled.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://bvk5bg4xckdv" path="res://Nodes/Editor/GUI/Icons/SliderGrabberHighlight.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://b56d3p53aik81" path="res://Nodes/Editor/GUI/Icons/SliderGrabber.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://bxvcqxavy51bt" path="res://Nodes/Editor/Icons/Close.svg" id="14"]
+[ext_resource type="Texture2D" uid="uid://dbpvrwkaftew8" path="res://Nodes/Editor/GUI/Icons/DialogBG.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://b02qvuwtccemi" path="res://Nodes/Editor/GUI/Icons/ToggleHiddenIcon.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://yatbdhxerxpd" path="res://Nodes/Editor/GUI/Icons/ParentFolderIcon.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://5b3orvanq72v" path="res://Nodes/Editor/GUI/Icons/ReloadIcon.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://cnbmr1brfiy6p" path="res://Nodes/Editor/GUI/Icons/FolderIcon.png" id="19"]
+[ext_resource type="Texture2D" uid="uid://ba30wkj6mnnco" path="res://Nodes/Editor/GUI/Icons/FileIcon.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://wmg5rv3f7y6y" path="res://Nodes/Editor/GUI/Icons/RadioChecked.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://bkrxgppwcbdka" path="res://Nodes/Editor/GUI/Icons/RadioUnchecked.png" id="22"]
+[ext_resource type="Texture2D" uid="uid://dblwt61mg4bvn" path="res://Nodes/Editor/GUI/Icons/CheckOff.png" id="23"]
+[ext_resource type="Texture2D" uid="uid://bufk26vmvlmde" path="res://Nodes/Editor/GUI/Icons/CheckOnDisabled.png" id="24"]
+[ext_resource type="Texture2D" uid="uid://cuqywcdfodw3y" path="res://Nodes/Editor/GUI/Icons/CheckOn.png" id="25"]
+[ext_resource type="Texture2D" uid="uid://dw2rjtgxpsrnk" path="res://Nodes/Editor/GUI/Icons/CheckOffDisabled.png" id="26"]
+[ext_resource type="Texture2D" uid="uid://biybuip7d0mes" path="res://Nodes/Editor/GUI/Icons/PickerAddPreset.png" id="27"]
+[ext_resource type="Texture2D" uid="uid://cj1bwh1xp6x81" path="res://Nodes/Editor/GUI/Icons/PickerPick.png" id="28"]
+
+[sub_resource type="ImageTexture" id="1"]
+
+[sub_resource type="Image" id="Image_ugxd4"]
+data = {
+"data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 91, 89, 97, 44, 91, 89, 97, 184, 90, 88, 96, 244, 90, 88, 96, 255, 91, 89, 97, 184, 91, 89, 97, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 89, 87, 95, 46, 90, 88, 96, 242, 86, 84, 92, 255, 84, 83, 90, 255, 84, 83, 90, 255, 86, 84, 92, 255, 90, 88, 96, 242, 89, 87, 95, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 88, 96, 184, 85, 83, 91, 255, 83, 81, 89, 255, 83, 81, 89, 255, 83, 81, 89, 255, 83, 81, 89, 255, 85, 83, 91, 255, 90, 88, 96, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 86, 94, 244, 82, 81, 89, 255, 82, 80, 88, 255, 82, 80, 88, 255, 82, 80, 88, 255, 82, 80, 88, 255, 82, 81, 89, 255, 88, 86, 94, 245, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 85, 93, 244, 81, 80, 88, 255, 81, 79, 87, 255, 81, 79, 87, 255, 81, 79, 87, 255, 81, 79, 87, 255, 81, 80, 88, 255, 87, 85, 93, 245, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 85, 93, 184, 82, 80, 88, 255, 80, 78, 86, 255, 80, 78, 86, 255, 80, 78, 86, 255, 80, 78, 86, 255, 82, 80, 88, 255, 87, 85, 93, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 83, 91, 47, 85, 83, 91, 242, 81, 79, 87, 255, 79, 77, 85, 255, 79, 77, 85, 255, 80, 79, 87, 255, 85, 83, 91, 242, 85, 83, 91, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 83, 91, 46, 85, 84, 92, 184, 84, 82, 90, 244, 84, 82, 90, 255, 85, 83, 91, 184, 84, 83, 91, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+"format": "RGBA8",
+"height": 12,
+"mipmaps": false,
+"width": 12
+}
+
+[sub_resource type="ImageTexture" id="3"]
+image = SubResource("Image_ugxd4")
+
+[sub_resource type="StyleBoxTexture" id="4"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+texture = SubResource("3")
+region_rect = Rect2(0, 0, 12, 12)
+
+[sub_resource type="Image" id="Image_vex3r"]
+data = {
+"data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 151, 208, 223, 37, 146, 203, 220, 173, 132, 187, 212, 241, 130, 186, 212, 255, 146, 202, 220, 173, 151, 208, 223, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 149, 208, 221, 39, 131, 187, 211, 239, 106, 162, 198, 255, 98, 154, 194, 255, 97, 154, 193, 255, 106, 162, 198, 255, 131, 187, 211, 239, 149, 208, 221, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 139, 200, 215, 173, 104, 159, 194, 255, 93, 146, 187, 255, 93, 146, 187, 255, 93, 146, 187, 255, 93, 146, 187, 255, 104, 159, 194, 255, 139, 200, 215, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 181, 203, 241, 92, 146, 184, 255, 88, 141, 182, 255, 88, 141, 182, 255, 88, 141, 182, 255, 88, 141, 182, 255, 92, 146, 184, 255, 120, 180, 202, 243, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 115, 176, 199, 241, 89, 142, 179, 255, 86, 137, 176, 255, 86, 137, 176, 255, 86, 137, 176, 255, 86, 137, 176, 255, 89, 142, 179, 255, 115, 176, 199, 243, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 123, 192, 207, 173, 92, 145, 178, 255, 83, 132, 169, 255, 83, 132, 169, 255, 83, 132, 169, 255, 83, 132, 169, 255, 92, 145, 178, 255, 123, 192, 207, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 197, 209, 40, 107, 174, 193, 239, 88, 143, 174, 255, 84, 131, 164, 255, 84, 131, 164, 255, 87, 142, 173, 255, 107, 174, 193, 239, 121, 197, 209, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 117, 198, 207, 39, 112, 188, 202, 173, 100, 166, 188, 242, 100, 165, 186, 255, 113, 188, 201, 173, 117, 198, 207, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+"format": "RGBA8",
+"height": 12,
+"mipmaps": false,
+"width": 12
+}
+
+[sub_resource type="ImageTexture" id="6"]
+image = SubResource("Image_vex3r")
+
+[sub_resource type="StyleBoxTexture" id="7"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+texture = SubResource("6")
+region_rect = Rect2(0, 0, 12, 12)
+
+[sub_resource type="Image" id="Image_lq6ve"]
+data = {
+"data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 191, 4, 176, 71, 176, 148, 176, 148, 176, 71, 191, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 176, 71, 175, 186, 175, 186, 175, 186, 175, 186, 176, 71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 176, 148, 175, 186, 175, 186, 175, 186, 175, 186, 176, 148, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 176, 148, 175, 186, 175, 186, 175, 186, 175, 186, 176, 148, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 176, 71, 175, 186, 175, 186, 175, 186, 175, 186, 176, 71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 191, 4, 176, 71, 176, 148, 176, 148, 176, 71, 191, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+"format": "LumAlpha8",
+"height": 12,
+"mipmaps": false,
+"width": 12
+}
+
+[sub_resource type="ImageTexture" id="9"]
+image = SubResource("Image_lq6ve")
+
+[sub_resource type="StyleBoxTexture" id="10"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+texture = SubResource("9")
+region_rect = Rect2(0, 0, 12, 12)
+
+[sub_resource type="Image" id="Image_2y7pk"]
+data = {
+"data": PackedByteArray(0, 0, 0, 0, 77, 75, 89, 4, 77, 75, 89, 25, 77, 75, 89, 64, 77, 75, 89, 93, 77, 75, 89, 102, 77, 75, 89, 102, 77, 75, 89, 93, 77, 75, 89, 64, 77, 75, 89, 25, 77, 75, 89, 4, 0, 0, 0, 0, 77, 75, 89, 4, 77, 75, 89, 40, 64, 62, 74, 147, 42, 41, 47, 240, 32, 32, 36, 252, 30, 30, 35, 255, 30, 30, 35, 255, 32, 32, 36, 252, 42, 41, 47, 240, 64, 62, 74, 147, 77, 75, 89, 40, 77, 75, 89, 4, 77, 75, 89, 25, 63, 62, 73, 148, 31, 31, 36, 252, 32, 32, 37, 255, 34, 34, 39, 255, 35, 35, 39, 255, 35, 35, 39, 255, 34, 34, 39, 255, 32, 32, 37, 255, 31, 31, 36, 252, 63, 62, 73, 148, 77, 75, 89, 25, 77, 75, 89, 64, 42, 41, 47, 240, 32, 32, 37, 255, 35, 35, 40, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 35, 35, 40, 255, 32, 32, 37, 255, 42, 41, 47, 240, 77, 75, 89, 64, 77, 75, 89, 93, 32, 32, 36, 253, 34, 34, 39, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 34, 34, 39, 255, 32, 32, 36, 253, 77, 75, 89, 93, 77, 75, 89, 103, 30, 30, 35, 255, 35, 35, 39, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 35, 35, 39, 255, 30, 30, 35, 255, 77, 75, 89, 103, 77, 75, 89, 103, 30, 30, 35, 255, 35, 35, 39, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 35, 35, 39, 255, 30, 30, 35, 255, 77, 75, 89, 103, 77, 75, 89, 93, 32, 32, 36, 253, 34, 34, 39, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 34, 34, 39, 255, 32, 32, 36, 253, 77, 75, 89, 93, 77, 75, 89, 64, 42, 41, 47, 240, 32, 32, 37, 255, 35, 35, 40, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 37, 37, 42, 255, 35, 35, 40, 255, 32, 32, 37, 255, 42, 41, 47, 240, 77, 75, 89, 64, 77, 75, 89, 26, 63, 62, 73, 150, 31, 31, 36, 252, 32, 32, 37, 255, 34, 34, 39, 255, 35, 35, 39, 255, 35, 35, 39, 255, 34, 34, 39, 255, 32, 32, 37, 255, 31, 31, 36, 252, 63, 62, 73, 150, 77, 75, 89, 26, 77, 75, 89, 4, 77, 75, 89, 40, 63, 62, 73, 149, 42, 41, 47, 240, 32, 32, 36, 253, 30, 30, 35, 255, 30, 30, 35, 255, 32, 32, 36, 253, 42, 41, 47, 240, 63, 62, 73, 149, 77, 75, 89, 40, 77, 75, 89, 4, 0, 0, 0, 0, 77, 75, 89, 4, 77, 75, 89, 25, 77, 75, 89, 64, 77, 75, 89, 93, 77, 75, 89, 102, 77, 75, 89, 102, 77, 75, 89, 93, 77, 75, 89, 64, 77, 75, 89, 25, 77, 75, 89, 4, 0, 0, 0, 0),
+"format": "RGBA8",
+"height": 12,
+"mipmaps": false,
+"width": 12
+}
+
+[sub_resource type="ImageTexture" id="12"]
+image = SubResource("Image_2y7pk")
+
+[sub_resource type="StyleBoxTexture" id="13"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = SubResource("12")
+region_rect = Rect2(0, 0, 12, 12)
+
+[sub_resource type="StyleBoxTexture" id="14"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = SubResource("12")
+region_rect = Rect2(0, 0, 12, 12)
+
+[sub_resource type="StyleBoxEmpty" id="24"]
+
+[sub_resource type="StyleBoxTexture" id="15"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+texture = ExtResource("7")
+region_rect = Rect2(0, 0, 36, 36)
+
+[sub_resource type="StyleBoxTexture" id="16"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+texture = ExtResource("8")
+region_rect = Rect2(0, 0, 36, 36)
+
+[sub_resource type="StyleBoxTexture" id="17"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+texture = ExtResource("10")
+region_rect = Rect2(0, 0, 36, 36)
+
+[sub_resource type="StyleBoxTexture" id="18"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("9")
+region_rect = Rect2(0, 0, 36, 36)
+
+[sub_resource type="StyleBoxTexture" id="29"]
+texture = ExtResource("15")
+expand_margin_left = 24.0
+expand_margin_top = 72.0
+expand_margin_right = 24.0
+expand_margin_bottom = 18.0
+region_rect = Rect2(0, 0, 126, 210)
+
+[resource]
+default_font = ExtResource("1")
+CheckBox/icons/checked = ExtResource("3")
+CheckBox/icons/checked_disabled = ExtResource("4")
+CheckBox/icons/radio_checked = ExtResource("21")
+CheckBox/icons/radio_unchecked = ExtResource("22")
+CheckBox/icons/unchecked = ExtResource("2")
+CheckBox/icons/unchecked_disabled = ExtResource("5")
+CheckButton/icons/off = ExtResource("23")
+CheckButton/icons/off_disabled = ExtResource("26")
+CheckButton/icons/on = ExtResource("25")
+CheckButton/icons/on_disabled = ExtResource("24")
+ColorPicker/icons/add_preset = ExtResource("27")
+ColorPicker/icons/screen_picker = ExtResource("28")
+FileDialog/icons/file = ExtResource("20")
+FileDialog/icons/folder = ExtResource("19")
+FileDialog/icons/parent_folder = ExtResource("17")
+FileDialog/icons/reload = ExtResource("18")
+FileDialog/icons/toggle_hidden = ExtResource("16")
+HScrollBar/icons/decrement = SubResource("1")
+HScrollBar/icons/decrement_highlight = SubResource("1")
+HScrollBar/icons/decrement_pressed = SubResource("1")
+HScrollBar/icons/increment = SubResource("1")
+HScrollBar/icons/increment_highlight = SubResource("1")
+HScrollBar/icons/increment_pressed = SubResource("1")
+HScrollBar/styles/grabber = SubResource("4")
+HScrollBar/styles/grabber_highlight = SubResource("7")
+HScrollBar/styles/grabber_pressed = SubResource("10")
+HScrollBar/styles/scroll = SubResource("13")
+HScrollBar/styles/scroll_focus = SubResource("14")
+HSlider/icons/grabber = ExtResource("13")
+HSlider/icons/grabber_disabled = ExtResource("11")
+HSlider/icons/grabber_highlight = ExtResource("12")
+HeaderLabel/colors/font_color = Color(1, 1, 0.8, 1)
+OptionButton/icons/arrow = ExtResource("6")
+PopupMenu/icons/radio_checked = ExtResource("21")
+PopupMenu/icons/radio_unchecked = ExtResource("22")
+ScrollContainer/styles/bg = SubResource("24")
+SpinBox/icons/updown = ExtResource("6")
+TagLabel/base_type = &"Label"
+TagLabel/colors/font_color = Color(0, 0, 0, 1)
+TagLabel/colors/font_color_shadow = Color(0, 0, 0, 1)
+TagLabel/colors/font_outline_modulate = Color(0, 0, 0, 1)
+TagLabel/constants/line_spacing = 0
+TagLabel/constants/shadow_as_outline = 0
+TagLabel/constants/shadow_offset_x = 0
+TagLabel/constants/shadow_offset_y = 0
+TagLabel/styles/normal = null
+VScrollBar/icons/decrement = SubResource("1")
+VScrollBar/icons/decrement_highlight = SubResource("1")
+VScrollBar/icons/decrement_pressed = SubResource("1")
+VScrollBar/icons/increment = SubResource("1")
+VScrollBar/icons/increment_highlight = SubResource("1")
+VScrollBar/icons/increment_pressed = SubResource("1")
+VScrollBar/styles/grabber = SubResource("15")
+VScrollBar/styles/grabber_highlight = SubResource("16")
+VScrollBar/styles/grabber_pressed = SubResource("17")
+VScrollBar/styles/scroll = SubResource("18")
+VScrollBar/styles/scroll_focus = SubResource("18")
+Window/constants/close_h_ofs = 42
+Window/constants/close_v_ofs = 42
+Window/constants/title_height = 50
+Window/icons/close = ExtResource("14")
+Window/icons/close_highlight = ExtResource("14")
+Window/styles/panel = SubResource("29")

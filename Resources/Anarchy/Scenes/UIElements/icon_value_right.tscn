@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/lumen_64x64.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=4]
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = ExtResource( 2 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=13]
+bg_color = Color( 1, 1, 1, 1 )
+corner_radius_top_right = 16
+corner_detail = 1
+
+[node name="IconValueRight" type="HBoxContainer"]
+offset_left = 321.0
+offset_right = 556.0
+offset_bottom = 64.0
+theme_override_constants/separation = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 165.0
+offset_bottom = 64.0
+theme_type_variation = "0000_brown_transp"
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+offset_right = 165.0
+offset_bottom = 64.0
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 48
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer"]
+offset_left = 48.0
+offset_right = 149.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "1000"
+
+[node name="Icon" type="Panel" parent="."]
+self_modulate = Color( 0.862745, 0.176471, 0.329412, 1 )
+material = SubResource( 12 )
+offset_left = 165.0
+offset_right = 235.0
+offset_bottom = 64.0
+custom_minimum_size = Vector2( 70, 64 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource( 13 )
+
+[node name="TextureRect" type="TextureRect" parent="Icon"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+texture = ExtResource( 3 )
+stretch_mode = 4

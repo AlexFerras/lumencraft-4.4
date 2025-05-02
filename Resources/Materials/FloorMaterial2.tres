@@ -1,0 +1,39 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=2]
+
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex_waved.gdshader" type="Shader" id=1]
+[ext_resource path="res://Resources/Terrain/Images/FloorBiomass.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Terrain/Images/FloorGlowingBiomass.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Terrain/Images/FloorFungus.png" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Terrain/Images/FloorMoss.png" type="Texture2D" id=5]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/resolution1 = 30.0
+shader_param/resolution2 = 30.0
+shader_param/resolution3 = 60.0
+shader_param/resolution4 = 24.736
+shader_param/multiply1 = 1.0
+shader_param/multiply2 = 8.0
+shader_param/multiply3 = 1.0
+shader_param/multiply4 = 1.0
+shader_param/wavy1 = 1.0
+shader_param/wavy2 = 0.6
+shader_param/wavy3 = 0.3
+shader_param/wavy4 = 0.0
+shader_param/hsvoffset1 = -0.058
+shader_param/hsvsaturation1 = -0.189
+shader_param/hsvlight1 = 0.0
+shader_param/hsvoffset2 = -0.058
+shader_param/hsvsaturation2 = -0.189
+shader_param/hsvlight2 = 0.0
+shader_param/hsvoffset3 = 0.0
+shader_param/hsvsaturation3 = -0.571
+shader_param/hsvlight3 = -0.127
+shader_param/hsvoffset4 = 0.0
+shader_param/hsvsaturation4 = -0.418
+shader_param/hsvlight4 = 0.0
+shader_param/black_as_empty = false
+shader_param/texture1 = ExtResource( 2 )
+shader_param/texture2 = ExtResource( 3 )
+shader_param/texture3 = ExtResource( 4 )
+shader_param/texture4 = ExtResource( 5 )

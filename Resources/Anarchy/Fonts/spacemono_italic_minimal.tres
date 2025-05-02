@@ -1,0 +1,17 @@
+[gd_resource type="FontFile" load_steps=5 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/space-mono.italic.ttf" type="FontFile" id=1]
+[ext_resource path="res://Resources/Fonts/NanumSquareB.ttf" type="FontFile" id=2]
+[ext_resource path="res://Resources/Fonts/mplus-1c-heavy.ttf" type="FontFile" id=3]
+[ext_resource path="res://Resources/Fonts/Source Han Sans CN Bold.otf" type="FontFile" id=4]
+
+[resource]
+size = 42
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -9
+extra_spacing_char = -2
+font_data = ExtResource( 1 )
+fallback/0 = ExtResource( 4 )
+fallback/1 = ExtResource( 2 )
+fallback/2 = ExtResource( 3 )

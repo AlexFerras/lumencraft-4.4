@@ -1,0 +1,90 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/inventory_item_ingame/inventory_item_ingame_template_01.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/inventory/inventory_item_machinegun_97x97.png" type="Texture2D" id=2]
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("ItemIcon:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 0.5, 0.5 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ItemIcon:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 3, 0.72, 0, 1 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "loop"
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("ItemIcon:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.5, 0.5 ), Vector2( 0.6, 0.6 ), Vector2( 0.5, 0.5 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ItemIcon:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 3, 0.72, 0, 1 ), Color( 7, 2.72, 0, 1 ), Color( 3, 0.72, 0, 1 ) ]
+}
+
+[node name="InventoryItemInGame" type="TextureRect"]
+offset_left = 1770.0
+offset_top = 1338.0
+offset_right = 1884.0
+offset_bottom = 1452.0
+texture = ExtResource( 1 )
+
+[node name="ItemIcon" type="TextureRect" parent="."]
+self_modulate = Color( 3, 0.72, 0, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.5
+offset_top = -62.0
+offset_right = 48.5
+offset_bottom = 35.0
+grow_horizontal = 2
+scale = Vector2( 0.5, 0.5 )
+pivot_offset = Vector2( 48, 48 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 1 )
+anims/loop = SubResource( 2 )

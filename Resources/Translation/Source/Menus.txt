@@ -1,0 +1,232 @@
+# Title
+
+Start
+Load Game
+Tutorial
+Options
+Extras
+Quit
+Finish
+Autosave
+UI Scale
+Main UI Color
+Secondary UI Color
+Blood Color
+Back
+Story Mode
+Quick Game
+Custom Game
+Map Editor
+New Game
+Continue
+Steam Workshop
+Custom Maps
+Browse Workshop
+Open Map Directory
+Failed initializing Steam. Steam features unavailable until restart.
+Save slot you are trying to load comes from an earlier version of Lumencraft. It is recommended to start a new game for better experience.
+Change Log
+
+You are about to start the game, but you didn't complete the tutorial. It is advised to play the tutorial first, to get better grasp of the game's mechanics.
+Start Game
+Start Tutorial
+Don't Ask Again
+Select Difficulty
+Brave\nScout
+For beginner scouts.\n• 50% bonus resources from digging\n• 1000 starting resources
+Worm\nSmasher
+For seasoned diggers.\n• 10% bonus resources from digging\n• 300 starting resources
+Swarm\nExterminator
+For advanced drillers.\n• No bonus resources from digging\n• No starting resources
+Cave\nOverlord
+For veteran delvers.\n• 30% less resources from digging\n• No starting resources
+Easy
+Medium
+Hard
+
+Delete Slot
+Select slot to delete.
+Select again to confirm.
+
+Downloading Workshop maps... (%s/%s)
+Play Map
+Subscribe
+Unsubscribe
+Open in Workshop
+Sort: %s
+Top
+Date
+Hot
+Friend Favorite
+Friend Created
+Controversial
+Followed Creator
+Not Rated
+Total Votes
+Subscriptions
+Recently Updated
+Search:
+No items found for the given filter
+Leaderboards
+Page %s
+Prev Page
+Next Page
+Global
+Near Me
+Friends
+Standard
+Speedrun
+
+Campaign
+Continue Campaign
+Start New Campaign
+
+Randomly Generated Maps
+Start Random Map
+
+Base Defense
+Adventure
+Challenge
+Steam Workshop Maps
+Local Maps
+[unnamed]
+The map is validated, i.e. it's confirmed to be winnable.
+
+Error loading map: %s.
+Can't open map file
+Map comes from newer version
+Map file invalid or corrupted
+Map doesn't have a valid start point
+
+# Map Generation
+
+Map Generation Settings
+Generate
+Advanced Settings
+Generation
+Gameplay
+Seed
+Empty for random
+Randomize Settings
+Objective Difficulty
+Biome
+Cave
+Tundra
+Desert
+Forest
+Survive Waves
+Collect Resource
+Get Crystal
+Map Size
+Enemy Multiplier
+Treasure Multiplier
+Wave Count
+Wave Power Multiplier
+Wave Time Multiplier
+Starting Resources
+Generating map...
+Starting generation
+Generating seed
+Generating tunnels
+Generating base terrain
+Creating pixels
+Generating areas of interest
+Applying area pixels
+Creating map file
+Configuring map
+Creating objects
+Creating objective
+Randomizing waves
+Generating floor
+Saving map
+Starting
+
+# Options
+
+ON
+OFF
+Game Options
+Language
+English
+Low Health Alarm
+Enemy Health Bars
+Damage Numbers
+Control Tooltips
+Relative WSAD Movement
+
+Display
+Screen Mode
+Window Resolution
+Fullscreen Resolution
+Fullscreen
+Windowed
+Borderless Fullscreen
+Exclusive Fullscreen
+VSync
+Limit FPS
+Light Viewport Size
+Shadow Raytrace Steps
+High Quality Glow
+Glow Type
+Glow Intensity
+
+Audio
+Mute Game When Unfocused
+Sounds
+Music
+
+Controls
+Change Controls
+Change
+Reset to Default
+Accept
+Discard
+Keyboard
+Controller %s
+Press key
+Press controller button
+Conflicting binds detected
+Single Player Controls
+Auto-Detect
+Keyboard + Mouse
+Controller
+
+Accessibility
+Vibrations
+Screen Shake
+Cursor Scale
+Extra Zoom
+Aim Assist
+
+Reset to Defaults
+Reset Settings
+
+Keep these settings? (%s)
+Yes
+No
+Apply
+
+# Extras
+
+Open Scorecard Folder
+Game Hints
+
+Credits
+Lumencraft Team
+
+Secret Options
+Note: these options are either experimental or provided for fun and are not guaranteed to work properly or at all. Use at your own discretion.
+Max Player Count
+2 Player Split-Screen
+Extra Biomes
+Display Quad Tree
+Disable Terrain Textures
+Special UI Scheme
+None
+Rainbow
+Grayscale
+Danger
+Glitch
+UV
+Ghost
+Invisible

@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/technology_001_192x192.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Scripts/map_tech_window_tech_item_button.gd" type="Script" id=4]
+
+[sub_resource type="FontFile" id=1]
+font_path = "res://Resources/Anarchy/Fonts/SpaceMono-Bold.ttf"
+
+[sub_resource type="FontFile" id=2]
+size = 42
+use_mipmaps = true
+use_filter = true
+spacing_bottom = -28
+extra_spacing_char = -1
+font_data = SubResource( 1 )
+
+[node name="MapTechWindowTechItemButton" type="Button"]
+offset_right = 350.0
+offset_bottom = 400.0
+custom_minimum_size = Vector2( 350, 350 )
+theme_type_variation = "theme_anarchy_techtree_button"
+icon = ExtResource( 2 )
+icon_alignment = 1
+script = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -175.0
+offset_top = -146.0
+offset_right = 175.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = SubResource( 2 )
+text = "Zabezpiecznie przed wstrząsami"
+align = 1
+autowrap = true
+
+[connection signal="focus_entered" from="." to="." method="_on_MapTechWindowTechItemButton_focus_entered"]
+[connection signal="focus_exited" from="." to="." method="_on_MapTechWindowTechItemButton_focus_exited"]
+[connection signal="mouse_entered" from="." to="." method="_on_MapTechWindowTechItemButton_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_MapTechWindowTechItemButton_mouse_exited"]

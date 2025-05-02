@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/Missions/missions_connector_vertical_192x192.png" type="Texture2D" id=1]
+
+[node name="missions_grid_connector_v" type="Control"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+offset_right = 96.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+offset_right = 96.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 1 )
+expand = true

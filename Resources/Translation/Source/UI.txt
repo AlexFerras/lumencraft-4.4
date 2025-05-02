@@ -1,0 +1,189 @@
+# In-game
+
+Loading...
+Entering Map...
+Press any key to continue
+
+Miss
+Wave %s
+Wave %s in %02d:%02d
+Wave %s - Enemies remaining %s
+Wave %s / %s - Enemies remaining %s
+Play Time:
+Inventory Full
+Start Co-op
+Stop Co-op
+Save Game
+New Slot
+Slot %s
+Invalid slot name. Avoid these characters: : / \\ ? * \" | % < > .
+Slot name already exists.
+Select again to overwite.
+Report Bug
+Save & Quit
+Game Paused
+Unsaved progress will be lost.\n\nQuit anyway?
+OK
+Cancel
+Autosave in %s
+Saving
+N
+S
+E
+W
+
+Space
+Hold
+Select Item
+Bind Secondary
+Use Item
+Drag Items
+Rearrange Items
+Quick Select
+Revive
+
+Tech
+Map Colors
+Map Items
+Wave Enemy
+Upcoming Wave Spawner
+Upcoming Wave Spawner (random)
+Last Death Marker
+Objective
+Change Tab
+Select
+
+Victory!
+Defeat!
+You died
+Reactor destroyed
+Time up
+Minimum score not met
+
+# Notifications
+
+Base under attack!
+Building destroyed
+Building demolished
+Enemy wave arrives soon
+Enemies approaching!
+Construction finished
+Construction failed
+Deconstruction finished
+
+Secret Frogs Found: %s of %s
+
+# Building
+
+Defense
+Special
+Utils
+Workshop
+
+select
+accept
+demolish
+select spot
+rotate
+and move to rotate
+place
+place multiple
+demolish multiple
+You can also demolish using drill (for less resources).
+Select a building or blueprint placed by player.
+
+Requirements
+Technology: %s
+Constructed: %s
+Reactor Level: %s
+Turret Count: %s/%s
+Turret limit reached. Upgrade the reactor.
+
+Building outside available range
+Building overlaps terrain
+Building overlaps player
+Building overlaps another building
+Building overlaps construction site
+Building overlaps enemy
+Gate too close to another gate
+No building to demolish
+Not placed by player
+
+You can disable control tooltips in game options.
+
+# Summary
+
+Summary
+Time
+Enemies Slain
+Lumen Collected
+Metal Collected
+Clear Bonus:
+Difficulty Multiplier:
+Cheating detected! Nullifying score.
+Total Score
+Uploading score...
+Upload failed
+New Best!
+Try again, you can do better!
+Retry
+Reload Last Save
+
+# Coop
+
+Co-op requires at least one connected controller.
+Assign Controls
+Player %s
+Conflicting control schemes.
+No controller %d detected.
+
+Controller Disconnected
+
+# Sandbox
+
+Custom Waves
+Enemy Strength
+Launch
+
+# Trello
+
+Lumencraft Bug Reporting Tool
+Title
+Description
+Category
+Take Screenshot
+Send
+Bug Report
+Feature suggestion
+Balance issue
+Typo
+Your feedback is being sent...
+Feedback sent successfully, thank you!
+Failed to send feedback. Check your connection and try again.
+Close
+
+# Campaign
+
+Welcome Scout!\nSo you got to the base in one piece, good. I’d say I hope you’ll find it adequate, but I won’t - after all, it’s your job to expand it.\nAs a reminder - your mission is acquiring 3 Lumen Chunks. They are huge rocks of very condensed Lumen. It's the ultimate energy source. 3 of them will be enough to cover all our energy needs for a few hundreds years.\nUltimately, we want to establish a settlement here. The Earth became unhabitable, so this is our only chance.\nGo to the Elevator and delve down to complete missions. Missions will yield you rewards, including new buildings for your base.\nUse the facilities provided to upgrade your gear and constructions. It's crucial for your success.\nGood luck Scout! The fate of humanity depends on you.
+
+Main Mission Status\n%d out of 3 Lumen Chunks delivered.\n\nHub Instructions\nUse the Elevator to bring up mission selection screen and select your next destination.\nCompleting missions will provide you with permanent rewards.\nThe Lumen you get from completing missions can be used in Hub to permanently upgrade your performance.\nUpgrades you unlock during mission will not carry to other missions.
+
+Good job, you finished your first mission. You can use the Lumen you got as a reward to buy upgrades.
+
+Good job, Scout!\nYou have sucessfully secured the three Lumen chunks. This solves our energy problems for a very long time. The humanity can now rebuild in peace, all thanks to your hard work and persistence. You are a hero!\nWhat will you do now? Retire and lead a quiet life, in the newly established settlement? Ha, who am I joking. Your help is still needed. If you feel like you need more action, and I bet you do, there is one final assignment. Head to the elevator for more info.\nWhatever you choose, we thank you on behalf of the whole human race. Good luck in your future endeavours, Scout!
+
+Not available in Hub.
+Building not yet unlocked.
+Upgrade in progress.
+
+Choose Your Destination
+Not Available
+Mission not available. Complete the previous one first.
+Rewards
+%d%% Claimed
+Best Score: %d
+Start
+Depth: %d
+Back to Hub
+Can't use it here.
+Randomly Generated Map

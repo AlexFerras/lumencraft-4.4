@@ -1,0 +1,248 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/throw_64x75.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_inventory_item.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=7]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/build_64x75.png" type="Texture2D" id=10]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/map_64x75.png" type="Texture2D" id=11]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends VBoxContainer
+
+func _ready() -> void:
+	hide()
+"
+
+[node name="HudInventoryLeft" type="MarginContainer"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -720.0
+offset_right = 1290.0
+offset_bottom = 811.0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_left = 32
+
+[node name="Content" type="VBoxContainer" parent="."]
+offset_left = 32.0
+offset_right = 1258.0
+offset_bottom = 1531.0
+theme_override_constants/separation = 6
+
+[node name="InventoryButton" parent="Content" instance=ExtResource( 8 )]
+unique_name_in_owner = true
+offset_bottom = 99.0
+size_flags_horizontal = 0
+action = "inventory"
+
+[node name="HudInventoryContent" type="VBoxContainer" parent="Content"]
+offset_top = 105.0
+offset_right = 1226.0
+offset_bottom = 1216.0
+theme_override_constants/separation = 6
+
+[node name="HudInventoryToolName" type="VBoxContainer" parent="Content/HudInventoryContent"]
+offset_right = 265.0
+offset_bottom = 68.0
+size_flags_horizontal = 0
+theme_override_constants/separation = 0
+
+[node name="DescriptionPanel" type="PanelContainer" parent="Content/HudInventoryContent/HudInventoryToolName"]
+unique_name_in_owner = true
+offset_right = 265.0
+offset_bottom = 64.0
+theme_type_variation = "0000_brown_transp"
+
+[node name="MarginContainer" type="MarginContainer" parent="Content/HudInventoryContent/HudInventoryToolName/DescriptionPanel"]
+offset_right = 265.0
+offset_bottom = 64.0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_left = 32
+
+[node name="ItemName" type="Label" parent="Content/HudInventoryContent/HudInventoryToolName/DescriptionPanel/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_right = 233.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource( 7 )
+text = "itemname"
+align = 1
+uppercase = true
+
+[node name="ColorRect" type="Panel" parent="Content/HudInventoryContent/HudInventoryToolName"]
+offset_top = 64.0
+offset_right = 265.0
+offset_bottom = 68.0
+custom_minimum_size = Vector2( 0, 4 )
+size_flags_horizontal = 3
+theme_type_variation = "Footer"
+
+[node name="ItemsAndTooltips" type="HBoxContainer" parent="Content/HudInventoryContent"]
+offset_top = 74.0
+offset_right = 1226.0
+offset_bottom = 1111.0
+theme_override_constants/separation = 32
+
+[node name="InventoryGrid" type="GridContainer" parent="Content/HudInventoryContent/ItemsAndTooltips"]
+unique_name_in_owner = true
+offset_right = 224.0
+offset_bottom = 1037.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 6
+columns = 2
+
+[node name="HudInventoryItem" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+
+[node name="HudInventoryItem2" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_right = 224.0
+
+[node name="HudInventoryItem3" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_top = 149.0
+offset_bottom = 292.0
+
+[node name="HudInventoryItem4" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 149.0
+offset_right = 224.0
+offset_bottom = 292.0
+
+[node name="HudInventoryItem5" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_top = 298.0
+offset_bottom = 441.0
+
+[node name="HudInventoryItem6" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 298.0
+offset_right = 224.0
+offset_bottom = 441.0
+
+[node name="HudInventoryItem7" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_top = 447.0
+offset_bottom = 590.0
+
+[node name="HudInventoryItem8" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 447.0
+offset_right = 224.0
+offset_bottom = 590.0
+
+[node name="HudInventoryItem9" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_top = 596.0
+offset_bottom = 739.0
+
+[node name="HudInventoryItem10" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 596.0
+offset_right = 224.0
+offset_bottom = 739.0
+
+[node name="HudInventoryItem11" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_top = 745.0
+offset_bottom = 888.0
+
+[node name="HudInventoryItem12" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 745.0
+offset_right = 224.0
+offset_bottom = 888.0
+
+[node name="HudInventoryItem13" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_top = 894.0
+offset_bottom = 1037.0
+
+[node name="HudInventoryItem14" parent="Content/HudInventoryContent/ItemsAndTooltips/InventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 894.0
+offset_right = 224.0
+offset_bottom = 1037.0
+
+[node name="Controls" type="VBoxContainer" parent="Content/HudInventoryContent/ItemsAndTooltips"]
+unique_name_in_owner = true
+offset_left = 256.0
+offset_right = 460.0
+offset_bottom = 204.0
+size_flags_vertical = 0
+theme_override_constants/separation = 6
+script = SubResource( 1 )
+
+[node name="Choose" parent="Content/HudInventoryContent/ItemsAndTooltips/Controls" instance=ExtResource( 8 )]
+offset_bottom = 99.0
+size_flags_horizontal = 0
+action = "select"
+text = "Select Item"
+
+[node name="Secondary" parent="Content/HudInventoryContent/ItemsAndTooltips/Controls" instance=ExtResource( 8 )]
+unique_name_in_owner = true
+offset_top = 105.0
+offset_bottom = 204.0
+size_flags_horizontal = 0
+action = "secondary_bind"
+text = "Bind Secondary"
+
+[node name="Use" parent="Content/HudInventoryContent/ItemsAndTooltips/Controls" instance=ExtResource( 8 )]
+unique_name_in_owner = true
+visible = false
+offset_top = 210.0
+offset_bottom = 309.0
+size_flags_horizontal = 0
+action = "use"
+text = "Use Item"
+
+[node name="Mouse" parent="Content/HudInventoryContent/ItemsAndTooltips/Controls" instance=ExtResource( 8 )]
+unique_name_in_owner = true
+visible = false
+offset_top = 210.0
+offset_bottom = 309.0
+size_flags_horizontal = 0
+action = "lmb"
+text = "Drag Items"
+
+[node name="Joy" parent="Content/HudInventoryContent/ItemsAndTooltips/Controls" instance=ExtResource( 8 )]
+unique_name_in_owner = true
+visible = false
+offset_top = 210.0
+offset_bottom = 309.0
+size_flags_horizontal = 0
+action = "rearrange"
+text = "Rearrange Items"
+
+[node name="Joy2" parent="Content/HudInventoryContent/ItemsAndTooltips/Controls" instance=ExtResource( 8 )]
+unique_name_in_owner = true
+visible = false
+offset_top = 210.0
+offset_bottom = 309.0
+size_flags_horizontal = 0
+action = "quick"
+text = "Quick Select"
+
+[node name="ActionTooltips" type="GridContainer" parent="Content/HudInventoryContent"]
+unique_name_in_owner = true
+visible = false
+offset_top = 1117.0
+offset_right = 1226.0
+offset_bottom = 1319.0
+columns = 2
+
+[node name="Throw" parent="Content/HudInventoryContent/ActionTooltips" instance=ExtResource( 8 )]
+offset_bottom = 99.0
+size_flags_horizontal = 0
+icon = ExtResource( 2 )
+action = "throw_item"
+
+[node name="Map" parent="Content/HudInventoryContent/ActionTooltips" instance=ExtResource( 8 )]
+offset_left = 208.0
+offset_right = 412.0
+offset_bottom = 99.0
+size_flags_horizontal = 0
+icon = ExtResource( 11 )
+action = "map"
+
+[node name="Build" parent="Content/HudInventoryContent/ActionTooltips" instance=ExtResource( 8 )]
+offset_top = 103.0
+offset_bottom = 202.0
+size_flags_horizontal = 0
+icon = ExtResource( 10 )
+action = "build"

@@ -1,0 +1,127 @@
+[
+    {
+        "name": "Wood",
+        "icon": "Shield",
+        "description": "Extremely common timber for building cheap and fragile structures."
+    },
+
+    {
+        "name": "Stone",
+        "icon": "Shield",
+        "description": "Popular building material."
+    },
+
+    {
+        "name": "Stone Furnace",
+        "icon": "Fire",
+        "description": "Cheap and effective furnace for smelting.",
+        "parents": ["Stone"]
+    },
+
+    {
+        "name": "Copper",
+        "icon": "Shield",
+        "description": "Common metal very useful for electronics."
+    },
+
+    {
+        "name": "Copper Furnace",
+        "icon": "Fire",
+        "description": "Cheap furnace, very prone to overheating.",
+        "parents": ["Copper"]
+    },
+
+    {
+        "name": "Copper Bar",
+        "icon": "Shield2",
+        "description": "Smelted copper ore.",
+        "parents": ["Copper Furnace"]
+    },
+
+    {
+        "name": "Copper Miner",
+        "icon": "Shield2",
+        "description": "Automatically mines ores in vicinity.",
+        "parents": ["Copper Bar"]
+    },
+
+    {
+        "name": "Copper Transport",
+        "icon": "Shield2",
+        "description": "Transport nodes made of copper.",
+        "parents": ["Copper Bar"]
+    },
+
+    {
+        "name": "Iron",
+        "icon": "Shield",
+        "description": "Common metal that can be used for making durable constructions and alloys."
+    },
+
+    {
+        "name": "Iron Furnace",
+        "icon": "Fire",
+        "description": "Standard furnace for smelting stuff.",
+        "parents": ["Iron"]
+    },
+
+    {
+        "name": "Iron Bar",
+        "icon": "Shield2",
+        "description": "Smelted iron ore.",
+        "parents": ["Iron Furnace"]
+    },
+
+    {
+        "name": "Iron Miner",
+        "icon": "Shield2",
+        "description": "Automatically mines ores in vicinity.",
+        "parents": ["Iron Bar"]
+    },
+
+    {
+        "name": "Bullet Factory",
+        "icon": "Sword",
+        "description": "Produces bullets out of iron.",
+        "parents": ["Iron Bar"]
+    },
+
+    {
+        "name": "Machinegun Tower",
+        "icon": "Sword",
+        "description": "Defensive tower armed with machinegun.",
+        "parents": ["Bullet Factory"]
+    },
+
+    {
+        "name": "Silver",
+        "icon": "Shield",
+        "description": "Noble metal. Strong against undead."
+    },
+
+    {
+        "name": "Gold",
+        "icon": "Shield",
+        "description": "Noble metal. Very fragile, but has its uses."
+    },
+
+    {
+        "name": "Gold Bar",
+        "icon": "Shield",
+        "description": "Smelted bar of gold ore.",
+        "parents": ["Gold"]
+    },
+
+    {
+        "name": "Accelerator",
+        "icon": "Sword",
+        "description": "Special building that increases movement speed.",
+        "parents": ["Copper Bar", "Gold Bar"]
+    },
+
+    {
+        "name": "Quartz",
+        "icon": "Shield",
+        "description": "Crystallic mineral resistant to chemicals."
+    }
+]

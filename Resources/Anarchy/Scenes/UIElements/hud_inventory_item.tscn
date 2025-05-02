@@ -1,0 +1,305 @@
+[gd_scene load_steps=12 format=3 uid="uid://c7exiit0a8fmj"]
+
+[ext_resource type="FontFile" uid="uid://dl2s2xsnt11bf" path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" id="1"]
+[ext_resource type="Texture2D" uid="uid://1wfhje0whjnk" path="res://Resources/Anarchy/Textures/Icons/rect_8x8.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://c4qgtjo6uaf1u" path="res://Resources/Anarchy/Textures/Icons/item_ind_first_64x64.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cpgu4jbayao4x" path="res://Resources/Anarchy/Textures/Icons/item_ind_second_64x64.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://5p3nm0n3svwn" path="res://Resources/Anarchy/Textures/Icons/rect_8x8_black.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://cil63wk8mvc7i" path="res://Resources/Anarchy/Textures/Icons/inventory/inventory_item_ammo_97x97.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://bj7la1lthtkds" path="res://Resources/Anarchy/Textures/controls/gamepad/DpadArrowD.png" id="7"]
+
+[sub_resource type="GDScript" id="9"]
+script/source = "extends VBoxContainer
+
+const BIND_ICONS = {
+	1: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/DpadArrowU.png\"),
+	2: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/DpadArrowR.png\"),
+	3: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/DpadArrowD.png\"),
+	4: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/DpadArrowL.png\"),
+}
+
+@export var hide_on_empty: bool
+
+var stack: Dictionary
+var can_drag: Variant
+
+var bind: int
+var player
+
+signal clicked
+signal right_clicked
+signal swap(with)
+
+func _ready() -> void:
+	$\"%Icon\".set_drag_forwarding(self)
+	$\"%FirstIndicator\".hide()
+	$\"%SecondIndicator\".hide()
+	
+	if Music.is_mobile_build():
+		$HBoxContainer/Panel.custom_minimum_size = Vector2(150, 150)
+
+func set_item(s: Dictionary):
+	stack = s
+	
+	if stack.is_empty():
+		clear()
+		return
+	
+	$\"%Icon\".texture = Utils.get_item_icon(stack.id, stack.get(\"data\"))
+	$\"%Value\".text = str(stack.amount)
+	$\"%Fullness\".max_value = Utils.get_stack_size(stack.id, stack.get(\"data\"))
+	$\"%Fullness\".value = stack.amount
+	show()
+
+func set_primary(isp: bool):
+	$\"%FirstIndicator\".visible = isp
+	$\"%SecondIndicator\".visible = false
+
+func set_secondary(iss: bool):
+	$\"%FirstIndicator\".visible = iss
+	$\"%SecondIndicator\".visible = iss
+
+func set_quick(idx: int):
+	pass
+
+func set_quick_visible(idx: int): ## TODO
+	pass
+
+func set_selected(s: bool):
+	$\"%Selection\".visible = s
+	$\"%Selection2\".visible = s
+
+func clear():
+	$\"%Icon\".texture = null
+	$\"%Value\".text = \"\"
+	$\"%Fullness\".value = 0
+#	set_primary(false)
+	
+	if hide_on_empty:
+		hide()
+
+func can_drop_data_fw(position, data, from_control):
+	return data.get(\"type\", \"\") == \"stack\"
+
+func drop_data_fw(position, data, from_control):
+	emit_signal(\"swap\", data.from)
+
+func get_drag_data_fw(position, from_control):
+	if can_drag and not can_drag.call():
+		return null
+	
+	var preview = $\"%Icon\".duplicate()
+	set_drag_preview(preview)
+	return {type = \"stack\", from = self}
+
+func icon_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			emit_signal(\"clicked\")
+		elif event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+			emit_signal(\"right_clicked\")
+
+func set_input_player(p):
+	player = p
+	
+	if player:
+		player.connect(\"tree_exited\", Callable(self, \"set\").bind(\"player\", null))
+	refresh_bind()
+
+func set_bind(idx: int):
+	bind = idx
+	$\"%BindJoyTexture\".texture = BIND_ICONS[idx]
+	$\"%Bind\".text = str(bind)
+	refresh_bind()
+
+func refresh_bind():
+	if bind == 0:
+		return
+	
+	if player and player.using_joypad():
+		$\"%BindJoy\".show()
+		$\"%Bind\".hide()
+	else:
+		$\"%BindJoy\".hide()
+		$\"%Bind\".show()
+
+func hide_amount():
+	$Volume.hide()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_ENTER_TREE or what == NOTIFICATION_THEME_CHANGED:
+		$\"%Fullness\".self_modulate = Const.UI_MAIN_COLOR
+		$\"%FirstIndicator\".self_modulate= Const.UI_SECONDARY_COLOR
+		$\"%SecondIndicator\".self_modulate= Const.UI_SECONDARY_COLOR
+"
+
+[sub_resource type="StyleBoxFlat" id="6"]
+bg_color = Color(0.117647, 0.105882, 0.0823529, 0.937255)
+corner_radius_top_left = 16
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="7"]
+bg_color = Color(0.378906, 0.328, 0.226191, 0.937255)
+corner_radius_top_left = 16
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="8"]
+bg_color = Color(0.378906, 0.328, 0.226191, 0.937255)
+corner_radius_bottom_left = 16
+corner_detail = 1
+
+[node name="HudInventoryItem" type="VBoxContainer"]
+offset_right = 109.0
+offset_bottom = 143.0
+theme_override_constants/separation = 6
+script = SubResource("9")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Panel" type="Panel" parent="HBoxContainer"]
+custom_minimum_size = Vector2(97, 97)
+layout_mode = 2
+theme_type_variation = &"inventory_item_panel"
+theme_override_styles/panel = SubResource("6")
+
+[node name="Selection" type="Panel" parent="HBoxContainer/Panel"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(97, 97)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.5
+offset_top = -48.5
+offset_right = 48.5
+offset_bottom = 48.5
+theme_type_variation = &"inventory_item_panel"
+theme_override_styles/panel = SubResource("7")
+
+[node name="FirstIndicator" type="TextureRect" parent="HBoxContainer/Panel"]
+unique_name_in_owner = true
+self_modulate = Color(0.0352941, 0.631373, 0.517647, 1)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -64.0
+offset_right = 64.0
+texture = ExtResource("3")
+stretch_mode = 3
+
+[node name="SecondIndicator" type="TextureRect" parent="HBoxContainer/Panel"]
+unique_name_in_owner = true
+self_modulate = Color(0.0352941, 0.631373, 0.517647, 1)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -64.0
+offset_right = 64.0
+texture = ExtResource("4")
+stretch_mode = 3
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer/Panel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(97, 97)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.5
+offset_top = -48.5
+offset_right = 48.5
+offset_bottom = 48.5
+texture = ExtResource("6")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Bind" type="Label" parent="HBoxContainer/Panel"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.5
+offset_top = -47.5
+offset_right = -22.5
+offset_bottom = 16.5
+theme_type_variation = &"BindLabel"
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BindJoy" type="Panel" parent="HBoxContainer/Panel"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 26.0
+offset_bottom = 27.0
+theme_type_variation = &"Footer"
+
+[node name="BindJoyTexture" type="TextureRect" parent="HBoxContainer/Panel/BindJoy"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 1.0
+offset_right = 26.0
+offset_bottom = 27.0
+texture = ExtResource("7")
+stretch_mode = 4
+
+[node name="Fullness" type="TextureProgressBar" parent="HBoxContainer"]
+unique_name_in_owner = true
+self_modulate = Color(1, 0.721569, 0, 1)
+custom_minimum_size = Vector2(12, 0)
+layout_mode = 2
+size_flags_vertical = 3
+fill_mode = 3
+nine_patch_stretch = true
+texture_under = ExtResource("5")
+texture_progress = ExtResource("2")
+
+[node name="Volume" type="Panel" parent="."]
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+theme_type_variation = &"inventory_item_panel"
+
+[node name="Selection2" type="Panel" parent="Volume"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -54.5
+offset_top = -20.0
+offset_right = 54.5
+offset_bottom = 20.0
+theme_type_variation = &"inventory_item_panel"
+theme_override_styles/panel = SubResource("8")
+
+[node name="Value" type="Label" parent="Volume"]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.5
+offset_top = -32.0
+offset_right = 50.5
+offset_bottom = 32.0
+theme_override_fonts/font = ExtResource("1")
+text = "70"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="gui_input" from="HBoxContainer/Panel/Icon" to="." method="icon_input"]

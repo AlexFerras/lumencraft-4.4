@@ -1,0 +1,37 @@
+Double-click the Change Log label in the main menu for a free achievement.
+When playing on a non-ranked map, a scorecard is created afterwards. You can access the scorecard directory from Extras menu.
+If you don't like the default WSAD movement, try the Alternate Movement setting in game options.
+Out of ammo? Go to workshop and buy more.
+Areas you uncover will be permanently visible on your map. Do some exploration!
+You can get useful resources by digging different mineral walls.
+Your turrets can shoot through structures you placed. Keep that in mind when devising defense strategy.
+Machine gun is useful for killing hordes of enemies and your ammo supply.
+Be sure to check available technology upgrades every now and then. You might find something useful.
+If you feel like your drill could be a bit faster, upgrade it.
+Lumen is a precious mineral that gave hope to the humanity. Be sure to hoard as much of it as you can.
+You can use your drill to demolish buildings you no longer need.
+Hold the button when throwing out item to throw whole stack.
+Triple tap button when using Drill to enable auto-drilling.
+If you are stuck, hold Respawn button to free yourself at the cost of your life.
+Supposedly there is a great secret hidden on some maps, but appears only on Wednesdays.
+The heartbeat warning on low health can be disabled in game options, should you find it irritating.
+Buildings damaged by monsters will drop less resources when destroyed.
+Be conservative with using resources. You don't need every single building to win.
+Buildings destroyed by enemies will return less resources.
+You can place a Storage Container next to a Miner to automatically collect the mined resources.
+Resources in your storages are globally available and will be used when your inventory runs short.
+Some enemies are resistant to low caliber bullets. You can eradicate them effectively with Sniper Turrets.
+Machinegun Turrets are great for big swarms of weak enemies, but useless against strong monsters.
+Bomb Turrets are expensive, but they are lethal in dealing with huge swarms of monsters.
+If you upgrade your wall too much, enemies may avoid it in favor of softer terrain. Be mindful what you are upgrading.
+Use Info Center to know where to focus your defenses.
+You will lose all items upon dying. Make sure you always have a spare clone at the reactor.
+Remember that your reactor has a Lumen Shockwave function that you can use as a last resort when you are overwhelmed.
+Scout Center will upgrade only the player that built-it. Keep that in mind if playing co-op.
+Too much metal and not enough Lumen? Build a Lumen Farm.
+Don't neglect placing Scout Center. Self-improvement is also important.
+Luck stat in Scout Center increases your critical damage chance and gives you chance to evade enemy attacks.
+You can stop flying enemies using foam.
+If you hold Attack button while using Spear, you can charge a more powerful attack.
+Time your Spear swings correctly to execute a powerful combo attack.
+If you urgently need metal and you own a Miner, you can interact with it and overclock it using Lumen.

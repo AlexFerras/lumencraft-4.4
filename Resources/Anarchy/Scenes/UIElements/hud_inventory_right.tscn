@@ -1,0 +1,779 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=1]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/tooltip_static_right.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Controls/Keyboard/tooltip_key.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_inventory_item.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=7]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/tooltip_black_text_separator.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Controls/Mouse/tooltip_mouse_icon.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/throw_64x75.png" type="Texture2D" id=10]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/build_64x75.png" type="Texture2D" id=11]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/map_64x75.png" type="Texture2D" id=12]
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 1 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 3 )
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends PanelContainer
+
+@onready var label: Label = $\"%ValueKey\"
+
+const CUSTOM_ACTIONS = {
+	\"move\": \"WSAD||LeftStick\",
+	\"look\": \"|None|RightStick\",
+	\"full_switch\": \"|WheelVertical|\",
+}
+
+enum {KEYBOARD, MOUSE, JOYPAD}
+enum JoypadMode {ADAPTIVE, FORCE_KEYBOARD, FORCE_JOYPAD, ONLY_JOYPAD, ONLY_KEYBOARD}
+enum FitMode {NONE, MATCH_WIDTH, MATCH_HEIGHT}
+
+@export var action_name: String
+@export var joypad_mode: JoypadMode = 0
+@export var favor_mouse: bool = true
+@export var fit_mode: FitMode = 1
+@export var constant: bool
+
+var base_path: String
+var use_joypad: bool
+
+var player
+var prefix: String
+
+func _ready() -> void:
+	Utils.connect(\"joypad_updated\", Callable(self, \"refresh2\"))
+	Utils.connect(\"coop_toggled\", Callable(self, \"update_coop\"))
+	
+	base_path = filename.get_base_dir()
+	use_joypad = Utils.is_using_joypad()
+	
+	if not action_name:
+		return
+	
+	if not InputMap.has_action(get_action_name()) and not action_name in CUSTOM_ACTIONS:
+		prefix = \"p1_\"
+		assert(InputMap.has_action(get_action_name()) or action_name in CUSTOM_ACTIONS, str(\"Action \\\"\", action_name, \"\\\" does not exist in the InputMap nor CUSTOM_ACTIONS.\"))
+	
+	refresh()
+
+func refresh():
+	if joypad_mode == JoypadMode.ONLY_JOYPAD:
+		if not use_joypad:
+			hide()
+			return
+		else:
+			show()
+	
+	if joypad_mode == JoypadMode.ONLY_KEYBOARD:
+		if use_joypad:
+			hide()
+			return
+		else:
+			show()
+	
+	if visible:
+		if fit_mode != FitMode.NONE:
+			custom_minimum_size = Vector2()
+		
+		if fit_mode == FitMode.MATCH_WIDTH:
+			custom_minimum_size.x = size.y
+		elif fit_mode == FitMode.MATCH_HEIGHT:
+			custom_minimum_size.y = size.x
+	else:
+		return
+	
+	var is_joypad := false
+	if joypad_mode != JoypadMode.ONLY_KEYBOARD and (joypad_mode == JoypadMode.FORCE_JOYPAD or joypad_mode == JoypadMode.ONLY_JOYPAD or (joypad_mode == JoypadMode.ADAPTIVE and use_joypad)):
+		is_joypad = true
+	
+	if action_name in CUSTOM_ACTIONS:
+		var image_list: PackedStringArray = CUSTOM_ACTIONS[action_name].split(\"|\")
+		assert(image_list.size() >= 3, \"Need more |\")
+		
+		if is_joypad and image_list[JOYPAD]:
+			pass
+#			texture = get_image(JOYPAD, image_list[JOYPAD])
+		elif not is_joypad:
+			if favor_mouse and image_list[MOUSE]:
+				pass
+#				texture = get_image(MOUSE, image_list[MOUSE])
+			elif image_list[KEYBOARD]:
+				pass
+#				texture = get_image(KEYBOARD, image_list[KEYBOARD])
+		return
+	
+	var keyboard := -1
+	var mouse := -1
+	var joypad := -1
+	var joypad_axis := -1
+	var joypad_axis_value: float
+	
+	var string_joy: String
+	var string_key: String
+	
+	for event in InputMap.action_get_events(get_action_name()):
+		if event is InputEventKey and keyboard == -1:
+			string_key = event.as_text()
+			if event.keycode > 0:
+				keyboard = event.keycode
+			else:
+				keyboard = event.physical_keycode
+		elif event is InputEventMouseButton and mouse == -1:
+			mouse = event.button_index
+		elif event is InputEventJoypadButton and joypad == -1:
+			joypad = event.button_index
+		elif event is InputEventJoypadMotion and joypad_axis == -1:
+			joypad_axis = event.axis
+			joypad_axis_value = event.axis_value
+	
+	label.text = \"??\"
+	
+	if is_joypad and joypad >= 0:
+		label.text = \"JOY\"
+#		texture = get_joypad(joypad)
+	elif is_joypad and joypad_axis >= 0:
+		label.text = \"JOY\"
+#		texture = get_joypad_axis(joypad_axis, joypad_axis_value)
+	elif not is_joypad:
+		if mouse >= 0 and (favor_mouse or keyboard < 0):
+			label.text = \"JOY\"
+#			texture = get_mouse(mouse)
+		elif keyboard >= 0:
+			label.text = string_key
+#			texture = get_keyboard(keyboard)
+
+func refresh2():
+	if is_instance_valid(player):
+		use_joypad = player.using_joypad()
+	else:
+		use_joypad = Utils.is_using_joypad()
+	refresh()
+
+func set_input_player(p):
+	player = p
+	prefix = \"p1_\"
+	refresh2()
+
+func get_action_name() -> String:
+	return prefix + action_name
+
+func set_prefix(p: String):
+	prefix = p
+	refresh()
+
+func update_coop(enable: bool):
+	if not is_instance_valid(player) or not enable:
+		prefix = \"p1_\"
+		refresh2()
+		return
+	
+	prefix = \"p%s_\" % player.control_id
+	refresh2()
+"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 1 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 3 )
+
+[sub_resource type="StyleBoxEmpty" id=5]
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends PanelContainer
+
+@onready var label: Label = $\"%ValueKey\"
+
+const CUSTOM_ACTIONS = {
+	\"move\": \"WSAD||LeftStick\",
+	\"look\": \"|None|RightStick\",
+	\"full_switch\": \"|WheelVertical|\",
+}
+
+enum {KEYBOARD, MOUSE, JOYPAD}
+enum JoypadMode {ADAPTIVE, FORCE_KEYBOARD, FORCE_JOYPAD, ONLY_JOYPAD, ONLY_KEYBOARD}
+enum FitMode {NONE, MATCH_WIDTH, MATCH_HEIGHT}
+
+@export var action_name: String
+@export var joypad_mode: JoypadMode = 0
+@export var favor_mouse: bool = true
+@export var fit_mode: FitMode = 1
+@export var constant: bool
+
+var base_path: String
+var use_joypad: bool
+
+var player
+var prefix: String
+
+func _ready() -> void:
+	Utils.connect(\"joypad_updated\", Callable(self, \"refresh2\"))
+	Utils.connect(\"coop_toggled\", Callable(self, \"update_coop\"))
+	
+	base_path = filename.get_base_dir()
+	use_joypad = Utils.is_using_joypad()
+	
+	if not action_name:
+		return
+	
+	if not InputMap.has_action(get_action_name()) and not action_name in CUSTOM_ACTIONS:
+		prefix = \"p1_\"
+		assert(InputMap.has_action(get_action_name()) or action_name in CUSTOM_ACTIONS, str(\"Action \\\"\", action_name, \"\\\" does not exist in the InputMap nor CUSTOM_ACTIONS.\"))
+	
+	refresh()
+
+func refresh():
+	if joypad_mode == JoypadMode.ONLY_JOYPAD:
+		if not use_joypad:
+			hide()
+			return
+		else:
+			show()
+	
+	if joypad_mode == JoypadMode.ONLY_KEYBOARD:
+		if use_joypad:
+			hide()
+			return
+		else:
+			show()
+	
+	if visible:
+		if fit_mode != FitMode.NONE:
+			custom_minimum_size = Vector2()
+		
+		if fit_mode == FitMode.MATCH_WIDTH:
+			custom_minimum_size.x = size.y
+		elif fit_mode == FitMode.MATCH_HEIGHT:
+			custom_minimum_size.y = size.x
+	else:
+		return
+	
+	var is_joypad := false
+	if joypad_mode != JoypadMode.ONLY_KEYBOARD and (joypad_mode == JoypadMode.FORCE_JOYPAD or joypad_mode == JoypadMode.ONLY_JOYPAD or (joypad_mode == JoypadMode.ADAPTIVE and use_joypad)):
+		is_joypad = true
+	
+	if action_name in CUSTOM_ACTIONS:
+		var image_list: PackedStringArray = CUSTOM_ACTIONS[action_name].split(\"|\")
+		assert(image_list.size() >= 3, \"Need more |\")
+		
+		if is_joypad and image_list[JOYPAD]:
+			pass
+#			texture = get_image(JOYPAD, image_list[JOYPAD])
+		elif not is_joypad:
+			if favor_mouse and image_list[MOUSE]:
+				pass
+#				texture = get_image(MOUSE, image_list[MOUSE])
+			elif image_list[KEYBOARD]:
+				pass
+#				texture = get_image(KEYBOARD, image_list[KEYBOARD])
+		return
+	
+	var keyboard := -1
+	var mouse := -1
+	var joypad := -1
+	var joypad_axis := -1
+	var joypad_axis_value: float
+	
+	var string_joy: String
+	var string_key: String
+	
+	for event in InputMap.action_get_events(get_action_name()):
+		if event is InputEventKey and keyboard == -1:
+			string_key = event.as_text()
+			if event.keycode > 0:
+				keyboard = event.keycode
+			else:
+				keyboard = event.physical_keycode
+		elif event is InputEventMouseButton and mouse == -1:
+			mouse = event.button_index
+		elif event is InputEventJoypadButton and joypad == -1:
+			joypad = event.button_index
+		elif event is InputEventJoypadMotion and joypad_axis == -1:
+			joypad_axis = event.axis
+			joypad_axis_value = event.axis_value
+	
+	label.text = \"??\"
+	
+	if is_joypad and joypad >= 0:
+		label.text = \"JOY\"
+#		texture = get_joypad(joypad)
+	elif is_joypad and joypad_axis >= 0:
+		label.text = \"JOY\"
+#		texture = get_joypad_axis(joypad_axis, joypad_axis_value)
+	elif not is_joypad:
+		if mouse >= 0 and (favor_mouse or keyboard < 0):
+			label.text = \"JOY\"
+#			texture = get_mouse(mouse)
+		elif keyboard >= 0:
+			label.text = string_key
+#			texture = get_keyboard(keyboard)
+
+func refresh2():
+	if is_instance_valid(player):
+		use_joypad = player.using_joypad()
+	else:
+		use_joypad = Utils.is_using_joypad()
+	refresh()
+
+func set_input_player(p):
+	player = p
+	prefix = \"p1_\"
+	refresh2()
+
+func get_action_name() -> String:
+	return prefix + action_name
+
+func set_prefix(p: String):
+	prefix = p
+	refresh()
+
+func update_coop(enable: bool):
+	if not is_instance_valid(player) or not enable:
+		prefix = \"p1_\"
+		refresh2()
+		return
+	
+	prefix = \"p%s_\" % player.control_id
+	refresh2()
+"
+
+[node name="HudInventoryRight" type="MarginContainer"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -1290.0
+offset_top = -720.0
+offset_bottom = 811.0
+grow_horizontal = 0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_left = 32
+
+[node name="Content" type="VBoxContainer" parent="."]
+offset_left = 32.0
+offset_right = 1258.0
+offset_bottom = 1531.0
+theme_override_constants/separation = 6
+
+[node name="HudInvntoryTooltipLeft" type="PanelContainer" parent="Content"]
+material = SubResource( 2 )
+offset_left = 980.0
+offset_right = 1226.0
+offset_bottom = 99.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_type_variation = "0001_yellow_border"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Content/HudInvntoryTooltipLeft"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 222.0
+offset_bottom = 87.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="TooltipText1" type="Label" parent="Content/HudInvntoryTooltipLeft/HBoxContainer"]
+visible = false
+offset_right = 101.0
+offset_bottom = 105.0
+size_flags_horizontal = 0
+size_flags_vertical = 1
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_constants/line_spacing = -23
+theme_override_fonts/font = ExtResource( 7 )
+text = "hold"
+valign = 1
+uppercase = true
+
+[node name="TooltipDetails" type="HBoxContainer" parent="Content/HudInvntoryTooltipLeft/HBoxContainer"]
+offset_right = 198.0
+offset_bottom = 75.0
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="TooltipKey" parent="Content/HudInvntoryTooltipLeft/HBoxContainer/TooltipDetails" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 100.0
+offset_bottom = 75.0
+theme_override_styles/panel = SubResource( 1 )
+script = SubResource( 3 )
+
+[node name="TooltipKey" parent="Content/HudInvntoryTooltipLeft/HBoxContainer/TooltipDetails/TooltipKey" index="0"]
+offset_right = 100.0
+
+[node name="MarginContainer" parent="Content/HudInvntoryTooltipLeft/HBoxContainer/TooltipDetails/TooltipKey" index="3"]
+offset_right = 100.0
+
+[node name="ValueKey" parent="Content/HudInvntoryTooltipLeft/HBoxContainer/TooltipDetails/TooltipKey/MarginContainer" index="0"]
+offset_left = 12.0
+offset_right = 88.0
+text = "tab"
+
+[node name="TooltipBlackTextSeparator2" parent="Content/HudInvntoryTooltipLeft/HBoxContainer/TooltipDetails" instance=ExtResource( 8 )]
+offset_left = 108.0
+offset_right = 134.0
+
+[node name="TooltipIcon" parent="Content/HudInvntoryTooltipLeft/HBoxContainer/TooltipDetails" instance=ExtResource( 9 )]
+offset_left = 142.0
+offset_right = 198.0
+
+[node name="HudInventoryContent" type="VBoxContainer" parent="Content"]
+offset_top = 105.0
+offset_right = 1226.0
+offset_bottom = 1531.0
+theme_override_constants/separation = 6
+
+[node name="HudInventoryToolName" type="VBoxContainer" parent="Content/HudInventoryContent"]
+offset_left = 961.0
+offset_right = 1226.0
+offset_bottom = 68.0
+size_flags_horizontal = 8
+theme_override_constants/separation = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="Content/HudInventoryContent/HudInventoryToolName"]
+offset_right = 265.0
+offset_bottom = 64.0
+theme_type_variation = "0000_brown_transp"
+
+[node name="MarginContainer" type="MarginContainer" parent="Content/HudInventoryContent/HudInventoryToolName/PanelContainer"]
+offset_right = 265.0
+offset_bottom = 64.0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_left = 32
+
+[node name="Value_ToolName" type="Label" parent="Content/HudInventoryContent/HudInventoryToolName/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_right = 233.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource( 7 )
+text = "itemname"
+align = 1
+uppercase = true
+
+[node name="ColorRect" type="ColorRect" parent="Content/HudInventoryContent/HudInventoryToolName"]
+offset_top = 64.0
+offset_right = 265.0
+offset_bottom = 68.0
+custom_minimum_size = Vector2( 0, 4 )
+size_flags_horizontal = 3
+color = Color( 1, 0.721569, 0, 1 )
+
+[node name="ItemsAndTooltips" type="HBoxContainer" parent="Content/HudInventoryContent"]
+offset_top = 74.0
+offset_right = 1226.0
+offset_bottom = 1111.0
+theme_override_constants/separation = 32
+
+[node name="SelectedItemTooltips" type="VBoxContainer" parent="Content/HudInventoryContent/ItemsAndTooltips"]
+unique_name_in_owner = true
+offset_top = 334.0
+offset_right = 970.0
+offset_bottom = 703.0
+size_flags_vertical = 6
+theme_override_constants/separation = 6
+
+[node name="TooltipStaticLeft" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips" instance=ExtResource( 2 )]
+offset_left = 0.0
+offset_right = 970.0
+
+[node name="TooltipStaticLeft2" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips" instance=ExtResource( 2 )]
+offset_left = 156.0
+offset_top = 135.0
+offset_right = 970.0
+offset_bottom = 264.0
+
+[node name="MarginContainer" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2" index="0"]
+offset_right = 790.0
+
+[node name="HBoxContainer" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2/MarginContainer" index="0"]
+offset_right = 750.0
+
+[node name="TooltipKey" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2/MarginContainer/HBoxContainer" index="3"]
+visible = false
+
+[node name="TooltipBlackTextSeparator2" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2/MarginContainer/HBoxContainer" index="4"]
+visible = false
+
+[node name="TooltipKey2" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2/MarginContainer/HBoxContainer" index="5"]
+offset_left = 279.0
+offset_right = 345.0
+
+[node name="TooltipBlackTextSeparator3" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2/MarginContainer/HBoxContainer" index="6"]
+offset_left = 377.0
+offset_right = 403.0
+
+[node name="TooltipKey3" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2/MarginContainer/HBoxContainer" index="7"]
+offset_left = 435.0
+offset_right = 501.0
+
+[node name="TooltipText2" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2/MarginContainer/HBoxContainer" index="8"]
+offset_left = 533.0
+offset_right = 734.0
+
+[node name="TooltipStaticLeft3" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips" instance=ExtResource( 2 )]
+offset_left = 389.0
+offset_top = 270.0
+offset_right = 970.0
+offset_bottom = 369.0
+
+[node name="MarginContainer" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3" index="0"]
+offset_right = 557.0
+offset_bottom = 87.0
+
+[node name="HBoxContainer" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer" index="0"]
+offset_right = 517.0
+offset_bottom = 75.0
+
+[node name="TooltipText1" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="0"]
+offset_bottom = 75.0
+
+[node name="TooltipIcon" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="1"]
+offset_top = 0.0
+offset_bottom = 75.0
+
+[node name="TooltipBlackTextSeparator" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="2"]
+offset_bottom = 75.0
+
+[node name="TooltipKey" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="3"]
+offset_top = 0.0
+offset_bottom = 75.0
+
+[node name="TooltipBlackTextSeparator2" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="4"]
+offset_bottom = 75.0
+
+[node name="TooltipKey2" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="5"]
+offset_top = 0.0
+offset_bottom = 75.0
+
+[node name="TooltipBlackTextSeparator3" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="6"]
+visible = false
+offset_bottom = 75.0
+
+[node name="TooltipKey3" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="7"]
+visible = false
+offset_top = 0.0
+offset_bottom = 75.0
+
+[node name="TooltipText2" parent="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3/MarginContainer/HBoxContainer" index="8"]
+visible = false
+
+[node name="HudInventoryGrid" type="GridContainer" parent="Content/HudInventoryContent/ItemsAndTooltips"]
+unique_name_in_owner = true
+offset_left = 1002.0
+offset_right = 1226.0
+offset_bottom = 1037.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 6
+columns = 2
+
+[node name="HudInventoryItem" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+
+[node name="HudInventoryItem2" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_right = 224.0
+
+[node name="HudInventoryItem3" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_top = 149.0
+offset_bottom = 292.0
+
+[node name="HudInventoryItem4" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 149.0
+offset_right = 224.0
+offset_bottom = 292.0
+
+[node name="HudInventoryItem5" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_top = 298.0
+offset_bottom = 441.0
+
+[node name="HudInventoryItem6" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 298.0
+offset_right = 224.0
+offset_bottom = 441.0
+
+[node name="HudInventoryItem7" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_top = 447.0
+offset_bottom = 590.0
+
+[node name="HudInventoryItem8" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 447.0
+offset_right = 224.0
+offset_bottom = 590.0
+
+[node name="HudInventoryItem9" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_top = 596.0
+offset_bottom = 739.0
+
+[node name="HudInventoryItem10" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 596.0
+offset_right = 224.0
+offset_bottom = 739.0
+
+[node name="HudInventoryItem11" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_top = 745.0
+offset_bottom = 888.0
+
+[node name="HudInventoryItem12" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 745.0
+offset_right = 224.0
+offset_bottom = 888.0
+
+[node name="HudInventoryItem13" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_top = 894.0
+offset_bottom = 1037.0
+
+[node name="HudInventoryItem14" parent="Content/HudInventoryContent/ItemsAndTooltips/HudInventoryGrid" instance=ExtResource( 5 )]
+offset_left = 115.0
+offset_top = 894.0
+offset_right = 224.0
+offset_bottom = 1037.0
+
+[node name="ActionTooltips" type="VBoxContainer" parent="Content/HudInventoryContent"]
+offset_left = 1040.0
+offset_top = 1117.0
+offset_right = 1226.0
+offset_bottom = 1426.0
+size_flags_horizontal = 8
+theme_override_constants/separation = 6
+
+[node name="HudInvntoryTooltipLeft2" type="PanelContainer" parent="Content/HudInventoryContent/ActionTooltips"]
+material = SubResource( 4 )
+offset_right = 186.0
+offset_bottom = 99.0
+size_flags_horizontal = 0
+theme_type_variation = "0001_yellow_border"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft2"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 162.0
+offset_bottom = 87.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="TooltipDetails" type="HBoxContainer" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft2/HBoxContainer"]
+offset_right = 138.0
+offset_bottom = 75.0
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="TooltipIcon" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft2/HBoxContainer/TooltipDetails" instance=ExtResource( 9 )]
+self_modulate = Color( 1, 1, 1, 1 )
+offset_right = 64.0
+texture = ExtResource( 10 )
+
+[node name="TooltipKey" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft2/HBoxContainer/TooltipDetails" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 72.0
+offset_right = 138.0
+offset_bottom = 75.0
+theme_override_styles/panel = SubResource( 5 )
+script = SubResource( 6 )
+
+[node name="ValueKey" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft2/HBoxContainer/TooltipDetails/TooltipKey/MarginContainer" index="0"]
+text = "f"
+
+[node name="HudInvntoryTooltipLeft3" type="PanelContainer" parent="Content/HudInventoryContent/ActionTooltips"]
+material = SubResource( 4 )
+offset_top = 105.0
+offset_right = 186.0
+offset_bottom = 204.0
+size_flags_horizontal = 0
+theme_type_variation = "0001_yellow_border"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft3"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 162.0
+offset_bottom = 87.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="TooltipDetails" type="HBoxContainer" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft3/HBoxContainer"]
+offset_right = 138.0
+offset_bottom = 75.0
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="TooltipIcon" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft3/HBoxContainer/TooltipDetails" instance=ExtResource( 9 )]
+self_modulate = Color( 1, 1, 1, 1 )
+offset_right = 64.0
+texture = ExtResource( 12 )
+
+[node name="TooltipKey" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft3/HBoxContainer/TooltipDetails" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 72.0
+offset_right = 138.0
+offset_bottom = 75.0
+theme_override_styles/panel = SubResource( 5 )
+script = SubResource( 6 )
+
+[node name="ValueKey" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft3/HBoxContainer/TooltipDetails/TooltipKey/MarginContainer" index="0"]
+text = "m"
+
+[node name="HudInvntoryTooltipLeft4" type="PanelContainer" parent="Content/HudInventoryContent/ActionTooltips"]
+material = SubResource( 4 )
+offset_top = 210.0
+offset_right = 186.0
+offset_bottom = 309.0
+size_flags_horizontal = 0
+theme_type_variation = "0001_yellow_border"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft4"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 162.0
+offset_bottom = 87.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="TooltipDetails" type="HBoxContainer" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft4/HBoxContainer"]
+offset_right = 138.0
+offset_bottom = 75.0
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="TooltipIcon" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft4/HBoxContainer/TooltipDetails" instance=ExtResource( 9 )]
+self_modulate = Color( 1, 1, 1, 1 )
+offset_right = 64.0
+texture = ExtResource( 11 )
+
+[node name="TooltipKey" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft4/HBoxContainer/TooltipDetails" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 72.0
+offset_right = 138.0
+offset_bottom = 75.0
+theme_override_styles/panel = SubResource( 5 )
+script = SubResource( 6 )
+
+[node name="ValueKey" parent="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft4/HBoxContainer/TooltipDetails/TooltipKey/MarginContainer" index="0"]
+text = "g"
+
+[editable path="Content/HudInvntoryTooltipLeft/HBoxContainer/TooltipDetails/TooltipKey"]
+[editable path="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft2"]
+[editable path="Content/HudInventoryContent/ItemsAndTooltips/SelectedItemTooltips/TooltipStaticLeft3"]
+[editable path="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft2/HBoxContainer/TooltipDetails/TooltipKey"]
+[editable path="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft3/HBoxContainer/TooltipDetails/TooltipKey"]
+[editable path="Content/HudInventoryContent/ActionTooltips/HudInvntoryTooltipLeft4/HBoxContainer/TooltipDetails/TooltipKey"]

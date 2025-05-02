@@ -1,0 +1,72 @@
+[gd_resource type="Theme" load_steps=12 format=2]
+
+[ext_resource path="res://Resources/Fonts/Font60.tres" type="FontFile" id=1]
+[ext_resource path="res://Nodes/UI/Options/Grabber.png" type="Texture2D" id=2]
+[ext_resource path="res://Nodes/UI/Options/GrabberFocus.png" type="Texture2D" id=3]
+[ext_resource path="res://Nodes/UI/Icons/OptionArrows.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/UI/Icons/RadioChecked.png" type="Texture2D" id=5]
+[ext_resource path="res://Nodes/UI/Icons/RadioUnchecked.png" type="Texture2D" id=6]
+
+[sub_resource type="StyleBoxEmpty" id=36]
+content_margin_left = 14.0
+content_margin_top = 16.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxLine" id=35]
+color = Color( 1, 1, 1, 1 )
+thickness = 6
+
+[sub_resource type="StyleBoxFlat" id=37]
+bg_color = Color( 0.1, 0.1, 0.1, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.2, 0.2, 0.2, 1 )
+
+[sub_resource type="StyleBoxFlat" id=40]
+content_margin_left = 1.0
+content_margin_right = 1.0
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+bg_color = Color( 0.05, 0.05, 0.05, 1 )
+border_color = Color( 0.2, 0.2, 0.2, 1 )
+
+[sub_resource type="StyleBoxFlat" id=38]
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+bg_color = Color( 0, 0, 0, 1 )
+
+[resource]
+default_font = ExtResource( 1 )
+Button/colors/font_color_focus = Color( 0.752941, 1, 0.972549, 1 )
+Button/colors/font_color_hover = Color( 0.752941, 1, 0.972549, 1 )
+Button/colors/font_color_pressed = Color( 0.752941, 1, 0.972549, 1 )
+Button/styles/disabled = SubResource( 36 )
+Button/styles/focus = SubResource( 36 )
+Button/styles/hover = SubResource( 36 )
+Button/styles/normal = SubResource( 36 )
+Button/styles/pressed = SubResource( 36 )
+HSlider/icons/grabber = ExtResource( 2 )
+HSlider/icons/grabber_highlight = ExtResource( 3 )
+HSlider/styles/grabber_area = SubResource( 35 )
+HSlider/styles/grabber_area_highlight = SubResource( 35 )
+HSlider/styles/slider = SubResource( 35 )
+Label/colors/font_color_disabled = Color( 0.4, 0.4, 0.4, 0.7 )
+Label/styles/normal = SubResource( 36 )
+LineEdit/styles/normal = SubResource( 37 )
+LineEdit/styles/read_only = SubResource( 40 )
+OptionButton/icons/arrow = ExtResource( 4 )
+OptionButton/styles/hover = SubResource( 37 )
+OptionButton/styles/normal = SubResource( 37 )
+OptionButton/styles/pressed = SubResource( 37 )
+PanelContainer/styles/panel = SubResource( 38 )
+PopupMenu/icons/radio_checked = ExtResource( 5 )
+PopupMenu/icons/radio_unchecked = ExtResource( 6 )
+PopupMenu/styles/panel = SubResource( 37 )
+TextEdit/styles/normal = SubResource( 37 )
+TextEdit/styles/read_only = SubResource( 40 )
+TooltipLabel/colors/font_color = Color( 1, 1, 1, 1 )
+VBoxContainer/constants/separation = 0

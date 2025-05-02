@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dvwjt53b7mxkt"]
+
+[sub_resource type="Shader" id="1"]
+code = "shader_type canvas_item;
+uniform vec4 glowing_color:source_color = vec4(1.0,1.0,1.0,1.0);
+uniform vec4 glow_mul = vec4(1.0,1.0,1.0,1.0);
+uniform vec4 glow_color = vec4(1.0,1.0,1.0,1.0);
+uniform float threshold = 0.1;
+
+void fragment() {
+	vec4 col = texture(TEXTURE,UV) * COLOR;
+	float blend = smoothstep(0.0, threshold, threshold - distance(glowing_color, col));
+	col *= vec4(1.0) + blend * glow_mul;
+	col += blend * glow_color;
+	//COLOR=vec4(step(distance(glowing_color,col),threshold));
+	COLOR = col;
+}"
+
+[resource]
+shader = SubResource("1")
+shader_parameter/glowing_color = Color(0.494118, 0.498039, 0.705882, 1)
+shader_parameter/glow_mul = Vector4(1, 1, 1, 1)
+shader_parameter/glow_color = Vector4(1, 1, 1, 1)
+shader_parameter/threshold = 0.0

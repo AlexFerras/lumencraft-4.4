@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://dmh4e42g1tlu4"]
+
+[ext_resource type="Texture2D" uid="uid://cx6d5nox33ufh" path="res://Nodes/UI/CantBuild.png" id="1"]
+
+[sub_resource type="Shader" id="1"]
+code = "shader_type canvas_item;
+
+uniform sampler2D disabled;
+
+void fragment() {
+	vec4 color = texture(TEXTURE, UV);
+	float v = max(max(color.r, color.g), color.b);
+	v += texture(disabled, UV * 6.0 + vec2(TIME*0.5)).r;
+	COLOR = vec4(v, 0, 0, color.a * 0.5);
+}"
+
+[resource]
+shader = SubResource("1")
+shader_parameter/disabled = ExtResource("1")

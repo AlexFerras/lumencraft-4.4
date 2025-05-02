@@ -1,0 +1,445 @@
+# Properties
+
+Ignored by Enemies?
+Radius
+Chunk Slots
+Is Flowing?
+Upgrade Levels
+Reactor Level
+Running?
+Disable zap?
+Enabled Screens
+Stored Power\n(-1 = infinite)
+Mushroom Count
+Growth Speed
+Color
+Reveal Fog of War?
+Time Offset
+Blink Duration
+Pattern Size
+Blink Pattern
+Open?
+Upgrade Level
+Player ID
+Stored Lumen
+Stored Metal
+Weapon Upgrade
+Scout Upgrade
+Level
+Increases Turret Limit?
+Autostart?
+
+Index
+Can be only modified after placing.
+Time Limit
+Custom Objective Text
+Note: Custom objective text only has effect when map objective is \"All Goals In Order\".
+Amount
+Disable physics?
+Contents:
+Hold Ctrl to add
+No items added. Drop a Pickup object on the chest to add.
+No items added. Drop a Pickup object on the box to add.
+No items added. Drop a Pickup object on the placer to add.
+No Loot
+No loot. Drop a Pickup object on the enemy to add.
+No Requirement
+No required items defined. Drop a Pickup object on the gate to add as required item.
+Mode
+Buried
+Open Space
+Any
+Message
+Spawner ID: %s
+Select a monster from the enemy list and Ctrl+click this object to assign it.
+Max Enemies at Once
+Skin
+Custom Nest HP
+Attacks Base?
+Triggered by Player?
+Enemy Count
+Spawn Batch
+Spawn Interval
+Metal Count
+Has miner?
+Display Marker?
+Marker Radius
+Destroy Terrain
+Random?
+Scale
+Max Growth
+Drop shadows?
+Enabled?
+Rectangle
+Circle
+Width
+Height
+Visible?
+Display Mode
+All
+On Minimap
+On Ground
+
+Override Stats
+Sight Range
+Count
+
+# Events
+
+Events
+Event #%s
+Add Event
+Repeatable
+The event can be triggered multiple times.
+Requires at least one instant condition.
+Conditions
+Add Condition
+Instant (not fullfiled continuously)
+Actions
+Add Action
+Pick Target
+No Target
+Use Special
+Find Object
+Copy
+Paste
+Fold/Unfold
+
+Lumen Chunk Delivered
+Destroyed
+Power Received
+Is Shooting
+Killed
+Player Entered
+Player Inside
+Enemy Entered
+Enemy Inside
+Object Entered
+Object Inside
+Filter Objects
+Finished
+Opened
+Collected
+On Start
+Wave Defeated
+Wave Number (or greater)
+Player Has Item
+Weapon Upgrade Level
+Technology Researched
+Compare Custom Variable
+Variable
+Operation
+Value
+Equal To
+Not Equal To
+Greater Than
+Less Than
+Triggered
+All Defeated
+Chest Opened
+Item Stored
+Item Retrieved
+
+Destroy
+Die
+Display Message
+Kill Player
+Set Ambient Light
+Shake Screen
+Launch Custom Wave
+Change Custom Variable
+Set
+Add
+Subtract
+Strength
+Duration
+Frequency
+Randomness
+Enable Flow
+Disable Flow
+Trigger Trap
+Fill
+Scoop Players
+Win
+Instant?
+Lose
+Custom Message
+Owned
+Display Objective
+Show
+Hide
+Toggle
+Stop
+Drop Item
+Drop Stack
+
+Objective Text (Empty = Default)
+BBCode Reference
+Preview
+
+# Help
+
+Lumencraft Map
+Map Saved
+
+If enabled, materials will only be drawn on top of existing terrain.
+The map will automatically finish when objective is completed.
+
+Editor Controls (F1 to close)
+General
+Pan
+Zoom
+Reset Zoom
+Move Around
+Move Faster
+Quick Test (at cursor)
+Quick Save
+Drawing
+Draw
+Erase
+Pick Material
+Draw Line
+Snap Angles
+Rotate
+Change Radius
+Change Size
+Undo Last Stroke
+Select/drag
+Deselect
+Delete Selected
+Copy Selected
+Toggle Layers
+Scan Resources
+Gizmos
+Terrain Layer
+Upper Floor Layer
+
+Music Player
+Play
+Single
+
+Unsaved
+Saved
+Validated
+
+# Menu
+
+System
+New Map
+Create Map
+Size
+Starting Material
+Generate Terrain
+Clear Terrain
+Save Map
+Save As...
+Load Map...
+Test Map
+Validate Map
+Enter validation mode. It's the same as test mode, but disables editor console.\nMap completed in validation mode will be marked as \"validated\" until modified.
+You have some unsaved changes. Quit anyway?
+Save
+Quit Anyway
+
+Terrain
+Drawing Shape
+Drawing Size: %d
+Drawing Rotation: %d°
+Draw on All
+Terrain Only
+Empty Only
+Terrain Material
+Surface Floor
+Base Floor
+Hardness
+Swap Terrain
+Swap Floor
+Durability: %s\nDrill Level: %s
+
+Buildings
+Misc
+Enemies
+Regular
+Boss
+Swarm
+Objects
+Basic
+Container
+Hazard
+Decoration
+Event
+Pickups
+Resource
+Weapon
+Consumable
+Utility
+Map Pickup List
+inside %s
+Help
+
+Open a File
+Save a File
+Name:
+Create Folder
+Directories & Files:
+Path:
+File:
+All Recognized
+All Files (*)
+Open
+Refresh files.
+Toggle the visibility of hidden files.
+Go to parent folder.
+File exists, overwrite?
+Please Confirm...
+
+Manage Maps
+Rename
+Delete
+Duplicate
+Really delete?
+New name
+Duplicate name
+Parent Directory
+
+F1: Editor Console
+Jump to wave
+Jump
+Skip Wave Timer
+God Mode
+Back to Editor
+
+# Settings
+
+Settings
+Map Name
+Map Description
+Ambient Light
+Enable Fog of War
+Buildings Drop Resources
+Extra Turret Limit
+Resource Efficiency
+
+Clear Condition
+Defeat All Waves
+Collect Item
+Reach Destination
+Any Goal
+All Goals
+All Goals In Order
+Survive Time
+Place Building
+Research Tech
+Kill Enemy
+Kill All Enemies
+Reach Score
+Minimum Score
+Custom
+Fail Conditions
+Death
+Reactor Destroyed
+Scoring Rules
+Starting Score
+Clear Bonus
+Points
+Time (s)
+Shots Fired
+Tech Researched
+Damage Taken
+Deaths
+Goals Reached
+Auto-Finish
+
+Player
+Clones
+Health
+Speed
+Luck
+Stamina
+Backpack
+Starting Inventory
+Include Default
+Drill x1 and Flare x50.
+Starting Stats
+Starting Weapon Upgrades
+Starting Upgrades
+Technology
+Locked
+Unlocked
+Can't Research
+Available Buildings
+Toggle All
+
+Waves
+Add Wave
+Wave Name
+Wait Time
+Repeat
+Multiplier
+Spawner
+Random
+Delay
+Target
+Same As Wave
+Auto
+Spawner %s
+
+# Publish
+
+ID: %s
+Publish to Workshop
+Update Note
+Custom Preview (max 1 MB)
+Publish
+Publishing...
+To create a public item on Steam Workshop, you need to accept Terms of Service.
+Open in browser
+Steam failed to load. Please restart the game in online mode.
+Download My Maps
+
+Map Type
+Story
+Other
+Difficulty
+Casual
+Normal
+Hardcore
+Length
+Short
+Long
+Internal Tags
+Objective: %s
+Is Validated
+Has Waves
+Has Custom Events
+
+Failed to create item. Error %s: %s
+Upload restricted. Contact Steam Support
+Banned
+Request timed out. Try again
+Not logged in
+Service unavailable. Try again
+Invalid parameter
+Access denied
+Workshop upload quota exceeded. Remove some files
+File not found
+Already created
+Name already used
+Account restricted due to password change
+Unknown error
+Publishing failed. Error %s: %s
+File not found or invalid. Make sure the game is not blocked by antivirus
+Access denied. Make sure you own the game
+Internal error
+Preview file too big. Try a different one
+Published successfully!
+
+# Errors
+
+Map needs to be saved first.
+No spawn point. Add a Reactor or Start Point.
+Waves are defined, but no Wave Spawner exists.
+Clear condition is defeat waves, but no wave is defined.
+Clear condition is collect item, but the item is not on map.
+Clear condition is reach goal, but there is no Goal Point object.
+Clear condition is custom, but there is no winning event.

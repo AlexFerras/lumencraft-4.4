@@ -1,0 +1,42 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://c8e64rb4hrak5"]
+
+[sub_resource type="Shader" id="1"]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.4.beta's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+float roundedBoxSDF(vec2 CenterPosition, vec2 Size, float Radius) {
+    return length(max(abs(CenterPosition)-Size+Radius,0.0))-Radius;
+}
+
+float udRoundBox(in vec2 distFromCenter, in vec2 halfSize, in float cornerRadius)
+{
+    float t = length(max(abs(distFromCenter) - (halfSize - cornerRadius), 0.)) - cornerRadius;
+    return smoothstep(-1., 1., t);
+}
+float sdRoundedBox( in vec2 p, in vec2 b, in float r ) {
+    vec2 q = abs(p)-b+r;
+    return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - r;
+}
+
+void fragment()
+{
+   	vec2 boxPos = vec2(0.5, 0.5);	// center of the screen
+    float radius = 0.1;
+    vec2 boxBnd = vec2(0.5-radius+0.04, 0.5-radius+0.04);  // half of the area
+    
+ 
+   
+    // Output to screen
+    float alpha = length(max(abs(UV - boxPos) - boxBnd, 0.0)) - radius;
+    
+    COLOR = vec4(1.0)*clamp(-alpha*20.0,0.0,1.0);
+ 
+	
+	
+}
+"
+
+[resource]
+shader = SubResource("1")

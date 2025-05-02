@@ -1,0 +1,103 @@
+Lumen Magnum
+Magnum will shoot special lumen bullets that leave damaging creep on impact.
+Bouncy Machinegun
+Machinegun bullets will bounce off walls multiple times.
+Explosive Shotgun
+Shotgun bullets will explode on impact.
+Homing Missiles
+Rocket launcher will lock onto target and shoot homing missiles.
+Rocket Launcher
+Allows you to build Rocket Launcher Workshop.
+Machinegun
+Allows you to build Machinegun Workshop.
+Shotgun
+Allows you to build Shotgun Workshop.
+Flamethrower
+Allows you to build Flamethrower Workshop.
+Explosive Barrels
+Allows you to craft Explosive Barrels at Explosive Workshop.
+Foam Gun
+Allows you to craft Foam Gun at Utility Workshop.
+Fireproof Gates
+Gates are fireproof and can't be destroyed by lava.
+Fast Gates
+Your gates open and close way faster.
+Gate Durability
+Doubles HP of all gates.
+Packed Mushrooms
+Mushrooms in Lumen Farm have twice more lumens.
+Regeneration
+You will regenerate health over time.
+Auto Heal
+Quickly regenerate up to 30% of your HP if not taken damage for a while.
+Unlimited Reload
+Pistol can be used without ammo, but needs reloading when empty.
+Energizing Underwear
+Stamina will regenerate faster.
+Improved Personal Light
+You hold stronger source of light to see better in darkness.
+Lumen Stacking
+You can carry more lumens in one stack.
+Magnet Upgrade
+You can collect resources easier.
+Production Speed
+Doubles the speed of making and upgrading items, weapons and tools.
+Multiple Build Drones
+You can build many structures at the same time.
+Metal Stacking
+You can carry more metal in one stack.
+Item Detector
+Notifies you of valuable items buried nearby.
+Recycling Efficiency
+Shredder will drop more metal from recycling items.
+Repair Tool Efficiency
+Repairing structures is twice as efficient.
+Extraction Efficiency
+Shredder yields more resources from Lumen Clumps and Metal Nuggets.
+Storage Capacity
+Increase capacity of Storages by 400.
+Turrets Upgrade
+Turrets can be upgraded to higher level.
+Turrets Upgrade 2
+Turrets Upgrade 3
+Turrets Upgrade 4
+Turrets Upgrade 5
+Earthquake Countermeasure
+Extends time between earthquakes.
+Faster Reactor Zap
+Reactor will zap enemies twice as often.
+Faster Reactor Zap 2
+Faster Reactor Zap 3
+Ammo Stacking
+You can carry 50% more ammo in one stack.
+Ammo Stacking 2
+Ammo Stacking 3
+Building Regeneration
+Your buildings will slowly repair over time.
+Building Regeneration 2
+Doubles the regeneration speed of buildings.
+Building Regeneration 3
+Fireproof Foam
+Foam is fire resistant and blocks lava. Doesn't change foam created before this upgrade.
+Eroded Lumen Conversion
+Repair Gun can convert Eroded Lumen into regular Lumen.
+Napalm Coverage
+Poured napalm covers twice as much area.
+Automatic Discovery
+Technologies in Labs refresh automaticaly every 5 minutes.
+Sticky Napalm
+Napalm slows down enemies.
+Research Development
+Doubles the speed of discovering new technologies in Labs and decreases research cost by 10%.
+Research Development 2
+Research Development 3
+Lava Cooling
+Allows Repair Gun to cool lava and allow safe passage.
+Second Aid
+Med Kits restore more HP.
+Auto Harvest
+Lumen Farm mushrooms are automatically harvested every few minutes.
+Magnetized Storages
+Storage Containers will attract resources within a fixed radius.
+Amplifying Stands
+Stands are able to receive power. Standing on a powered Stand will increase damage output of weapons by 20%.

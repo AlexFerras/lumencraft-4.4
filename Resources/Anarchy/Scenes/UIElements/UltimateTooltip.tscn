@@ -1,0 +1,395 @@
+[gd_scene load_steps=9 format=3 uid="uid://dtmi1woj8mrtr"]
+
+[ext_resource type="Shader" uid="uid://s0qxgu8qs7bj" path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" id="1"]
+[ext_resource type="FontFile" uid="uid://dl2s2xsnt11bf" path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" id="2"]
+[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/tooltip_black_text_separator.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://dg86ttaobo25o" path="res://Resources/Anarchy/Scenes/UIElements/UltimateButton.tscn" id="4"]
+[ext_resource type="FontFile" uid="uid://cbad7p2duhj3r" path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal_border.tres" id="5"]
+[ext_resource type="Texture2D" uid="uid://bw00xaik2yt8n" path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" id="6"]
+
+[sub_resource type="ShaderMaterial" id="2"]
+shader = ExtResource("1")
+shader_parameter/cutoff = 0.0
+shader_parameter/smooth_size = 0.047
+shader_parameter/mask = ExtResource("6")
+
+[sub_resource type="GDScript" id="4"]
+script/source = "extends PanelContainer
+
+@export var hold: bool: set = set_hold
+@export var icon: Texture2D: set = set_icon
+@export var action: String: set = set_action
+@export var text: String: set = set_text
+
+@onready var buttons = [$\"%UltimateButton\", $\"%UltimateButton2\", $\"%UltimateButton3\", $\"%UltimateButton4\", $\"%UltimateButton5\"]
+@onready var separators = [$\"%Separator\", $\"%Separator2\", $\"%Separator3\", $\"%Separator4\"]
+@onready var spacers = [$\"%Spacer\", $\"%Spacer2\", $\"%Spacer3\"]
+
+@onready var hold_label := $\"%Hold\"
+@onready var icon_rect := $\"%Icon\"
+@onready var text_label := $\"%TooltipText\"
+
+var player: Object
+var need_refresh: bool
+var isredy: bool
+
+func _ready() -> void:
+	Utils.connect(\"joypad_updated\", Callable(self, \"refresh\"))
+	Utils.connect(\"coop_toggled\", Callable(self, \"refresh\"))
+	isredy = true
+	_refresh()
+
+func _enter_tree() -> void:
+	if need_refresh and isredy:
+		_refresh()
+
+func set_hold(h: bool):
+	hold = h
+	refresh()
+
+func set_icon(i: Texture2D):
+	icon = i
+	refresh()
+
+func set_action(a: String):
+	action = a
+	refresh()
+
+func set_text(t: String):
+	text = t
+	refresh()
+
+func refresh(dupa = null):
+	if need_refresh:
+		return
+	
+	need_refresh = true
+	call_deferred(\"_refresh\")
+
+func _refresh():
+	if not is_inside_tree():
+		return
+	
+	need_refresh = false
+	hold_label.visible = hold
+	
+	if icon:
+		icon_rect.show()
+		icon_rect.texture = icon
+	else:
+		icon_rect.hide()
+	
+	if text.is_empty():
+		text_label.hide()
+	else:
+		text_label.show()
+		text_label.text = text
+	
+	spacers[0].visible = hold_label.visible
+	spacers[1].visible = icon_rect.visible
+	spacers[2].visible = text_label.visible
+	
+	for button in buttons:
+		button.hide()
+		
+	for separator in separators:
+		separator.hide()
+		separator.text = \"/\"
+	
+	match action:
+		\"inventory\", \"map\", \"throw_item\", \"build\", \"run\", \"interact\", \"menu\",\\
+		\"up\", \"left\", \"right\", \"down\", \"slot1\", \"slot2\", \"slot3\", \"slot4\", \"next_slot\", \"prev_slot\", \"auto_walk\", \"respawn\":
+			set_button_action(buttons[0], action)
+		\"accept\":
+			set_button_action(buttons[0], \"interact\")
+#			if not is_using_joypad():
+#				separators[0].show()
+#				buttons[1].show()
+#				buttons[1].set_mouse(BUTTON_LEFT)
+		\"shoot\", \"use\":
+			if is_using_joypad():
+				set_button_action(buttons[0], \"shoot\")
+			else:
+				buttons[0].show()
+				buttons[0].set_mouse(MOUSE_BUTTON_LEFT)
+		\"shoot2\":
+			if is_using_joypad():
+				set_button_action(buttons[0], \"shoot2\")
+			else:
+				buttons[0].show()
+				buttons[0].set_mouse(MOUSE_BUTTON_RIGHT)
+		\"rotate\":
+			if is_using_joypad():
+				buttons[0].show()
+				buttons[0].set_joypad(101, -1)
+			else:
+				buttons[0].show()
+				buttons[0].set_mouse(MOUSE_BUTTON_MIDDLE)
+		\"select\":
+			if is_using_joypad():
+				buttons[0].show()
+				buttons[0].set_joypad(100, -1)
+			else:
+				set_button_action(buttons[0], \"prev_slot\")
+				set_button_action(buttons[1], \"next_slot\")
+				separators[1].show()
+				buttons[2].show()
+				buttons[2].set_mouse(MOUSE_BUTTON_MIDDLE)
+		\"mouse\":
+			buttons[0].show()
+			buttons[0].set_mouse(-1)
+		\"lmb\":
+			buttons[0].show()
+			buttons[0].set_mouse(MOUSE_BUTTON_LEFT)
+		\"move\":
+			if is_using_joypad():
+				buttons[0].show()
+				buttons[0].set_joypad(-1, JOY_AXIS_LEFT_X)
+			else:
+				set_button_action(buttons[0], \"up\")
+				set_button_action(buttons[1], \"down\")
+				set_button_action(buttons[2], \"left\")
+				set_button_action(buttons[3], \"right\")
+		\"look\":
+			if is_using_joypad():
+				buttons[0].show()
+				buttons[0].set_joypad(-1, JOY_AXIS_RIGHT_X)
+			else:
+				buttons[0].show()
+				buttons[0].set_mouse(-1)
+		\"secondary_bind\":
+			if is_using_joypad():
+				buttons[0].show()
+				buttons[0].set_joypad(JOY_BUTTON_BACK, -1)
+				separators[0].text = \"+\"
+				set_button_action(buttons[1], \"shoot2\")
+			else:
+				buttons[0].show()
+				buttons[0].set_mouse(MOUSE_BUTTON_RIGHT)
+		\"left_trigger\":
+			buttons[0].show()
+			buttons[0].set_joypad(JOY_AXIS_TRIGGER_LEFT, -1)
+		\"right_trigger\":
+			buttons[0].show()
+			buttons[0].set_joypad(JOY_AXIS_TRIGGER_RIGHT, -1)
+#		\"quick_bind\":
+#			set_button_action(buttons[1], \"slot1\")
+#
+#			if is_using_joypad():
+#				buttons[0].show()
+#				buttons[0].set_joypad(JOY_BUTTON_4, -1)
+#				separators[0].text = \"+\"
+#			else:
+#				separators[0].hide()
+#
+#			set_button_action(buttons[2], \"slot2\")
+#			set_button_action(buttons[3], \"slot3\")
+#			set_button_action(buttons[4], \"slot4\")
+		\"quick\":
+			buttons[0].show()
+			buttons[0].set_joypad(JOY_BUTTON_BACK, -1)
+			separators[0].show()
+			separators[0].text = \"+\"
+			buttons[1].show()
+			buttons[1].set_joypad(100, -1)
+		\"rearrange\":
+			buttons[0].show()
+			buttons[0].set_joypad(JOY_BUTTON_BACK, -1)
+			separators[0].show()
+			separators[0].text = \"+\"
+			buttons[1].show()
+			buttons[1].set_joypad(-1, JOY_AXIS_RIGHT_X)
+		\"quit\":
+			buttons[0].show()
+			if is_using_joypad():
+				buttons[0].set_joypad(JOY_BUTTON_B, -1)
+			else:
+				buttons[0].set_keyboard(KEY_ESCAPE)
+		\"retry\":
+			buttons[0].show()
+			if is_using_joypad():
+				buttons[0].set_joypad(JOY_BUTTON_X, -1)
+			else:
+				buttons[0].set_keyboard(KEY_R)
+		\"reload_save\":
+			buttons[0].show()
+			if is_using_joypad():
+				buttons[0].set_joypad(JOY_BUTTON_Y, -1)
+			else:
+				buttons[0].set_keyboard(KEY_L)
+		\"changelog\":
+			if is_using_joypad():
+				buttons[0].show()
+				buttons[0].set_joypad(JOY_BUTTON_Y, -1)
+			else:
+				buttons[0].show()
+				buttons[0].set_mouse(MOUSE_BUTTON_LEFT)
+
+func set_button_action(button: Control, what: String):
+	button.show()
+	if buttons.find(button) > 0:
+		separators[buttons.find(button) - 1].show()
+	
+	var controls = get_controls()
+	
+	if is_using_joypad():
+		var event = controls.get_action_button(what)
+		if event:
+			button.set_joypad(event.button_index, -1)
+	else:
+		var event = controls.get_action_key(what)
+		if event:
+			button.set_keyboard(event.keycode)
+
+func is_using_joypad() -> bool:
+	if player:
+		return player.using_joypad()
+	else:
+		return Utils.is_using_joypad()
+
+func set_input_player(p):
+	player = p
+	if player and \"INVENTORY_COLUMNS\" in player: # lol
+		player.connect(\"tree_exited\", Callable(self, \"set\").bind(\"player\", null), CONNECT_REFERENCE_COUNTED) ## chyba trzeba odłączać czy coś
+	refresh()
+
+func get_controls() -> Resource:
+	var prefix: String
+	if player:
+		prefix = str(\"p\", player.control_id)
+	
+	if not player or prefix == \"p1\":
+		if is_using_joypad():
+			prefix = \"p3\"
+		else:
+			prefix = \"p2\"
+	
+	match prefix:
+		\"p2\":
+			return Save.config.controls1
+		\"p3\":
+			return Save.config.controls2
+		\"p4\":
+			return Save.config.controls3
+		_:
+			return Save.config.controls3
+	return null
+"
+
+[node name="UltimateTooltip" type="PanelContainer"]
+material = SubResource("2")
+offset_right = 204.0
+offset_bottom = 129.0
+size_flags_vertical = 0
+theme_type_variation = &"0010_yellow_border"
+script = SubResource("4")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="MainHB" type="HBoxContainer" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 5
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Hold" type="Label" parent="MarginContainer/MainHB"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = -23
+theme_override_fonts/font = ExtResource("2")
+text = "Hold"
+vertical_alignment = 1
+uppercase = true
+
+[node name="Spacer" type="Control" parent="MarginContainer/MainHB"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/MainHB"]
+unique_name_in_owner = true
+visible = false
+modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+
+[node name="Spacer2" type="Control" parent="MarginContainer/MainHB"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+
+[node name="UltimateButton" parent="MarginContainer/MainHB" instance=ExtResource("4")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Separator" parent="MarginContainer/MainHB" instance=ExtResource("3")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="UltimateButton2" parent="MarginContainer/MainHB" instance=ExtResource("4")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Separator2" parent="MarginContainer/MainHB" instance=ExtResource("3")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="UltimateButton3" parent="MarginContainer/MainHB" instance=ExtResource("4")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Separator3" parent="MarginContainer/MainHB" instance=ExtResource("3")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="UltimateButton4" parent="MarginContainer/MainHB" instance=ExtResource("4")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Separator4" parent="MarginContainer/MainHB" instance=ExtResource("3")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="UltimateButton5" parent="MarginContainer/MainHB" instance=ExtResource("4")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Spacer3" type="Control" parent="MarginContainer/MainHB"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+
+[node name="TooltipText" type="Label" parent="MarginContainer/MainHB"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+theme_override_constants/line_spacing = -23
+theme_override_fonts/font = ExtResource("5")
+text = "?"
+vertical_alignment = 1
+uppercase = true

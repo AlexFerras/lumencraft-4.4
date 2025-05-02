@@ -1,0 +1,66 @@
+Start Point
+Defines start position of the map. Takes priority over Reactor.
+Goal Point
+Target point for Reach Destination objective.
+Pickup
+Pickable item.
+Loot box that needs to be extracted with Shredder.
+Chest
+Interactable container for pickups.
+Rusty Chest
+Destructible container for pickups.
+Item Placer
+Randomly places given items in the defined radius.
+Message Box
+Interactable object that displays custom text.
+Wave Spawner
+Spawn point for map's waves.
+Monster Egg
+Destructible object that spawns Lumens and spiders.
+Monster Nest
+Infinitely spawns a set amount of monsters until destroyed.
+Hole Trap
+Hidden trap that spawns monsters when triggered.
+Water Source
+Infinitely makes water in the given radius. (WIP)
+Lava Source
+Infinitely makes lava in the given radius.
+Metal Vein
+A spot for placing a Miner to automatically mine metal.
+Stone Gate
+Special gate that requires specific items to be opened.
+Required
+Teleport Plate
+Teleports you to another teleport plate with the same color.
+Light
+Generic point light with custom range and color.
+Interactive Light
+Small lamp with customizable blinking pattern.
+Boulder
+Heavy rock that can be slightly pushed around.
+Lumen Chunk
+Solid chunk of Lumen that you can tow to a reactor slot.
+Lumen Mushroom
+Glowing object that drops Lumen when destroyed.
+Glowing Coral
+Underground plant that resembles coral tubes.
+Tree
+Just a regular tree. How does it grow underground though?
+Terrain Modifier
+Dynamically creates or removes terrain.
+Trigger
+General-purpose object detector.
+Timer
+Counts down time.
+Marker
+A generic marker that marks a position and shows on minimap.
+
+Technology Orb
+Technology Orb (%s)
+Key (%s)
+Azure
+Silver
+Amber
+Stone Tablet
+AI Chip
+Monster Heart

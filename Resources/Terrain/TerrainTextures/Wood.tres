@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Terrain/TerrainTextures/TerrainTexture.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Terrain/Images/WallWood.png" type="Image" id=2]
+
+[resource]
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+durability = 2.0
+debris_color = Color( 0.168627, 0.113725, 0.0980392, 1 )
+hit_sound = "Objects/impactwood"
+break_sound = "wood_audio"
+transparent = false
+attackable_by_monsters = true

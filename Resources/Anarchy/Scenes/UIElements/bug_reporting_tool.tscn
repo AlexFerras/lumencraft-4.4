@@ -1,0 +1,488 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=1]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_analog_axis_75x75.png" type="Texture2D" id=3]
+[ext_resource path="res://addons/TrelloReporting/Trello_Reporting_Tool.gd" type="Script" id=4]
+[ext_resource path="res://Resources/Anarchy/Scripts/tooltip.gd" type="Script" id=5]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=6]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" type="Texture2D" id=7]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" type="Texture2D" id=8]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" type="Texture2D" id=9]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" type="Texture2D" id=10]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_mainmenu.tres" type="FontFile" id=11]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Controls/Gamepad/tooltip_gamepad_icon.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Resources/Anarchy/Scripts/UpperCaseButton.gd" type="Script" id=13]
+[ext_resource path="res://Nodes/Editor/GUI/Icons/FolderIcon.png" type="Texture2D" id=14]
+
+[sub_resource type="InputEventAction" id=34]
+action = "ui_cancel"
+
+[sub_resource type="Shortcut" id=35]
+shortcut = SubResource( 34 )
+
+[sub_resource type="StyleBoxFlat" id=25]
+content_margin_left = 16.0
+content_margin_right = 16.0
+bg_color = Color( 0.380392, 0.380392, 0.380392, 1 )
+corner_radius_bottom_right = 32
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id=24]
+content_margin_left = 16.0
+content_margin_right = 16.0
+bg_color = Color( 0.254902, 0.254902, 0.254902, 1 )
+corner_radius_bottom_right = 32
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id=32]
+content_margin_left = 16.0
+content_margin_right = 16.0
+bg_color = Color( 0.380392, 0.380392, 0.380392, 1 )
+corner_radius_bottom_right = 32
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id=31]
+content_margin_left = 16.0
+content_margin_right = 16.0
+bg_color = Color( 0.254902, 0.254902, 0.254902, 1 )
+corner_radius_bottom_right = 32
+corner_detail = 1
+
+[sub_resource type="ButtonGroup" id=33]
+
+[sub_resource type="ShaderMaterial" id=30]
+shader = ExtResource( 1 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 2 )
+
+[node name="BugReportingTool" type="VBoxContainer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -966.0
+offset_top = -979.0
+offset_right = 966.0
+offset_bottom = 979.0
+custom_minimum_size = Vector2( 1500, 1700 )
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+script = ExtResource( 4 )
+
+[node name="Header" type="HBoxContainer" parent="."]
+offset_right = 1932.0
+offset_bottom = 107.0
+size_flags_horizontal = 3
+
+[node name="HeaderName" type="PanelContainer" parent="Header"]
+offset_right = 1376.0
+offset_bottom = 107.0
+size_flags_horizontal = 0
+theme_type_variation = "1000_yellow"
+
+[node name="HaderText" type="Label" parent="Header/HeaderName"]
+offset_left = 64.0
+offset_right = 1312.0
+offset_bottom = 107.0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 11 )
+text = "Lumencraft Bug Reporting Tool"
+uppercase = true
+
+[node name="Spacing" type="Control" parent="Header"]
+offset_left = 1380.0
+offset_right = 1710.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 32, 0 )
+size_flags_horizontal = 3
+
+[node name="Exit" type="PanelContainer" parent="Header"]
+offset_left = 1714.0
+offset_right = 1932.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+theme_type_variation = "ExitPanel"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Header/Exit"]
+offset_right = 218.0
+offset_bottom = 107.0
+
+[node name="Tooltip" type="Control" parent="Header/Exit/HBoxContainer"]
+offset_right = 107.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TooltipGamepadIcon" parent="Header/Exit/HBoxContainer/Tooltip" instance=ExtResource( 12 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+
+[node name="Exit" type="Control" parent="Header/Exit/HBoxContainer"]
+offset_left = 111.0
+offset_right = 218.0
+offset_bottom = 107.0
+custom_minimum_size = Vector2( 107, 107 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="ExitButton" type="TextureButton" parent="Header/Exit/HBoxContainer/Exit"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+custom_minimum_size = Vector2( 32, 32 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+shortcut = SubResource( 35 )
+texture_normal = ExtResource( 7 )
+texture_pressed = ExtResource( 8 )
+texture_hover = ExtResource( 9 )
+texture_disabled = ExtResource( 7 )
+texture_focused = ExtResource( 10 )
+expand = true
+stretch_mode = 5
+
+[node name="Content" type="PanelContainer" parent="."]
+offset_top = 107.0
+offset_right = 1932.0
+offset_bottom = 1859.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = "0001_yellow_only_border"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 1868.0
+offset_bottom = 1688.0
+
+[node name="Label" type="Label" parent="Content/VBoxContainer"]
+offset_right = 1804.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource( 6 )
+text = "Title"
+uppercase = true
+
+[node name="Separator6" type="Control" parent="Content/VBoxContainer"]
+offset_top = 68.0
+offset_right = 1804.0
+offset_bottom = 84.0
+custom_minimum_size = Vector2( 0, 16 )
+
+[node name="Title" type="LineEdit" parent="Content/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 88.0
+offset_right = 1804.0
+offset_bottom = 152.0
+custom_minimum_size = Vector2( 500, 0 )
+theme_override_fonts/font = ExtResource( 6 )
+theme_override_styles/focus = SubResource( 25 )
+theme_override_styles/normal = SubResource( 24 )
+max_length = 50
+
+[node name="Separator8" type="Control" parent="Content/VBoxContainer"]
+offset_top = 156.0
+offset_right = 1804.0
+offset_bottom = 172.0
+custom_minimum_size = Vector2( 0, 16 )
+
+[node name="Label2" type="Label" parent="Content/VBoxContainer"]
+offset_top = 176.0
+offset_right = 1804.0
+offset_bottom = 240.0
+theme_override_fonts/font = ExtResource( 6 )
+text = "Description"
+uppercase = true
+
+[node name="Separator7" type="Control" parent="Content/VBoxContainer"]
+offset_top = 244.0
+offset_right = 1804.0
+offset_bottom = 260.0
+custom_minimum_size = Vector2( 0, 16 )
+
+[node name="Description" type="TextEdit" parent="Content/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 264.0
+offset_right = 1804.0
+offset_bottom = 564.0
+custom_minimum_size = Vector2( 0, 300 )
+theme_override_fonts/font = ExtResource( 6 )
+theme_override_styles/focus = SubResource( 32 )
+theme_override_styles/normal = SubResource( 31 )
+wrap_enabled = true
+
+[node name="Separator5" type="Control" parent="Content/VBoxContainer"]
+offset_top = 568.0
+offset_right = 1804.0
+offset_bottom = 600.0
+custom_minimum_size = Vector2( 0, 32 )
+
+[node name="Description2" type="Label" parent="Content/VBoxContainer"]
+offset_top = 604.0
+offset_right = 1804.0
+offset_bottom = 668.0
+theme_override_fonts/font = ExtResource( 6 )
+text = "Category"
+uppercase = true
+
+[node name="Separator9" type="Control" parent="Content/VBoxContainer"]
+offset_top = 672.0
+offset_right = 1804.0
+offset_bottom = 688.0
+custom_minimum_size = Vector2( 0, 16 )
+
+[node name="Labels" type="VBoxContainer" parent="Content/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 692.0
+offset_right = 1804.0
+offset_bottom = 1004.0
+theme_override_constants/separation = 8
+
+[node name="MenuButton4" type="Button" parent="Content/VBoxContainer/Labels"]
+offset_right = 900.0
+offset_bottom = 72.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "button_cyan"
+theme_override_fonts/font = ExtResource( 6 )
+toggle_mode = true
+pressed = true
+group = SubResource( 33 )
+text = "BUG REPORT"
+align = 0
+script = ExtResource( 13 )
+
+[node name="MenuButton5" type="Button" parent="Content/VBoxContainer/Labels"]
+offset_top = 80.0
+offset_right = 900.0
+offset_bottom = 152.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "button_cyan"
+theme_override_fonts/font = ExtResource( 6 )
+toggle_mode = true
+group = SubResource( 33 )
+text = "BALANCE ISSUE"
+align = 0
+script = ExtResource( 13 )
+
+[node name="MenuButton6" type="Button" parent="Content/VBoxContainer/Labels"]
+offset_top = 160.0
+offset_right = 900.0
+offset_bottom = 232.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "button_cyan"
+theme_override_fonts/font = ExtResource( 6 )
+toggle_mode = true
+group = SubResource( 33 )
+text = "FEATURE SUGGESTION"
+align = 0
+script = ExtResource( 13 )
+
+[node name="MenuButton8" type="Button" parent="Content/VBoxContainer/Labels"]
+offset_top = 240.0
+offset_right = 900.0
+offset_bottom = 312.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "button_cyan"
+theme_override_fonts/font = ExtResource( 6 )
+toggle_mode = true
+group = SubResource( 33 )
+text = "TYPO"
+align = 0
+script = ExtResource( 13 )
+
+[node name="Separator4" type="Control" parent="Content/VBoxContainer"]
+offset_top = 1008.0
+offset_right = 1804.0
+offset_bottom = 1040.0
+custom_minimum_size = Vector2( 0, 32 )
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Content/VBoxContainer"]
+offset_top = 1044.0
+offset_right = 1804.0
+offset_bottom = 1444.0
+size_flags_vertical = 4
+theme_override_constants/separation = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content/VBoxContainer/HBoxContainer2"]
+offset_right = 568.0
+offset_bottom = 400.0
+alignment = 1
+
+[node name="Screenshot" type="Button" parent="Content/VBoxContainer/HBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 126.0
+offset_right = 568.0
+offset_bottom = 198.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_type_variation = "button_cyan"
+theme_override_fonts/font = ExtResource( 6 )
+text = "Take Screenshot"
+align = 0
+script = ExtResource( 13 )
+
+[node name="Screenshot2" type="Button" parent="Content/VBoxContainer/HBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 202.0
+offset_right = 240.0
+offset_bottom = 274.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_type_variation = "button_cyan"
+theme_override_fonts/font = ExtResource( 6 )
+icon = ExtResource( 14 )
+align = 0
+script = ExtResource( 13 )
+
+[node name="ScreenshotBackground" type="ColorRect" parent="Content/VBoxContainer/HBoxContainer2"]
+offset_left = 584.0
+offset_right = 1296.0
+offset_bottom = 400.0
+custom_minimum_size = Vector2( 712, 400 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+color = Color( 0.203922, 0.203922, 0.203922, 1 )
+
+[node name="ScreenshotPreview" type="TextureRect" parent="Content/VBoxContainer/HBoxContainer2/ScreenshotBackground"]
+unique_name_in_owner = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 7.0
+offset_right = -13.0
+offset_bottom = -7.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+expand = true
+flip_v = true
+
+[node name="Separator10" type="Control" parent="Content/VBoxContainer"]
+visible = false
+offset_top = 1448.0
+offset_right = 1804.0
+offset_bottom = 1480.0
+custom_minimum_size = Vector2( 0, 32 )
+
+[node name="Feedback" type="Label" parent="Content/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 1448.0
+offset_right = 1804.0
+offset_bottom = 1512.0
+custom_minimum_size = Vector2( 0, 32 )
+theme_override_fonts/font = ExtResource( 6 )
+uppercase = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Content/VBoxContainer"]
+offset_top = 1516.0
+offset_right = 1804.0
+offset_bottom = 1588.0
+
+[node name="Send" type="Button" parent="Content/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_right = 900.0
+offset_bottom = 72.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "main_menu_button"
+theme_override_fonts/font = ExtResource( 6 )
+disabled = true
+text = "Send"
+script = ExtResource( 13 )
+
+[node name="Cancel" type="Button" parent="Content/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 904.0
+offset_right = 1804.0
+offset_bottom = 72.0
+custom_minimum_size = Vector2( 900, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "main_menu_button"
+theme_override_fonts/font = ExtResource( 6 )
+text = "Cancel"
+script = ExtResource( 13 )
+
+[node name="TooltipStaticLeft5" type="PanelContainer" parent="."]
+material = SubResource( 30 )
+offset_top = 1859.0
+offset_right = 214.0
+offset_bottom = 1958.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "0001_yellow_border"
+script = ExtResource( 5 )
+
+[node name="MarginContainer" type="MarginContainer" parent="TooltipStaticLeft5"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 190.0
+offset_bottom = 87.0
+size_flags_vertical = 4
+
+[node name="MainHB" type="HBoxContainer" parent="TooltipStaticLeft5/MarginContainer"]
+offset_right = 166.0
+offset_bottom = 75.0
+size_flags_vertical = 5
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TooltipGamepadIcon" parent="TooltipStaticLeft5/MarginContainer/MainHB" instance=ExtResource( 12 )]
+offset_right = 75.0
+texture = ExtResource( 3 )
+
+[node name="TooltipGamepadIcon2" parent="TooltipStaticLeft5/MarginContainer/MainHB" instance=ExtResource( 12 )]
+offset_left = 91.0
+offset_right = 166.0
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+timeout = 10.0
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[node name="FileDialog" type="FileDialog" parent="Timer"]
+unique_name_in_owner = true
+visible = true
+offset_left = -1859.0
+offset_top = 423.0
+offset_right = -357.0
+offset_bottom = 1550.0
+window_title = "Otwórz plik"
+mode = 0
+access = 2
+filters = PackedStringArray( "*.png", "*.jpg" )
+
+[connection signal="pressed" from="Header/Exit/HBoxContainer/Exit/ExitButton" to="." method="exit"]
+[connection signal="text_changed" from="Content/VBoxContainer/Title" to="." method="text_edited"]
+[connection signal="text_changed" from="Content/VBoxContainer/Description" to="." method="text_edited"]
+[connection signal="pressed" from="Content/VBoxContainer/HBoxContainer2/VBoxContainer/Screenshot" to="." method="take_screenshot"]
+[connection signal="pressed" from="Content/VBoxContainer/HBoxContainer2/VBoxContainer/Screenshot2" to="." method="pick_screenshot"]
+[connection signal="pressed" from="Content/VBoxContainer/HBoxContainer/Send" to="." method="_on_Send_pressed"]
+[connection signal="pressed" from="Content/VBoxContainer/HBoxContainer/Cancel" to="." method="exit"]
+[connection signal="request_completed" from="HTTPRequest" to="." method="_on_HTTPRequest_request_completed"]
+[connection signal="timeout" from="Timer" to="." method="take_snapshot"]
+[connection signal="file_selected" from="Timer/FileDialog" to="." method="_on_FileDialog_file_selected"]

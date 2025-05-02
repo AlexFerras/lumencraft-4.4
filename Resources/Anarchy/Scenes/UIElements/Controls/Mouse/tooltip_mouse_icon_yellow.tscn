@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Textures/controls/mouse/tooltip_mmb_56x75.png" type="Texture2D" id=1]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 1, 0.721569, 0, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 1, 0.721569, 0, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 1
+
+[node name="TooltipMouseIconYellow" type="PanelContainer"]
+offset_right = 14.0
+offset_bottom = 14.0
+theme_override_styles/panel = SubResource( 1 )
+
+[node name="TooltipMouseIcon" type="TextureRect" parent="."]
+self_modulate = Color( 0, 0, 0, 1 )
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 60.0
+offset_bottom = 79.0
+size_flags_vertical = 4
+texture = ExtResource( 1 )

@@ -1,0 +1,222 @@
+[gd_scene load_steps=8 format=3 uid="uid://dg86ttaobo25o"]
+
+[ext_resource type="FontFile" uid="uid://dl2s2xsnt11bf" path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" id="1"]
+[ext_resource type="Texture2D" uid="uid://bgxshpocpagrd" path="res://Resources/Anarchy/Textures/controls/mouse/tooltip_mmb_56x75.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://04scswlto7yp" path="res://Resources/Anarchy/Textures/controls/keyboard/tooltip_button_64x64.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dccuto874f61b" path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_icon_playstation_0_75x75.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://cfpviffq1unat" path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png" id="7"]
+
+[sub_resource type="StyleBoxEmpty" id="1"]
+
+[sub_resource type="GDScript" id="2"]
+script/source = "extends Control
+
+enum {KEYBOARD, JOYPAD, MOUSE}
+@onready var controls := [$Keyboard, $Joypad, $Mouse]
+
+@onready var keyboard_text: Label = $\"%KeyboardText\"
+
+@onready var joypad_icon: TextureRect = $Joypad
+@onready var joypad_icon2: TextureRect = $\"%JoypadIcon2\"
+@onready var joypad_text: Label = $\"%JoypadText\"
+@onready var joypad_margin: MarginContainer = $\"%JoypadMargin\"
+
+@onready var mouse_icon: TextureRect = $Mouse
+
+const ButtonNames = {
+	JOY_BUTTON_A: \"A\",
+	JOY_BUTTON_B: \"B\",
+	JOY_BUTTON_X: \"X\",
+	JOY_BUTTON_Y: \"Y\",
+	JOY_BUTTON_LEFT_SHOULDER: \"LB\",
+	JOY_BUTTON_RIGHT_SHOULDER: \"RB\",
+	JOY_AXIS_TRIGGER_LEFT + 100: \"LT\",
+	JOY_AXIS_TRIGGER_RIGHT + 100: \"RT\",
+	JOY_BUTTON_LEFT_STICK: \"L\",
+	JOY_BUTTON_RIGHT_STICK: \"R\",
+}
+
+const ButtonIcons = {
+	JOY_BUTTON_BACK: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_icon_xbox_10_75x75.png\"), # select
+	JOY_BUTTON_START: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_icon_xbox_11_75x75.png\"), # start
+	JOY_BUTTON_DPAD_UP: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_dpad_12_75x75.png\"), # dup
+	JOY_BUTTON_DPAD_DOWN: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_dpad_13_75x75.png\"), # ddown
+	JOY_BUTTON_DPAD_LEFT: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_dpad_14_75x75.png\"), # dleft
+	JOY_BUTTON_DPAD_RIGHT: preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_dpad_15_75x75.png\"), # dright
+}
+
+func set_keyboard(keycode: int):
+	set_current(KEYBOARD)
+	
+	var key := InputEventKey.new()
+	key.keycode = keycode
+	keyboard_text.text = key.as_text()
+
+func set_joypad(button: int, axis: int):
+	set_current(JOYPAD)
+	
+	joypad_margin.remove_theme_constant_override(\"offset_top\")
+	joypad_icon2.hide()
+	joypad_text.text = \"\"
+	
+	if button > -1:
+		match button:
+			# TODO
+			#JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_X, JOY_BUTTON_Y:
+				#var idx := button
+				## TODO
+				#joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png\")
+				#joypad_text.text = ButtonNames[idx]
+			#JOY_BUTTON_BACK, JOY_BUTTON_START:
+				#joypad_margin.add_theme_constant_override(\"offset_top\", 32)
+				#joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_button_4_5_75x75.png\")
+				#joypad_text.text = ButtonNames[button]
+			#JOY_BUTTON_6, JOY_BUTTON_7:
+				#joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_button_6_7_75x75.png\")
+				#joypad_text.text = ButtonNames[button]
+			#JOY_BUTTON_8, JOY_BUTTON_9:
+				#joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_analog_button_75x75.png\")
+				#joypad_text.text = ButtonNames[button]
+			#JOY_BUTTON_10, JOY_BUTTON_11, JOY_BUTTON_12, JOY_BUTTON_13, JOY_BUTTON_14, JOY_BUTTON_15:
+				#joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png\")
+				#joypad_icon2.show()
+				#joypad_icon2.texture = ButtonIcons[button]
+			100:
+				joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png\")
+				joypad_icon2.show()
+				joypad_icon2.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_dpad_all_75x75.png\")
+			101:
+				joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png\")
+				joypad_icon2.show()
+				joypad_icon2.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_dpad_horizontal_75x75.png\")
+	elif axis > -1:
+		match axis:
+			JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y:
+				joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_analog_axis_75x75.png\")
+				joypad_text.text = \"L\"
+			JOY_AXIS_RIGHT_X, JOY_AXIS_RIGHT_Y:
+				joypad_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/gamepad/gamepad_analog_axis_75x75.png\")
+				joypad_text.text = \"R\"
+
+func set_mouse(button: int):
+	set_current(MOUSE)
+	
+	match button:
+		-1:
+			mouse_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/mouse/tooltip_none_56x75.png\")
+		MOUSE_BUTTON_LEFT:
+			mouse_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/mouse/tooltip_lmb_56x75.png\")
+		MOUSE_BUTTON_MIDDLE:
+			mouse_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/mouse/tooltip_mmb_56x75.png\")
+		MOUSE_BUTTON_RIGHT:
+			mouse_icon.texture = preload(\"res://Resources/Anarchy/Textures/controls/mouse/tooltip_rmb_56x75.png\")
+
+func set_current(idx: int):
+	for i in controls.size():
+		controls[i].visible = i == idx
+"
+
+[node name="UltimateButton" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -3774.0
+offset_bottom = -2085.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("1")
+script = SubResource("2")
+
+[node name="Keyboard" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="TooltipKey" type="NinePatchRect" parent="Keyboard"]
+self_modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(66, 75)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("4")
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 24
+
+[node name="MarginContainer" type="MarginContainer" parent="Keyboard"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+
+[node name="KeyboardText" type="Label" parent="Keyboard/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1")
+text = "e"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Joypad" type="TextureRect" parent="."]
+visible = false
+self_modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("7")
+
+[node name="JoypadIcon2" type="TextureRect" parent="Joypad"]
+unique_name_in_owner = true
+visible = false
+self_modulate = Color(0, 0, 0, 1)
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+texture = ExtResource("6")
+
+[node name="JoypadMargin" type="MarginContainer" parent="Joypad"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -29.5
+offset_top = -37.5
+offset_right = 45.5
+offset_bottom = 37.5
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="JoypadText" type="Label" parent="Joypad/JoypadMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1")
+text = "b"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Mouse" type="TextureRect" parent="."]
+visible = false
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("3")

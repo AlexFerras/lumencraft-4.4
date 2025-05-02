@@ -1,0 +1,45 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://d0hfkvmappe23"]
+
+[sub_resource type="Shader" id="1"]
+code = "shader_type canvas_item;
+uniform    float speed = 0.58;
+uniform    float interval = 5.0;
+uniform float linewidth = 0.58;
+uniform float grad = 3.0;
+uniform float time_offset = 3.0;
+uniform vec4 col1:source_color = vec4(0.5,0.5,1.0,0.0) ;
+
+
+void fragment()
+{
+    
+    // RECHECK
+    COLOR= texture(TEXTURE,UV) *COLOR; //*MODULATE;
+    
+    // Plot line...
+    vec2 linepos = UV;
+    linepos.y=-linepos.y;
+    // RECHECK
+    linepos.x = linepos.x - mod(TIME*speed+time_offset/*+MODULATE.r*11111.0*/,interval)+interval*0.5;
+   // linepos.x = linepos.x - mod(1.0*speed,2.0)+0.5;
+
+    float y = linepos.x*grad;
+    float s = smoothstep( y-linewidth, y, linepos.y) - smoothstep( y, y+linewidth, linepos.y); 
+    //s*=s;
+    // Merge texture + Glint
+    vec4 additional_glow = s*col1;
+
+    COLOR*= vec4(1.0)+vec4(additional_glow.rgb,0.0);
+    //COLOR=min(COLOR,vec4(1.9));
+
+    //COLOR= vec4(additional_glow.rgb,1.0);
+}"
+
+[resource]
+shader = SubResource("1")
+shader_parameter/speed = 0.58
+shader_parameter/interval = 5.0
+shader_parameter/linewidth = 0.58
+shader_parameter/grad = 3.0
+shader_parameter/time_offset = 3.0
+shader_parameter/col1 = Color(0.5, 0.5, 1, 0)

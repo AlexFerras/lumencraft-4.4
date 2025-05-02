@@ -1,0 +1,63 @@
+Range
+Increase reactor range.
+Increases shooting and detection range.
+Increases the range of projectiles.
+
+# Weapons
+
+Damage
+Increases damage dealt.
+
+Max Bullets
+Increases the amount of shots before reload.
+
+Reload Speed
+Shortens reloading time.
+Reduces time between shots.
+
+Fire Rate
+Increases rate of fire.
+
+Drilling Power
+Allows to drill harder materials and also faster.
+
+Stamina Usage
+Reduces the stamina required for attacking.
+
+Charge Speed
+Reduces the time required to charge a stab.
+
+Bullet Count
+Increases number of bullets shot at once.
+
+Ammo Efficiency
+Reduces the ammo used per shot.
+
+Flame Power
+Increases amount of flames.
+
+Explosion Power
+Increases explosion size.
+
+Explosion Damage
+Increases damage of the explosion.
+
+# Turrets
+
+Pierce
+Bullets will pierce through enemies.
+
+Sticky Flame
+Flames will linger on ground.
+
+Missile Count
+Increases the number of missiles shot in a volley.
+
+Anti-Air
+Double damage against flying enemies.
+
+Critical Hit
+25% chance to deal 4x damage.
+
+Cluster Explosion
+2 more smaller bombs spawn after explosion.

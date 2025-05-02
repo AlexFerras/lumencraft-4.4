@@ -1,0 +1,130 @@
+Routine Digging
+Your job starts here. As a warm-up, you have to dig 100 Lumens. Try to stay out of danger, but if a monster attacks you, just run. Remember that the Reactor has defensive capabilities, so use them to your advantage.
+We detected huge Lumen deposits. Dig!
+This is Lumen. Drill that.
+
+Need More Power
+They are approaching! We lost power in one of our bases and its gate can't be closed. Go there and restore the power to enable our defenses and fend off the incoming monsters.
+Survive a wave of enemies.
+Build a Power Expander to power up the turrets and survive.
+
+Tunnel Struggle
+You were lost while exploring a cave and need to get back to your base. Your only weapon is a Spear, so time to practice your fighting skills.
+Escape from the area.
+Destroy the nest to get a key.
+Hold attack button to charge the spear attack.
+
+Box Extraction
+We have located an important piece of technology lost by one of the expeditions. The target is located at the end of a deep tunnel. There is no way to get there due to absurd number of monsters. Luckily, we got information about a powerful weapon hidden somewhere in the area. Grab it and finish your objective.
+Get the Armored Box.
+Power up Shredder and use it to shred the box.
+Reach the target chest.
+Pivotal building destroyed
+
+Stand Your Ground
+We have recently established a new outpost and your mission will be to protect it. The defense is still not fully constructed. You are provided with Walls, some Stands and your weapons. Use them well.
+Use the stands to defend the southern entrance.
+Defend against 4 more waves, until extraction is available.
+Reach the extraction zone. Dig or fight, your choice.
+
+Defensive Reconnaissance
+A strategic area is under attack. The problem is that this location vulnerable from many sides. You have to figure out where to focus your defenses and protect the base. There is Info Center somewhere in one of the tunnels, which we recommend that you use.
+Use the Info Center to find a big wave path.
+
+There is a Wall Between Us
+A wave of enemies is approaching to another of our outposts. We constructed defenses, but due to wrong intel, they stand on the wrong side. It's too late to move it now, just patch up the other path with some walls. Make sure to build them thick and upgraded.
+Block the unprotected way with walls and survive.
+
+Lumenous Defenses
+This is a tough spot. You have to defend a base, but the area has no metal around. You won't be able to build anything. Your only option is to power up an old defense system and start Lumen Beams. Luckily Lumen is plenty and the beams will be more than enough to defend the Reactor.
+Start generators to power up Lumen Beams.
+Interact with the cannons to start them.
+
+Drill Beyond Limits
+We have located the first Lumen Chunk. It's in a secluded cave, behind a wall of strong metal. We have setup an outpost to prepare for extraction operation. Your task will be carrying the operation, by upgrading your drill and retrieving the chunk. Do note that the area is infested by monsters, so you need to prepare some defenses.
+Upgrade your Drill to be able to drill through harder terrain.
+Use Repair Gun to carry the Lumen Chunk to the reactor.
+Reach the target point.
+
+Extreme Test of Endurance
+There is a vault to open. We have located the keys, the problem is... they are all in lava. Your suit does withstand a bit of lava, but it's going to be tough. There is a Health Center somewhere in the area. Make a good use of it.
+Find the 4 keys.
+Open the vault.
+
+Point Alpha
+Good job so far, Scout! We are expanding further down and you need to help us. Your task is to setup a starting point for future expeditions. You know the drill - build a base and defend it from monsters. Use everything you have collected so far.
+
+Conservation of Lumen
+Monsters are coming from every direction and the situation is dire. Something especially big will arrive soon and we need to defend somehow. Our only chance might is the Lumen shockwave. The catch? All of the Lumen in this area has eroded and you need to convert it back to regular Lumen.
+Now you can convert eroded (blue) Lumen to regular Lumen using Repair Gun.
+Survive 10-th wave.
+Find the Technology Orb containing Eroded Lumen Conversion tech.
+Use the orb in the inventory.
+
+Defense is Best Offense
+Your task is to reach a certain location, but the path is blocked by strong monsters and you don't have strong weapons. Try building strong defenses and lure your enemies to their doom. Sniper Turrets recommended.
+Not enough metal to build a Miner? Mine it manually, by drilling the glittering spots. Give it a try.
+
+Stored Victory
+Just another enemy wave to fend off. There isn't much resources in the area, but you can get them from the nearby Storage Container. The problem is that it was cut off from the base and it's guarded by a strong creature. You need to either defeat the creature or try to power up the container.
+Claim resources from the Storage Container.
+Build defences and survive the wave.
+
+The Boss Has Arrived
+We are expanding further down and it's getting more dangerous. Lots of strong monsters are coming to your position. We have machinegun defenses, but we didn't anticipate this level of threat. You need build turrets that are more adapted to dealing with big enemies.
+Survive boss waves.
+Use drill to demolish Machinegun Turrets, build Sniper Turrets instead.
+
+Against the Rubble
+We lost one of our bases. Well, not only one, but this particular location is important for our future missions. It was destroyed and your task is to rebuild it. There is a Utility Workshop nearby. Use it to produce necessary repair tools and re-establish the defenses.
+Repair the turrets with Repair Gun and survive the wave.
+Power up the Utility Workshop.
+
+All is Lava
+There was an incident in the mine and you are surrounded by lava! Use all means necessary to survive.
+
+Point Beta
+Another starting point to setup. The monsters here are even more ferocious. But at this point, you experienced enough, right?
+
+Barrel Trap
+Enemies are coming at this position, but your means of defense are very limited. You only have Walls and a Repair Gun. And barrels. Lots of barrels. You can use your Repair Gun to move them around and construct an explosive surprise of doom.
+Use explosive barrels to survive the big wave.
+
+Explosive Win
+We have located another Lumen chunk. The base was built at an old explosive factory, so you have lots of explosives. You can use them to defend the base and blow up various things. Have fun.
+Survive the 1st wave. Try to use explosives.
+Now use the time between waves to find the Chunk we need.
+Get it to the reactor.
+Now run.
+
+Bucket of Nuggets
+We had a cave in and one of the bases was buried under the dirt. Retrieve the Item Detector tech from the buried base. You will need it to fuel your economy and protect the nearby outpost.
+Acquire the Item Detector technology.
+You are getting the sense of it.
+Defend against 5 waves.
+Grab five Metal Nuggets and get out.
+
+Point Gamma
+It's getting really dangerous. Not like it wasn't dangerous already. Setting up this checkpoint will be more difficult than anything you have faced so far. Are you prepared, Scout?
+
+Stealth Digging Mission
+We found a remote area full of precious resources. Due to how far it is from our headquarters, we can't provide you with sufficient defenses. You need to carefully gather the resources in the area, without alerting the residing creatures.
+Gather 250 Lumen and 250 metal.
+
+Bomb the Bugs
+We have just developed a new kind of turrets. Their explosive firepower is very effective against huge swarms. You will have a chance to test them against the huge wave of monsters coming at the research site. The turrets are already in place, you just need to make some space for them to operate properly.
+Clear metal walls obscuring Bomb Turrets.
+Prepare defense for big waves of enemies.
+
+Point Delta
+This will be the last checkpoint to establish. Below this point the depths become almost impossible to survive for humans. We are detecting the last Lumen chunk just a further down from there, but we need a strong starting point for the final expedition. Get ready for strong resistance from the creatures that live in the area.
+
+Lumen Farmlands
+This is your last assignment for this mission. The final chunk is in this area, behind sturdy stone gates. They require Lumen to be opened. Lots of Lumen. The base has many farms to provide you with necessary supplies. Just survive until you retrieve the chunk.
+Collect 2000 Lumens to get the Lumen Chunk.
+Return to the base.
+Build and upgrade more farms to collect 2000 Lumen.
+Carry the Lumen Chunk to reactor.
+
+Final Frontier
+This is it, Scout. The final frontier. Beyond that is the great unknown. Our settlement is established, your mission was successful. But your job does not end here. What dangers await you below? How deep does it go? No one knows. Only one way to discover - dig. Dig. Keep digging.

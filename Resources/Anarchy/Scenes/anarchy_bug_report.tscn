@@ -1,0 +1,722 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://Scenes/Title/Background.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=2]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_hellotext.tres" type="FontFile" id=3]
+[ext_resource path="res://Nodes/Editor/Icons/Player.png" type="Texture2D" id=4]
+[ext_resource path="res://Nodes/Buildings/Workshop/Sprites/Upgrade.png" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=6]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/tooltip_black_text_separator.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/keyboard/tooltip_button_64x64.png" type="Texture2D" id=8]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=9]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/types/mouse_167x223.png" type="Texture2D" id=10]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/tooltip_joypad_button.png" type="Texture2D" id=11]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_summary_title.tres" type="FontFile" id=12]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/Controls/Gamepad/tooltip_gamepad_icon.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_icon_playstation_0_75x75.png" type="Texture2D" id=14]
+[ext_resource path="res://Resources/Anarchy/Textures/controls/gamepad/gamepad_roundbutton_75x75.png" type="Texture2D" id=15]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/bug_reporting_tool.tscn" type="PackedScene" id=16]
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 6 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 9 )
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[node name="Example" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Background" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource( 1 )
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1650.0
+offset_top = -900.0
+offset_right = 1650.0
+offset_bottom = 900.0
+custom_minimum_size = Vector2( 3300, 1839 )
+size_flags_horizontal = 3
+theme_type_variation = "0001_brown_transp"
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 3236.0
+offset_bottom = 1775.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+offset_right = 3172.0
+offset_bottom = 1711.0
+custom_minimum_size = Vector2( 2200, 0 )
+size_flags_horizontal = 7
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+self_modulate = Color( 1, 0.721569, 0, 1 )
+offset_right = 3172.0
+offset_bottom = 149.0
+theme_override_fonts/font = ExtResource( 12 )
+text = "PODSUMOWANIE"
+align = 1
+
+[node name="Subtitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 149.0
+offset_right = 3172.0
+offset_bottom = 236.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "Opanowany komplesk"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Spacing2" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 236.0
+offset_bottom = 268.0
+custom_minimum_size = Vector2( 0, 32 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="PanelContainer3" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_left = 86.0
+offset_top = 268.0
+offset_right = 3086.0
+offset_bottom = 792.0
+custom_minimum_size = Vector2( 3000, 0 )
+size_flags_horizontal = 4
+theme_type_variation = "0001_yellow_only_border"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3"]
+offset_left = 264.0
+offset_top = 64.0
+offset_right = 2736.0
+offset_bottom = 460.0
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer"]
+offset_right = 2472.0
+offset_bottom = 87.0
+size_flags_horizontal = 0
+
+[node name="Name" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer"]
+offset_right = 1200.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "Czas:"
+align = 2
+valign = 1
+
+[node name="Spacing4" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer"]
+offset_left = 1204.0
+offset_right = 1268.0
+custom_minimum_size = Vector2( 64, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Value" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+offset_left = 1272.0
+offset_right = 2472.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "00:00:00"
+valign = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer"]
+offset_top = 103.0
+offset_right = 2472.0
+offset_bottom = 190.0
+size_flags_horizontal = 0
+
+[node name="Name" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer2"]
+offset_right = 1200.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "Zabici wrogowie:"
+align = 2
+valign = 1
+
+[node name="Spacing4" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer2"]
+offset_left = 1204.0
+offset_right = 1268.0
+custom_minimum_size = Vector2( 64, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Value" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer2"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+offset_left = 1272.0
+offset_right = 2472.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "100*5=500"
+valign = 1
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer"]
+offset_top = 206.0
+offset_right = 2472.0
+offset_bottom = 293.0
+size_flags_horizontal = 0
+
+[node name="Name" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer3"]
+offset_right = 1200.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "Zebrany lumen:"
+align = 2
+valign = 1
+
+[node name="Spacing4" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer3"]
+offset_left = 1204.0
+offset_right = 1268.0
+custom_minimum_size = Vector2( 64, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Value" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer3"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+offset_left = 1272.0
+offset_right = 2472.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "100*5=500"
+valign = 1
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer"]
+offset_top = 309.0
+offset_right = 2472.0
+offset_bottom = 396.0
+size_flags_horizontal = 0
+
+[node name="Name" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer4"]
+offset_right = 1200.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "Zebrany metal:"
+align = 2
+valign = 1
+
+[node name="Spacing4" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer4"]
+offset_left = 1204.0
+offset_right = 1268.0
+custom_minimum_size = Vector2( 64, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Value" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer3/VBoxContainer/HBoxContainer4"]
+self_modulate = Color( 0.0352941, 0.631373, 0.517647, 1 )
+offset_left = 1272.0
+offset_right = 2472.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 1200, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "100*5=500"
+valign = 1
+
+[node name="Spacing4" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 792.0
+offset_bottom = 824.0
+custom_minimum_size = Vector2( 0, 32 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TheBest" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_left = 1086.0
+offset_top = 824.0
+offset_right = 2086.0
+offset_bottom = 973.0
+custom_minimum_size = Vector2( 1000, 0 )
+size_flags_horizontal = 4
+theme_type_variation = "1000_yellow"
+
+[node name="TheBestInfo" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TheBest"]
+offset_left = 64.0
+offset_right = 936.0
+offset_bottom = 149.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource( 12 )
+text = "nowy rekord!"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_left = 86.0
+offset_top = 973.0
+offset_right = 3086.0
+offset_bottom = 1250.0
+custom_minimum_size = Vector2( 3000, 0 )
+size_flags_horizontal = 4
+theme_type_variation = "0001_yellow_only_border"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 2936.0
+offset_bottom = 213.0
+grow_horizontal = 2
+size_flags_horizontal = 7
+
+[node name="Score" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+offset_right = 1400.0
+offset_bottom = 149.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource( 12 )
+text = "Całkowity wynik"
+align = 2
+valign = 1
+uppercase = true
+
+[node name="Spacing3" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+offset_left = 1404.0
+offset_right = 1468.0
+custom_minimum_size = Vector2( 64, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Value_Score" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+self_modulate = Color( 1, 0.721569, 0, 1 )
+offset_left = 1472.0
+offset_right = 2872.0
+offset_bottom = 149.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource( 12 )
+text = "19999999232323223"
+valign = 1
+autowrap = true
+uppercase = true
+
+[node name="Spacing3" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 1250.0
+offset_bottom = 1282.0
+custom_minimum_size = Vector2( 0, 32 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Motivizer" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 1282.0
+offset_right = 3172.0
+offset_bottom = 1369.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource( 3 )
+text = "Spróbój ponownie. Stać Cię na więcej!"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Spacing5" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 1369.0
+offset_bottom = 1401.0
+custom_minimum_size = Vector2( 0, 32 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Rank" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_left = 1159.0
+offset_top = 1401.0
+offset_right = 2013.0
+offset_bottom = 1550.0
+size_flags_horizontal = 4
+theme_override_constants/separation = 32
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/Rank"]
+offset_right = 501.0
+offset_bottom = 149.0
+grow_horizontal = 2
+size_flags_horizontal = 0
+
+[node name="Icon" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/Rank/HBoxContainer2"]
+offset_top = 24.0
+offset_right = 100.0
+offset_bottom = 124.0
+custom_minimum_size = Vector2( 100, 100 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6
+
+[node name="Spacing3" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/Rank/HBoxContainer2"]
+offset_left = 104.0
+offset_right = 136.0
+custom_minimum_size = Vector2( 32, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Value_Score" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Rank/HBoxContainer2"]
+self_modulate = Color( 1, 0.721569, 0, 1 )
+offset_left = 140.0
+offset_right = 501.0
+offset_bottom = 149.0
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource( 12 )
+text = "25/176"
+valign = 1
+uppercase = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/Rank"]
+offset_left = 533.0
+offset_right = 854.0
+offset_bottom = 149.0
+grow_horizontal = 2
+size_flags_horizontal = 0
+
+[node name="Icon" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/Rank/HBoxContainer3"]
+offset_top = 24.0
+offset_right = 100.0
+offset_bottom = 124.0
+custom_minimum_size = Vector2( 100, 100 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 5 )
+expand = true
+stretch_mode = 6
+
+[node name="Spacing3" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/Rank/HBoxContainer3"]
+offset_left = 104.0
+offset_right = 136.0
+custom_minimum_size = Vector2( 32, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Value_Score" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Rank/HBoxContainer3"]
+self_modulate = Color( 1, 0.721569, 0, 1 )
+offset_left = 140.0
+offset_right = 321.0
+offset_bottom = 149.0
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource( 12 )
+text = "243"
+valign = 1
+uppercase = true
+
+[node name="Spacing6" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 1550.0
+offset_bottom = 1582.0
+custom_minimum_size = Vector2( 0, 32 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+offset_left = 1054.0
+offset_top = 1582.0
+offset_right = 2117.0
+offset_bottom = 1711.0
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="TooltipStaticLeft" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+material = SubResource( 2 )
+offset_right = 503.0
+offset_bottom = 129.0
+custom_minimum_size = Vector2( 0, 129 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "0010_yellow_border"
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft"]
+offset_left = 24.0
+offset_top = 27.0
+offset_right = 479.0
+offset_bottom = 102.0
+size_flags_vertical = 4
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 16
+
+[node name="MainHB" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer"]
+offset_left = 16.0
+offset_right = 439.0
+offset_bottom = 75.0
+size_flags_vertical = 5
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="TooltipKey" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB"]
+offset_right = 100.0
+offset_bottom = 75.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource( 1 )
+
+[node name="TooltipKey" type="NinePatchRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB/TooltipKey"]
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 100.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 66, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 24
+
+[node name="TooltipButton" type="NinePatchRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB/TooltipKey"]
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 66, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 11 )
+patch_margin_left = 15
+patch_margin_top = 14
+patch_margin_right = 15
+patch_margin_bottom = 14
+
+[node name="TooltipMouse" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB/TooltipKey"]
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+texture = ExtResource( 10 )
+expand = true
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB/TooltipKey"]
+offset_right = 100.0
+offset_bottom = 75.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_left = 12
+
+[node name="ValueKey" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB/TooltipKey/MarginContainer"]
+offset_left = 12.0
+offset_right = 88.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 2 )
+text = "esc"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="TooltipBlackTextSeparator2" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB" instance=ExtResource( 7 )]
+offset_left = 132.0
+offset_right = 158.0
+
+[node name="TooltipGamepadIcon" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB" instance=ExtResource( 13 )]
+offset_left = 190.0
+offset_right = 265.0
+
+[node name="TooltipText" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft/MarginContainer/MainHB"]
+offset_left = 297.0
+offset_right = 423.0
+offset_bottom = 64.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_constants/line_spacing = -23
+theme_override_fonts/font = ExtResource( 2 )
+text = "wyjdź"
+valign = 1
+uppercase = true
+
+[node name="TooltipStaticLeft2" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+material = SubResource( 2 )
+offset_left = 519.0
+offset_right = 1063.0
+offset_bottom = 129.0
+custom_minimum_size = Vector2( 0, 129 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = "0010_yellow_border"
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 520.0
+offset_bottom = 117.0
+size_flags_vertical = 4
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 16
+
+[node name="MainHB" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer"]
+offset_left = 16.0
+offset_right = 480.0
+offset_bottom = 105.0
+size_flags_vertical = 5
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="TooltipKey" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB"]
+offset_top = 15.0
+offset_right = 66.0
+offset_bottom = 90.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource( 1 )
+
+[node name="TooltipKey" type="NinePatchRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipKey"]
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 66, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 24
+
+[node name="TooltipButton" type="NinePatchRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipKey"]
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+custom_minimum_size = Vector2( 66, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 11 )
+patch_margin_left = 15
+patch_margin_top = 14
+patch_margin_right = 15
+patch_margin_bottom = 14
+
+[node name="TooltipMouse" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipKey"]
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+offset_right = 66.0
+offset_bottom = 75.0
+texture = ExtResource( 10 )
+expand = true
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipKey"]
+offset_right = 66.0
+offset_bottom = 75.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_left = 12
+
+[node name="ValueKey" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipKey/MarginContainer"]
+offset_left = 20.0
+offset_right = 46.0
+offset_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 2 )
+text = "r"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="TooltipBlackTextSeparator2" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB" instance=ExtResource( 7 )]
+offset_left = 98.0
+offset_right = 124.0
+offset_bottom = 105.0
+
+[node name="TooltipGamepadIcon" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB"]
+self_modulate = Color( 0, 0, 0, 1 )
+offset_left = 156.0
+offset_top = 15.0
+offset_right = 231.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2( 75, 75 )
+size_flags_vertical = 4
+texture = ExtResource( 15 )
+
+[node name="AdditionalIcon" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipGamepadIcon"]
+visible = false
+self_modulate = Color( 0, 0, 0, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+custom_minimum_size = Vector2( 75, 75 )
+texture = ExtResource( 14 )
+
+[node name="AdditionalText" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipGamepadIcon"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+custom_minimum_size = Vector2( 75, 75 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ValueText" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB/TooltipGamepadIcon/AdditionalText"]
+offset_left = 24.0
+offset_top = 5.0
+offset_right = 50.0
+offset_bottom = 69.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = ExtResource( 2 )
+text = "a"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="TooltipText" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TooltipStaticLeft2/MarginContainer/MainHB"]
+offset_left = 263.0
+offset_right = 464.0
+offset_bottom = 105.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_constants/line_spacing = -23
+theme_override_fonts/font = ExtResource( 2 )
+text = "spróbuj
+ponownie"
+valign = 1
+uppercase = true
+
+[node name="BugReportingTool" parent="." instance=ExtResource( 16 )]

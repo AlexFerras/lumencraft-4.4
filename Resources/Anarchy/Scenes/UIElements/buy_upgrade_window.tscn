@@ -1,0 +1,797 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Resources/Anarchy/Scripts/buy_upgrade_window.gd" type="Script" id=3]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/buy_upgrade_window_more_items.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Resources/Anarchy/Textures/Masks/mask_32x32_01.jpg" type="Texture2D" id=5]
+[ext_resource path="res://Resources/Anarchy/Textures/Icons/technology_001_192x192.png" type="Texture2D" id=6]
+[ext_resource path="res://Resources/Anarchy/Materials/ui_mask_shadermaterial.tres" type="Material" id=7]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/icon_value.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=10]
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=11]
+[ext_resource path="res://Resources/Anarchy/Shaders/ui_mask_shader.tres" type="Shader" id=12]
+
+[sub_resource type="StyleBoxEmpty" id=8]
+
+[sub_resource type="ShaderMaterial" id=22]
+resource_local_to_scene = true
+shader = ExtResource( 12 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 5 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.117647, 0.105882, 0.0823529, 0.937255 )
+corner_radius_top_left = 16
+corner_detail = 1
+
+[sub_resource type="ShaderMaterial" id=25]
+resource_local_to_scene = true
+shader = ExtResource( 12 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 5 )
+
+[sub_resource type="StyleBoxFlat" id=21]
+bg_color = Color( 0.117647, 0.105882, 0.0823529, 0.937255 )
+corner_detail = 1
+
+[sub_resource type="ShaderMaterial" id=16]
+shader = ExtResource( 12 )
+shader_param/cutoff = 0.0
+shader_param/smooth_size = 0.047
+shader_param/mask = ExtResource( 5 )
+
+[sub_resource type="StyleBoxEmpty" id=26]
+
+[sub_resource type="GDScript" id=27]
+script/source = "extends Button
+
+func _pressed() -> void:
+	print(\"opooppp\")
+"
+
+[sub_resource type="Animation" id=23]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("VBoxContainer/Header:material:shader_param/cutoff")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("VBoxContainer/Separator:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("VBoxContainer/Separator:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("VBoxContainer/Header/MarginContainer/HBoxContainer/HeaderTitle:percent_visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue2:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("VBoxContainer/PanelContainer:material:shader_param/cutoff")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("VBoxContainer/Footer:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("VBoxContainer/Footer:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Description:percent_visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/10/type = "value"
+tracks/10/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/IconPanel:modulate")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/ProgressPanel:modulate")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/12/type = "value"
+tracks/12/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/13/type = "value"
+tracks/13/path = NodePath(".:visible")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/14/type = "value"
+tracks/14/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Actions:modulate")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=24]
+resource_name = "show"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/path = NodePath("VBoxContainer/Header:material:shader_param/cutoff")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("VBoxContainer/Separator:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, -25 ), Vector2( 1, -25 ), Vector2( 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("VBoxContainer/Separator:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("VBoxContainer/Header/MarginContainer/HBoxContainer/HeaderTitle:percent_visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0, 1.0 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PackedFloat32Array( 0, 0.3, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue2:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PackedFloat32Array( 0, 0.4, 0.6 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("VBoxContainer/PanelContainer:material:shader_param/cutoff")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.4 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 1.0, 0.0 ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("VBoxContainer/Footer:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PackedFloat32Array( 0, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, -180 ), Vector2( 1, 1 ) ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("VBoxContainer/Footer:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PackedFloat32Array( 0, 0.2 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Description:percent_visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0, 1.0 ]
+}
+tracks/10/type = "value"
+tracks/10/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/IconPanel:modulate")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/ProgressPanel:modulate")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PackedFloat32Array( 0, 0.3, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/12/type = "value"
+tracks/12/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PackedFloat32Array( 0, 0.5, 0.7 ),
+"transitions": PackedFloat32Array( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/13/type = "value"
+tracks/13/path = NodePath(".:visible")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/14/type = "value"
+tracks/14/path = NodePath("VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Actions:modulate")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/keys = {
+"times": PackedFloat32Array( 0, 0.3 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[node name="BuyUpgradeWindow" type="PanelContainer"]
+visible = false
+offset_right = 1072.0
+offset_bottom = 758.0
+theme_override_styles/panel = SubResource( 8 )
+script = ExtResource( 3 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_right = 1072.0
+offset_bottom = 771.0
+theme_override_constants/separation = 0
+
+[node name="Header" type="PanelContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+material = SubResource( 22 )
+offset_right = 1072.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 0, 96 )
+mouse_filter = 2
+theme_override_styles/panel = SubResource( 7 )
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Header"]
+offset_right = 1072.0
+offset_bottom = 96.0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_left = 32
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Header/MarginContainer"]
+offset_left = 32.0
+offset_right = 1040.0
+offset_bottom = 96.0
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="HeaderTitle" type="Label" parent="VBoxContainer/Header/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 86.0
+offset_right = 387.0
+offset_bottom = 96.0
+size_flags_vertical = 1
+theme_override_colors/font_color = Color( 1, 1, 1, 1 )
+theme_override_fonts/font = ExtResource( 11 )
+text = "Header title"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="Costs" type="HBoxContainer" parent="VBoxContainer/Header/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 419.0
+offset_right = 921.0
+offset_bottom = 96.0
+theme_override_constants/separation = 32
+
+[node name="IconValue2" parent="VBoxContainer/Header/MarginContainer/HBoxContainer/Costs" instance=ExtResource( 9 )]
+offset_top = 16.0
+offset_right = 235.0
+offset_bottom = 80.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Icon" parent="VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue2" index="0"]
+self_modulate = Color( 0.337255, 0.262745, 0.188235, 1 )
+
+[node name="IconValue" parent="VBoxContainer/Header/MarginContainer/HBoxContainer/Costs" instance=ExtResource( 9 )]
+offset_left = 267.0
+offset_top = 16.0
+offset_right = 502.0
+offset_bottom = 80.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Icon" parent="VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue" index="0"]
+self_modulate = Color( 0.819608, 0.109804, 0.427451, 1 )
+
+[node name="Separator" type="Panel" parent="VBoxContainer"]
+material = ExtResource( 7 )
+offset_top = 96.0
+offset_right = 1072.0
+offset_bottom = 100.0
+custom_minimum_size = Vector2( 0, 4 )
+mouse_filter = 2
+theme_type_variation = "Footer"
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+self_modulate = Color( 1, 1, 1, 0.901961 )
+material = SubResource( 25 )
+offset_top = 100.0
+offset_right = 1072.0
+offset_bottom = 767.0
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource( 21 )
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
+offset_right = 1072.0
+offset_bottom = 667.0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="ControlContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer2"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 1040.0
+offset_bottom = 635.0
+theme_override_constants/separation = 16
+
+[node name="Description" type="RichTextLabel" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer"]
+unique_name_in_owner = true
+offset_right = 1008.0
+offset_bottom = 168.0
+theme_override_fonts/normal_font = ExtResource( 10 )
+bbcode_enabled = true
+text = "Long ESTABLISHED fact that a reader will be distracted by the readable something ble content."
+text = "Long ESTABLISHED fact that a reader will be distracted by the readable something ble content."
+fit_content_height = true
+scroll_active = false
+
+[node name="DescriptionSpacer" type="Control" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer"]
+unique_name_in_owner = true
+offset_top = 184.0
+offset_right = 1008.0
+offset_bottom = 184.0
+size_flags_vertical = 3
+
+[node name="IconHBox" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer"]
+unique_name_in_owner = true
+offset_top = 200.0
+offset_right = 1008.0
+offset_bottom = 488.0
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="IconPanel" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox"]
+unique_name_in_owner = true
+self_modulate = Color( 1, 1, 1, 0.901961 )
+material = SubResource( 16 )
+offset_right = 168.0
+offset_bottom = 288.0
+theme_type_variation = "BuyUpgradePanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/IconPanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 164.0
+offset_bottom = 284.0
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="MainIcon" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/IconPanel/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 144.0
+offset_bottom = 264.0
+custom_minimum_size = Vector2( 128, 128 )
+size_flags_vertical = 5
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="ProgressContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox"]
+unique_name_in_owner = true
+offset_left = 184.0
+offset_right = 1008.0
+offset_bottom = 288.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="ProgressPanel" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer"]
+unique_name_in_owner = true
+self_modulate = Color( 1, 1, 1, 0.901961 )
+material = SubResource( 16 )
+offset_right = 824.0
+offset_bottom = 136.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+theme_type_variation = "BuyUpgradePanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/ProgressPanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 820.0
+offset_bottom = 132.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/ProgressPanel/MarginContainer"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 800.0
+offset_bottom = 112.0
+size_flags_horizontal = 3
+size_flags_vertical = 5
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="ProgressIcon" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/ProgressPanel/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 140.0
+offset_right = 236.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/ProgressPanel/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 244.0
+offset_top = 16.0
+offset_right = 644.0
+offset_bottom = 80.0
+custom_minimum_size = Vector2( 400, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_type_variation = "WorkshopProgress"
+value = 70.0
+
+[node name="QueuePanel" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer"]
+unique_name_in_owner = true
+self_modulate = Color( 1, 1, 1, 0.901961 )
+material = SubResource( 16 )
+offset_top = 152.0
+offset_right = 824.0
+offset_bottom = 288.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+theme_type_variation = "BuyUpgradePanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 820.0
+offset_bottom = 132.0
+size_flags_horizontal = 3
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="QueueContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer"]
+unique_name_in_owner = true
+offset_left = 48.0
+offset_top = 16.0
+offset_right = 768.0
+offset_bottom = 112.0
+size_flags_horizontal = 4
+theme_override_constants/separation = 8
+
+[node name="Icon2" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer/QueueContainer"]
+offset_right = 96.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Icon3" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer/QueueContainer"]
+offset_left = 104.0
+offset_right = 200.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Icon4" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer/QueueContainer"]
+offset_left = 208.0
+offset_right = 304.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Icon5" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer/QueueContainer"]
+offset_left = 312.0
+offset_right = 408.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Icon6" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer/QueueContainer"]
+offset_left = 416.0
+offset_right = 512.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="Icon7" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer/QueueContainer"]
+offset_left = 520.0
+offset_right = 616.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+texture = ExtResource( 6 )
+expand = true
+stretch_mode = 6
+
+[node name="BuyUpgradeWindowMoreItems" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/IconHBox/ProgressContainer/QueuePanel/MarginContainer/QueueContainer" instance=ExtResource( 4 )]
+offset_left = 624.0
+offset_right = 720.0
+
+[node name="Actions" type="GridContainer" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer"]
+unique_name_in_owner = true
+offset_left = 292.0
+offset_top = 504.0
+offset_right = 716.0
+offset_bottom = 603.0
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 16
+columns = 2
+
+[node name="UltimateTooltip" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Actions" instance=ExtResource( 1 )]
+offset_bottom = 99.0
+
+[node name="Button" type="Button" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Actions/UltimateTooltip"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 180.0
+offset_bottom = 87.0
+theme_override_styles/focus = SubResource( 26 )
+flat = true
+script = SubResource( 27 )
+
+[node name="UltimateTooltip2" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Actions" instance=ExtResource( 1 )]
+offset_left = 220.0
+offset_right = 424.0
+offset_bottom = 99.0
+
+[node name="Button" type="Button" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer/Actions/UltimateTooltip2"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 180.0
+offset_bottom = 87.0
+theme_override_styles/focus = SubResource( 26 )
+flat = true
+
+[node name="CantUse" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer2/ControlContainer"]
+unique_name_in_owner = true
+visible = false
+offset_top = 619.0
+offset_right = 1008.0
+offset_bottom = 683.0
+size_flags_vertical = 10
+theme_type_variation = "YellowLabel"
+text = "Can't use it here."
+align = 1
+autowrap = true
+
+[node name="Footer" type="Panel" parent="VBoxContainer"]
+material = ExtResource( 7 )
+offset_top = 767.0
+offset_right = 1072.0
+offset_bottom = 771.0
+custom_minimum_size = Vector2( 0, 4 )
+theme_type_variation = "Footer"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 23 )
+anims/show = SubResource( 24 )
+
+[editable path="VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue2"]
+[editable path="VBoxContainer/Header/MarginContainer/HBoxContainer/Costs/IconValue"]

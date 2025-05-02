@@ -1,0 +1,205 @@
+Blast from the Past
+You take control of an old base. Your aim is to restore its functions and defend from monsters swarming in nearby caves. Something big is lurking in the shadows...
+Offline
+required
+Starting...
+Running
+Start the reactor.
+Look around and find 10 Lumens to start the reactor.
+Find a way to the cave south-west (SW).
+Kill the big monster.
+Fend off a wave of enemies.
+Tiny Spiders
+Something Disgusting
+Fight Together
+The Big One
+Big Trio
+Fast and Effective
+
+Underground Survival
+Plan your base from scratch to defend against waves from all sides. Explore the caves to find rich resource deposits and valuable treasures.
+Try to block the lava. The geiser will erupt soon.
+Another eruption. The lava will flow further, block it!
+Lava is coming
+The Battering Ram
+Lava strikes again
+
+First Encounter
+You are in a vast cave system with only a reactor. Your task is to build a base using the rich resource deposits in the area and fend off the monsters that are waiting around every corner.
+Do not be afraid!
+Explore!
+Think positive.
+It's alive!
+The fun begins.
+How is it going?
+Few more turrets?
+Deep breath.
+It's a trap!
+Free the worms!
+One more!
+Easy peasy lemon squeezy.
+Darkness is coming.
+To be or not to be.
+They're coming for you!
+Peace and love.
+We have a problem.
+Because.
+Life is a simulation.
+BIG CRAZY WAVE!
+Peaceful times.
+Almost done.
+Are you ready?
+This is BIG my friend!
+Ding Dong!
+The Sound Of Silence.
+You are the best!
+You won! Game will finish in 2 minutes.
+Monster Nests Destroyed
+
+Forsaken Tunnels
+Survive and reach the target at the end of a very dark cave maze.
+Upgrading your drill at least twice will be useful.
+Eroded Lumen can be converted with Repair Gun.
+There is a machine somewhere that can extract contents of this crate.
+Pivotal building destroyed
+
+Infested Complex
+You are in an abandoned facility full of monsters. Your target is to escape, and of course, survive.
+These will come in handy later. Don't waste them.
+
+Desert Excavation
+Drill your way through the vast sandy caves to find ancient stone tablet.
+The Tablet is now revealed.
+Tundra Excavation
+Drill your way through the vast snowy caves to find ancient stone tablet.
+
+Fear the Darkness
+Your reactor is out of power and the monsters are creeping in the shadows, waiting for your mistake. Keep your reactor powered with Lumen and use light to scare off the monsters. Brave into darkness to find special golden Lumen that gives infinite energy. Can you complete this challenge with its own unique rules?
+Special rules for this map:\n- Darkness is persistent and [color=#ff9010]light[/color] scares off monsters. Avoid shadows and use flares often.\n- [color=#a000ff][shake rate=60 level=15]Fear[/shake][/color] system. When in darkness for too long, enemies will start to spawn and stalk you and your aim will be impaired.\n- Sprinting and dashing is disabled.\n- Your pistol has unlimited ammo, but requires reload if you have no bullets in your inventory.\n- [color=#a000ff]Reactor Fuel[/color] system [img]res://Nodes/Unique/PowerBar.png[/img]\nKeep supplying Lumens to your reactor. Depending on the power level:\n\tin [color=#dc2d54]red[/color] - buildings do not operate,\n\tin [color=#007b5b]green[/color] - normal operation,\n\tin [color=#09a17a]bright green[/color] - overdrive, extended range, buildings regenerate.\n- The final wave spawns infinitely until certain conditions are met.\n\nVictory conditions:\n- Bring 3 golden Lumen to the reactor.\n- Survive 10th wave.
+Collect 3 golden Lumen.
+Collect 2 golden Lumen.
+Collect 1 golden Lumen.
+Defend yourself from the 10th enemy wave.
+LOW
+NOMINAL
+OVERDRIVE
+Need %s more Lumen to start the reactor.
+Add %s Lumen
+Add Lumen
+Start Reactor
+Puts up to %s Lumen into the reactor, increases time by up to %s seconds.
+They sleep in the darkness.
+They sense vibrations.
+You are the intruder.
+Light will protect you... for now.
+Dig deeper.
+Dig faster.
+The swarm awakes.
+The swarm is angry.
+Prepare your defense!
+Final confrontation.
+
+Rocket Arena
+Fight against waves of monsters on a deadly arena surrounded by lava.
+Warm up
+Fire some rockets
+Have you found upgrades?
+Final encounter
+One more final encounter
+
+Flare Siege
+You are alone against a legion of enemies. All you have are flares.
+Use flares to defeat incoming enemies.
+
+Hub
+
+# Random maps
+Survive %d waves
+Deliver a Lumen Chunk to the reactor.
+
+Horrible
+Dangerous
+Dark
+Scary
+Creepy
+Shocking
+Abominable
+Awful
+Nasty
+Terrifying
+Threatening
+Eldritch
+Grotesque
+Siege
+Battle
+Aggression
+Charge
+Invasion
+Strike
+Skirimish
+Encounter
+Assault
+Huge
+Big
+Gigantic
+Colossal
+Massive
+Heavy
+
+# Generic
+
+Defeat all waves.
+Collect %s x %d.
+Reach the destination.
+Reach all goal points.
+Reach the next goal.
+Survive for %02d:%02d.
+Build %s.
+Research %s.
+Kill %s x %s.
+Kill all enemies.
+Get score of %s.
+Time Limit: %02d:%02d
+Time Left: %02d:%02d
+Map completed! Exit at any time to get score summary.
+
+# Tutorial
+
+Move
+Dash (hold to run)
+Use Primary Item
+Use Secondary Item
+Open Build Menu
+Metal and Lumen
+Triple press to enable auto-drilling
+Welcome to the tutorial. Drill your way north to start. Your ultimate goal is to defend base from incoming wave of enemies. There will be objectives to guide you, but feel free to do things in any order.
+Fun begins
+
+Get items from the chest.
+Make a pistol and some ammo at the workshop.
+Dig up the metal and Lumen deposit.
+Interact with the metal vein to build a Miner.
+Place a Storage Container next to the Miner.
+Use the other workshop to upgrade your drill twice.
+Use build menu to place a Power Expander to power buildings.
+Get a Lumen Clump, select it in inventory and throw at the Shredder.
+Use your upgraded drill to reach the Lab.
+Put another Power Expander to power the Lab.
+Research any tech at the Lab.
+Upgrade any stat at the Scout Center.
+Use the Repair Gun to repair damaged structures.
+Upgrade any turret.
+You are now ready to face the enemies. You can use Reactor to shorten the waiting time.
+Survive.
+
+Shredder can be used to extract Lumen Clumps. Just drop the items in it.
+Upgrade your drill to mine stronger materials. You need 2 upgrades to get past the green rocks in the west.
+Here you can make weapon and ammo to defend yourself.
+You can speed up the wave here if you don't want to wait.
+Explosives are useful for quick mining.
+If you put a Storage Container next to a Miner, it will automatically collect resources. Stored resources are automatically used when your inventory is not enough.
+Buildings need to be powered to work. Place some Power Expanders where necessary.
+Use Lab and Scout Center to permanently upgrade your character and other aspects. You can check your acquired technologies in the Map menu. In co-op, Scout Center upgrades only the player who built it, so each player needs their own.
+Explore the map to prepare for the incoming enemy wave.
+When you die, a clone replaces your dead character. If you don't have spares, it's game over. Note that normally you drop all items on death; this is disabled in the tutorial.
+You can make more Flares and other useful items when you place Utility Workshop.

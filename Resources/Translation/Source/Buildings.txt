@@ -1,0 +1,159 @@
+Reactor
+Powers all buildings in range and provides a respawn point.
+Create Clone
+Create a spare clone, which will be used to revive after death.
+Defense Shockwave
+Turn your lumens into shockwave to defend your base. Use with caution!
+Explode
+Extract Lumen
+Search for Lumen under the reactor. This will attract attention of the monsters, making the wave come faster.
+Extract
+Upgrade Reactor Level
+Upgrading reactor's level will increase its health and range. It also increases the maximum number of placed turrets.\nMax health: %s -> %s\nMax Turrets: %s -> %s
+
+Drill Workshop
+Allows to create and upgrade Drills.
+Spear Workshop
+Allows to create and upgrade Spears.
+Pistol Workshop
+Allows to create and upgrade Pistols.
+Machinegun Workshop
+Allows to create and upgrade Machineguns.
+Shotgun Workshop
+Allows to create and upgrade Shotguns.
+Rocket Launcher Workshop
+Allows to create and upgrade Rocket Launchers.
+Flamethrower Workshop
+Allows to create and upgrade Flamethrowers.
+
+Workshop done
+Create
+Upgrade
+Queue
+Cancel Queue
+Error
+lv
+
+Explosive Workshop
+Creates different sorts of explosives.
+Explosive Barrel
+Movable barrel that explodes on impact.
+
+Utility Workshop
+Creates utility tools for movement and maintenance.
+
+Machinegun Turret
+A turret with high fire rate. Good against crowds.
+
+Flamethrower Turret
+Spews fire onto enemies.
+
+Missile Turret
+Shoots powerful missiles. Good against big foes.
+
+Sniper Turret
+High damage, range and precision, but low fire rate.
+
+Bomb Turret
+Launches explosive bombs that deal heavy splash damage.
+
+Light Tower
+Small lighthouse shining in one direction.
+
+Power Expander
+Provides power to connected buildings and increases building range.
+
+Lumen Farm
+Eternal and infinite source of lumens.
+Upgrade Capacity
+More mushrooms will grow at once.
+Upgrade Speed
+Mushrooms will grow faster.
+
+Gate
+Defense structure that can open and close.
+
+Wall
+Generic stone wall for all your defense needs.
+Durability
+Fire Resistant
+Slows Flying
+
+Stand
+Allows you to shoot above walls.
+
+Health Center
+Restores and upgrades health and produces medkits.
+Upgrade Use Time
+Increases efficiency of healing, making it possible to heal faster.
+
+Scout Center
+Adds and improves abilities of your character. Each player needs their own center.
+Hitpoints
+maxed
+No player
+
+Lab
+Allows to upgrade and research new tech.
+Research complete: %s
+New technologies at Lab
+Inactive
+Active
+Busy
+Researching %s...
+Research
+Discover Technologies
+Replace available technologies with a new set.
+Search
+Discovering new technologies...
+
+Shredder
+Destroys items and salvages resources from them.
+
+Storage Container
+Stores Lumen and metal to save inventory space.
+Store Lumen
+Store metal
+Store
+
+Generator
+Stores energy and powers up nearby building when turned on.
+Turn On
+Turn Off
+
+Miner
+Place a Miner
+Gives constant income of metal. Needs to be in range of power source. Metal left: %s.
+Remaining Metal: %s
+Mining in progress.
+No power.
+No power!
+Mining in progress. Use Lumen to overclock.
+Overclock
+
+Info Center
+Displays detailed information about upcoming waves.
+No Upcoming Waves
+No Enemy Selected
+Next Enemy
+Show All
+HP:
+Count:
+
+Lumen Beam
+Uses Lumen to shoot a devastating laser beam.
+Shoot Laser
+Will automatically shoot for 10s.
+Remaining time: %.1f.
+Shoot
+Lock Rotation
+Unlock Rotation
+
+Pet Station
+Constructs mechanical pets.
+
+Item Rack
+Holds up to 3 stacks of an item.
+Stored: %s x %s
+Retrieve Single
+Retrieve Stack

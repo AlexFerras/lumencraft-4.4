@@ -1,0 +1,31 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=2]
+
+[ext_resource path="res://Resources/Terrain/Images/FloorSandy.png" type="Texture2D" id=1]
+[ext_resource path="res://Resources/Terrain/Images/FloorGround.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Terrain/Images/FloorSteel.png" type="Texture2D" id=3]
+[ext_resource path="res://Resources/Terrain/Images/FloorDirt.jpg" type="Texture2D" id=4]
+[ext_resource path="res://Resources/Materials/FloorMaterial_4tex.gdshader" type="Shader" id=5]
+
+[resource]
+shader = ExtResource( 5 )
+shader_param/resolution1 = 40.0
+shader_param/resolution2 = 60.0
+shader_param/resolution3 = 100.0
+shader_param/resolution4 = 32.0
+shader_param/hsvoffset1 = 0.513
+shader_param/hsvsaturation1 = -0.289
+shader_param/hsvlight1 = -0.093
+shader_param/hsvoffset2 = 0.459
+shader_param/hsvsaturation2 = -0.211
+shader_param/hsvlight2 = -0.134
+shader_param/hsvoffset3 = 0.01
+shader_param/hsvsaturation3 = 0.0
+shader_param/hsvlight3 = 0.0
+shader_param/hsvoffset4 = -0.891
+shader_param/hsvsaturation4 = -0.741
+shader_param/hsvlight4 = 0.0
+shader_param/use_black_as_alpha = false
+shader_param/texture1 = ExtResource( 2 )
+shader_param/texture2 = ExtResource( 4 )
+shader_param/texture3 = ExtResource( 3 )
+shader_param/texture4 = ExtResource( 1 )

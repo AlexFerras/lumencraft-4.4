@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/player_hp_stamina_resources_left.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/hud_inventory_item.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Resources/Anarchy/Scenes/UIElements/UltimateTooltip.tscn" type="PackedScene" id=3]
+
+[node name="HudPlayerTopLeft" type="MarginContainer"]
+offset_right = 1350.0
+offset_bottom = 255.0
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="Content" type="VBoxContainer" parent="."]
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 1352.0
+offset_bottom = 255.0
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Status" parent="Content" instance=ExtResource( 1 )]
+unique_name_in_owner = true
+offset_right = 1320.0
+
+[node name="PlayerItems" type="HBoxContainer" parent="Content"]
+offset_top = 80.0
+offset_right = 1320.0
+offset_bottom = 223.0
+theme_override_constants/separation = 6
+
+[node name="CurrentItem" parent="Content/PlayerItems" instance=ExtResource( 2 )]
+unique_name_in_owner = true
+
+[node name="CurrentAmmo" parent="Content/PlayerItems" instance=ExtResource( 2 )]
+unique_name_in_owner = true
+offset_left = 115.0
+offset_right = 224.0
+
+[node name="SecondaryItem" parent="Content/PlayerItems" instance=ExtResource( 2 )]
+unique_name_in_owner = true
+offset_left = 230.0
+offset_right = 339.0
+
+[node name="Spacer" type="Control" parent="Content/PlayerItems"]
+offset_left = 345.0
+offset_right = 445.0
+offset_bottom = 143.0
+custom_minimum_size = Vector2( 100, 0 )
+
+[node name="QuickBinds" type="HBoxContainer" parent="Content/PlayerItems"]
+unique_name_in_owner = true
+offset_left = 451.0
+offset_right = 1107.0
+offset_bottom = 143.0
+
+[node name="Quick1" parent="Content/PlayerItems/QuickBinds" instance=ExtResource( 2 )]
+
+[node name="Quick2" parent="Content/PlayerItems/QuickBinds" instance=ExtResource( 2 )]
+offset_left = 113.0
+offset_right = 222.0
+
+[node name="Quick3" parent="Content/PlayerItems/QuickBinds" instance=ExtResource( 2 )]
+offset_left = 226.0
+offset_right = 335.0
+
+[node name="Quick4" parent="Content/PlayerItems/QuickBinds" instance=ExtResource( 2 )]
+offset_left = 339.0
+offset_right = 448.0
+
+[node name="ControllerBind" parent="Content/PlayerItems/QuickBinds" instance=ExtResource( 3 )]
+unique_name_in_owner = true
+offset_left = 452.0
+offset_right = 656.0
+offset_bottom = 99.0
+action = "quick"

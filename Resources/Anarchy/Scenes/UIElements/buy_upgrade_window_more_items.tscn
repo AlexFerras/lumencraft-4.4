@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" type="FontFile" id=1]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[node name="BuyUpgradeWindowMoreItems" type="Panel"]
+offset_right = 96.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 96, 96 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -38.0
+offset_top = -32.0
+offset_right = 38.0
+offset_bottom = 32.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "..."

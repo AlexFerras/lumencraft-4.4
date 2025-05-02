@@ -1,0 +1,17 @@
+Up
+Down
+Left
+Right
+Interact
+Drop Item
+Attack
+Alt Attack
+Dash
+Run
+Inventory
+Build
+Map
+Next Slot
+Prev Slot
+Auto Walk
+Respawn

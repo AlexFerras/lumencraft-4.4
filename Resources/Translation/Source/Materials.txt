@@ -1,0 +1,45 @@
+Dirt
+Metal
+Better Metal
+Super Metal
+Eroded Lumen
+Lava
+Ashes
+Foam
+Rock
+Bedrock
+Concrete
+Steel
+Ruins
+Sandstone
+Ice
+Ivy
+Steel Plate
+Quartz
+Marble
+Granite
+Wavy Rock
+Mossy Rock
+Wood
+Snow Ruins
+
+Light Dirt
+Dark Dirt
+Coarse Dirt
+Dank Dirt
+Blue Grass
+Sand
+Marble Path
+Dry Moss
+Grass
+Brown Stone
+Dark Stone
+
+Biomass
+Glowing Biomass
+Fungus
+Moss
+Roots
+Snow
+Worm Nest
+Blood
