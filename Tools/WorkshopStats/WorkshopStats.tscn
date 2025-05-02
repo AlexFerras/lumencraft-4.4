@@ -1,0 +1,394 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=1]
+
+[sub_resource type="Theme" id=1]
+default_font = ExtResource( 1 )
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Control
+
+const KEEP_STATS = [\"Terrain Pixels\", \"Terrain Material Ratio\"]
+const USE_THREADS = true
+
+var page := 1
+var left: int
+
+var stats: Dictionary
+var hash_index: Dictionary
+
+var dir: DirAccess
+var current: int
+var total: int
+var stopped: bool
+
+var thread_pool: Array
+var work_to_do: Array
+var work_mutex := Mutex.new()
+var stat_mutex := Mutex.new()
+
+func _ready() -> void:
+	set_process(false)
+	
+	if USE_THREADS:
+		for i in 12:
+			var th := Thread.new()
+			th.start(Callable(self, \"thread_method\"))
+			thread_pool.append(th)
+
+func downlaod() -> void:
+	SteamAPI.connect(\"workshop_loaded\", Callable(self, \"on_workshop_loaded\"))
+	SteamAPI.connect(\"map_downloaded\", Callable(self, \"on_map_downloaded\"))
+	
+	SteamAPI.load_workshop(1, page, \"\")
+
+func on_workshop_loaded(count: int, c: bool):
+	if count == 0:
+		return
+	
+	left += count
+	
+	for i in count:
+		var item := SteamAPI.singleton.getQueryUGCResult(SteamAPI.workshop_handle, i)
+		if not item.is_empty():
+			SteamAPI.singleton.downloadItem(item.file_id, false)
+	
+	page += 1
+	SteamAPI.load_workshop(1, page, \"\")
+
+func on_map_downloaded(map: Dictionary):
+	left -= 1
+	
+	if left == 0:
+		print(\"Done downloading. Go to %s\" % map.path.get_base_dir().get_base_dir())
+	else:
+		print(\"Downloading. %s left\" % left)
+
+func get_stats() -> void:
+	var file := File.new()
+	file.open(\"res://Tools/WorkshopStats/LastData.dat\", file.READ)
+	var old_data = file.get_var()
+	
+	for stat in KEEP_STATS:
+		stats[stat] = old_data[stat]
+	
+	$Button2.queue_free()
+	$Button3.show()
+	
+	dir = DirAccess.new()
+	dir.open(\"C:/Program Files (x86)/Steam/steamapps/workshop/content/1713810\")
+	dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	
+	var f := dir.get_next()
+	while not f.is_empty():
+		total += 1
+		f = dir.get_next()
+	
+	dir.list_dir_end()
+	dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	
+	set_process(true)
+
+func _process(delta: float) -> void:
+	var folder := dir.get_next()
+	if folder.is_empty():
+		stop()
+	
+	if stopped:
+		set_process(false)
+		print(\"Finished. Stats:\")
+		print(stats)
+		if not hash_index.is_empty():
+			print(hash_index)
+		plot_stats()
+		save_stats()
+		return
+	
+	current += 1
+	print(\"Loading map %s of %s\" % [current, total])
+	
+	var map := MapFile.new()
+	map.load_from_file(dir.get_current_dir().plus_file(folder).plus_file(\"map.lcmap\"))
+	if map.error.is_empty():
+		print(\"Map loaded: %s (%sx%s)\" % [map.map_name, map.pixel_data.get_width(), map.pixel_data.get_height()])
+		
+		if USE_THREADS:
+			work_mutex.lock()
+			work_to_do.append(map)
+			work_mutex.unlock()
+		else:
+			fetch_stats(map, stats)
+	else:
+		print(\"Broken map: \", folder)
+
+func fetch_stats(map: MapFile, data: Dictionary):
+	if map.uid.is_empty():
+		push_error(\"no uid\")
+	
+	count_stat(data, \"Version\", map.loaded_version)
+	count_stat(data, \"Map Size\", map.pixel_data.get_size())
+	
+#	var pixel_map: Array
+#	pixel_map.resize(32)
+#	pixel_map.fill(0)
+	
+#	map.pixel_data.lock()
+#	for x in map.pixel_data.get_width():
+#		for y in map.pixel_data.get_height():
+#			pixel_map[Utils.get_pixel_material(map.pixel_data.get_pixel(x, y))] += 1
+#			count_stat(data, \"Terrain Pixels\", Utils.get_pixel_material(map.pixel_data.get_pixel(x, y)))
+	
+#	var full_size: float = map.pixel_data.get_width() * map.pixel_data.get_height()
+#	for i in pixel_map.size():
+#		if pixel_map[i] > 0:
+#			count_stat(data, \"Terrain Material Ratio\", str(i, \"|\", pixel_map[i] / full_size))
+	
+	for i in map.terrain_config.terrain.size():
+		count_stat(data, \"Used Custom Materials\", map.terrain_config.terrain[i])
+	
+	for i in map.terrain_config.upper_floor.size():
+		count_stat(data, \"Used Upper Floor Textures\", map.terrain_config.upper_floor[i])
+	
+	for i in map.terrain_config.lower_floor.size():
+		count_stat(data, \"Used Lower Floor Textures\", map.terrain_config.lower_floor[i])
+	
+	count_stat(data, \"Wave Count\", map.wave_data.size())
+	var has_infinite: bool
+	for wave in map.wave_data:
+		var count: int
+		for enemy in wave.enemies:
+			count_stat(data, \"Wave Enemies\", enemy.name.trim_prefix(\"Swarm/\"))
+			count += enemy.count
+		
+		count_stat(data, \"Wave Enemy Count\", count)
+		count_stat(data, \"Wave Delay\", wave.wait_time)
+		if wave.repeat == -1:
+			has_infinite = true
+	count_stat(data, \"Infinite Waves\", has_infinite)
+	
+	count_stat(data, \"Include Default Inventory\", map.start_config.include_default)
+	for item in map.start_config.inventory:
+		count_stat(data, \"Starting Items\", get_item_name_custom(item))
+	
+	count_stat(data, \"Starting Technology Count\", map.start_config.disabled_buildings.size())
+	for tech in map.start_config.unlocked_technology:
+		count_stat(data, \"Starting Technology\", tech)
+	
+	count_stat(data, \"Starting Clones\", map.start_config.stats.get(\"clones\", 0))
+	for upgrade in map.start_config.upgrades:
+		count_stat(data, \"Starting Upgrades\", str(upgrade, \"|\", map.start_config.upgrades[upgrade]))
+	
+	for upgrade in map.start_config.weapon_upgrades:
+		count_stat(data, \"Starting Weapon Upgrades\", str(upgrade, \"|\", map.start_config.weapon_upgrades[upgrade]))
+	
+	count_stat(data, \"Disabled Buildings Count\", map.start_config.disabled_buildings.size())
+	for building in map.start_config.disabled_buildings:
+		count_stat(data, \"Disabled Buildings\", building)
+	
+	count_stat(data, \"Win Condition\", map.objective_data.win.type)
+	count_stat(data, \"Auto Finish\", map.objective_data.get(\"auto_finish\", false))
+	if \"scoring\" in map.objective_data:
+		for item in map.objective_data.scoring.table:
+			count_stat(data, \"Scoring Rules\", item)
+	if \"fail\" in map.objective_data:
+		for item in map.objective_data.fail:
+			count_stat(data, \"Fail Condition\", item)
+	
+	count_stat(data, \"Ambient Color\", map.darkness_color.to_html(false))
+	count_stat(data, \"Fog of War\", map.enable_fog)
+	
+	var has_reactor: bool
+	var building_count: int
+	var enemy_count: int
+	var swarm_count: int
+	var object_count: int
+	var pickup_count: int
+	
+	for object in map.objects:
+		if object.type == \"Enemy\":
+			count_stat(data, \"Enemies\", object.name)
+			enemy_count += 1
+			
+			var has_custom: bool
+			for override in object.data.get(\"overrides\", {}):
+				has_custom = true
+				
+				var v = object.data.overrides[override]
+				if v is Color:
+					v = v.to_html(false)
+				
+				count_stat(data, \"Enemy Stat Overrides\", str(override, \"|\", v))
+			count_stat(data, \"Enemy Has Custom Stats\", has_custom)
+		elif object.type == \"Enemy Swarm\":
+			count_stat(data, \"Swarms\", object.name)
+			swarm_count += object.data.count
+		elif object.type == \"Building\":
+			count_stat(data, \"Buildings\", object.name)
+			building_count += 1
+			has_reactor = has_reactor or object.name == \"Reactor\"
+		elif object.type == \"Object\":
+			count_stat(data, \"Objects\", object.name)
+			object_count += 1
+			
+			if object.name == \"Pickup\":
+				count_stat(data, \"Pickups\", get_item_name_custom(object.data))
+				count_stat(data, \"Pickup Size\", object.data.amount)
+				pickup_count += 1
+			elif object.name == \"Chest\" or object.name == \"Rusty Chest\" or object.name == \"Armored Box\":
+				var count = 0
+				for item in object.data.items:
+					count_stat(data, \"Chest Contents\", get_item_name_custom(item))
+					count += item.amount
+				count_stat(data, \"Chest Item Count\", count)
+			elif object.name == \"Hole Trap\":
+				count_stat(data, \"Hole Enemies\", object.data.enemy)
+				count_stat(data, \"Hole Enemy Count\", object.data.enemy_count)
+			elif object.name == \"Lava Source\":
+				count_stat(data, \"Lava Source Size\", object.data.radius)
+			elif object.name == \"Laptop\":
+				count_stat(data, \"Laptop Message Length\", object.data.message.length())
+	
+	count_stat(data, \"Has Reactor\", has_reactor)
+	count_stat(data, \"Building Count\", building_count)
+	count_stat(data, \"Enemy Count\", enemy_count)
+	count_stat(data, \"Swarm Enemy Count\", swarm_count)
+	count_stat(data, \"Object Count\", object_count)
+	count_stat(data, \"Pickup Count\", pickup_count)
+	count_stat(data, \"Entity Count\", map.objects.size())
+
+func count_stat(data: Dictionary, stat: String, value):
+	if not stat in data:
+		data[stat] = {}
+	
+	var key = value
+	if value is Dictionary or value is Array:
+		key = hash(value)
+		hash_index[key] = value
+	
+	data[stat][key] = data[stat].get(value, 0) + 1
+
+func fetch_one_item(new_text: String) -> void:
+	var map := MapFile.new()
+	map.load_from_file(\"C:/Program Files (x86)/Steam/steamapps/workshop/content/1713810/%s\" % new_text)
+	if map.error:
+		print(map.error)
+		return
+	
+	stats.clear()
+	fetch_stats(map, stats)
+	print(stats)
+
+func stop() -> void:
+	stopped = true
+	if not USE_THREADS:
+		return
+	
+	var thleft := thread_pool.size()
+	for thread in thread_pool:
+		print(\"Threads left: \", thleft)
+		thread.wait_to_finish()
+		thleft -= 1
+
+func plot_stats():
+	$Tree.clear()
+	
+	var root = $Tree.create_item()
+	var keys = stats.keys()
+	keys.sort()
+	
+	for stat in keys:
+		var stat_item = $Tree.create_item(root)
+		stat_item.set_text(0, stat)
+		
+		for value in stats[stat]:
+			var value_item = $Tree.create_item(stat_item)
+			value_item.set_text(0, \"[%s] %s\" % [value, stats[stat][value]])
+
+func save_stats():
+	var file := File.new()
+	file.open(\"res://Tools/WorkshopStats/LastData.dat\", File.WRITE)
+	file.store_var(stats)
+
+func get_item_name_custom(item: Dictionary) -> String:
+	return str(item.id, \"|\", item.get(\"data\", \"\"))
+	
+	item.id = Const.ItemIDs.keys().find(item.id)
+	
+	if item.id == Const.ItemIDs.TECHNOLOGY_ORB:
+		item.erase(\"cached_tech\")
+	
+	return Utils.get_item_name(item)
+
+func thread_method():
+	while true:
+		var sub_stats: Dictionary
+		
+		work_mutex.lock()
+		var map = work_to_do.pop_back()
+		work_mutex.unlock()
+		
+		if map:
+			fetch_stats(map, sub_stats)
+		elif stopped:
+			break
+		
+		if not sub_stats.is_empty():
+			stat_mutex.lock()
+			for stat in sub_stats:
+				for value in sub_stats[stat]:
+					for i in sub_stats[stat][value]:
+						count_stat(stats, stat, value)
+			stat_mutex.unlock()
+		
+		OS.delay_msec(10)
+"
+
+[node name="WorkshopStats" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = SubResource( 1 )
+script = SubResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Button" type="Button" parent="."]
+offset_left = 464.0
+offset_top = 275.0
+offset_right = 814.0
+offset_bottom = 336.0
+text = "Download items"
+
+[node name="Button2" type="Button" parent="."]
+offset_left = 538.0
+offset_top = 1029.0
+offset_right = 888.0
+offset_bottom = 1090.0
+text = "Obtain stats"
+
+[node name="Button3" type="Button" parent="."]
+visible = false
+offset_left = 1565.0
+offset_top = 1175.0
+offset_right = 1675.0
+offset_bottom = 1236.0
+text = "Stop"
+
+[node name="LineEdit" type="LineEdit" parent="."]
+offset_left = 513.0
+offset_top = 1431.0
+offset_right = 1264.0
+offset_bottom = 1496.0
+placeholder_text = "One item"
+
+[node name="Tree" type="Tree" parent="."]
+offset_left = 1967.0
+offset_top = 220.0
+offset_right = 3525.0
+offset_bottom = 1959.0
+hide_root = true
+
+[connection signal="pressed" from="Button" to="." method="downlaod"]
+[connection signal="pressed" from="Button2" to="." method="get_stats"]
+[connection signal="pressed" from="Button3" to="." method="stop"]
+[connection signal="text_submitted" from="LineEdit" to="." method="fetch_one_item"]

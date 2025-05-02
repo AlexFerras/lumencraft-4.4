@@ -1,0 +1,219 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+var column_prefab: PackedScene
+
+var data_name: String
+var data: Dictionary
+
+func _ready() -> void:
+	column_prefab = Prefab.create($\"%Column\")
+
+func set_data(dn: String, d: Dictionary):
+	var max_value = 0
+	data = d
+	data_name = dn
+	
+	preprocess_data()
+	
+	for value in data.values():
+		max_value = max(value, max_value)
+	
+	var keys = data.keys()
+	keys.sort_custom(Callable(self, \"sort_keys\"))
+
+	$\"%Title\".text = data_name
+	
+	for column in $\"%Columns\".get_children():
+		column.queue_free()
+	
+	var all_count: float
+	for key in keys:
+		all_count += data[key]
+	
+	var i: int
+	for key in keys:
+		var column = column_prefab.instantiate()
+		$\"%Columns\".add_child(column)
+		
+		column.get_node(\"Value\").text = \"%s (%.2f%%)\" % [data[key], (float(data[key]) / all_count) * 100]
+		set_bottom_display(column, key)
+		
+		column.get_node(\"Bar\").max_value = max_value
+		column.get_node(\"Bar\").value = data[key]
+		
+		set_bar_color(Color.from_hsv(i * 0.1, 0.25, 1), column, key)
+		i = (i + 1) % 10
+	
+	set_statistics(keys)
+
+func sort_keys(key1, key2):
+	return data[key1] > data[key2]
+
+func set_bottom_display(column, key):
+	if data_name == \"Wave Count\":
+		column.get_node(\"Label\").text = str(key, \" wave(s)\")
+	elif data_name == \"Terrain Pixels\" or data_name == \"Average Material Ratio\":
+		column.get_node(\"Label\").text = Const.Materials.keys()[Const.Materials.values().find(key)]
+	else:
+		column.get_node(\"Label\").text = str(key)
+
+func set_statistics(keys):
+	if (keys[0] is int or keys[0] is Vector2) and data_name != \"Terrain Pixels\":
+		var all: Array
+		var sum
+		
+		for key in keys:
+			for j in data[key]:
+				all.append(key)
+				
+				if not sum:
+					sum = key
+				else:
+					sum += key
+		
+		all.sort()
+		
+		$\"%Min\".text += str(all.front())
+		$\"%Max\".text += str(all.back())
+		$\"%Average\".text += str(sum / float(all.size()))
+		
+		if all.size() % 2 == 0:
+			$\"%Median\".text += str((all[all.size() / 2] + all[all.size() / 2 + 1]) / 2)
+		else:
+			$\"%Median\".text += str(all[all.size() / 2 + 1])
+	else:
+		$\"%Min\".hide()
+		$\"%Max\".hide()
+		$\"%Average\".hide()
+		$\"%Median\".hide()
+
+func set_bar_color(default, column, key):
+	if data_name == \"Ambient Color\":
+		column.get_node(\"Bar\").modulate = Color(key)
+		column.get_node(\"Bar\").value *= 10
+	elif data_name == \"Enemy Stat Overrides\" and key.begins_with(\"color\"):
+		var color = key.get_slice(\"|\", 1)
+		column.get_node(\"Bar\").modulate = Color(color)
+	else:
+		column.get_node(\"Bar\").modulate = default
+	column.get_node(\"Value\").modulate = column.get_node(\"Bar\").modulate
+
+func preprocess_data():
+	if data_name == \"Terrain Material Ratio\":
+		data_name = \"Average Material Ratio\"
+		
+		var new_data: Dictionary
+		for key in data:
+			var mat = int(key.get_slice(\"|\", 0))
+			var ratio = float(key.get_slice(\"|\", 1))
+			
+			if not mat in new_data:
+				new_data[mat] = [0]
+			
+			new_data[mat][0] += data[key]
+			new_data[mat].append(ratio * data[key])
+		
+		data.clear()
+		
+		for mat in new_data:
+			var count: int = new_data[mat].pop_front()
+			var sum: float
+			for val in new_data[mat]:
+				sum += val
+			
+			data[mat] = sum / count
+"
+
+[sub_resource type="Gradient" id=2]
+offsets = PackedFloat32Array( 1 )
+colors = PackedColorArray( 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture2D" id=3]
+gradient = SubResource( 2 )
+height = 512
+
+[node name="Graph" type="PanelContainer"]
+offset_right = 214.0
+offset_bottom = 324.0
+size_flags_horizontal = 0
+script = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 407.0
+offset_bottom = 645.0
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_right = 400.0
+offset_bottom = 14.0
+
+[node name="Min" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 18.0
+offset_right = 400.0
+offset_bottom = 32.0
+text = "Min: "
+
+[node name="Max" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 36.0
+offset_right = 400.0
+offset_bottom = 50.0
+text = "Max: "
+
+[node name="Average" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 54.0
+offset_right = 400.0
+offset_bottom = 68.0
+text = "Average: "
+
+[node name="Median" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 72.0
+offset_right = 400.0
+offset_bottom = 86.0
+text = "Median: "
+
+[node name="Columns" type="HBoxContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 90.0
+offset_right = 400.0
+offset_bottom = 638.0
+theme_override_constants/separation = 30
+
+[node name="Column" type="VBoxContainer" parent="VBoxContainer/Columns"]
+unique_name_in_owner = true
+offset_right = 400.0
+offset_bottom = 548.0
+
+[node name="Value" type="Label" parent="VBoxContainer/Columns/Column"]
+offset_left = 188.0
+offset_right = 212.0
+offset_bottom = 14.0
+size_flags_horizontal = 4
+text = "100"
+
+[node name="Bar" type="TextureProgressBar" parent="VBoxContainer/Columns/Column"]
+offset_left = 168.0
+offset_top = 18.0
+offset_right = 232.0
+offset_bottom = 530.0
+size_flags_horizontal = 4
+max_value = 87.0
+value = 42.0
+texture_progress = SubResource( 3 )
+fill_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/Columns/Column"]
+offset_top = 534.0
+offset_right = 400.0
+offset_bottom = 548.0
+custom_minimum_size = Vector2( 400, 0 )
+align = 1
+autowrap = true

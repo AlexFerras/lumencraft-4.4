@@ -1,0 +1,81 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://icon.png" type="Texture2D" id=2]
+[ext_resource path="res://Resources/Fonts/Font28Outline.tres" type="FontFile" id=3]
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends BaseEnemy
+
+const PERIOD = 2
+
+var prev_hp = hp
+
+var history: Array
+
+class HistoryItem:
+	var timestamp: int
+	var damage: int
+
+func _process(delta: float) -> void:
+	var dmg: int = prev_hp - hp
+	
+	if dmg > 0:
+		var item := HistoryItem.new()
+		item.timestamp = Time.get_ticks_msec()
+		item.damage = dmg
+		history.append(item)
+	
+	var dps: int
+	
+	var j: int
+	for i in history.size():
+		var item: HistoryItem = history[j]
+		
+		if Time.get_ticks_msec() - item.timestamp > PERIOD * 1000:
+			history.remove(j)
+		else:
+			dps += item.damage
+			j += 1
+	
+	if j > 0:
+		$Label.text = \"DPS: %s\" % (dps / PERIOD)
+	else:
+		$Label.text = \"DPS: 0\"
+	
+	prev_hp = hp
+"
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 7.69492
+
+[node name="Dummy" type="Node2D"]
+position = Vector2( 418.044, 545.565 )
+script = SubResource( 5 )
+
+[node name="Dummu" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Dummu"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2( 0.049623, 0.049623 )
+texture = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+offset_left = 37.9561
+offset_top = -3.56494
+offset_right = 201.956
+offset_bottom = 28.4351
+scale = Vector2( 0.2, 0.2 )
+theme_override_colors/font_color = Color( 0, 1, 0, 1 )
+theme_override_fonts/font = ExtResource( 3 )
+text = "DPS:"
+
+[connection signal="timeout" from="Timer" to="." method="set" binds= [ "hp", 10000 ]]
+[connection signal="timeout" from="Timer" to="Dummu/CollisionShape2D" method="set" binds= [ "disabled", false ]]

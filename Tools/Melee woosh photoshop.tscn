@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Nodes/Player/Weapons/Melee/Rust_spear_head.png" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=19]
+script/source = "extends Node2D
+
+@onready var sprite = $Sprite2D
+
+func _ready():
+	var new_sprite:Sprite2D
+#	for i in 100:
+#		new_sprite = sprite.duplicate()
+#		add_child(new_sprite)
+#		new_sprite.position = Vector2( -i, 0 )
+##		new_sprite.position = Vector2(i, cos(float(i)/100 *PI/4.0)*30 * -1 +30 )
+#		new_sprite.modulate.a = float(100-i)/200.0
+#		new_sprite.z_index = -i
+#
+"
+
+[node name="Sprite2D" type="Node2D"]
+script = SubResource( 19 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 1.5708
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 1 )

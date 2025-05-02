@@ -1,0 +1,213 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends CenterContainer
+
+var uid: String
+
+func _ready() -> void:
+	get_tree().connect(\"files_dropped\", Callable(self, \"on_files_dropped\"))
+
+func on_files_dropped(files, cooo):
+	var image := Image.new()
+	image.load(files[0])
+	
+	var texture := ImageTexture.new()
+	texture.create_from_image(image)
+	$VBoxContainer/PanelContainer/Preview.texture = texture
+	
+	var uida: PackedStringArray
+	
+	false # image.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+	for i in 9:
+		var pixel = image.get_pixel(i, 199)
+		var ascii = pixel.b8 + 1
+		uida.append(char(ascii))
+	
+	uid = \"\".join(uida)
+	$VBoxContainer/UID.text += uid
+
+func verify() -> void:
+	var scoreboard = []
+	for child in $VBoxContainer/Scoreboard.get_children():
+		if child is LineEdit and not child.text.is_empty():
+			if child.text.find(\":\") > -1:
+				var time = child.text.split(\":\")
+				scoreboard.append(str(int(time[0]) * 60 * 60 + int(time[1]) * 60 + int(time[2])))
+			else:
+				scoreboard.append(child.text)
+	
+	var expected_id = str($VBoxContainer/HBoxContainer2/Score.text, uid, scoreboard).md5_buffer()
+	var id_base2 := PackedStringArray()
+	for byte in expected_id:
+		id_base2.append(str(byte))
+	expected_id = \"\".join(id_base2).substr(0, 9)
+	
+	if $VBoxContainer/HBoxContainer/ScoreID.text != expected_id:
+		$VBoxContainer/Result.text = \"Unexpected ID. Expected: %s\" % expected_id
+		$VBoxContainer/Result.modulate = Color.RED
+	else:
+		$VBoxContainer/Result.text = \"OK\"
+		$VBoxContainer/Result.modulate = Color.GREEN
+"
+
+[sub_resource type="StyleBoxFlat" id=1]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+
+[node name="Verificator" type="CenterContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 630.0
+offset_top = 364.0
+offset_right = 1290.0
+offset_bottom = 716.0
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+offset_left = 126.0
+offset_right = 534.0
+offset_bottom = 208.0
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource( 1 )
+
+[node name="Preview" type="TextureRect" parent="VBoxContainer/PanelContainer"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 404.0
+offset_bottom = 204.0
+custom_minimum_size = Vector2( 400, 200 )
+
+[node name="UID" type="Label" parent="VBoxContainer"]
+offset_top = 212.0
+offset_right = 660.0
+offset_bottom = 226.0
+text = "Map UID: "
+align = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+offset_top = 230.0
+offset_right = 660.0
+offset_bottom = 254.0
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+offset_left = 201.0
+offset_top = 5.0
+offset_right = 255.0
+offset_bottom = 19.0
+text = "Score ID"
+
+[node name="ScoreID" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+offset_left = 259.0
+offset_right = 459.0
+offset_bottom = 24.0
+custom_minimum_size = Vector2( 200, 0 )
+max_length = 9
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+offset_top = 258.0
+offset_right = 660.0
+offset_bottom = 282.0
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2"]
+offset_left = 210.0
+offset_top = 5.0
+offset_right = 245.0
+offset_bottom = 19.0
+text = "Score"
+
+[node name="Score" type="LineEdit" parent="VBoxContainer/HBoxContainer2"]
+offset_left = 249.0
+offset_right = 449.0
+offset_bottom = 24.0
+custom_minimum_size = Vector2( 200, 0 )
+max_length = 9
+
+[node name="Scoreboard" type="HBoxContainer" parent="VBoxContainer"]
+offset_top = 286.0
+offset_right = 660.0
+offset_bottom = 310.0
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/Scoreboard"]
+offset_top = 5.0
+offset_right = 40.0
+offset_bottom = 19.0
+text = "Points"
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 44.0
+offset_right = 102.0
+offset_bottom = 24.0
+placeholder_text = "0:00:00"
+
+[node name="LineEdit2" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 106.0
+offset_right = 164.0
+offset_bottom = 24.0
+
+[node name="LineEdit3" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 168.0
+offset_right = 226.0
+offset_bottom = 24.0
+
+[node name="LineEdit4" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 230.0
+offset_right = 288.0
+offset_bottom = 24.0
+
+[node name="LineEdit5" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 292.0
+offset_right = 350.0
+offset_bottom = 24.0
+
+[node name="LineEdit6" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 354.0
+offset_right = 412.0
+offset_bottom = 24.0
+
+[node name="LineEdit7" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 416.0
+offset_right = 474.0
+offset_bottom = 24.0
+
+[node name="LineEdit8" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 478.0
+offset_right = 536.0
+offset_bottom = 24.0
+
+[node name="LineEdit9" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 540.0
+offset_right = 598.0
+offset_bottom = 24.0
+
+[node name="LineEdit10" type="LineEdit" parent="VBoxContainer/Scoreboard"]
+offset_left = 602.0
+offset_right = 660.0
+offset_bottom = 24.0
+
+[node name="Button" type="Button" parent="VBoxContainer"]
+offset_left = 306.0
+offset_top = 314.0
+offset_right = 354.0
+offset_bottom = 334.0
+size_flags_horizontal = 4
+text = "Verify"
+
+[node name="Result" type="Label" parent="VBoxContainer"]
+modulate = Color( 0, 1, 0, 1 )
+offset_top = 338.0
+offset_right = 660.0
+offset_bottom = 352.0
+
+[connection signal="pressed" from="VBoxContainer/Button" to="." method="verify"]

@@ -1,0 +1,109 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Fonts/Font20.tres" type="FontFile" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+const SAVE_CLASS = preload(\"res://Scripts/Data/SaveFile.gd\")
+
+var save: RefCounted
+
+func _ready() -> void:
+	save = SAVE_CLASS.new()
+#	load_slot(\"W5_02_05\")
+	load_slot(\"debug\")
+	
+	var root = $Tree.create_item()
+	
+	for node in save.map_data:
+		var object = $Tree.create_item(root)
+		object.set_text(0, node)
+		
+		if save.map_data[node] is Dictionary:
+			for property in save.map_data[node]:
+				var value = $Tree.create_item(object)
+				value.set_text(0, str(property, \" = \", save.map_data[node][property]))
+		elif save.map_data[node] is Array:
+			for property in save.map_data[node]:
+				var value = $Tree.create_item(object)
+				value.set_text(0, str(property))
+		else:
+			var value = $Tree.create_item(object)
+			value.set_text(0, str(save.map_data[node]))
+	
+	root = $Tree2.create_item()
+	
+	for category in save.savegame_data:
+		var object = $Tree2.create_item(root)
+		object.set_text(0, category)
+		
+		for value in save.savegame_data[category]:
+			var item = $Tree2.create_item(object)
+			item.set_text(0, str(value, \" = \", save.savegame_data[category][value]))
+	
+	save = load(\"user://saves/Debug/data.tres\")
+	print(save)
+
+func fold() -> void:
+	var item: TreeItem = $Tree.get_root().get_children()
+	
+	while item:
+		## fold :/
+		item = item.get_next()
+
+func load_slot(slot: String):
+	var d1 = DirAccess.new()
+	d1.open(\"user://saves\")
+	d1.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	var f1 = d1.get_next()
+	while f1:
+		if d1.current_is_dir():
+			if f1 == slot:
+				var d2 = DirAccess.new()
+				d2.open(\"user://saves/\" + f1)
+				d2.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+				var f2 = d2.get_next()
+				
+				while f2:
+					if f2.get_extension() == \"lcsave\":
+						save.load_from_file(d2.get_current_dir().plus_file(f2))
+						return
+					f2 = d2.get_next()
+		
+		f1 = d1.get_next()
+	
+	
+"
+
+[node name="SaveFileExplorer" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+
+[node name="Tree" type="Tree" parent="."]
+offset_left = 37.0
+offset_top = 81.0
+offset_right = 977.0
+offset_bottom = 2083.0
+theme_override_constants/item_margin = 30
+theme_override_fonts/font = ExtResource( 1 )
+hide_root = true
+
+[node name="Tree2" type="Tree" parent="."]
+offset_left = 1062.0
+offset_top = 83.0
+offset_right = 1883.0
+offset_bottom = 2088.0
+theme_override_constants/item_margin = 30
+theme_override_fonts/font = ExtResource( 1 )
+hide_root = true
+
+[node name="Button" type="Button" parent="."]
+offset_left = 79.0
+offset_top = 25.0
+offset_right = 91.0
+offset_bottom = 45.0
+text = "Fold"
+
+[connection signal="pressed" from="Button" to="." method="fold"]

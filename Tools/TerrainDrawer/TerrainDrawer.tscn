@@ -1,0 +1,126 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Tools/TerrainDrawer/Grid.png" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+const GRID_SIZE = 16
+
+@onready var grid := $Grid
+@onready var overlay := $Overlay
+
+var to_do: Array
+var building: Array
+var built: Array
+var erasing: Array
+var erased: Array
+
+var build_delay: float
+
+func _ready() -> void:
+	grid.connect(\"visibility_changed\", Callable(self, \"update_process\"))
+	set_process(false)
+
+func draw_tile(where: Vector2):
+	if where in to_do or where in building or where in built:
+		return
+	to_do.append(where)
+	overlay.update()
+	
+	erased.erase(-where)
+	to_do.erase(-where)
+	erasing.erase(-where)
+
+func erase_tile(where: Vector2):
+	if where in to_do or where in erasing or where in erased:
+		return
+	to_do.append(where)
+	overlay.update()
+	
+	built.erase(-where)
+	to_do.erase(-where)
+	building.erase(-where)
+
+func _process(delta: float) -> void:
+	if Input.is_action_pressed(\"p1_shoot\"):
+		draw_at(get_local_mouse_position())
+	if Input.is_action_pressed(\"p1_shoot2\"):
+		erase_at(-get_local_mouse_position())
+	
+	build_delay -= delta
+	if not to_do.is_empty() and build_delay <= 0:
+		var draw_drone := preload(\"res://Tools/TerrainDrawer/DrawDrone.tscn\").instantiate() as Node2D
+		draw_drone.position = Utils.game.core.global_position
+		
+		var where: Vector2 = to_do.pop_front()
+		if where.x < 0:
+			erasing.append(where)
+			draw_drone.erasing = true
+			draw_drone.connect(\"finished\", Callable(self, \"finish_erase\").bind(where))
+			draw_drone.target = -where * GRID_SIZE + Vector2.ONE * GRID_SIZE * 0.5
+		else:
+			building.append(where)
+			draw_drone.connect(\"finished\", Callable(self, \"finish_draw\").bind(where))
+			draw_drone.target = where * GRID_SIZE + Vector2.ONE * GRID_SIZE * 0.5
+		
+		Utils.game.map.add_child(draw_drone)
+		build_delay = 0.1
+
+func _draw_overlay() -> void:
+	for vec in to_do:
+		if vec.x < 0:
+			overlay.draw_rect(Rect2(-vec * GRID_SIZE, Vector2.ONE * GRID_SIZE), Color(1, 0, 0.0313726, 0.5))
+		else:
+			overlay.draw_rect(Rect2(vec * GRID_SIZE, Vector2.ONE * GRID_SIZE), Color(0, 1, 0.0313726, 0.5))
+	
+	for vec in building:
+		overlay.draw_rect(Rect2(vec * GRID_SIZE, Vector2.ONE * GRID_SIZE), Color(0, 1, 0.0313726, 0.5))
+
+	for vec in erasing:
+		overlay.draw_rect(Rect2(-vec * GRID_SIZE, Vector2.ONE * GRID_SIZE), Color(1, 0, 0.0313726, 0.5))
+
+func finish_draw(where: Vector2):
+	building.erase(where)
+	built.append(where)
+	overlay.update()
+
+func finish_erase(where: Vector2):
+	erasing.erase(where)
+	erased.append(where)
+	overlay.update()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F5:
+		grid.visible = not grid.visible
+
+func update_process():
+	set_process(grid.visible)
+
+func draw_at(pos: Vector2):
+	draw_tile((pos / GRID_SIZE).floor())
+
+func erase_at(pos: Vector2):
+	erase_tile((pos / GRID_SIZE).ceil())
+"
+
+[node name="TerrainDrawer" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Grid" type="TextureRect" parent="."]
+visible = false
+modulate = Color( 0.556641, 0.556641, 0.556641, 0.12549 )
+show_behind_parent = true
+offset_right = 8000.0
+offset_bottom = 8000.0
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 1 )
+stretch_mode = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Overlay" type="Node2D" parent="."]
+z_index = 100
+
+[connection signal="draw" from="Overlay" to="." method="_draw_overlay"]

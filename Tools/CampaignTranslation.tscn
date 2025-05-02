@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+var messages: Array
+
+func _ready() -> void:
+	var file := File.new()
+	file.open(\"Resources/Translation/Source/Campaign.txt\", File.WRITE)
+	
+	var first := true
+	for level in Const.CampaignLevels.values():
+		if first:
+			first = false
+		else:
+			file.store_line(\"\")
+		
+		file.store_line(level.level_name)
+		file.store_line(level.description)
+		
+		if \"map_file\" in level:
+			var map := MapFile.new()
+			map.load_from_file(\"res://Maps/Campaign/\" + level.map_file + \".lcmap\")
+			
+			if map.objective_data and \"message\" in map.objective_data.win:
+				store_message(file, map.objective_data.win, \"message\")
+			
+			for event in map.events:
+				for action in event.actions:
+					if \"data\" in action:
+						store_message(file, action.data, \"objective\")
+						store_message(file, action.data, \"message\")
+	
+	get_tree().quit()
+
+func store_message(file: File, from: Dictionary, property: String):
+	var message: String
+	if property in from:
+		message = from[property]
+	
+	if not message.is_empty() and not message in messages:
+		messages.append(message)
+		file.store_line(message)
+"
+
+[node name="Node" type="Node"]
+script = SubResource( 1 )

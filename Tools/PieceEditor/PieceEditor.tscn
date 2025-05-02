@@ -1,0 +1,437 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Tools/PieceEditor/Grid.png" type="Texture2D" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+enum Type {CENTER = -1, UP, RIGHT, DOWN, LEFT}
+
+const PIECES_PATH = \"res://Nodes/Map/Generator/MapPieces/\"
+var EMPTY_IMAGE: Image
+
+@onready var canvas := $\"%Canvas\"
+@onready var under_canvas := $\"%Back\"
+@onready var brush_viewport: SubViewport = $BrushViewport
+@onready var brush: Sprite2D = $BrushViewport/Brush
+
+@onready var current_piece_idx: Range = $\"%ID\"
+@onready var current_sub_idx: Range = $\"%SubID\"
+@onready var piece_count: Label = $\"%PieceCountLabel\"
+
+var drawing: int
+
+var current_piece: MapPiece
+var current_type: int = -1
+var current_image: Image
+
+var brush_shape: Texture2D
+var brush_size: int = 64
+var brush_color := Color.WHITE
+
+var brush_texture: Texture2D
+var brush_image: Image
+
+var pieces: Array
+var prev_id: int
+
+func _ready() -> void:
+	EMPTY_IMAGE = Image.new()
+	EMPTY_IMAGE.create(1, 1, false, Image.FORMAT_RGB8)
+	
+	var dir := DirAccess.new()
+	dir.open(PIECES_PATH)
+	dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	var file := dir.get_next()
+	while not file.is_empty():
+		if file.begins_with(\"Piece\"):
+			var id := int(file.trim_prefix(\"Piece\"))
+			pieces.resize(max(pieces.size(), id + 1))
+			pieces[id] = load(dir.get_current_dir().plus_file(file))
+		file = dir.get_next()
+	
+	refresh_id()
+	get_tree().auto_accept_quit = false
+	
+	brush_shape = preload(\"res://Tools/PieceEditor/Circle.png\")
+	refresh_brush()
+	await get_tree().create_timer(0.6).timeout
+	refresh_brush() # genialne >:(
+
+func draw_canvas() -> void:
+	if not brush_texture:
+		return
+	
+	canvas.draw_texture(brush_texture, (canvas.get_local_mouse_position() - brush_texture.get_size() / 2).floor(), Color(1, 0.5, 0.5, 0.5))
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		canvas.update()
+		
+		if drawing != 0:
+			draw_on_piece()
+	
+	if event is InputEventKey:
+		if event.keycode == KEY_SHIFT:
+			if event.pressed:
+				brush_color = Color.BLACK
+			else:
+				brush_color = Color.WHITE
+			refresh_brush()
+		
+		if event.keycode == KEY_I and event.pressed:
+			false # current_image.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+			for x in current_image.get_width():
+				for y in current_image.get_height():
+					current_image.set_pixel(x, y, current_image.get_pixel(x, y).inverted())
+			false # current_image.unlock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+	
+	if event is InputEventMouseButton:
+		if event.pressed:
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				drawing = 1
+			elif event.button_index == MOUSE_BUTTON_RIGHT:
+				drawing = -1
+			draw_on_piece()
+		else:
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				brush_size = 64
+				refresh_brush()
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				brush_size = 32
+				refresh_brush()
+			else:
+				drawing = 0
+
+func draw_on_piece():
+	if drawing == 0:
+		return
+	
+	false # current_image.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+	
+	if drawing == 1:
+		current_image.blend_rect(brush_image, Rect2(Vector2(), brush_image.get_size()), (canvas.get_local_mouse_position() - brush_image.get_size() / 2).floor())
+	elif drawing == -1:
+		current_image.fill_rect(Rect2(canvas.get_local_mouse_position().floor() - Vector2.ONE * brush_size / 2, Vector2.ONE * brush_size), Color.BLACK if current_type == Type.CENTER else Color(0, 0, 0, 0))
+	
+	false # current_image.unlock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+	refresh_texture()
+	current_piece.untouched = false
+
+func refresh_id():
+	piece_count.text = str(pieces.size())
+	current_piece_idx.max_value = pieces.size()
+	
+	current_piece = pieces[current_piece_idx.value - 1]
+	compat(current_piece)
+	
+	current_sub_idx.editable = current_type != Type.CENTER
+	$\"%AddSub\".disabled = current_type == Type.CENTER
+	
+	for i in 4:
+		get_node(str(\"%SubButton\", i)).text = str(current_piece.border_images[i].size())
+	
+	if current_type == Type.CENTER:
+		current_image = current_piece.main_image
+		release_sub()
+	else:
+		current_sub_idx.max_value = current_piece.border_images[current_type].size()
+		if current_piece.border_images[current_type].is_empty():
+			add_sub()
+			return
+		current_image = current_piece.border_images[current_type][current_sub_idx.value - 1]
+	
+	refresh_texture()
+
+func refresh_texture():
+	canvas.texture.create_from_image(current_image) #,0
+	if current_type != Type.CENTER:
+		under_canvas.texture.create_from_image(current_piece.main_image) #,0
+	else:
+		under_canvas.texture.create_from_image(EMPTY_IMAGE) #,0
+
+func save(id: int = current_piece_idx.value - 1):
+	if current_piece.untouched:
+		return
+	
+	ResourceSaver.save(PIECES_PATH.plus_file(\"Piece%04d.res\" % id), current_piece)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_QUIT_REQUEST:
+		save()
+		get_tree().quit()
+
+func set_type(type: int) -> void:
+	if type == current_type:
+		current_type = Type.CENTER
+	else:
+		current_type = type
+	refresh_id()
+
+func compat(piece: MapPiece):
+	if piece.border_images.is_empty():
+		piece.border_images.resize(4)
+		for i in 4:
+			piece.border_images[i] = []
+
+func refresh_brush():
+	brush.texture = null
+	brush_viewport.render_target_clear_mode = SubViewport.CLEAR_MODE_ONCE
+	await RenderingServer.frame_post_draw
+	brush.texture = brush_shape
+	brush.scale = Vector2.ONE * (brush_size / brush_shape.get_size().x)
+	brush.modulate = brush_color
+	await RenderingServer.frame_post_draw
+	brush_texture = brush_viewport.get_texture()
+	brush_image = brush_texture.get_data()
+	brush_image.convert(MapPiece.FORMAT)
+
+func on_id_changed(value: float) -> void:
+	save(prev_id)
+	prev_id = value - 1
+	release_sub()
+	refresh_id()
+
+func add_piece() -> void:
+	current_piece = MapPiece.new()
+	current_piece.setup()
+	current_piece.untouched = true
+	pieces.append(current_piece)
+	refresh_id()
+
+func sub_id_changed(value: float) -> void:
+	refresh_id()
+
+func add_sub() -> void:
+	current_piece.new_border(current_type)
+	refresh_id()
+
+func release_sub():
+	if $\"%SubButton0\".group.get_pressed_button():
+		$\"%SubButton0\".group.get_pressed_button().button_pressed = false
+	current_type = Type.CENTER
+
+
+func dupa() -> void:
+	false # current_image.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+	for x in current_image.get_width():
+		for y in current_image.get_height():
+			current_image.set_pixel(x, y, current_image.get_pixel(x, y).inverted())
+"
+
+[sub_resource type="ButtonGroup" id=2]
+
+[sub_resource type="ImageTexture" id=4]
+flags = 0
+flags = 0
+
+[sub_resource type="ImageTexture" id=3]
+flags = 0
+flags = 0
+
+[node name="PieceEditor" type="CenterContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -5943.0
+offset_top = -3292.0
+offset_right = -5943.0
+offset_bottom = -3292.0
+scale = Vector2( 4, 4 )
+script = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 1668.0
+offset_top = 938.0
+offset_right = 2172.0
+offset_bottom = 1222.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+offset_right = 504.0
+offset_bottom = 24.0
+alignment = 1
+
+[node name="ID" type="SpinBox" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+offset_left = 194.0
+offset_right = 268.0
+offset_bottom = 24.0
+min_value = 1.0
+value = 1.0
+align = 1
+
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer2/ID"]
+anchor_left = 6.22408
+anchor_top = -0.71441
+anchor_right = 6.22408
+anchor_bottom = -0.71441
+offset_left = 119.918
+offset_top = 488.146
+offset_right = 164.918
+offset_bottom = 508.146
+text = "Dupa"
+
+[node name="PieceCountLabel" type="Label" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+offset_left = 272.0
+offset_top = 5.0
+offset_right = 285.0
+offset_bottom = 19.0
+text = "/1"
+
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer2"]
+offset_left = 289.0
+offset_right = 309.0
+offset_bottom = 24.0
+text = "+"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+offset_top = 28.0
+offset_right = 504.0
+offset_bottom = 284.0
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/HBoxContainer"]
+offset_top = 64.0
+offset_right = 200.0
+offset_bottom = 192.0
+size_flags_vertical = 4
+columns = 3
+
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer/GridContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 40 )
+
+[node name="SubButton0" type="Button" parent="VBoxContainer/HBoxContainer/GridContainer"]
+unique_name_in_owner = true
+offset_left = 80.0
+offset_right = 120.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 40 )
+size_flags_horizontal = 4
+toggle_mode = true
+group = SubResource( 2 )
+text = "0"
+
+[node name="Control2" type="Control" parent="VBoxContainer/HBoxContainer/GridContainer"]
+offset_left = 160.0
+offset_right = 200.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 40 )
+
+[node name="SubButton3" type="Button" parent="VBoxContainer/HBoxContainer/GridContainer"]
+unique_name_in_owner = true
+offset_top = 44.0
+offset_right = 40.0
+offset_bottom = 84.0
+custom_minimum_size = Vector2( 40, 40 )
+toggle_mode = true
+group = SubResource( 2 )
+text = "0"
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer/GridContainer"]
+offset_left = 44.0
+offset_top = 44.0
+offset_right = 156.0
+offset_bottom = 84.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/GridContainer/PanelContainer"]
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 105.0
+offset_bottom = 33.0
+
+[node name="SubID" type="SpinBox" parent="VBoxContainer/HBoxContainer/GridContainer/PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_right = 74.0
+offset_bottom = 26.0
+min_value = 1.0
+value = 1.0
+editable = false
+
+[node name="AddSub" type="Button" parent="VBoxContainer/HBoxContainer/GridContainer/PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 78.0
+offset_right = 98.0
+offset_bottom = 26.0
+text = "+"
+
+[node name="SubButton1" type="Button" parent="VBoxContainer/HBoxContainer/GridContainer"]
+unique_name_in_owner = true
+offset_left = 160.0
+offset_top = 44.0
+offset_right = 200.0
+offset_bottom = 84.0
+custom_minimum_size = Vector2( 40, 40 )
+toggle_mode = true
+group = SubResource( 2 )
+text = "0"
+
+[node name="Control3" type="Control" parent="VBoxContainer/HBoxContainer/GridContainer"]
+offset_top = 88.0
+offset_right = 40.0
+offset_bottom = 128.0
+custom_minimum_size = Vector2( 40, 40 )
+
+[node name="SubButton2" type="Button" parent="VBoxContainer/HBoxContainer/GridContainer"]
+unique_name_in_owner = true
+offset_left = 80.0
+offset_top = 88.0
+offset_right = 120.0
+offset_bottom = 128.0
+custom_minimum_size = Vector2( 40, 40 )
+size_flags_horizontal = 4
+toggle_mode = true
+group = SubResource( 2 )
+text = "0"
+
+[node name="Control4" type="Control" parent="VBoxContainer/HBoxContainer"]
+offset_left = 204.0
+offset_right = 244.0
+offset_bottom = 256.0
+custom_minimum_size = Vector2( 40, 0 )
+
+[node name="Canvas" type="TextureRect" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+offset_left = 248.0
+offset_right = 504.0
+offset_bottom = 256.0
+custom_minimum_size = Vector2( 256, 256 )
+clip_contents = true
+texture = SubResource( 4 )
+
+[node name="Back" type="TextureRect" parent="VBoxContainer/HBoxContainer/Canvas"]
+unique_name_in_owner = true
+modulate = Color( 1, 1, 1, 0.12549 )
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_minimum_size = Vector2( 256, 256 )
+clip_contents = true
+texture = SubResource( 3 )
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer/Canvas"]
+modulate = Color( 1, 1, 1, 0.12549 )
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource( 1 )
+
+[node name="BrushViewport" type="SubViewport" parent="."]
+size = Vector2( 256, 256 )
+transparent_bg = true
+usage = 0
+render_target_clear_mode = 1
+
+[node name="Brush" type="Sprite2D" parent="BrushViewport"]
+unique_name_in_owner = true
+position = Vector2( 128, 128 )
+
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer2/ID" to="." method="on_id_changed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/ID/Button" to="." method="dupa"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Button" to="." method="add_piece"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/GridContainer/SubButton0" to="." method="set_type" binds= [ 0 ]]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/GridContainer/SubButton3" to="." method="set_type" binds= [ 3 ]]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer/GridContainer/PanelContainer/HBoxContainer/SubID" to="." method="sub_id_changed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/GridContainer/PanelContainer/HBoxContainer/AddSub" to="." method="add_sub"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/GridContainer/SubButton1" to="." method="set_type" binds= [ 1 ]]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/GridContainer/SubButton2" to="." method="set_type" binds= [ 2 ]]
+[connection signal="draw" from="VBoxContainer/HBoxContainer/Canvas" to="." method="draw_canvas"]

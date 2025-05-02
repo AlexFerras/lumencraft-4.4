@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+func _ready() -> void:
+	for sprite in get_children():
+		generate_sprite(sprite)
+
+func generate_sprite(sprite: Sprite2D):
+	var piece = load(\"res://Nodes/Map/Generator/MapPieces/Piece000%d.res\" % (randi() % 2)) as MapPiece
+	sprite.texture = piece.get_merged_texture([randi() % 2 - 1, randi() % 2 - 1, randi() % 2 - 1, randi() % 2 - 1])
+
+func _input(event: InputEvent) -> void:
+	if event.is_pressed():
+		for sprite in get_children():
+			generate_sprite(sprite)
+"
+
+[node name="TestGenerate" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2( 219, 202 )
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+position = Vector2( 873, 178 )
+
+[node name="Sprite3" type="Sprite2D" parent="."]
+position = Vector2( 1308, 310 )
+
+[node name="Sprite4" type="Sprite2D" parent="."]
+position = Vector2( 509, 568 )
+
+[node name="Sprite5" type="Sprite2D" parent="."]
+position = Vector2( 1625, 499 )
+
+[node name="Sprite6" type="Sprite2D" parent="."]
+position = Vector2( 1333, 830 )
+
+[node name="Sprite7" type="Sprite2D" parent="."]
+position = Vector2( 936, 988 )
+
+[node name="Sprite8" type="Sprite2D" parent="."]
+position = Vector2( 922, 628 )
+
+[node name="Sprite9" type="Sprite2D" parent="."]
+position = Vector2( 187, 910 )

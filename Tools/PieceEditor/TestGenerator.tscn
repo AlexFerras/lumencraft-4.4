@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+func _ready() -> void:
+	var gen = load(\"res://Nodes/Map/Generator/AdvancedTerrainGenerator.gd\").new()
+	gen.generate(Vector2(5, 5), 10)
+	gen.bake()
+	
+	await gen.bake_finished
+	gen.final_texture.get_data().save_png(\"generated.png\")
+	
+	get_tree().quit()
+"
+
+[node name="Node" type="Node"]
+script = SubResource( 1 )

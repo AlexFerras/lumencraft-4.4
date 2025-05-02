@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "tool
+extends TextureRect
+
+@export var gen_seed: int
+@export var new_map: bool: set = generate_map
+
+func generate_map(generate: bool):
+	if not generate:
+		return
+	
+	for child in get_children():
+		child.queue_free()
+	
+	var generator = preload(\"res://Nodes/Map/Generator/ChunkedMapGenerator.gd\").new()
+	if gen_seed >= 0:
+		generator.rng.seed = gen_seed
+	else:
+		generator.rng.seed = randi()
+	generator.generate_terrain()
+	await generator.terrain_generated
+	
+	texture = generator.raw_terrain
+	
+	for chunk in generator.placed_generators.values():
+		add_child(chunk)
+		chunk.owner = self
+		chunk.hide()
+"
+
+[node name="GeneratorPreviewer" type="TextureRect"]
+script = SubResource( 1 )
+gen_seed = -1

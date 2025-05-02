@@ -1,0 +1,84 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" type="FontFile" id=1]
+
+[sub_resource type="Theme" id=2]
+default_font = ExtResource( 1 )
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends CenterContainer
+
+var rng
+
+func _ready() -> void:
+	rng = RandomNumberGenerator.new()
+	rng.randomize()
+
+
+func n() -> void:
+	for c in $\"%GridContainer\".get_children():
+		c.free()
+	
+	var e = WaveGenerator.new().generate_enemy_group($\"%SpinBox\".value)
+	
+	for enemy in e:
+		var h = HBoxContainer.new()
+		
+		var tr = TextureRect.new()
+		if enemy.name.begins_with(\"Swarm\"):
+			tr.texture = load(Const.Enemies[enemy.name.get_slice(\"/\", 1)].placeholder_sprite)
+		else:
+			tr.texture = load(Const.Enemies[enemy.name].placeholder_sprite)
+		tr.tooltip_text = str(enemy)
+		h.add_child(tr)
+		
+		var l = Label.new()
+		l.text = str(enemy.count)
+		h.add_child(l)
+		
+		$\"%GridContainer\".add_child(h)
+"
+
+[node name="Control" type="CenterContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = SubResource( 2 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 1920.0
+offset_top = 1080.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+columns = 8
+
+[node name="Control" type="Node2D" parent="."]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+offset_left = 1686.0
+offset_top = 612.0
+offset_right = 2090.0
+offset_bottom = 677.0
+
+[node name="SpinBox" type="SpinBox" parent="Control/HBoxContainer"]
+unique_name_in_owner = true
+offset_right = 314.0
+offset_bottom = 65.0
+custom_minimum_size = Vector2( 200, 0 )
+max_value = 99999.0
+value = 1000.0
+
+[node name="Button" type="Button" parent="Control/HBoxContainer"]
+offset_left = 318.0
+offset_right = 404.0
+offset_bottom = 65.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "New"
+
+[connection signal="pressed" from="Control/HBoxContainer/Button" to="." method="n"]

@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var generator = load(\"res://Nodes/Map/Generator/TerrainGenerator.gd\").new()
+
+func _draw() -> void:
+	for i in 4:
+		for j in 2:
+			var piece = generator.Piece.new()
+			piece.piece = generator.PIECE_DATA[1]
+			piece.position = Vector2(1 + i, 1 + j)
+			piece.rotation = i
+			piece.mirrored = j
+			
+			print(piece.get_exits())
+			
+			piece.draw(self)
+"
+
+[node name="Node2D" type="Node2D"]
+script = SubResource( 1 )

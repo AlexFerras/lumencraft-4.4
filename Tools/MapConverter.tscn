@@ -1,0 +1,105 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+var map_file: MapFile
+var map_filename: String
+var map_instance: Map
+
+func on_open() -> void:
+	$FileDialog.current_dir = \"user://Maps\"
+	$FileDialog.popup_centered()
+
+func on_file_selected(path: String) -> void:
+	if path.get_extension() == \"lcmap\":
+		map_filename = path.get_file().get_basename()
+		map_file = MapFile.new()
+		map_file.load_from_file(path)
+		$Label.text = \"\"\"%s
+%s\"\"\" % [map_file.map_name, map_file.map_description]
+
+func convert_map() -> void:
+	if not map_file:
+		return
+	
+	var scene_path = \"res://Maps\".plus_file(map_filename + \".tscn\")
+	var terrain_path = \"res://Maps\".plus_file(map_filename + \".png\")
+	var floor_path = \"res://Maps\".plus_file(map_filename + \"Floor.png\")
+	var floor2_path = \"res://Maps\".plus_file(map_filename + \"Floor2.png\")
+	
+	map_instance = load(\"res://Scenes/EmptyMap.tscn\").instance()
+	map_instance.get_node(\"PixelMap\").set_texture_path_noload(terrain_path)
+	map_instance.get_node(\"Floor\").set_texture_path_noload(floor_path)
+	map_instance.get_node(\"Floor2\").set_texture_path_noload(floor2_path)
+	var pickables_to_spawn: Array
+	
+	for i in map_file.objects.size():
+		var object: Dictionary = map_file.objects[i]
+		var child_count = map_instance.get_child_count()
+		EditorObject.instantiate(object, map_instance, {pickables_to_spawn = pickables_to_spawn})
+		for j in range(map_instance.get_child_count() - child_count, map_instance.get_child_count()):
+			map_instance.get_child(j).owner = map_instance
+	
+	var packed = PackedScene.new()
+	packed.pack(map_instance)
+	ResourceSaver.save(scene_path, packed)
+	
+	save_png(map_file.pixel_data, terrain_path)
+	save_png(map_file.floor_data, floor_path)
+	save_png(map_file.floor_data2, floor2_path)
+	
+	get_tree().quit()
+
+func save_png(image, path):
+	image.save_png(path)
+	
+	var file := File.new()
+	if not file.file_exists(path + \".import\"):
+		file.open(path + \".import\", file.WRITE)
+		file.store_string(load(\"res://addons/PixelMapEditorPlugin/PixelMapEditorPlugin.gd\").IMPORT_OPTIONS)
+"
+
+[node name="MapConverter" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="FileDialog" type="FileDialog" parent="."]
+offset_left = -606.0
+offset_top = 64.0
+offset_right = -119.0
+offset_bottom = 364.0
+custom_minimum_size = Vector2( 300, 105 )
+window_title = "Otwórz plik"
+mode = 0
+access = 1
+
+[node name="Button" type="Button" parent="."]
+offset_left = 627.0
+offset_top = 218.0
+offset_right = 710.0
+offset_bottom = 238.0
+text = "Select map"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 801.876
+offset_top = 693.938
+offset_right = 841.876
+offset_bottom = 707.938
+
+[node name="Button2" type="Button" parent="."]
+anchor_left = 0.293304
+anchor_top = 0.906747
+anchor_right = 0.293304
+anchor_bottom = 0.906747
+offset_right = 12.0
+offset_bottom = 20.0
+text = "Convert"
+
+[connection signal="file_selected" from="FileDialog" to="." method="on_file_selected"]
+[connection signal="pressed" from="Button" to="." method="on_open"]
+[connection signal="pressed" from="Button2" to="." method="convert_map"]

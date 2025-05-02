@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Tools/MineralCounter.gd" type="Script" id=1]
+
+[node name="MineralCounter" type="ReferenceRect"]
+offset_right = 4096.0
+offset_bottom = 4096.0
+custom_minimum_size = Vector2( 4096, 4096 )
+border_color = Color( 0.6, 1.36, 2, 1 )
+script = ExtResource( 1 )

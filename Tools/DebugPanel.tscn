@@ -1,0 +1,1092 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Resources/Fonts/Font14Outline.tres" type="FontFile" id=1]
+[ext_resource path="res://Resources/Fonts/Font10Outline.tres" type="FontFile" id=2]
+[ext_resource path="res://Tools/Swarm_Tracking.gd" type="Script" id=3]
+[ext_resource path="res://Tools/EnemyInspector.gd" type="Script" id=4]
+[ext_resource path="res://Tools/DebugPanel.gd" type="Script" id=5]
+[ext_resource path="res://Resources/Fonts/mplus-1c-heavy.ttf" type="FontFile" id=6]
+[ext_resource path="res://Resources/Fonts/NanumSquareB.ttf" type="FontFile" id=7]
+[ext_resource path="res://Resources/Fonts/Source Han Sans CN Bold.otf" type="FontFile" id=8]
+[ext_resource path="res://Resources/Anarchy/Fonts/SpaceMono-Regular.ttf" type="FontFile" id=9]
+
+[sub_resource type="FontFile" id=7]
+use_mipmaps = true
+use_filter = true
+spacing_top = -9
+extra_spacing_char = -2
+font_data = ExtResource( 9 )
+fallback/0 = ExtResource( 8 )
+fallback/1 = ExtResource( 7 )
+fallback/2 = ExtResource( 6 )
+
+[sub_resource type="Theme" id=8]
+default_font = SubResource( 7 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 4.0
+content_margin_right = 4.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0, 0, 0, 0.3 )
+
+[sub_resource type="FontFile" id=1]
+font_path = "res://Resources/Anarchy/Fonts/SpaceMono-Bold.ttf"
+
+[sub_resource type="FontFile" id=9]
+size = 72
+outline_size = 2
+use_mipmaps = true
+use_filter = true
+extra_spacing_char = -1
+font_data = SubResource( 1 )
+fallback/0 = ExtResource( 8 )
+fallback/1 = ExtResource( 7 )
+fallback/2 = ExtResource( 6 )
+
+[sub_resource type="Theme" id=4]
+default_font = ExtResource( 2 )
+
+[sub_resource type="GDScript" id=3]
+resource_name = "Building inspector"
+script/source = "extends PanelContainer
+
+func inspect(building: BaseBuilding):
+	show()
+	
+	set_text(\"NodeName\", \"Node name\", building.name)
+	set_text(\"BuildingHP\", \"HP\", str(building.hp, \" / \", building.max_hp))
+	
+	var data: Dictionary
+	for b in Const.Buildings.values():
+		if b.scene == building.filename:
+			data = b
+			break
+	
+	set_text(\"BuildingName\", \"Name\", data.get(\"name\", \"N/A\"))
+	set_text(\"BuildingCost\", \"Cost\", data.get(\"cost\", \"N/A\"))
+
+func set_text(label, field, value):
+	$VBoxContainer.get_node(label).text = str(field, \": \", value)
+"
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Node2D
+
+var draw_pm_qt = false
+var draw_pickables_debug = false
+var draw_enemy_tracker = false
+var draw_swarm_debug = false
+var draw_player_tracker = false
+var draw_buildings_trackers = false
+
+func _ready():
+	pass # Replace with function body.
+
+func _process(delta):
+	update()
+
+func _draw():
+	if not is_instance_valid(Utils.game) or not is_instance_valid(Utils.game.map) or not is_instance_valid(Utils.game.map.pixel_map):
+		return
+
+	var culling_circle_position = Utils.game.camera.position
+#	var culling_circle_radius = Utils.game.get_viewport_rect().size.length()/2.0/4.0
+	var culling_circle_radius = Utils.game.screen_diagonal_radius_scaled
+#	var culling_circle_radius = Save.config.screen_diagonal/2.0/4.0
+#	var culling_circle_radius = sqrt(Const.RESOLUTION.x * Const.RESOLUTION.x + Const.RESOLUTION.y * Const.RESOLUTION.y)/2.0/4.0
+	var empty_node_color = Color(0.4, 0.4, 0.4, 0.4)
+	var solid_node_color = Color(1.0, 1.0, 1.0, 1.0)
+	var object_circle_color = Color(1.0, 0.0, 0.0, 1.0)
+	var lights_circle_color = Color(1.0, 1.0, 0.0, 1.0)
+	var danger_circle_color = Color(1.0, 0.0, 1.0, 1.0)
+	if draw_pm_qt:
+		Utils.game.map.pixel_map.drawDebugSIQTWithCulling(self, culling_circle_position, culling_circle_radius, empty_node_color, solid_node_color)
+	if draw_pickables_debug:
+		if Utils.game.map.pickables:
+			Utils.game.map.pickables.draw_debug_ext(self, true)
+	if draw_enemy_tracker:
+		Utils.game.map.enemy_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+	if draw_swarm_debug:
+		var swarms = get_tree().get_nodes_in_group(\"MegaSwarm\")
+		for s in swarms:
+			s.drawDebugExt(self, true, true, true, true, true)
+	if draw_player_tracker:
+		Utils.game.map.player_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+	if draw_buildings_trackers:
+		Utils.game.map.common_buildings_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+		Utils.game.map.gate_buildings_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+		Utils.game.map.power_expander_buildings_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+		Utils.game.map.turret_buildings_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+		Utils.game.map.mine_buildings_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+		Utils.game.map.passive_buildings_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, object_circle_color)
+		Utils.game.map.lights_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, lights_circle_color)
+		Utils.game.map.flares_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, lights_circle_color)
+		Utils.game.map.danger_tracker.drawDebugWithCulling(self, culling_circle_position, culling_circle_radius, true, empty_node_color, solid_node_color, danger_circle_color)
+"
+
+[node name="DebugPanel" type="CanvasLayer"]
+process_mode = 3
+layer = 128
+
+[node name="Panel" type="PanelContainer" parent="." groups=["debug_panel"]]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -1670.0
+offset_top = 10.0
+offset_right = -842.0
+offset_bottom = 740.0
+scale = Vector2( 2, 2 )
+theme = SubResource( 8 )
+theme_override_styles/panel = SubResource( 2 )
+script = ExtResource( 5 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 824.0
+offset_bottom = 738.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/HBoxContainer"]
+offset_right = 366.0
+offset_bottom = 734.0
+
+[node name="GridContainer" type="GridContainer" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_right = 366.0
+offset_bottom = 72.0
+columns = 2
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+visible = false
+offset_right = 186.0
+offset_bottom = 16.0
+theme_override_fonts/font = ExtResource( 1 )
+text = "Debug menu"
+align = 1
+
+[node name="Label2" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+offset_right = 194.0
+offset_bottom = 15.0
+text = "F1 - teleport "
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+offset_left = 198.0
+offset_right = 366.0
+offset_bottom = 15.0
+text = "F2 - destroy terrain "
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label4" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+offset_top = 19.0
+offset_right = 194.0
+offset_bottom = 34.0
+text = "F3 - draw dirt"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label9" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+offset_left = 198.0
+offset_top = 19.0
+offset_right = 366.0
+offset_bottom = 34.0
+text = "F4 - respawn"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label7" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+offset_top = 38.0
+offset_right = 194.0
+offset_bottom = 53.0
+text = "F5 - alternative  draw"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label8" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+offset_left = 198.0
+offset_top = 38.0
+offset_right = 366.0
+offset_bottom = 53.0
+text = "F7 - open in editor"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label10" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+offset_top = 57.0
+offset_right = 194.0
+offset_bottom = 72.0
+text = "F12 - screenshot (no UI)"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label5" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+visible = false
+offset_left = 295.0
+offset_top = 56.0
+offset_right = 533.0
+offset_bottom = 70.0
+text = "Click on building or enemy to inspect"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label6" type="Label" parent="Panel/HBoxContainer/VBoxContainer/GridContainer"]
+visible = false
+offset_left = 190.0
+offset_top = 56.0
+offset_right = 481.0
+offset_bottom = 70.0
+text = "Alt+Click to set as camera target (Alt to reset)"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="ColorRect" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 76.0
+offset_right = 366.0
+offset_bottom = 96.0
+custom_minimum_size = Vector2( 0, 20 )
+
+[node name="PixelLabel" type="Label" parent="Panel/HBoxContainer/VBoxContainer/Control"]
+unique_name_in_owner = true
+offset_top = -5.0
+offset_right = 1599.0
+offset_bottom = 102.0
+scale = Vector2( 0.25, 0.25 )
+size_flags_horizontal = 4
+theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
+theme_override_fonts/font = SubResource( 9 )
+text = "Hovered pixel: %s"
+align = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/HBoxContainer/VBoxContainer"]
+visible = false
+offset_top = 70.0
+offset_right = 319.0
+offset_bottom = 86.0
+theme_override_constants/separation = 16
+
+[node name="MusicLabel" type="Label" parent="Panel/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 100.0
+offset_right = 366.0
+offset_bottom = 115.0
+text = "Current music: %s"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SpeedLabel" type="Label" parent="Panel/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+offset_top = 119.0
+offset_right = 366.0
+offset_bottom = 134.0
+text = "Game speed x%s"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSlider" type="HSlider" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 138.0
+offset_right = 366.0
+offset_bottom = 178.0
+custom_minimum_size = Vector2( 0, 40 )
+min_value = 0.001
+max_value = 2.0
+step = 0.01
+value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer"]
+visible = false
+offset_top = 126.0
+offset_right = 337.0
+offset_bottom = 150.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="Panel/HBoxContainer/VBoxContainer/HBoxContainer2"]
+offset_right = 215.0
+offset_bottom = 24.0
+size_flags_horizontal = 3
+text = "Spawn enemy wave"
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer/VBoxContainer/HBoxContainer2"]
+offset_left = 219.0
+offset_top = 5.0
+offset_right = 259.0
+offset_bottom = 19.0
+theme_override_constants/line_spacing = -4
+text = "Threat"
+
+[node name="SpinBox" type="SpinBox" parent="Panel/HBoxContainer/VBoxContainer/HBoxContainer2"]
+offset_left = 263.0
+offset_right = 337.0
+offset_bottom = 24.0
+max_value = 1e+06
+value = 500.0
+
+[node name="Button2" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 182.0
+offset_right = 366.0
+offset_bottom = 222.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Force start wave"
+
+[node name="Button8" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 226.0
+offset_right = 366.0
+offset_bottom = 266.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Force start wave 2"
+
+[node name="Button10" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 270.0
+offset_right = 366.0
+offset_bottom = 310.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Next Music Set"
+
+[node name="Button6" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 314.0
+offset_right = 366.0
+offset_bottom = 354.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Create enemy locator"
+
+[node name="Button9" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 358.0
+offset_right = 366.0
+offset_bottom = 398.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Show wave paths"
+
+[node name="Button7" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 402.0
+offset_right = 366.0
+offset_bottom = 442.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Kill all enemies"
+
+[node name="Button3" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+offset_top = 446.0
+offset_right = 366.0
+offset_bottom = 486.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Spawn GRUBAS"
+
+[node name="Button5" type="Button" parent="Panel/HBoxContainer/VBoxContainer"]
+visible = false
+offset_top = 490.0
+offset_right = 366.0
+offset_bottom = 530.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Hack map textures (need Terrain.png)"
+
+[node name="EnemyStats" type="PanelContainer" parent="Panel/HBoxContainer/VBoxContainer"]
+modulate = Color( 1, 1, 1, 0.627451 )
+offset_top = 490.0
+offset_right = 366.0
+offset_bottom = 722.0
+grow_horizontal = 0
+theme = SubResource( 4 )
+theme_override_styles/panel = SubResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 362.0
+offset_bottom = 228.0
+script = ExtResource( 3 )
+
+[node name="CheckBox" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_left = 142.0
+offset_right = 216.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Track"
+
+[node name="HSeparator" type="HSeparator" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 28.0
+offset_right = 358.0
+offset_bottom = 32.0
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+modulate = Color( 1, 1, 0, 1 )
+offset_top = 36.0
+offset_right = 358.0
+offset_bottom = 48.0
+text = "All"
+align = 1
+
+[node name="AllTree" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 52.0
+offset_right = 358.0
+offset_bottom = 64.0
+text = "All in tree: %s"
+align = 1
+
+[node name="AllWave" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 68.0
+offset_right = 358.0
+offset_bottom = 80.0
+text = "All in wave: %s"
+align = 1
+
+[node name="Label2" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+modulate = Color( 1, 0, 0, 1 )
+offset_top = 84.0
+offset_right = 358.0
+offset_bottom = 96.0
+text = "Regular"
+align = 1
+
+[node name="RegularTree" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 100.0
+offset_right = 358.0
+offset_bottom = 112.0
+text = "Regular in tree: %s"
+align = 1
+
+[node name="RegularTracker" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 116.0
+offset_right = 358.0
+offset_bottom = 128.0
+text = "Regular in tracker: %s"
+align = 1
+
+[node name="RegularWave" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 132.0
+offset_right = 358.0
+offset_bottom = 144.0
+text = "Regular in wave: %s"
+align = 1
+
+[node name="Label3" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+modulate = Color( 0, 1, 0, 1 )
+offset_top = 148.0
+offset_right = 358.0
+offset_bottom = 160.0
+text = "Swarm"
+align = 1
+
+[node name="SwarmCount" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 164.0
+offset_right = 358.0
+offset_bottom = 176.0
+text = "Swarm count: %s"
+align = 1
+
+[node name="SwarmCountWave" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 180.0
+offset_right = 358.0
+offset_bottom = 192.0
+text = "Swarm count in wave: %s"
+align = 1
+
+[node name="SwarmEnemies" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 196.0
+offset_right = 358.0
+offset_bottom = 208.0
+text = "Swarm enemies: %s"
+align = 1
+
+[node name="SwarmWave" type="Label" parent="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer"]
+offset_top = 212.0
+offset_right = 358.0
+offset_bottom = 224.0
+text = "Swarm enemies in wave: %s"
+align = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/HBoxContainer"]
+offset_left = 370.0
+offset_right = 820.0
+offset_bottom = 734.0
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_right = 450.0
+offset_bottom = 25.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer4"]
+offset_left = 52.0
+offset_top = 5.0
+offset_right = 142.0
+offset_bottom = 20.0
+text = "Max players"
+
+[node name="Button6" type="SpinBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer4"]
+offset_left = 146.0
+offset_right = 268.0
+offset_bottom = 25.0
+tooltip_text = "Enable coop"
+min_value = 2.0
+max_value = 5.0
+value = 2.0
+
+[node name="CheckBox" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer4"]
+offset_left = 272.0
+offset_right = 398.0
+offset_bottom = 25.0
+text = "Fake joypads"
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/HBoxContainer/VBoxContainer2"]
+visible = false
+offset_top = 336.0
+offset_right = 319.0
+offset_bottom = 352.0
+theme_override_constants/separation = 16
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 29.0
+offset_right = 450.0
+offset_bottom = 53.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Zoom_0125" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6"]
+offset_left = 65.0
+offset_right = 119.0
+offset_bottom = 24.0
+text = "0.075"
+
+[node name="Zoom_025" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6"]
+offset_left = 123.0
+offset_right = 177.0
+offset_bottom = 24.0
+text = "0.125"
+
+[node name="Zoom_05" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6"]
+offset_left = 181.0
+offset_right = 227.0
+offset_bottom = 24.0
+text = "0.25"
+
+[node name="Zoom_075" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6"]
+offset_left = 231.0
+offset_right = 269.0
+offset_bottom = 24.0
+text = "0.5"
+
+[node name="Zoom_1" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6"]
+offset_left = 273.0
+offset_right = 319.0
+offset_bottom = 24.0
+text = "0.75"
+
+[node name="FreeCamera" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6"]
+offset_left = 323.0
+offset_right = 385.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Free"
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 57.0
+offset_right = 450.0
+offset_bottom = 97.0
+custom_minimum_size = Vector2( 0, 40 )
+alignment = 1
+
+[node name="PauseGame" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer8"]
+offset_left = 56.0
+offset_right = 166.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 0, 40 )
+size_flags_horizontal = 4
+text = "Pause game"
+
+[node name="DisableUI" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer8"]
+offset_left = 170.0
+offset_right = 280.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+text = "Disable UI"
+
+[node name="ShowFrameTime" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer8"]
+unique_name_in_owner = true
+offset_left = 284.0
+offset_right = 394.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+text = "Frame Time"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 101.0
+offset_right = 450.0
+offset_bottom = 141.0
+alignment = 1
+
+[node name="InfiniteHealth" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer"]
+offset_left = 69.0
+offset_right = 219.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 0, 40 )
+size_flags_horizontal = 4
+text = "Infinite health"
+
+[node name="InfiniteReactor" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer"]
+offset_left = 223.0
+offset_right = 381.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 0, 40 )
+size_flags_horizontal = 4
+text = "Infinite reactor"
+
+[node name="HBoxContainer7" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 145.0
+offset_right = 450.0
+offset_bottom = 185.0
+custom_minimum_size = Vector2( 0, 40 )
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DisableDarkness" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer7"]
+unique_name_in_owner = true
+offset_left = 64.0
+offset_right = 222.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+text = "Disable darkness"
+
+[node name="Dark" type="ColorPickerButton" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer7"]
+unique_name_in_owner = true
+offset_left = 226.0
+offset_right = 296.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 20 )
+text = "Derkest"
+color = Color( 0.101961, 0.101961, 0.101961, 1 )
+edit_alpha = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Light3D" type="ColorPickerButton" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer7"]
+unique_name_in_owner = true
+offset_left = 300.0
+offset_right = 386.0
+offset_bottom = 40.0
+custom_minimum_size = Vector2( 40, 20 )
+text = "Brightest"
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
+edit_alpha = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 189.0
+offset_right = 450.0
+offset_bottom = 229.0
+custom_minimum_size = Vector2( 0, 40 )
+alignment = 1
+
+[node name="DisableFog" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+offset_right = 174.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+text = "Disable fog of war"
+
+[node name="HidePixelMap" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer2"]
+offset_left = 178.0
+offset_right = 312.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+text = "Hide PixelMap"
+
+[node name="DisableSmoke" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer2"]
+offset_left = 316.0
+offset_right = 450.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+text = "Disable smoke"
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 233.0
+offset_right = 450.0
+offset_bottom = 273.0
+custom_minimum_size = Vector2( 0, 40 )
+alignment = 1
+
+[node name="PauseGame4" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer5"]
+offset_left = 45.0
+offset_right = 267.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+text = "Alternate health display"
+
+[node name="DebugEnemies" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer5"]
+unique_name_in_owner = true
+offset_left = 271.0
+offset_right = 405.0
+offset_bottom = 40.0
+size_flags_horizontal = 4
+pressed = true
+text = "Debug enemies"
+
+[node name="HBoxContainer9" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 277.0
+offset_right = 450.0
+offset_bottom = 301.0
+alignment = 1
+
+[node name="DrawPixelMapQT" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer9"]
+offset_left = 49.0
+offset_right = 207.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Draw PixelMap QT"
+
+[node name="DrawPickablesDebug" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer9"]
+offset_left = 211.0
+offset_right = 401.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Draw Pickables Debug"
+
+[node name="HBoxContainer10" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 305.0
+offset_right = 450.0
+offset_bottom = 329.0
+alignment = 1
+
+[node name="DrawEnemyTracker" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer10"]
+offset_left = 57.0
+offset_right = 231.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Draw Enemy Tracker"
+
+[node name="DrawSwarmDebug" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer10"]
+offset_left = 235.0
+offset_right = 393.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Draw Swarm Debug"
+
+[node name="HBoxContainer11" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 333.0
+offset_right = 450.0
+offset_bottom = 357.0
+alignment = 1
+
+[node name="DrawPlayerTracker" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer11"]
+offset_left = 25.0
+offset_right = 207.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Draw Player Tracker"
+
+[node name="DrawBuildingsTrackers" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer11"]
+offset_left = 211.0
+offset_right = 425.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Draw Buildings Trackers"
+
+[node name="HBoxContainer15" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 361.0
+offset_right = 450.0
+offset_bottom = 385.0
+alignment = 1
+
+[node name="Boost" type="CheckBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer15"]
+offset_left = 170.0
+offset_right = 280.0
+offset_bottom = 24.0
+size_flags_horizontal = 4
+text = "Boost Mode"
+
+[node name="HBoxContainer12" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 389.0
+offset_right = 450.0
+offset_bottom = 429.0
+custom_minimum_size = Vector2( 0, 40 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemList" type="OptionButton" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer12"]
+unique_name_in_owner = true
+offset_right = 220.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+expand_icon = true
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer12"]
+offset_left = 224.0
+offset_top = 12.0
+offset_right = 234.0
+offset_bottom = 27.0
+text = "x"
+
+[node name="SpinBox" type="SpinBox" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer12"]
+unique_name_in_owner = true
+offset_left = 238.0
+offset_right = 360.0
+offset_bottom = 40.0
+max_value = 10000.0
+value = 1.0
+
+[node name="Button" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer12"]
+offset_left = 364.0
+offset_right = 450.0
+offset_bottom = 40.0
+text = "Give item"
+
+[node name="Button4" type="Button" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 433.0
+offset_right = 450.0
+offset_bottom = 473.0
+custom_minimum_size = Vector2( 0, 40 )
+text = "Give all items"
+
+[node name="HBoxContainer13" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 477.0
+offset_right = 450.0
+offset_bottom = 517.0
+custom_minimum_size = Vector2( 0, 40 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TechList" type="OptionButton" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer13"]
+unique_name_in_owner = true
+offset_right = 344.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+
+[node name="T" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer13"]
+offset_left = 348.0
+offset_right = 450.0
+offset_bottom = 40.0
+text = "Unlock tech"
+
+[node name="HBoxContainer14" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 521.0
+offset_right = 450.0
+offset_bottom = 561.0
+custom_minimum_size = Vector2( 0, 40 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UpgradeList" type="OptionButton" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer14"]
+unique_name_in_owner = true
+offset_right = 376.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer14"]
+offset_left = 380.0
+offset_right = 450.0
+offset_bottom = 40.0
+text = "Upgrade"
+
+[node name="EnemyInspector" type="PanelContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+unique_name_in_owner = true
+offset_top = 565.0
+offset_right = 450.0
+offset_bottom = 681.0
+grow_horizontal = 0
+theme = SubResource( 4 )
+theme_override_styles/panel = SubResource( 2 )
+script = ExtResource( 4 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 446.0
+offset_bottom = 112.0
+
+[node name="NodeName" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector/VBoxContainer"]
+offset_right = 442.0
+offset_bottom = 12.0
+
+[node name="EnemyName" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector/VBoxContainer"]
+offset_top = 16.0
+offset_right = 442.0
+offset_bottom = 28.0
+
+[node name="EnemyHP" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector/VBoxContainer"]
+offset_top = 32.0
+offset_right = 442.0
+offset_bottom = 44.0
+
+[node name="EnemyThreat" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector/VBoxContainer"]
+offset_top = 48.0
+offset_right = 442.0
+offset_bottom = 60.0
+
+[node name="EnemyDamage" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector/VBoxContainer"]
+offset_top = 64.0
+offset_right = 442.0
+offset_bottom = 76.0
+
+[node name="EnemyFlags" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector/VBoxContainer"]
+offset_top = 80.0
+offset_right = 442.0
+offset_bottom = 92.0
+
+[node name="EnemyCustom" type="Label" parent="Panel/HBoxContainer/VBoxContainer2/EnemyInspector/VBoxContainer"]
+offset_top = 96.0
+offset_right = 442.0
+offset_bottom = 108.0
+autowrap = true
+
+[node name="Spacer" type="Control" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 685.0
+offset_right = 450.0
+offset_bottom = 685.0
+size_flags_vertical = 3
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 689.0
+offset_right = 450.0
+offset_bottom = 705.0
+theme_override_constants/separation = 16
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/HBoxContainer/VBoxContainer2"]
+offset_top = 709.0
+offset_right = 450.0
+offset_bottom = 734.0
+
+[node name="LineEdit" type="LineEdit" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer3"]
+unique_name_in_owner = true
+offset_right = 376.0
+offset_bottom = 25.0
+size_flags_horizontal = 3
+placeholder_text = "Put some GDScript here"
+
+[node name="Button" type="Button" parent="Panel/HBoxContainer/VBoxContainer2/HBoxContainer3"]
+offset_left = 380.0
+offset_right = 450.0
+offset_bottom = 25.0
+text = "Execute"
+
+[node name="BuildingInspector" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -773.0
+offset_top = 45.0
+offset_right = -488.0
+offset_bottom = 141.0
+grow_horizontal = 0
+theme = SubResource( 4 )
+theme_override_styles/panel = SubResource( 2 )
+script = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BuildingInspector"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 281.0
+offset_bottom = 92.0
+
+[node name="NodeName" type="Label" parent="BuildingInspector/VBoxContainer"]
+offset_right = 277.0
+offset_bottom = 19.0
+
+[node name="BuildingName" type="Label" parent="BuildingInspector/VBoxContainer"]
+offset_top = 23.0
+offset_right = 277.0
+offset_bottom = 42.0
+
+[node name="BuildingHP" type="Label" parent="BuildingInspector/VBoxContainer"]
+offset_top = 46.0
+offset_right = 277.0
+offset_bottom = 65.0
+
+[node name="BuildingCost" type="Label" parent="BuildingInspector/VBoxContainer"]
+offset_top = 69.0
+offset_right = 277.0
+offset_bottom = 88.0
+
+[node name="StaticCL" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+follow_viewport_enabled = true
+
+[node name="Drawer" type="Node2D" parent="StaticCL"]
+script = SubResource( 6 )
+
+[connection signal="value_changed" from="Panel/HBoxContainer/VBoxContainer/HSlider" to="Panel" method="speed_changed"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/HBoxContainer2/Button" to="Panel" method="spawn_wave"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button2" to="Panel" method="force_wave"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button8" to="Panel" method="force_wave_2"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button10" to="Panel" method="next_music"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button6" to="Panel" method="create_locator"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button9" to="Panel" method="show_paths"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button7" to="Panel" method="kill_all"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button3" to="Panel" method="spawn_GRUBAS"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer/Button5" to="Panel" method="hack_textures"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer/CheckBox" to="Panel/HBoxContainer/VBoxContainer/EnemyStats/VBoxContainer" method="_on_CheckBox_toggled"]
+[connection signal="value_changed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer4/Button6" to="Panel" method="set_max_players"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer4/CheckBox" to="Panel" method="set_fake_joypads"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6/Zoom_0125" to="Panel" method="_on_Zoom_0125_pressed"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6/Zoom_025" to="Panel" method="_on_Zoom_025_pressed"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6/Zoom_05" to="Panel" method="_on_Zoom_05_pressed"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6/Zoom_075" to="Panel" method="_on_Zoom_075_pressed"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6/Zoom_1" to="Panel" method="_on_Zoom_1_pressed"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer6/FreeCamera" to="Panel" method="toggle_free_camera"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer8/PauseGame" to="Panel" method="toggle_pause"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer8/DisableUI" to="Panel" method="toggle_ui"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer8/ShowFrameTime" to="Panel" method="_toggle_frame_time"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer/InfiniteHealth" to="Panel" method="toggle_god_mode"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer/InfiniteReactor" to="Panel" method="toggle_god_reactor"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer7/DisableDarkness" to="Panel" method="toggle_darknes"]
+[connection signal="color_changed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer7/Dark" to="Panel" method="_on_Dark_color_changed"]
+[connection signal="color_changed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer7/Light3D" to="Panel" method="_on_Light_color_changed"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer2/DisableFog" to="Panel" method="toggle_fog"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer2/HidePixelMap" to="Panel" method="toggle_wall_hack"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer2/DisableSmoke" to="Panel" method="toggle_smoke"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer5/PauseGame4" to="Panel" method="toggle_alternate_health"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer5/DebugEnemies" to="Panel" method="toggle_enemy_debug"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer9/DrawPixelMapQT" to="Panel" method="toggle_draw_pm_qt"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer9/DrawPickablesDebug" to="Panel" method="toggle_draw_pickables_debug"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer10/DrawEnemyTracker" to="Panel" method="toggle_draw_enemy_tracker"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer10/DrawSwarmDebug" to="Panel" method="toggle_draw_swarm_debug"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer11/DrawPlayerTracker" to="Panel" method="toggle_draw_player_tracker"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer11/DrawBuildingsTrackers" to="Panel" method="toggle_draw_buildings_trackers"]
+[connection signal="toggled" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer15/Boost" to="Panel" method="toggle_boost_mode"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer12/Button" to="Panel" method="give_item"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/Button4" to="Panel" method="give_all"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer13/T" to="Panel" method="unlock_tech"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer14/Button" to="Panel" method="upgrade_weapon"]
+[connection signal="text_submitted" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer3/LineEdit" to="Panel" method="dupa"]
+[connection signal="pressed" from="Panel/HBoxContainer/VBoxContainer2/HBoxContainer3/Button" to="Panel" method="execute_command"]
