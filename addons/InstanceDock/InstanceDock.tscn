@@ -1,0 +1,145 @@
+[gd_scene load_steps=3 format=3 uid="uid://cicx6wvnx175i"]
+
+[ext_resource type="Script" uid="uid://stakc6fiyy2n" path="res://addons/InstanceDock/InstanceDock.gd" id="2"]
+
+[sub_resource type="GDScript" id="1"]
+script/source = "@tool
+extends Label
+
+@onready var start_text = text
+
+func _ready() -> void:
+	set_value(1)
+
+func set_value(val):
+	text = str(start_text, \" \", val)
+"
+
+[node name="Instances" type="PanelContainer"]
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 350.0
+script = ExtResource("2")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TabBar" type="TabBar" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+tab_close_display_policy = 1
+
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "+"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GridContainer" type="HFlowContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Add tab to continue"
+
+[node name="Label2" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Drag scene on slot to assign"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer"]
+layout_mode = 2
+text = "Enable drawing"
+
+[node name="CheckBox2" type="CheckBox" parent="VBoxContainer"]
+layout_mode = 2
+text = "Random angle"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Min scale 1 1"
+script = SubResource("1")
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.01
+max_value = 10.0
+step = 0.1
+value = 1.01
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Max scale 1 1"
+script = SubResource("1")
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.01
+max_value = 10.0
+step = 0.1
+value = 1.01
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="Control"]
+size = Vector2i(477, 100)
+visible = true
+
+[node name="Label2" type="Label" parent="Control/ConfirmationDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -50.0
+text = "This will permanently remove the tab. Continue?"
+
+[node name="ConfirmationDialog2" type="ConfirmationDialog" parent="Control"]
+visible = true
+
+[node name="LineEdit" type="LineEdit" parent="Control/ConfirmationDialog2"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 50.0
+placeholder_text = "Tab name"
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+gui_disable_input = true
+size = Vector2i(64, 64)
+render_target_update_mode = 3
+
+[connection signal="tab_changed" from="VBoxContainer/HBoxContainer/TabBar" to="." method="on_tab_changed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Button" to="." method="add_tab_pressed"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer2/HSlider" to="VBoxContainer/HBoxContainer2/Label" method="set_value"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer3/HSlider" to="VBoxContainer/HBoxContainer3/Label" method="set_value"]
+[connection signal="confirmed" from="Control/ConfirmationDialog" to="." method="remove_tab_confirm"]
+[connection signal="confirmed" from="Control/ConfirmationDialog2" to="." method="add_tab_confirm"]
