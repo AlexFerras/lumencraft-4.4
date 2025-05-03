@@ -116,7 +116,7 @@ func get_coords() -> Vector2:
 
 func select():
 	$Button.button_pressed = true
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	$Button.grab_focus()
 
 func is_unlocked():

@@ -38,12 +38,18 @@ var path: Array
 var path_index: int
 var path_waypoint: Vector2
 
+var is_ready:bool
+
 func _ready() -> void:
 	assert(default_state, "Default state not defined. Assign it inside _init().")
 	set_state(default_state)
+	is_ready = true
 
 func _physics_process(delta: float) -> void:
+	if not is_ready:
+		return
 	assert(state)
+		
 	
 	global_state(delta)
 	call(state, delta)

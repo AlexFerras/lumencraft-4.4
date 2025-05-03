@@ -209,7 +209,7 @@ func _physics_process(delta):
 		
 	smoke.modulate.a=clamp(heat*2.0/15.0,0.0,1.0)
 	player.get_current_item()[\"heat\"]=heat
-	animator.playback_speed = spin_speed
+	animator.speed_scale = spin_speed
 	timer += delta
 	base_upgrade.modulate.a = spin_speed + abs(sin(timer*10.0*spin_speed)) * 0.2
 	
@@ -226,7 +226,7 @@ func on_hit():
 
 func put_away():
 #	animator.stop()
-	animator.playback_speed = 0
+	animator.speed_scale = 0
 	attack_collider.disabled = true
 #	position.x = 12
 	

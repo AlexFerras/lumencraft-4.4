@@ -541,7 +541,7 @@ func exit_vehicle():
 
 func do_fake_press(action: String, keep := true):
 	fake_press.append(action)
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	fake_press.erase(action)
 	if keep:
 		fake_hold.append(action)
@@ -549,7 +549,7 @@ func do_fake_press(action: String, keep := true):
 func do_fake_release(action: String):
 	fake_hold.erase(action)
 	fake_release.append(action)
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	fake_release.erase(action)
 
 func is_action_pressed(action: String) -> bool:

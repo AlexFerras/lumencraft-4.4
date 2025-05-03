@@ -1,6 +1,6 @@
 extends Control
 
-@export_node_path("Node") var target_control
+@export var target_control:Control
 
 func _ready() -> void:
 	create_tween().set_loops().tween_callback(Callable(self, "update_visibility")).set_delay(0.25)

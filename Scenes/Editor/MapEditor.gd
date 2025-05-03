@@ -566,8 +566,8 @@ func on_accept_create():
 	clear_map()
 	
 	wait.show()
-	await get_tree().idle_frame
-	await get_tree().idle_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
 	new_map_menu.hide()
 	
 	var is_empty = starting_material.get_selected_id() == Const.Materials.EMPTY
@@ -582,7 +582,7 @@ func on_accept_create():
 		var source: Image = generated_terrain.final_image
 		var target := pixelmap.get_texture().get_image()
 		
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		
 		## FIXME: jakieś errory wysrywa
 		false # source.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
@@ -664,8 +664,8 @@ func on_file_selected(path: String) -> void:
 	if load_dialog.mode == FileDialog.FILE_MODE_OPEN_FILE:
 		clear_map()
 		
-		await get_tree().idle_frame
-		await get_tree().idle_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
 		
 		load_map(path)
 		set_menu("Edit")
@@ -680,7 +680,7 @@ func load_map(path: String):
 	var map_file := MapFile.new()
 	map_file.load_from_file(path)
 	if map_file.error:
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		exit()
 		display_error("Error loading map. File invalid or corrupted.")
 		return
@@ -1102,11 +1102,11 @@ func _viewport_input(event: InputEvent) -> void:
 				elif get_current_object():
 					if current_hovered and event.command:
 						object_settings.propagate_call("release_focus")
-						await get_tree().idle_frame
+						await get_tree().process_frame
 						current_hovered._push_object(get_current_object())
 					else:
 						object_settings.propagate_call("release_focus")
-						await get_tree().idle_frame
+						await get_tree().process_frame
 						var to_place := get_current_object().copy()
 						place_object(to_place, current_object.position)
 						set_unsaved(true)
@@ -1296,8 +1296,8 @@ func _input(event: InputEvent) -> void:
 			if pixmap.has_meta("previous_state"):
 				wait.show()
 				var temp_data := pixmap.get_pixel_data()
-				await get_tree().idle_frame
-				await get_tree().idle_frame
+				await get_tree().process_frame
+				await get_tree().process_frame
 				pixmap.set_pixel_data(pixmap.get_meta("previous_state"), pixmap.get_texture().get_size())
 				wait.hide()
 				pixmap.set_meta("previous_state", temp_data)
@@ -1719,7 +1719,7 @@ func is_hovering_selected() -> bool:
 func set_camera_position(position: Vector2):
 	camera.position = position
 	camera.force_update_transform()
-	camera.position = camera.get_camera_screen_center()
+	camera.position = camera.get_screen_center_position()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:

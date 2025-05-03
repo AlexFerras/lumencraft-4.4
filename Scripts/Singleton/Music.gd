@@ -122,14 +122,18 @@ func swap_track(track: String):
 func _process(delta):
 	if fader > delta:
 		fader -= delta
-		other_audio_player.volume_db = linear_to_db(1.0 - (fader / fade_time))
-		current_audio_player.volume_db = linear_to_db(fader / fade_time)
+		if other_audio_player:
+			other_audio_player.volume_db = linear_to_db(1.0 - (fader / fade_time))
+		if current_audio_player:
+			current_audio_player.volume_db = linear_to_db(fader / fade_time)
 	else:
 		set_process(false)
 		fader = 0.0
-		other_audio_player.volume_db = linear_to_db(1.0)
+		if other_audio_player:
+			other_audio_player.volume_db = linear_to_db(1.0)
 		_block_stop()
-		current_audio_player.stop()
+		if current_audio_player:
+			current_audio_player.stop()
 		current_audio_player = other_audio_player
 		other_audio_player = null
 

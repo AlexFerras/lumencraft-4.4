@@ -50,8 +50,8 @@ func _ready() -> void:
 		for i in frames:
 			viewport.get_texture().get_data().save_png(\"res://Tools/Photos/Photo%s.png\" % i)
 			propagate_call(\"next_frame\")
-			await get_tree().idle_frame
-			await get_tree().idle_frame
+			await get_tree().process_frame
+			await get_tree().process_frame
 		get_tree().quit()
 
 func sopen_photo_folder(o: bool):

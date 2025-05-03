@@ -24,8 +24,8 @@ func _ready() -> void:
 	$\"ThankYou/PanelContainer/VBoxContainer/HelloText\".text = tr($\"ThankYou/PanelContainer/VBoxContainer/HelloText\".text)
 
 	if not Music.is_game_build():
-		await get_tree().idle_frame
-		await get_tree().idle_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
 		get_tree().change_scene_to_file(Const.TITLE_SCENE)
 		return
 

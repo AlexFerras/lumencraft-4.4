@@ -50,7 +50,7 @@ var original_scale: Vector2
 
 func _enter_tree() -> void:
 	if has_node("PreferredSize"):
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		
 		$PreferredSize.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		for i in 100:
@@ -478,8 +478,8 @@ func reset_window(override_position := 0):
 		main_window.custom_minimum_size = preferred_rect.size
 		
 		if not Music.is_game_build():
-			await get_tree().idle_frame
-			await get_tree().idle_frame
+			await get_tree().process_frame
+			await get_tree().process_frame
 			if main_window.size != Vector2() and main_window.size != preferred_rect.size:
 				push_error("Za mały ustawiony rozmiar okna dla %s! Minimalny rozmiar to %s." % [Utils.game.map.get_path_to(self), main_window.size])
 

@@ -282,18 +282,22 @@ func get_default_terrain_texture():
 	
 	if not cached_terrain_texture or cached_terrain_texture.modified_by_pixelmap != self:
 		cached_terrain_texture = ModifiableTextureArray.new()
-		cached_terrain_texture.create(1024, 1024, 16, Image.FORMAT_RGBA8)
-		
+		var images:Array[Image]
+		images.resize(16)
 		for i in 16:
 			if i in Const.DefaultMaterials:
-				replace_material(cached_terrain_texture, i, Const.DefaultMaterials[i])
+				var img = Const.DefaultMaterials[i].texture
+				img.convert(Image.FORMAT_RGBA8)
+				img.generate_mipmaps()
+				images.set(i, img)
 			else:
 				var image: Image = Const.MaterialTextures.get(i, preload("res://Resources/Terrain/Images/WallUnused.png"))
 				image.convert(Image.FORMAT_RGBA8)
 				image.generate_mipmaps()
-				cached_terrain_texture.set_layer_data(image, i)
-		
+				images.set(i, image)
+		cached_terrain_texture.create_from_images(images)
+		var layers = cached_terrain_texture.get_layers()
 		Constants.static_texture_container.clear()
 		Constants.static_texture_container.append(cached_terrain_texture)
-	
+		
 	return cached_terrain_texture

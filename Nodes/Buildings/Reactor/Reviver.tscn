@@ -27,9 +27,9 @@ func _ready() -> void:
 	indicator.set_as_top_level(true)
 
 func _physics_process(delta: float) -> void:
-	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y):
 		return
-	var center :Vector2= Utils.game.camera.get_camera_screen_center()
+	var center :Vector2= Utils.game.camera.get_screen_center_position()
 	var screen_size := (Utils.game.resolution_of_visible_rect * 0.5 - Vector2(160, 160)) * Utils.game.camera.zoom
 #	var screen_size := (Const.RESOLUTION * 0.5 - Vector2(160, 160)) * Utils.game.camera.zoom
 	indicator.global_position.x = clamp(global_position.x, center.x - screen_size.x, center.x + screen_size.x)

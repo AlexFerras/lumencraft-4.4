@@ -193,25 +193,25 @@ func _physics_process(delta: float) -> void:
 	var pickup_draw_distance = Utils.game.screen_diagonal_radius_scaled
 #	var pickup_draw_distance = Save.config.screen_diagonal/2/4
 #	var pickup_draw_distance = (Const.RESOLUTION / 2 / 4).length()
-	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y):
 		return
-	Utils.game.map.pickup_tracker.updateFocusCircle(camera.get_camera_screen_center(), pickup_draw_distance)
+	Utils.game.map.pickup_tracker.updateFocusCircle(camera.get_screen_center_position(), pickup_draw_distance)
 
-#	Utils.game.map.pickup_tracker.updateFocusCircle(camera.get_camera_screen_center(), 1024)
-	Utils.game.map.enemy_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.player_tracker.updateFocusCircle(camera.get_camera_screen_center(), 1024) # dodawane sa z 99999 radius wiec nie wypadna
-	Utils.game.map.common_buildings_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.gate_buildings_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.power_expander_buildings_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.turret_buildings_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.mine_buildings_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.passive_buildings_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.lights_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.flares_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
-	Utils.game.map.danger_tracker.updateFocusCircle(camera.get_camera_screen_center(), 512)
+#	Utils.game.map.pickup_tracker.updateFocusCircle(camera.get_screen_center_position(), 1024)
+	Utils.game.map.enemy_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.player_tracker.updateFocusCircle(camera.get_screen_center_position(), 1024) # dodawane sa z 99999 radius wiec nie wypadna
+	Utils.game.map.common_buildings_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.gate_buildings_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.power_expander_buildings_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.turret_buildings_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.mine_buildings_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.passive_buildings_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.lights_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.flares_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
+	Utils.game.map.danger_tracker.updateFocusCircle(camera.get_screen_center_position(), 512)
 
-	Utils.game.map.strategic_buildings_group.update()
-	Utils.game.map.enemies_group.update()
+	Utils.game.map.strategic_buildings_group.queue_redraw()
+	Utils.game.map.enemies_group.queue_redraw()
 
 	if not building_queue.is_empty():
 		if not Save.is_tech_unlocked("many_drones") and not get_tree().get_nodes_in_group("build_drone").is_empty():
@@ -359,7 +359,7 @@ func goto_map(map_name):
 	
 	add_child(loader)
 	
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	
 	if map:
 		Save.current_map = old_map
@@ -370,7 +370,7 @@ func goto_map(map_name):
 	
 	loader.set_process(true)
 	await loader.tree_exited
-	camera.current = true
+	camera.make_current()
 	if Save.is_hub():
 		Music.stop()
 		disable_music = true
@@ -614,13 +614,13 @@ func shake_in_direction(attenuation:float, direction:Vector2, duration:float = 0
 	Utils.vibrate(attenuation * 0.1, attenuation * 0.05, attenuation * 0.01)
 	
 func shake_in_position(shake_source:Vector2, attenuation: float, duration:float = 0.5, freqency:float= 30.0, randomness:float = 1.0):
-	if is_nan(Utils.game.camera.get_camera_screen_center().y) or is_nan(get_viewport_rect().size.y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y) or is_nan(get_viewport_rect().size.y):
 		return
-	var distance  = (camera.get_camera_screen_center().distance_to(shake_source)) / (get_viewport_rect().size.x * camera.zoom.x * 0.5)
+	var distance  = (camera.get_screen_center_position().distance_to(shake_source)) / (get_viewport_rect().size.x * camera.zoom.x * 0.5)
 	if  distance <= 1:
 		attenuation *= (1.0 - distance)
 #		camera_shakes.append([power,0])
-		shake_in_direction(attenuation, shake_source.direction_to(camera.get_camera_screen_center()) , duration, freqency, randomness)
+		shake_in_direction(attenuation, shake_source.direction_to(camera.get_screen_center_position()) , duration, freqency, randomness)
 
 func process_screen_shake_all(delta):
 	if camera_shakes.size() <= 0:
@@ -687,7 +687,7 @@ func add_new_player(control_id := 1, player_id := 1):
 	player.player_id = player_id
 	player.control_id = control_id
 	add_child(player)
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	if not Save.data.player_data[player_id]:
 		set_starting_inventory(player)
 		Utils.game.map.apply_player_start(player)

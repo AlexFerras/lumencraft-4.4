@@ -186,8 +186,8 @@ func draw_bake(canvas: CanvasItem, viewport: SubViewport):
 	for piece in pieces:
 		piece.draw(canvas)
 	
-	await Utils.get_tree().idle_frame
-	await Utils.get_tree().idle_frame
+	await Utils.get_tree().process_frame
+	await Utils.get_tree().process_frame
 	
 	final_image = viewport.get_texture().get_data()
 	final_texture = ImageTexture.new()

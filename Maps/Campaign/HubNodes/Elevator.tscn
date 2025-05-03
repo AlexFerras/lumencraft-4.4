@@ -137,7 +137,7 @@ func start_map(map):
 
 func close_ui():
 	set_process_input(false)
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	get_tree().paused = false
 	$UI.hide()
 	Utils.game.ui.block_menu = false

@@ -1177,7 +1177,7 @@ func refresh_extra_options(whatever = null):
 func register_data(property: String, setter: Callable, getter: Callable, default = null):
 	registered_properties.append({name = property, setter = setter, getter = getter})
 	
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	
 	if property in loaded_data:
 		setter.call(loaded_data.get(property, default))
@@ -1625,7 +1625,7 @@ func _process(delta: float) -> void:
 	
 	var parent_size: Vector2 = get_parent().size
 	size = parent_size / map_size * overlay.size * camera.zoom
-	position = camera.get_camera_screen_center() / map_size * get_parent().size - size * 0.5
+	position = camera.get_screen_center_position() / map_size * get_parent().size - size * 0.5
 
 func _minimap_input(event: InputEvent):
 	if event is InputEventMouseButton:
@@ -1821,8 +1821,8 @@ func tag_callback(tags: PackedStringArray):
 func generate_preview():
 	snapshot.texture = owner.pixelmap.get_texture()
 	snapshot.get_parent().render_target_update_mode = SubViewport.UPDATE_ONCE
-	await get_tree().idle_frame
-	await get_tree().idle_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
 	map_preview.texture = snapshot.get_parent().get_texture()
 
 func on_publish_confirm() -> void:

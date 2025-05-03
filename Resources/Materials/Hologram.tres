@@ -5,12 +5,12 @@ code = "shader_type canvas_item;
 uniform vec4 tint=vec4(1.0,1.0,1.0,1.0);
 uniform float time_offset=0.0;
 
-//by Vladimir Storm 
+//by Vladimir Storm
 //https://twitter.com/vladstorm_
 
 //random hash
 vec4 hash42(vec2 p){
-    
+
 	vec4 p4 = fract(vec4(p.xyxy) * vec4(443.8975,397.2973, 491.1871, 470.7827));
     p4 += dot(p4.wzxy, p4+19.19);
     return fract(vec4(p4.x * p4.y, p4.x*p4.z, p4.y*p4.w, p4.x*p4.w));
@@ -40,22 +40,22 @@ float nn(float t, vec2 p){
 
     float y = p.y;
     float s = t*2.;
-    
+
     float v = (n( vec3(y*.01 +s, 			1., 1.0) ) + .0)
-          	 *(n( vec3(y*.011+1000.0+s, 	1., 1.0) ) + .0) 
-          	 *(n( vec3(y*.51+421.0+s, 	1., 1.0) ) + .0)   
+          	 *(n( vec3(y*.011+1000.0+s, 	1., 1.0) ) + .0)
+          	 *(n( vec3(y*.51+421.0+s, 	1., 1.0) ) + .0)
         ;
     //v*= n( vec3( (fragCoord.xy + vec2(s,0.))*100.,1.0) );
    	v*= hash42(   vec2(p.x +t*0.01, p.y) ).x +.3 ;
 
-    
+
     v = pow(v+.3, 1.);
 	if(v<.7) v = 0.;  //threshold
     return v;
 }
 
 void fragment( ){
-	
+
 	vec2 iResolution = 1.0 / TEXTURE_PIXEL_SIZE;
     vec2 uv = UV;
 

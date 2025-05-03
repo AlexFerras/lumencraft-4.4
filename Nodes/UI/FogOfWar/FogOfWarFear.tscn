@@ -11,9 +11,9 @@ script/source = "extends ColorRect
 
 func _ready():
 	size = get_parent().size
-	await get_tree().idle_frame
-	await get_tree().idle_frame
-	await get_tree().idle_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
 	queue_free()
 "
 
@@ -23,9 +23,9 @@ script/source = "extends ColorRect
 
 func _ready():
 	size = get_parent().size
-	await get_tree().idle_frame
-	await get_tree().idle_frame
-	await get_tree().idle_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
 #	queue_free()
 	color.a = 6.0/255.0
 "

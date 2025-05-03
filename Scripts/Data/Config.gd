@@ -258,7 +258,7 @@ func apply_window_maximize():
 		Utils.get_window().size = target_window_size
 #		OS.window_fullscreen = true
 	else:
-		Utils.get_window().size = target_window_size + Vector2(0,1)
+		Utils.get_window().size = target_window_size + Vector2i(0,1)
 		
 func apply_window_move():
 	Utils.get_window().position = target_window_position

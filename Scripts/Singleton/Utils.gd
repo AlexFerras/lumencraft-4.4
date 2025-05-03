@@ -72,11 +72,11 @@ func debug_inspect(node):
 
 func debug_map(map: String):
 	Save.new_game()
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	Game.start_map("res://Maps/" + map + ".tscn")
 	get_tree().current_scene.queue_free()
 	if get_meta("override").has_method("on_map_loaded"):
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		Utils.game.connect("map_changed", Callable(get_meta("override"), "on_map_loaded"))
 
 func print_node(node):
@@ -929,7 +929,7 @@ func play_sample(sample, source = null, follow := false, random_pitch := 1.0, pi
 	
 	if not is_equal_approx(random_pitch, 1.0):
 		var stream := AudioStreamRandomizer.new()
-		stream.audio_stream = sample
+		stream.set_stream(0, sample)
 		stream.random_pitch = random_pitch
 		sample = stream
 	
@@ -1248,9 +1248,9 @@ class AudioManager:
 			var position = source
 			if source is Node2D:
 				position = source.position
-			if is_nan(Utils.game.camera.get_camera_screen_center().y):
+			if is_nan(Utils.game.camera.get_screen_center_position().y):
 				return
-			if Utils.game.camera.get_camera_screen_center().distance_squared_to(position) >= 3686400:
+			if Utils.game.camera.get_screen_center_position().distance_squared_to(position) >= 3686400:
 				return
 		
 		_playing += 1
@@ -1599,7 +1599,7 @@ func load_resource(path: String, interactive: bool):
 		else:
 			async_resource_loader.resource = load(path)
 		
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		async_resource_loader.is_finished = true
 
 func clear_async():

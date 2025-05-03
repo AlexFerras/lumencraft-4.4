@@ -31,7 +31,8 @@ signal right_clicked
 signal swap(with)
 
 func _ready() -> void:
-	$\"%Icon\".set_drag_forwarding(self)
+	# RECHECK
+	#$\"%Icon\".set_drag_forwarding(self)
 	$\"%FirstIndicator\".hide()
 	$\"%SecondIndicator\".hide()
 	

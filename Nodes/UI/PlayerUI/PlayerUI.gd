@@ -47,7 +47,8 @@ func _ready() -> void:
 	description_panel.hide()
 	
 	if mirrored:
-		inventory.raise()
+		# RECHECK
+		inventory.z_index = 1
 	
 	for slot in inventory.get_children():
 		slot.can_drag = Callable(self, "can_drag")

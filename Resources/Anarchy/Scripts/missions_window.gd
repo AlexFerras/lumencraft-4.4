@@ -156,5 +156,5 @@ func connect_to_neighbor(node: Node, offset: Vector2, used_nodes: Array):
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_VISIBILITY_CHANGED and is_visible_in_tree():
 		nodes.get_child(first_unfinished).call_deferred("select")
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		$"%ScrollContainer".scroll_vertical = nodes.get_child(first_unfinished).position.y - $"%ScrollContainer".get_v_scroll_bar().page * 0.5

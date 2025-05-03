@@ -9,9 +9,9 @@ func _process(delta):
 
 func update_properites():
 	if not Engine.is_editor_hint():
-		if is_nan(Utils.game.camera.get_camera_screen_center().y):
+		if is_nan(Utils.game.camera.get_screen_center_position().y):
 			return
 		scale = Utils.game.camera.zoom * Save.config.downsample *1.01
-		global_position = Utils.game.camera.get_camera_screen_center()
+		global_position = Utils.game.camera.get_screen_center_position()
 	
 	material.set_shader_parameter("global_transform", get_global_transform())

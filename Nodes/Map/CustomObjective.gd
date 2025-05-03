@@ -124,7 +124,7 @@ func _ready() -> void:
 			Save.scoreboard._starting_score = scoring.starting_score
 			Save.score = scoring.starting_score
 		
-		await get_tree().idle_frame # Potrzebne, bo startowe technologie itp
+		await get_tree().process_frame # Potrzebne, bo startowe technologie itp
 		Utils.game.map.scoring_rules = Utils.merge_dicts({_clear_bonus = objectives.scoring.clear_bonus}, objectives.scoring.table)
 	
 	if need_score:

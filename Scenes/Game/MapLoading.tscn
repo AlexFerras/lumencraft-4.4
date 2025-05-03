@@ -55,9 +55,12 @@ func _process(delta: float) -> void:
 	elif started == 1:
 		match mode:
 			SCENE:
-				loader = ResourceLoader.load_threaded_request(load_path)
-				assert(loader, \"Mapy nie znaleziono\")
-				progress.max_value = loader.get_stage_count()
+				# Perform synchronous loading
+				loader = ResourceLoader.load(load_path)
+				assert(loader, \"Map not found\")
+				# Assuming no progress stages since it's synchronous
+				progress.max_value = 100  # Set a reasonable default
+				progress.value = 1
 			MAP:
 				if load_path is MapFile:
 					loader = load_path
@@ -81,25 +84,16 @@ func _process(delta: float) -> void:
 				progress.value = 1
 		started -= 1
 	
-	if finished:
+	if is_finished:
 		return
 	
 	match mode:
 		SCENE:
-			if loader.poll() != ERR_FILE_EOF:
-				progress.value = loader.get_stage()
-			else:
-				is_finished = true
-				progress.value = progress.max_value
-				instance = loader.get_resource().instantiate()
-				call_deferred(\"finish\")
+			# Synchronously load the scene after loading
+			progress.value = 100
+			instance = loader.instantiate()
+			call_deferred(\"finish\")
 		MAP:
-			if Utils.async_resource_loader and not Utils.async_resource_loader.is_finished:
-				Utils.async_resource_loader.progress()
-				if delta > 0:
-					_process(delta - get_process_delta_time() * 0.1)
-				return
-			
 			progress.value += 1
 			if progress.value == 2:
 				instance.pixel_data_override = loader.pixel_data
@@ -115,8 +109,6 @@ func _process(delta: float) -> void:
 				var object: Dictionary = loader.objects[progress.value - 3]
 				EditorObject.instance(object, instance, {pickables_to_spawn = pickables_to_spawn}, true)
 				
-				if delta > 0:
-					_process(delta - get_process_delta_time() * 0.1)
 			else:
 				instance.get_node(\"PixelMap/MapDarkness\").ambient_color = loader.darkness_color
 				if not loader.enable_fog:
@@ -267,7 +259,7 @@ func progress_time(time: int):
 	
 	if not instance.is_inside_tree():
 		await instance.tree_entered
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	
 	get_tree().call_group(\"timed_nodes\", \"progress_time\", time)
 
@@ -357,7 +349,7 @@ stretch = true
 unique_name_in_owner = true
 handle_input_locally = false
 gui_disable_input = true
-size = Vector2i(3840, 2160)
+size = Vector2i(1280, 720)
 render_target_update_mode = 0
 
 [node name="Loading" type="Control" parent="."]
@@ -365,6 +357,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 

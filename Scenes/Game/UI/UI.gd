@@ -63,7 +63,7 @@ func _ready() -> void:
 		res.hide()
 	
 	create_tween().set_loops().tween_callback(Callable(self, "refresh_global_turrets")).set_delay(0.5)
-	Utils.connect_to_lazy(minimap.overlay, "update")
+	Utils.connect_to_lazy(minimap.overlay, "queue_redraw")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED:
@@ -94,7 +94,7 @@ func _physics_process(delta: float) -> void:
 	if not Utils.game.map or Save.is_saving:
 		return
 	
-#	minimap.screen_center_position = Utils.game.camera.get_camera_screen_center()
+#	minimap.screen_center_position = Utils.game.camera.get_screen_center_position()
 	minimap.screen_center_position = Utils.game.camera_target.global_position
 	
 	if block_menu or menu.is_confirm_quit_dialog_open:
@@ -258,7 +258,9 @@ func set_objective(id: int, o: String, allow_repeat := false, won := false):
 
 func refresh_objective():
 #	objective.text = str("  ", tr(objective_text))
-	objective.text = objective_text
+	# RECHECK
+	#objective.text = objective_text
+	pass
 
 func get_player_ui(idx: int) -> Node:
 	return get_node_or_null(str("Player", idx))

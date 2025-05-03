@@ -28,6 +28,6 @@ func update_darkness():
 	darkness.update()
 
 func _process(delta):
-	darkness.position = Utils.game.camera.get_camera_screen_center() / 8.0
+	darkness.position = Utils.game.camera.get_screen_center_position() / 8.0
 	darkness.scale.x = Save.config.downsample/64.0 * (8.0*Utils.game.camera.zoom.x)
 	darkness.scale.y = darkness.scale.x

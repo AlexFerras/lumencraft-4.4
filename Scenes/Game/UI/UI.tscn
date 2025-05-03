@@ -49,7 +49,7 @@
 [ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/hud_score_coOp_resources.tscn" id="47"]
 [ext_resource type="PackedScene" path="res://Nodes/UI/PlayerUI/PlayerUIMirrored.tscn" id="48"]
 [ext_resource type="PackedScene" uid="uid://dtqq50uehvawp" path="res://Resources/Anarchy/Scenes/UIElements/Options.tscn" id="49"]
-[ext_resource type="PackedScene" path="res://Resources/Anarchy/Scenes/UIElements/player_controls_window.tscn" id="50"]
+[ext_resource type="PackedScene" uid="uid://gdi84lss15bo" path="res://Resources/Anarchy/Scenes/UIElements/player_controls_window.tscn" id="50"]
 [ext_resource type="FontFile" path="res://Resources/Anarchy/Fonts/spacemono_bolditalic_minimal.tres" id="51"]
 [ext_resource type="FontFile" path="res://Resources/Fonts/Font14Outline.tres" id="52"]
 [ext_resource type="FontFile" uid="uid://bbjiqd54pwcbm" path="res://Resources/Anarchy/Fonts/spacemono_bold_mainmenu.tres" id="53"]
@@ -353,12 +353,12 @@ func _draw() -> void:
 #			var pos: Vector2 = enemy.global_position * scale - DOT_HALF
 #			draw_rect(Rect2(pos, DOT_SIZE), Color.red)
 	
-	screen_node.update()
+	screen_node.queue_redraw()
 
 func draw_screen():
 	if draw_screen_rect:
 		var scale: float = map.get_view_scale()
-		screen_node.draw_rect(Rect2(Utils.game.camera.get_camera_screen_center() * scale - Utils.get_viewport().size / Const.CAMERA_ZOOM * scale * 0.5, Utils.get_viewport().size / Const.CAMERA_ZOOM * scale) ,Color(1.0, 1.0, 0, 0.3), false, 1)
+		screen_node.draw_rect(Rect2(Utils.game.camera.get_screen_center_position() * scale - Utils.get_viewport().size / Const.CAMERA_ZOOM * scale * 0.5, Utils.get_viewport().size / Const.CAMERA_ZOOM * scale) ,Color(1.0, 1.0, 0, 0.3), false, 1)
 
 #	if Utils.game.map.buffs.has(Const.Buffs.RADAR):
 #		for artifact in get_tree().get_nodes_in_group(\"artifacts\"):
@@ -1036,7 +1036,7 @@ func on_coop_toggled(active: bool):
 
 func display_objective() -> void:
 	toggle(true)
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	owner.on_screen_message.add_message(Const.CampaignLevels[Save.campaign.current_map].description)
 "
 
@@ -1779,7 +1779,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TopPanel" type="ReferenceRect" parent="VisibilityRects"]
+[node name="TopPanel" type="ReferenceRect" parent="VisibilityRects" node_paths=PackedStringArray("target_control")]
 layout_mode = 0
 offset_left = 1360.0
 offset_top = 23.0
@@ -1788,7 +1788,7 @@ offset_bottom = 448.0
 script = ExtResource("30")
 target_control = NodePath("../../TopPanel")
 
-[node name="Player1" type="ReferenceRect" parent="VisibilityRects"]
+[node name="Player1" type="ReferenceRect" parent="VisibilityRects" node_paths=PackedStringArray("target_control")]
 layout_mode = 0
 offset_left = 13.0
 offset_top = 23.0
@@ -1797,7 +1797,7 @@ offset_bottom = 452.0
 script = ExtResource("30")
 target_control = NodePath("../../Player1")
 
-[node name="Player2" type="ReferenceRect" parent="VisibilityRects"]
+[node name="Player2" type="ReferenceRect" parent="VisibilityRects" node_paths=PackedStringArray("target_control")]
 layout_mode = 0
 offset_left = 2991.0
 offset_top = 23.0
@@ -1806,7 +1806,7 @@ offset_bottom = 452.0
 script = ExtResource("30")
 target_control = NodePath("../../Player2")
 
-[node name="InfoLabels" type="ReferenceRect" parent="VisibilityRects"]
+[node name="InfoLabels" type="ReferenceRect" parent="VisibilityRects" node_paths=PackedStringArray("target_control")]
 layout_mode = 0
 offset_left = 1186.0
 offset_top = 1729.0
@@ -1815,7 +1815,7 @@ offset_bottom = 2154.0
 script = ExtResource("30")
 target_control = NodePath("../../InfoLabels")
 
-[node name="Notifications" type="ReferenceRect" parent="VisibilityRects"]
+[node name="Notifications" type="ReferenceRect" parent="VisibilityRects" node_paths=PackedStringArray("target_control")]
 layout_mode = 0
 offset_left = 18.0
 offset_top = 1643.0
@@ -1824,7 +1824,7 @@ offset_bottom = 2154.0
 script = ExtResource("30")
 target_control = NodePath("../../NotificationPanel")
 
-[node name="MinimapVisibler" type="ReferenceRect" parent="VisibilityRects"]
+[node name="MinimapVisibler" type="ReferenceRect" parent="VisibilityRects" node_paths=PackedStringArray("target_control")]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 3139.0
@@ -1834,7 +1834,7 @@ offset_bottom = 764.0
 script = ExtResource("30")
 target_control = NodePath("../../MinimapPanel")
 
-[node name="MinimapVisibler2" type="ReferenceRect" parent="VisibilityRects"]
+[node name="MinimapVisibler2" type="ReferenceRect" parent="VisibilityRects" node_paths=PackedStringArray("target_control")]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 3039.0
@@ -3301,32 +3301,19 @@ visible = false
 layout_mode = 2
 script = SubResource("44")
 
-[node name="VBoxContainer" parent="PauseMenu/CoopSettings" index="0"]
-layout_mode = 2
-
-[node name="Header" parent="PauseMenu/CoopSettings/VBoxContainer" index="0"]
-layout_mode = 2
-theme_type_variation = &"CoopHeader"
-
 [node name="MarginContainer" parent="PauseMenu/CoopSettings/VBoxContainer/Header" index="0"]
-layout_mode = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
 
-[node name="ValueHeaderTitle" parent="PauseMenu/CoopSettings/VBoxContainer/Header/MarginContainer" index="0"]
-layout_mode = 2
-vertical_alignment = 1
-
 [node name="ButtonExit" parent="PauseMenu/CoopSettings/VBoxContainer/Header" index="1"]
-layout_mode = 0
 anchor_left = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 offset_left = 0.0
 offset_right = 32.0
+offset_bottom = 32.0
 
 [node name="PadHint" parent="PauseMenu/CoopSettings/VBoxContainer/Header/ButtonExit" index="0"]
-layout_mode = 0
 anchor_top = 0.0
 anchor_bottom = 0.0
 offset_left = 0.0
@@ -3334,58 +3321,7 @@ offset_top = 0.0
 offset_right = 56.0
 offset_bottom = 75.0
 
-[node name="PanelContainer" parent="PauseMenu/CoopSettings/VBoxContainer" index="1"]
-layout_mode = 2
-
-[node name="MarginContainer2" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer" index="0"]
-layout_mode = 2
-
-[node name="VBoxContainer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2" index="0"]
-layout_mode = 2
-
-[node name="Players" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="0"]
-layout_mode = 2
-
-[node name="Player" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players" index="0"]
-layout_mode = 2
-
-[node name="ValuePlayer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="0"]
-layout_mode = 2
-theme_type_variation = &"YellowLabel"
-horizontal_alignment = 1
-
-[node name="ButtonUp" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="1"]
-layout_mode = 2
-
-[node name="ControlsNone" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="2"]
-layout_mode = 2
-
-[node name="Icon1" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsNone" index="0"]
-layout_mode = 2
-
-[node name="ControlsKeyboardMouse" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="3"]
-layout_mode = 2
-
-[node name="Icon1" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsKeyboardMouse" index="0"]
-layout_mode = 2
-
-[node name="Icon2" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsKeyboardMouse" index="1"]
-layout_mode = 2
-
-[node name="ControlsGamepad" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="4"]
-layout_mode = 2
-
-[node name="H" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad" index="0"]
-layout_mode = 2
-
-[node name="Icon1" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad/H" index="0"]
-layout_mode = 2
-
-[node name="L" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad/H" index="1"]
-layout_mode = 2
-
 [node name="V" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad/H/L" index="0"]
-layout_mode = 0
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -3394,28 +3330,6 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 40.0
 offset_bottom = 64.0
-horizontal_alignment = 1
-
-[node name="L" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player/ControlsGamepad" index="1"]
-layout_mode = 2
-horizontal_alignment = 1
-
-[node name="ButtonDown" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/Players/Player" index="5"]
-layout_mode = 2
-
-[node name="Error" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="1"]
-layout_mode = 2
-horizontal_alignment = 1
-
-[node name="HBoxContainer" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer" index="2"]
-layout_mode = 2
-
-[node name="UltimateTooltip" parent="PauseMenu/CoopSettings/VBoxContainer/PanelContainer/MarginContainer2/VBoxContainer/HBoxContainer" index="0"]
-layout_mode = 2
-
-[node name="Footer" parent="PauseMenu/CoopSettings/VBoxContainer" index="2"]
-layout_mode = 2
-theme_type_variation = &"Footer"
 
 [node name="AnimationPlayer" parent="PauseMenu/CoopSettings" index="1"]
 libraries = {
@@ -3430,10 +3344,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 1827.0
-offset_top = 1016.0
-offset_right = 2013.0
-offset_bottom = 1144.0
+offset_left = 1187.0
+offset_top = 656.0
+offset_right = 1373.0
+offset_bottom = 784.0
 theme_override_styles/panel = SubResource("75")
 script = SubResource("76")
 

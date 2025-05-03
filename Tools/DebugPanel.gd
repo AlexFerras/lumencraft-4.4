@@ -65,8 +65,8 @@ func _ready() -> void:
 		debug_enemies = true
 		show_frame_time = false
 	
-	var file = File.new()
-	if Utils.safe_open(file, "user://debug", file.READ):
+	var file = Utils.safe_open(Utils.FILE, "user://debug", FileAccess.READ)
+	if file:
 #		$VBoxContainer/FreeCamera.pressed = bool(file.get_8())
 		$"%DebugEnemies".set_pressed_no_signal(bool(file.get_8()))
 		debug_enemies = $"%DebugEnemies".pressed
@@ -169,10 +169,10 @@ func _input(event: InputEvent) -> void:
 				vis[node] = node.modulate
 				node.modulate.a = 0
 		
-		DirAccess.new().make_dir_recursive("user://Screenshots")
+		DirAccess.make_dir_recursive_absolute("user://Screenshots")
 		
-		await get_tree().idle_frame
-		await get_tree().idle_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
 		var data = get_viewport().get_texture().get_data()
 		data.flip_y()
 		data.save_png(str("user://Screenshots/screenshot-", str(Time.get_unix_time_from_system(), ".png")))
@@ -347,8 +347,7 @@ func execute_command() -> void:
 	ref.execute()
 
 func save_settings():
-	var file = File.new()
-	file.open("user://debug", file.WRITE)
+	var file = FileAccess.open("user://debug", FileAccess.WRITE)
 	
 #	file.store_8(int($VBoxContainer/FreeCamera.pressed))
 	file.store_8(int($"%DebugEnemies".pressed))
@@ -426,9 +425,9 @@ func toggle_alternate_health(button_pressed: bool) -> void:
 		player.get_node("AlternateHealth").set_enabled(button_pressed)
 
 func hack_textures() -> void:
-	var file = File.new()
+	var file = Utils.safe_open(Utils.FILE, "res://Terrain.png", FileAccess.READ)
 	
-	if Utils.safe_open(file, "res://Terrain.png", file.READ):
+	if file:
 		var source = Image.new()
 		source.load_png_from_buffer(file.get_buffer(file.get_length()))
 		var size = Vector2(source.get_size() / 4)

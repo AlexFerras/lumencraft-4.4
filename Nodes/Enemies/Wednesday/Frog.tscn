@@ -1,10 +1,10 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=3 uid="uid://dpyvffuv7or1r"]
 
-[ext_resource path="res://SFX/Enemies/Frog/wednesday_2.wav" type="AudioStream" id=1]
-[ext_resource path="res://Nodes/Enemies/Wednesday/Frog.png" type="Texture2D" id=2]
-[ext_resource path="res://SFX/Enemies/Frog/wednesday_1.wav" type="AudioStream" id=3]
+[ext_resource type="AudioStream" uid="uid://dln2qksnym0f3" path="res://SFX/Enemies/Frog/wednesday_2.wav" id="1"]
+[ext_resource type="Texture2D" uid="uid://c8i2s3015l0hd" path="res://Nodes/Enemies/Wednesday/Frog.png" id="2"]
+[ext_resource type="AudioStream" uid="uid://mjn10fby743d" path="res://SFX/Enemies/Frog/wednesday_1.wav" id="3"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends WalkingEnemy
 
 var jump_finished: bool
@@ -90,96 +90,111 @@ func _on_AnimationPlayer2_animation_finished(anim_name: String) -> void:
 	queue_free()
 "
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id="2"]
 resource_name = "Jump"
 length = 0.5
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.5 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ 0, 6 ]
+"values": [0, 6]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_l6s07"]
+_data = {
+&"Jump": SubResource("2")
+}
+
+[sub_resource type="Animation" id="4"]
 resource_name = "Wednesday"
 length = 5.0
 tracks/0/type = "audio"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("AudioStreamPlayer2D")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"clips": [ {
+"clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource( 3 )
+"stream": ExtResource("3")
 }, {
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource( 1 )
-} ],
-"times": PackedFloat32Array( 0, 1.7 )
+"stream": ExtResource("1")
+}],
+"times": PackedFloat32Array(0, 1.7)
+}
+tracks/0/use_blend = true
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_28l4u"]
+_data = {
+&"Wednesday": SubResource("4")
 }
 
-[sub_resource type="CircleShape2D" id=3]
+[sub_resource type="CircleShape2D" id="3"]
 radius = 4.0
 
 [node name="Frog" type="Node2D"]
 z_as_relative = false
-script = SubResource( 1 )
+script = SubResource("1")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/Jump = SubResource( 2 )
+libraries = {
+&"": SubResource("AnimationLibrary_l6s07")
+}
 
 [node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
-anims/Wednesday = SubResource( 4 )
+libraries = {
+&"": SubResource("AnimationLibrary_28l4u")
+}
 
 [node name="Hitbox" type="Area2D" parent="."]
 collision_layer = 32
 collision_mask = 32
 
 [node name="Shape2D" type="CollisionShape2D" parent="Hitbox"]
-shape = SubResource( 3 )
+shape = SubResource("3")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
-scale = Vector2( 0.125, 0.125 )
-texture = ExtResource( 2 )
+scale = Vector2(0.125, 0.125)
+texture = ExtResource("2")
 hframes = 7
 
 [node name="Collisions" type="Node2D" parent="Sprite2D"]
 rotation = -1.5708
-scale = Vector2( 8, 8 )
+scale = Vector2(8, 8)
 
 [node name="LeftStart" type="Marker2D" parent="Sprite2D/Collisions"]
-position = Vector2( 0, -6 )
 z_index = 1023
+position = Vector2(0, -6)
 
 [node name="LeftEnd" type="Marker2D" parent="Sprite2D/Collisions"]
-position = Vector2( 6, -7 )
 z_index = 1023
+position = Vector2(6, -7)
 
 [node name="RightStart" type="Marker2D" parent="Sprite2D/Collisions"]
-position = Vector2( 0, 6 )
 z_index = 1023
+position = Vector2(0, 6)
 
 [node name="RightEnd" type="Marker2D" parent="Sprite2D/Collisions"]
-position = Vector2( 6, 7 )
 z_index = 1023
+position = Vector2(6, 7)
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource( 1 )
+stream = ExtResource("1")
 volume_db = 5.0
 max_distance = 500.0
 attenuation = 2.0
-bus = "SFX"
+bus = &"SFX"
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="animation_finished"]
 [connection signal="animation_finished" from="AnimationPlayer2" to="." method="_on_AnimationPlayer2_animation_finished"]

@@ -45,4 +45,4 @@ func get_texture_for_map():
 
 
 #func _process(delta):
-#	darkness.position = Utils.game.camera.get_camera_screen_center() / coords_scale
+#	darkness.position = Utils.game.camera.get_screen_center_position() / coords_scale

@@ -103,9 +103,9 @@ func _tech_unlocked(tech: String):
 
 var timer := 3.0
 func _physics_process(delta):
-	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y):
 		return
-	updateFocusCircle(Utils.game.camera.get_camera_screen_center(), 10000.0)
+	updateFocusCircle(Utils.game.camera.get_screen_center_position(), 10000.0)
 	timer -= delta
 
 

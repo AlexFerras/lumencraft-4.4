@@ -45,7 +45,7 @@ func _ready():
 		positions[i] = global_position
 	
 	spawn_batch = min(spawn_batch, max_monsters_at_once)
-	mask_image = mask.texture.get_data()
+	mask_image = mask.texture.get_image()
 	$AudioStreamPlayer2D.stream = load("res://SFX/Environmnent/rock_earthquake_impact_0"+str(randi()%2+1)+".wav")
 	if is_zero_approx(trigger_size):
 		$Area2D/CollisionShape2D.disabled = true

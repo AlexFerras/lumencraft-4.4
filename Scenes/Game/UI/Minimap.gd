@@ -27,7 +27,7 @@ func _ready() -> void:
 	
 	Utils.game.connect("map_changed", Callable(self, "on_map_change"))
 	material.set_shader_parameter("material_colors_texture", Const.material_colors_texture)
-	texture.flags = 0
+	#texture.flags = 0
 	
 	minimap_size = size
 

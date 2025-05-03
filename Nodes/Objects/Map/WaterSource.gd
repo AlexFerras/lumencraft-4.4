@@ -8,7 +8,10 @@ var fluid_source_id = -1
 @export var fluid_radius = 200.0: set = set_radius
 @export var fluid_flow_speed = 43.0: set = set_velocity
 @export var fluid_dmg_materials_mask = 0x1FFFFFFF: set = set_dmg_materials_mask
-@export var fluid_dmg_durability_threshold = 0: set = set_dmg_durability_threshold
+
+# TODO
+# weird problem with setter. temperarily disabled setter
+@export var fluid_dmg_durability_threshold = 0#: set = set_dmg_durability_threshold
 @export var fluid_dmg = 0: set = set_dmg
 @export var fluid_is_simulated: bool = false: set = set_is_simulated
 @export var fluid_simulate_in_editor: bool = false: set = set_simulate_in_editor
@@ -78,10 +81,11 @@ func set_dmg_materials_mask(dmg_materials_mask: int):
 	update_fluid()
 
 func set_dmg_durability_threshold(dmg_durability_threshold: int):
+	print("Setting watersource durability threshhold")
 	fluid_dmg_durability_threshold = dmg_durability_threshold
 	fluid_dmg = max(fluid_dmg, dmg_durability_threshold)
 	notify_property_list_changed()
-
+	
 	if not is_inside_tree():
 		return
 	

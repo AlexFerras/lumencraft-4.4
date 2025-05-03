@@ -63,8 +63,8 @@ func generate():
 	pixel_map.set_pixel_data(first_pass.get_data(), first_pass.get_size())
 	Utils.add_child(pixel_map)
 
-	await Utils.get_tree().idle_frame
-	await Utils.get_tree().idle_frame
+	await Utils.get_tree().process_frame
+	await Utils.get_tree().process_frame
 
 	var rectangles: Array = pixel_map.getEmptyRegions(6, ~(1 << Const.Materials.DIRT | 1 << Const.Materials.LUMEN | 1 << Const.Materials.WEAK_SCRAP | 1 << Const.SwappableMaterials[0]), true)
 	pixel_map.free()
@@ -109,8 +109,8 @@ func generate():
 	pixel_map.set_pixel_data(map_file.pixel_data.get_data(), map_file.pixel_data.get_size())
 	Utils.add_child(pixel_map)
 	
-	await Utils.get_tree().idle_frame
-	await Utils.get_tree().idle_frame
+	await Utils.get_tree().process_frame
+	await Utils.get_tree().process_frame
 	
 	print("Placing objects")
 	
@@ -170,7 +170,7 @@ func generate_terrain(available_rectangles := []):
 					break
 		
 		if not all_ready:
-			await Const.get_tree().idle_frame
+			await Const.get_tree().process_frame
 	
 	var baker = preload("res://Scripts/TextureBaker.gd").create(map_size)
 	var terrain = ColorRect.new()

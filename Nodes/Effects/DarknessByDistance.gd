@@ -49,9 +49,9 @@ func update_distance_from_light():
 	for building in get_tree().get_nodes_in_group("Light3D"):
 #		prints("building", building.name)
 		if building.is_running:
-			if is_nan(Utils.game.camera.get_camera_screen_center().y):
+			if is_nan(Utils.game.camera.get_screen_center_position().y):
 				return
-			distance = (building.global_position - Utils.game.camera.get_camera_screen_center()).length_squared()
+			distance = (building.global_position - Utils.game.camera.get_screen_center_position()).length_squared()
 			if distance < closest_light:
 				closest_light = distance
 				closest_position = building.global_position
@@ -68,9 +68,9 @@ func update_distance_from_light():
 
 func update_darkness():
 	if darkness:
-		if is_nan(Utils.game.camera.get_camera_screen_center().y):
+		if is_nan(Utils.game.camera.get_screen_center_position().y):
 			return
-		var center=Utils.game.camera.get_camera_screen_center()
+		var center=Utils.game.camera.get_screen_center_position()
 		var lava_count=Utils.game.map.pixel_map.count_material_occurrences_rect(Const.Materials.LAVA, Rect2(center-lava_detection_rect*0.5, lava_detection_rect), 10, false)
 		var max_lava=lava_detection_rect.x*lava_detection_rect.y
 		$lava_audio.volume_db=linear_to_db(min(20.0*lava_count/max_lava,1.0))

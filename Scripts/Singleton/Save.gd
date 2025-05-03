@@ -427,4 +427,4 @@ func is_hub() -> bool:
 
 func set_cheated(c):
 	cheated = c
-	Utils.game.ui.get_node("%CanAchieve").update_status()
+	#Utils.game.ui.get_node("%CanAchieve").update_status()

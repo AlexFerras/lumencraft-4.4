@@ -359,7 +359,7 @@ func start_random_map2():
 	$\"%GeneratingPanel\".gen()
 	$\"%MainMenu\".hide()
 	
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	
 	var time = Time.get_ticks_msec()
 	var generator = load(\"res://Nodes/Map/Generator/GeneratedMapBase.tscn\").instantiate()
@@ -418,13 +418,13 @@ func start_random_map2():
 	prints(\"Generation time:\", Time.get_ticks_msec() - time)
 	
 	$\"%GeneratingPanel\".set_status(\"Saving map\")
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	
 	var mf = generator.map_file
 	generator.queue_free()
 	
 	$\"%GeneratingPanel\".set_status(\"Starting\")
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	
 	start_game(mf, false, true)
 #	Utils.set_meta(\"editor_debug\", \"user://random.lcmap\")
@@ -2082,14 +2082,14 @@ func toggle():
 	
 	if expnded:
 		content.remove_theme_stylebox_override(\"panel\")
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		content.size.y = 0
 		content.size_flags_vertical = 1
 		notes.scroll_active = false
 	else:
 		content.add_theme_stylebox_override(\"panel\", content.stylebox)
 		ultimate_tooltip.hide()
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		content.size.y = max_content_size
 		notes.scroll_active = false
 "
@@ -3041,6 +3041,8 @@ process_material = SubResource("107")
 [node name="AnarchyUI" type="CanvasLayer" parent="."]
 process_mode = 3
 layer = 11
+scale = Vector2(0.5, 0.5)
+transform = Transform2D(0.5, 0, 0, 0.5, 0, 0)
 
 [node name="MainMenu" type="Control" parent="AnarchyUI"]
 unique_name_in_owner = true
@@ -3054,8 +3056,8 @@ script = ExtResource("4")
 
 [node name="MarginContainer" type="MarginContainer" parent="AnarchyUI/MainMenu"]
 layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
+offset_right = 2644.0
+offset_bottom = 1592.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_constants/margin_left = 72
@@ -4919,7 +4921,6 @@ layout_mode = 2
 [node name="UltimateTooltip" parent="AnarchyUI/MainMenu/MarginContainer/HBoxContainer/Hints" instance=ExtResource("13")]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_type_variation = &"0010_yellow_border"
 action = "look"
 
 [node name="Credits" type="VBoxContainer" parent="AnarchyUI/MainMenu/MarginContainer/HBoxContainer"]
@@ -6522,7 +6523,6 @@ layout_mode = 2
 [node name="UltimateTooltip" parent="AnarchyUI/MainMenu/MarginContainer/HBoxContainer/ChangeLog" instance=ExtResource("13")]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_type_variation = &"0010_yellow_border"
 action = "look"
 
 [node name="WorkshopDownload" type="PanelContainer" parent="AnarchyUI/MainMenu/MarginContainer"]

@@ -278,7 +278,7 @@ func _exit_tree():
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
-	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y):
 		return
 	if not started:
 		started = true
@@ -286,7 +286,7 @@ func _physics_process(delta: float) -> void:
 #	pickables.set_pickables_draw_distance(Save.config.screen_diagonal/2/4)
 	wave_manager.process(delta)
 
-	pickables.update_focus_circle(Utils.game.camera.get_camera_screen_center(), 9999)
+	pickables.update_focus_circle(Utils.game.camera.get_screen_center_position(), 9999)
 	
 #	if Input.is_action_just_pressed("p1_build"):
 #		$"%endgame".endgame_start()

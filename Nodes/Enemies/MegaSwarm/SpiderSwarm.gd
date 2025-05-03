@@ -221,13 +221,13 @@ func spawn_in_radius_with_delay(pos: Vector2, radius: float, amount: int, delay:
 	return tween
 
 func _physics_process(delta):
-	if Engine.is_editor_hint() or is_nan(Utils.game.camera.get_camera_screen_center().y):
+	if Engine.is_editor_hint() or is_nan(Utils.game.camera.get_screen_center_position().y):
 		return
 	
 	if just_wander:
-		updateFocusCircle(Utils.game.camera.get_camera_screen_center(), custom_reality_bubble_radius if custom_reality_bubble_radius>=0.0 else 350.0)
+		updateFocusCircle(Utils.game.camera.get_screen_center_position(), custom_reality_bubble_radius if custom_reality_bubble_radius>=0.0 else 350.0)
 	else:
-		updateFocusCircle(Utils.game.camera.get_camera_screen_center(), custom_reality_bubble_radius if custom_reality_bubble_radius>=0.0 else 10000.0)
+		updateFocusCircle(Utils.game.camera.get_screen_center_position(), custom_reality_bubble_radius if custom_reality_bubble_radius>=0.0 else 10000.0)
 		if player_target_timer >= 0:
 			player_target_timer -= delta
 			if player_target_timer < 0:

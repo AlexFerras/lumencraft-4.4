@@ -61,7 +61,7 @@ func on_window_resized():
 		
 	update_viewports()
 	$Darkness.update_properites()
-	$Darkness.update()
+	$Darkness.queue_redraw()
 	emit_signal("viewports_resized")
 
 func only_once():
@@ -142,17 +142,17 @@ func update_viewports():
 #	light_viewport.canvas_transform = get_canvas_transform()
 #	shadow_viewport.canvas_transform = get_canvas_transform()
 	
-	if is_nan(Utils.game.camera.get_camera_screen_center().y) or is_nan(get_viewport_rect().size.y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y) or is_nan(get_viewport_rect().size.y):
 		return
 	VP_light_camera.transform = Utils.game.camera.transform
-	VP_light_camera.global_position = Utils.game.camera.get_camera_screen_center()
+	VP_light_camera.global_position = Utils.game.camera.get_screen_center_position()
 	VP_light_camera.zoom = Utils.game.camera.zoom * Save.config.downsample
 	
 	VP_shadow_camera.transform = Utils.game.camera.transform
-	VP_shadow_camera.global_position = Utils.game.camera.get_camera_screen_center() 
+	VP_shadow_camera.global_position = Utils.game.camera.get_screen_center_position() 
 	VP_shadow_camera.zoom = Utils.game.camera.zoom * Save.config.downsample
 
-	ambient.position = Utils.game.camera.get_camera_screen_center() - get_viewport_rect().size * 0.5 * Utils.game.camera.zoom
+	ambient.position = Utils.game.camera.get_screen_center_position() - get_viewport_rect().size * 0.5 * Utils.game.camera.zoom
 	ambient.size = get_viewport_rect().size * Utils.game.camera.zoom
 
 	

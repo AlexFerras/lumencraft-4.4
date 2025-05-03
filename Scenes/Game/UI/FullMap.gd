@@ -9,7 +9,7 @@ func _ready() -> void:
 	if Utils.game.map:
 		on_map_changed()
 	
-	Utils.connect_to_lazy(minimap.overlay, "update")
+	Utils.connect_to_lazy(minimap.overlay, "queue_redraw")
 
 func on_map_changed():
 	if Utils.game.map.pixel_map.fog_of_war:

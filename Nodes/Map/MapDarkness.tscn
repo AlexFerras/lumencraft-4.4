@@ -83,9 +83,9 @@ func _process(delta):
 #		global_position = trans.origin + get_viewport().size*0.5
 #	scale = ( scale_inv * aspect_scale).ceil() * 0.25
 #	global_position = -trans.origin * scale_inv
-	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y):
 		return
-	global_position = Utils.game.camera.get_camera_screen_center() + Vector2(50,0)
+	global_position = Utils.game.camera.get_screen_center_position() + Vector2(50,0)
 #	material.set_shader_param(\"global_transform\", get_global_transform())
 "
 
@@ -108,10 +108,9 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if is_nan(Utils.game.camera.get_camera_screen_center().y):
+	if is_nan(Utils.game.camera.get_screen_center_position().y):
 		return
-	global_position = Utils.game.camera.get_camera_screen_center() - Vector2(50,0)
-
+	global_position = Utils.game.camera.get_screen_center_position() - Vector2(50,0)
 "
 
 [node name="MapDarkness" type="Node2D"]

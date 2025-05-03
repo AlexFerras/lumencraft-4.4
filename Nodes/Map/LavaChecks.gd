@@ -34,4 +34,3 @@ func is_lava_touching():
 			return true
 	is_in_lava=false
 	return false
-

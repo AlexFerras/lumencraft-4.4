@@ -342,8 +342,8 @@ func spawn_cracks():
 func spawn_claw(id: float):
 	#Utils.game.shake(6.0-id)
 	Utils.game.shake_in_position(attack_shape.global_position, 1.0 - float(id)/6.0, 1.0)
-	#Utils.game.shake_in_direction(1.0 - float(id)/6.0, attack_shape.global_position.direction_to(Utils.game.camera.get_camera_screen_center()), 1.0)
-	#Utils.game.camera.get_camera_screen_center()
+	#Utils.game.shake_in_direction(1.0 - float(id)/6.0, attack_shape.global_position.direction_to(Utils.game.camera.get_screen_center_position()), 1.0)
+	#Utils.game.camera.get_screen_center_position()
 	var claw := preload("res://Nodes/Enemies/Crueltackle/Claw.tscn").instantiate() as Node2D
 	claw.scale = Vector2.ONE * 2.0
 	claw.damage_radius = 3.0

@@ -330,4 +330,4 @@ func generate_objective():
 
 func send_status(status: String):
 	emit_signal("status", status)
-	await get_tree().idle_frame
+	await get_tree().process_frame

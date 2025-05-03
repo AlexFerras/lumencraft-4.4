@@ -298,7 +298,7 @@ func get_cached_image(path):
 	if ret:
 		return ret
 	else:
-		ret = ResourceLoader.load(path).get_data()
+		ret = ResourceLoader.load(path).get_image()
 		cached_images[path]=ret
 		return ret
 		

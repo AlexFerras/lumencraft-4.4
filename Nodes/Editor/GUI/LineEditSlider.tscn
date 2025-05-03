@@ -10,7 +10,7 @@ var syncing: bool
 func _ready() -> void:
 	$HSlider.connect(\"value_changed\", Callable(self, \"sync_line_edit\"))
 	$LineEdit.connect(\"text_changed\", Callable(self, \"sync_slider\"))
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	sync_line_edit(get_child(0).value)
 
 func set_editable(e: bool):

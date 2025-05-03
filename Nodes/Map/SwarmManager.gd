@@ -22,7 +22,7 @@ func request_swarm(swarm: String, data = null, no_wander := false) -> Swarm:
 				swarm_instance.loadUnitsStateFromBinaryData(data)
 		return swarm_map[swarm_key]
 	else:
-		var swarm_instance: Swarm = load(swarm.trim_suffix(".nw")).instance()
+		var swarm_instance: Swarm = load(swarm.trim_suffix(".nw")).instantiate()
 		swarm_instance.add_to_group("MegaSwarm")
 		
 		if not no_wander:

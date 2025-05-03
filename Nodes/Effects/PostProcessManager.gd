@@ -80,10 +80,10 @@ func _process(delta):
 		dirty=false
 	
 	if range_dirty or pernament_range_dirty:
-		if is_nan(Utils.game.camera.get_camera_screen_center().y):
+		if is_nan(Utils.game.camera.get_screen_center_position().y):
 			return
 		var range_data: PackedVector2Array
-		var screen_center: Vector2 = Utils.game.camera.get_camera_screen_center()
+		var screen_center: Vector2 = Utils.game.camera.get_screen_center_position()
 		var screen_zoom: float = Utils.game.camera.zoom.x
 		
 		for range_drawer in get_tree().get_nodes_in_group("range_draw"):

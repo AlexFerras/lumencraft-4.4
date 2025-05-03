@@ -1,10 +1,9 @@
-[gd_resource type="Theme" load_steps=136 format=4 uid="uid://dicboyikjrh6e"]
+[gd_resource type="Theme" load_steps=135 format=4 uid="uid://dicboyikjrh6e"]
 
 [ext_resource type="Texture2D" uid="uid://fsdx48ofm8nv" path="res://Resources/Anarchy/Textures/Icons/close_flat_hover_32x32.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://dh7fqkw8h70y1" path="res://Resources/Anarchy/Textures/Icons/close_flat_normal_32x32.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://gi4tks1ia8u5" path="res://Resources/Anarchy/Textures/Icons/close_flat_pressed_32x32.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://o81vqdpy3ram" path="res://Resources/Anarchy/Textures/Icons/close_flat_focus_32x32.png" id="4"]
-[ext_resource type="FontFile" uid="uid://dl2s2xsnt11bf" path="res://Resources/Anarchy/Fonts/spacemono_bold_minimal.tres" id="6"]
 [ext_resource type="FontFile" path="res://Resources/Anarchy/Fonts/spacemono_regular_minimal.tres" id="7"]
 
 [sub_resource type="StyleBoxFlat" id="40"]
@@ -857,7 +856,7 @@ bg_color = Color(0, 0, 0, 1)
 corner_radius_bottom_right = 16
 corner_detail = 1
 
-[sub_resource type="Image" id="Image_c884y"]
+[sub_resource type="Image" id="Image_xdxnm"]
 data = {
 "data": PackedByteArray("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="),
 "format": "LumAlpha8",
@@ -867,7 +866,7 @@ data = {
 }
 
 [sub_resource type="ImageTexture" id="126"]
-image = SubResource("Image_c884y")
+image = SubResource("Image_xdxnm")
 
 [sub_resource type="StyleBoxTexture" id="19"]
 texture = SubResource("126")
@@ -1177,7 +1176,6 @@ corner_radius_bottom_left = 16
 corner_detail = 1
 
 [resource]
-default_font = ExtResource("6")
 0000_brown_transp/base_type = &"PanelContainer"
 0000_brown_transp/styles/panel = SubResource("40")
 0001_brown_transp/base_type = &"PanelContainer"
@@ -1309,7 +1307,7 @@ button_cyan/colors/font_color_focus = Color(1, 1, 1, 1)
 button_cyan/colors/font_color_hover = Color(1, 1, 1, 1)
 button_cyan/colors/font_color_pressed = Color(0, 0, 0, 1)
 button_cyan/constants/hseparation = 0
-button_cyan/fonts/font = ExtResource("6")
+button_cyan/fonts/font = null
 button_cyan/styles/disabled = SubResource("65")
 button_cyan/styles/focus = SubResource("64")
 button_cyan/styles/hover = SubResource("63")
@@ -1337,7 +1335,7 @@ main_menu_button/colors/font_color_hover = Color(0, 0, 0, 1)
 main_menu_button/colors/font_color_pressed = Color(1, 1, 1, 1)
 main_menu_button/colors/icon_color_normal = Color(1, 0.721569, 0, 1)
 main_menu_button/constants/hseparation = 0
-main_menu_button/fonts/font = ExtResource("6")
+main_menu_button/fonts/font = null
 main_menu_button/styles/disabled = SubResource("81")
 main_menu_button/styles/focus = SubResource("58")
 main_menu_button/styles/hover = SubResource("57")
@@ -1351,7 +1349,7 @@ main_menu_button_no_padding/colors/font_color_hover = Color(0, 0, 0, 1)
 main_menu_button_no_padding/colors/font_color_pressed = Color(1, 1, 1, 1)
 main_menu_button_no_padding/colors/icon_color_normal = Color(1, 0.721569, 0, 1)
 main_menu_button_no_padding/constants/hseparation = 0
-main_menu_button_no_padding/fonts/font = ExtResource("6")
+main_menu_button_no_padding/fonts/font = null
 main_menu_button_no_padding/styles/disabled = SubResource("92")
 main_menu_button_no_padding/styles/focus = SubResource("93")
 main_menu_button_no_padding/styles/hover = SubResource("96")
@@ -1362,7 +1360,7 @@ player_tooltip/styles/panel = SubResource("129")
 progress_bar_right/base_type = &"ProgressBar"
 progress_bar_right/colors/font_color = Color(0, 0, 0, 1)
 progress_bar_right/colors/font_color_shadow = Color(0, 0, 0, 1)
-progress_bar_right/fonts/font = ExtResource("6")
+progress_bar_right/fonts/font = null
 progress_bar_right/styles/bg = SubResource("51")
 progress_bar_right/styles/fg = SubResource("52")
 theme_anarchy_exit_icon_button/base_type = &"Button"
@@ -1372,7 +1370,7 @@ theme_anarchy_exit_icon_button/colors/font_color_focus = Color(0, 0, 0, 1)
 theme_anarchy_exit_icon_button/colors/font_color_hover = Color(0, 0, 0, 1)
 theme_anarchy_exit_icon_button/colors/font_color_pressed = Color(0, 0, 0, 1)
 theme_anarchy_exit_icon_button/constants/hseparation = 2
-theme_anarchy_exit_icon_button/fonts/font = ExtResource("6")
+theme_anarchy_exit_icon_button/fonts/font = null
 theme_anarchy_exit_icon_button/styles/disabled = SubResource("6")
 theme_anarchy_exit_icon_button/styles/focus = SubResource("124")
 theme_anarchy_exit_icon_button/styles/hover = SubResource("8")
@@ -1385,7 +1383,7 @@ theme_anarchy_exit_icon_button2/colors/font_color_focus = Color(0, 0, 0, 1)
 theme_anarchy_exit_icon_button2/colors/font_color_hover = Color(0, 0, 0, 1)
 theme_anarchy_exit_icon_button2/colors/font_color_pressed = Color(0, 0, 0, 1)
 theme_anarchy_exit_icon_button2/constants/hseparation = 0
-theme_anarchy_exit_icon_button2/fonts/font = ExtResource("6")
+theme_anarchy_exit_icon_button2/fonts/font = null
 theme_anarchy_exit_icon_button2/styles/disabled = SubResource("102")
 theme_anarchy_exit_icon_button2/styles/focus = SubResource("2")
 theme_anarchy_exit_icon_button2/styles/hover = SubResource("120")
@@ -1394,7 +1392,7 @@ theme_anarchy_exit_icon_button2/styles/pressed = SubResource("5")
 theme_anarchy_progress_bar/base_type = &"ProgressBar"
 theme_anarchy_progress_bar/colors/font_color = Color(0, 0, 0, 1)
 theme_anarchy_progress_bar/colors/font_color_shadow = Color(0, 0, 0, 1)
-theme_anarchy_progress_bar/fonts/font = ExtResource("6")
+theme_anarchy_progress_bar/fonts/font = null
 theme_anarchy_progress_bar/styles/bg = SubResource("11")
 theme_anarchy_progress_bar/styles/fg = SubResource("12")
 theme_anarchy_scroll_bar/base_type = &"VScrollBar"
@@ -1416,7 +1414,7 @@ theme_anarchy_standard_button/colors/font_color_focus = Color(1, 0.721569, 0, 1)
 theme_anarchy_standard_button/colors/font_color_hover = Color(1, 0.721569, 0, 1)
 theme_anarchy_standard_button/colors/font_color_pressed = Color(0, 0, 0, 1)
 theme_anarchy_standard_button/constants/hseparation = 2
-theme_anarchy_standard_button/fonts/font = ExtResource("6")
+theme_anarchy_standard_button/fonts/font = null
 theme_anarchy_standard_button/styles/disabled = SubResource("20")
 theme_anarchy_standard_button/styles/focus = SubResource("21")
 theme_anarchy_standard_button/styles/hover = SubResource("22")
@@ -1431,7 +1429,7 @@ theme_anarchy_tab_container/constants/label_valign_bg = 2
 theme_anarchy_tab_container/constants/label_valign_fg = 0
 theme_anarchy_tab_container/constants/side_margin = 8
 theme_anarchy_tab_container/constants/top_margin = 24
-theme_anarchy_tab_container/fonts/font = ExtResource("6")
+theme_anarchy_tab_container/fonts/font = null
 theme_anarchy_tab_container/icons/decrement = null
 theme_anarchy_tab_container/icons/decrement_highlight = null
 theme_anarchy_tab_container/icons/increment = null
@@ -1468,7 +1466,7 @@ yellow_button/colors/font_color_focus = Color(0, 0, 0, 1)
 yellow_button/colors/font_color_hover = Color(0, 0, 0, 1)
 yellow_button/colors/font_color_pressed = Color(0, 0, 0, 1)
 yellow_button/constants/hseparation = 0
-yellow_button/fonts/font = ExtResource("6")
+yellow_button/fonts/font = null
 yellow_button/styles/disabled = SubResource("77")
 yellow_button/styles/focus = SubResource("78")
 yellow_button/styles/hover = SubResource("90")

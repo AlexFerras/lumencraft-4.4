@@ -105,7 +105,7 @@ var interactables: Array
 var current_interactable: Node2D
 var prev_interactable: Node2D
 
-@export var inventory: Array
+@export var inventory: Array[Dictionary]
 var inventory_select: int
 var inventory_secondary: int = -1: set = set_inventory_secondary
 var inventory_secondary_id: int = -1
@@ -181,7 +181,7 @@ func _init() -> void:
 		inventory_quick_id[i] = -1
 	
 	if Utils.game:
-		await Utils.get_tree().idle_frame
+		await Utils.get_tree().process_frame
 	else:
 		return
 	
@@ -248,7 +248,7 @@ func _ready() -> void:
 	Utils.call_super_deferred(self, "check_hp")
 	
 	if not Utils.game.initialized:
-		await get_tree().idle_frame
+		await get_tree().process_frame
 	
 	build_menu_cached = preload("res://Nodes/Player/BuildMenu/BuildMenu.tscn").instantiate()
 	build_menu_cached.player = self
@@ -666,7 +666,7 @@ func process_building():
 			emit_signal("inventory_toggled", false)
 		
 		if not build_menu:
-			await get_tree().idle_frame
+			await get_tree().process_frame
 			if build_menu_cached.appear():
 				build_menu = build_menu_cached
 		elif build_menu and not using_joypad():
@@ -942,18 +942,18 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 			if stamina > TIRED_STAMINA:
 				tired = false
 	
-	if is_nan(Utils.game.camera.get_camera_screen_center().y) or is_nan(Utils.game.resolution_of_visible_rect.y) :
+	if is_nan(Utils.game.camera.get_screen_center_position().y) or is_nan(Utils.game.resolution_of_visible_rect.y) :
 		return
 	
 	if Utils.game.players.size() > 1 and not Utils.game.get_second_viewport():
-		if global_position.x < Utils.game.camera.get_camera_screen_center().x - Utils.game.resolution_of_visible_rect.x * Utils.game.camera.zoom.x * 0.5:
+		if global_position.x < Utils.game.camera.get_screen_center_position().x - Utils.game.resolution_of_visible_rect.x * Utils.game.camera.zoom.x * 0.5:
 			move.x = max(0, move.x)
-		elif global_position.x > Utils.game.camera.get_camera_screen_center().x + Utils.game.resolution_of_visible_rect.x * Utils.game.camera.zoom.x * 0.5:
+		elif global_position.x > Utils.game.camera.get_screen_center_position().x + Utils.game.resolution_of_visible_rect.x * Utils.game.camera.zoom.x * 0.5:
 			move.x = min(0, move.x)
 		
-		if global_position.y < Utils.game.camera.get_camera_screen_center().y - Utils.game.resolution_of_visible_rect.y * Utils.game.camera.zoom.y * 0.5:
+		if global_position.y < Utils.game.camera.get_screen_center_position().y - Utils.game.resolution_of_visible_rect.y * Utils.game.camera.zoom.y * 0.5:
 			move.y = max(0, move.y)
-		elif global_position.y > Utils.game.camera.get_camera_screen_center().y + Utils.game.resolution_of_visible_rect.y * Utils.game.camera.zoom.y * 0.5:
+		elif global_position.y > Utils.game.camera.get_screen_center_position().y + Utils.game.resolution_of_visible_rect.y * Utils.game.camera.zoom.y * 0.5:
 			move.y = min(0, move.y)
 	
 	if is_dashing:
@@ -1737,7 +1737,7 @@ func upgrade_max_stacks():
 	Save.set_unlocked_tech("player" + str(player_id) + "backpack_upgrade", upgrade_number + 1)
 	
 	for i in get_max_stacks() - inventory.size():
-		inventory.append(EMPTY_STACK)
+		inventory.append(EMPTY_STACK.duplicate())
 	refresh_indices()
 	
 func test_max_upgrade():
@@ -2555,8 +2555,11 @@ func set_inventory_secondary(idx: int):
 
 func refresh_indices():
 	for i in inventory.size():
+		#var item = inventory[i].duplicate()
+		#item.index = i
+		#inventory[i] = item
 		inventory[i].index = i
-
+		
 func ensure_inventory_size():
 	while inventory.size() < get_max_stacks():
 		inventory.append(EMPTY_STACK.duplicate())

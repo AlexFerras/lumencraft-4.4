@@ -122,9 +122,9 @@ func add_to_tracker():
 
 func build():
 	in_construction = false
-	if SteamAPI.achievements.last_bulldozered == name:
-		SteamAPI.unlock_achievement("HOME_MAKEOVER")
-	SteamAPI.achievements.last_bulldozered = ""
+	#if SteamAPI.achievements.last_bulldozered == name:
+		#SteamAPI.unlock_achievement("HOME_MAKEOVER")
+	#SteamAPI.achievements.last_bulldozered = ""
 	
 	if not get_tree().paused: # Nie pokazuj podczas wczytywania mapy
 		Utils.log_message("Building constructed: %s" % building_data.name)
@@ -339,7 +339,7 @@ func apply_mask(mat: int):
 	
 	var mask_position := mask_sprite.global_position#.round()
 	var mask_rotation := mask_sprite.global_rotation#deg_to_rad(round(rad_to_deg(mask_sprite.global_rotation)))
-	Utils.game.map.pixel_map.update_material_mask_rotated(mask_position, mask_sprite.texture.get_data(), mat, Vector3(mask_sprite.scale.x, mask_sprite.scale.y, mask_rotation), 0xFFFFFFFF, 255)
+	Utils.game.map.pixel_map.update_material_mask_rotated(mask_position, mask_sprite.texture.get_image(), mat, Vector3(mask_sprite.scale.x, mask_sprite.scale.y, mask_rotation), 0xFFFFFFFF, 255)
 
 func set_disabled(disabled: bool, force := false):
 	is_running = not disabled
