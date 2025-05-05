@@ -1916,33 +1916,33 @@ func process_animation():
 	if is_walking:
 		SteamAPI.fail_achievement("WAVE_NO_ACTION")
 		legs_animator.play()
-		legs_animator.playback_speed = linear_velocity.length() / 2.0
+		legs_animator.speed_scale = linear_velocity.length() / 2.0
 	else:
 		legs_animator.stop()
 	
 	if animation_state == NONE:
 		if is_walking:
 			torso_animator.play()
-			torso_animator.playback_speed = linear_velocity.length() / 2.0
+			torso_animator.speed_scale = linear_velocity.length() / 2.0
 		else:
 			torso_animator.stop()
 	elif animation_state == THROW:
-		torso_animator.playback_speed = 30
+		torso_animator.speed_scale = 30
 		if thrown_item:
 			torso_animator.play("Throw")
 			torso_animator.seek(throwing_power * 28, true)
 		else:
 			if throwing_melee:
-				torso_animator.playback_speed = 45
+				torso_animator.speed_scale = 45
 				torso_animator.play("Throw_melee")
 			else:
 				torso_animator.play("Throw")
 	elif animation_state == SHOOT:
-		torso_animator.playback_speed = 30
+		torso_animator.speed_scale = 30
 	elif animation_state == DASH:
-		torso_animator.playback_speed = 30
+		torso_animator.speed_scale = 30
 	elif animation_state == DASH_TAIL:
-		torso_animator.playback_speed = 30
+		torso_animator.speed_scale = 30
 
 static func init_weapon(proj: Node2D, pcollider: Area2D, weapon: int) -> Dictionary:
 	var data := {}

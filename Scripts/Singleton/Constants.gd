@@ -18,7 +18,7 @@ var PICKUP_COLLISION_LAYER: int
 var BUILDING_COLLISION_LAYER: int
 var ENEMY_COLLISION_LAYER: int
 
-var CAMERA_ZOOM := 8.0
+var CAMERA_ZOOM :float = 0.125# 1.0 / 8.0
 var PLAYER_LIMIT := 2
 
 static var EXPLOSION = preload("res://Nodes/Effects/Explosion/Explosion.tscn")
@@ -487,4 +487,4 @@ static func get_crafted_rect(rect: String) -> Dictionary:
 	else:
 		return CraftedRects[rect]
 
-const static_texture_container := [null]
+static var static_texture_container := [null]

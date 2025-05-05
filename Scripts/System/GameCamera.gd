@@ -8,7 +8,9 @@ class_name GameCamera
 @onready var additional_zoom = 0.0
 #onready var debug = $"../CanvasLayer/Debug"
 
-const zoom_levels = [0.0625, 0.0833333, 0.125, 0.1875 ,0.25, 0.375, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4]
+
+#const zoom_levels = [0.0625, 0.0833333, 0.125, 0.1875 ,0.25, 0.375, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4]
+const zoom_levels = [1/0.0625, 1/0.0833333, 1/0.125, 1/0.1875 ,1/0.25, 1/0.375, 1/0.5, 1/0.75, 1/1, 1/1.25, 1/1.5, 1/2, 1/3, 1/4]
 var current_zoom_index = 0
 var LMB_pressed = false
 var MMB_pressed = false
@@ -51,6 +53,8 @@ func _physics_process(delta: float):
 	var az=target.get("additional_zoom")
 	if !az:
 		az=0.0
+		
+	#target_zoom = Vector2.ONE * 
 	zoom = lerp(zoom, target_zoom+az*Vector2.ONE, 2 * delta)
 	Utils.game.update_screen_diagonal()
 

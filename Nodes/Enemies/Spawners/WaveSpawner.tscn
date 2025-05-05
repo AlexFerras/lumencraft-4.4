@@ -1,47 +1,53 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=24 format=3 uid="uid://bx8jgpffx0sus"]
 
-[ext_resource path="res://Nodes/Enemies/Spawners/glut.png" type="Texture2D" id=1]
-[ext_resource path="res://Nodes/Map/MapMarker/MapMarker.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Nodes/Map/MapMarker/BuildingAttackedMarker.png" type="Texture2D" id=3]
-[ext_resource path="res://Resources/Textures/Smoke_particle.png" type="Texture2D" id=4]
-[ext_resource path="res://Nodes/Map/ZIndexer.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Nodes/Enemies/Spawners/hole_heightmap.png" type="Texture2D" id=6]
-[ext_resource path="res://SFX/Enemies/scary_howl.wav" type="AudioStream" id=7]
-[ext_resource path="res://Nodes/Enemies/Spawners/WaveSpawner.gd" type="Script" id=8]
+[ext_resource type="Texture2D" uid="uid://non70xp7jvcx" path="res://Nodes/Enemies/Spawners/glut.png" id="1"]
+[ext_resource type="PackedScene" uid="uid://cb216dj4xhvhx" path="res://Nodes/Map/MapMarker/MapMarker.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://bkad5viusepe5" path="res://Nodes/Map/MapMarker/BuildingAttackedMarker.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://do72fwam5mn6x" path="res://Resources/Textures/Smoke_particle.png" id="4"]
+[ext_resource type="PackedScene" path="res://Nodes/Map/ZIndexer.tscn" id="5"]
+[ext_resource type="Texture2D" uid="uid://dxk21plx10o1b" path="res://Nodes/Enemies/Spawners/hole_heightmap.png" id="6"]
+[ext_resource type="AudioStream" uid="uid://cnhkg7mk0nte5" path="res://SFX/Enemies/scary_howl.wav" id="7"]
+[ext_resource type="Script" uid="uid://cd6nrspi4jfdi" path="res://Nodes/Enemies/Spawners/WaveSpawner.gd" id="8"]
 
-[sub_resource type="Animation" id=25]
+[sub_resource type="Animation" id="25"]
 resource_name = "New Anim"
 length = 2.0
-loop = true
+loop_mode = 1
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 1 ),
-"transitions": PackedFloat32Array( 1, 1 ),
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ Color( 1.07, 1.47, 1.53, 1 ), Color( 0, 0, 0, 1 ) ]
+"values": [Color(1.07, 1.47, 1.53, 1), Color(0, 0, 0, 1)]
 }
 
-[sub_resource type="Animation" id=26]
+[sub_resource type="Animation" id="26"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 1.07, 1.47, 1.53, 1 ) ]
+"values": [Color(1.07, 1.47, 1.53, 1)]
 }
 
-[sub_resource type="Shader" id=23]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_x1ji5"]
+_data = {
+&"New Anim": SubResource("25"),
+&"RESET": SubResource("26")
+}
+
+[sub_resource type="Shader" id="Shader_x1ji5"]
 code = "shader_type canvas_item;
 
 void fragment()
@@ -51,270 +57,270 @@ void fragment()
 	COLOR=texture(TEXTURE,UV+uv_waved);
 }"
 
-[sub_resource type="ShaderMaterial" id=24]
-shader = SubResource( 23 )
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vob3r"]
+shader = SubResource("Shader_x1ji5")
 
-[sub_resource type="Gradient" id=4]
-offsets = PackedFloat32Array( 0, 0.463932, 0.998586 )
-colors = PackedColorArray( 0.929412, 0.929412, 0.929412, 0, 0.980392, 0.980392, 0.980392, 0.380392, 1, 1, 1, 0 )
+[sub_resource type="Gradient" id="4"]
+offsets = PackedFloat32Array(0, 0.463932, 0.998586)
+colors = PackedColorArray(0.929412, 0.929412, 0.929412, 0, 0.980392, 0.980392, 0.980392, 0.380392, 1, 1, 1, 0)
 
-[sub_resource type="GradientTexture2D" id=5]
-gradient = SubResource( 4 )
+[sub_resource type="GradientTexture2D" id="5"]
+gradient = SubResource("4")
 
-[sub_resource type="ParticleProcessMaterial" id=6]
+[sub_resource type="ParticleProcessMaterial" id="6"]
 emission_shape = 1
 emission_sphere_radius = 30.76
-flag_disable_z = true
 spread = 180.0
-gravity = Vector3( 0, 0, 0 )
-initial_velocity = 47.54
-angular_velocity = 40.45
-angular_velocity_random = 1.0
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-angle = 720.0
-angle_random = 1.0
-scale = 0.19
-scale_random = 0.89
-color_ramp = SubResource( 5 )
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 0.0
+color_ramp = SubResource("5")
 
-[sub_resource type="Animation" id=21]
+[sub_resource type="Animation" id="21"]
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("Fissure6:material:shader_param/mincutoff")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Fissure6:material:shader_parameter/mincutoff")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.3869 ]
+"values": [0.3869]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Fissure6:material:shader_param/cutoff")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
+tracks/1/path = NodePath("Fissure6:material:shader_parameter/cutoff")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 1.994 ]
+"values": [1.994]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Fissure6:material:shader_param/circle_add")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
+tracks/2/path = NodePath("Fissure6:material:shader_parameter/circle_add")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.218 ]
+"values": [0.218]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("../GPUParticles2D:emitting")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ false ]
+"values": [false]
 }
 
-[sub_resource type="Animation" id=22]
+[sub_resource type="Animation" id="22"]
 resource_name = "start"
 length = 8.0
-loop = true
+loop_mode = 1
 tracks/0/type = "value"
-tracks/0/path = NodePath("Fissure6:material:shader_param/cutoff")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Fissure6:material:shader_parameter/cutoff")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 1.8, 4.4, 6 ),
-"transitions": PackedFloat32Array( 0.5, 1, 0.5, 1 ),
+"times": PackedFloat32Array(0, 1.8, 4.4, 6),
+"transitions": PackedFloat32Array(0.5, 1, 0.5, 1),
 "update": 0,
-"values": [ 1.994, 1.102, 1.994, 1.164 ]
+"values": [1.994, 1.102, 1.994, 1.164]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Fissure6:material:shader_param/circle_add")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
+tracks/1/path = NodePath("Fissure6:material:shader_parameter/circle_add")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 4.4 ),
-"transitions": PackedFloat32Array( 0.5, 0.5 ),
+"times": PackedFloat32Array(0, 4.4),
+"transitions": PackedFloat32Array(0.5, 0.5),
 "update": 0,
-"values": [ 0.218, 0.218 ]
+"values": [0.218, 0.218]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Fissure6:material:shader_param/mincutoff")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
+tracks/2/path = NodePath("Fissure6:material:shader_parameter/mincutoff")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0, 1.8, 4.4, 6 ),
-"transitions": PackedFloat32Array( 0.5, 1, 0.5, 1 ),
+"times": PackedFloat32Array(0, 1.8, 4.4, 6),
+"transitions": PackedFloat32Array(0.5, 1, 0.5, 1),
 "update": 0,
-"values": [ 0.3869, 0.88, 0.3869, 0.872 ]
+"values": [0.3869, 0.88, 0.3869, 0.872]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("../GPUParticles2D:emitting")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ false ]
+"values": [false]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id="7"]
 resource_name = "start"
 length = 4.0
 tracks/0/type = "value"
-tracks/0/path = NodePath("Fissure6:material:shader_param/cutoff")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Fissure6:material:shader_parameter/cutoff")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0.5, 3.7 ),
-"transitions": PackedFloat32Array( 0.5, 0.5 ),
+"times": PackedFloat32Array(0.5, 3.7),
+"transitions": PackedFloat32Array(0.5, 0.5),
 "update": 3,
-"values": [ 1.994, 0.458 ]
+"values": [1.994, 0.458]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Fissure6:material:shader_param/circle_add")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
+tracks/1/path = NodePath("Fissure6:material:shader_parameter/circle_add")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0.5, 3.7 ),
-"transitions": PackedFloat32Array( 0.5, 0.5 ),
+"times": PackedFloat32Array(0.5, 3.7),
+"transitions": PackedFloat32Array(0.5, 0.5),
 "update": 3,
-"values": [ 0.218, 0.352 ]
+"values": [0.218, 0.352]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Fissure6:material:shader_param/mincutoff")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
+tracks/2/path = NodePath("Fissure6:material:shader_parameter/mincutoff")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0.5, 3.7 ),
-"transitions": PackedFloat32Array( 0.5, 0.5 ),
+"times": PackedFloat32Array(0.5, 3.7),
+"transitions": PackedFloat32Array(0.5, 0.5),
 "update": 3,
-"values": [ 0.3869, 0.0 ]
+"values": [0.3869, 0.0]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("../GPUParticles2D:emitting")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0, 1.4, 1.5 ),
-"transitions": PackedFloat32Array( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 1.4, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
-"values": [ false, false, true ]
+"values": [false, false, true]
 }
 tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("..")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
-"values": [ {
-"args": [  ],
-"method": "nest_open_sound"
-} ]
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"nest_open_sound"
+}]
 }
 
-[sub_resource type="Animation" id=20]
+[sub_resource type="Animation" id="20"]
 resource_name = "grow"
 length = 4.0
 tracks/0/type = "value"
-tracks/0/path = NodePath("Fissure6:material:shader_param/cutoff")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Fissure6:material:shader_parameter/cutoff")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 3.9 ),
-"transitions": PackedFloat32Array( 1, 0.5 ),
+"times": PackedFloat32Array(0, 3.9),
+"transitions": PackedFloat32Array(1, 0.5),
 "update": 0,
-"values": [ 0.46, 1.994 ]
+"values": [0.46, 1.994]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Fissure6:material:shader_param/circle_add")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
+tracks/1/path = NodePath("Fissure6:material:shader_parameter/circle_add")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array( 0, 3.9 ),
-"transitions": PackedFloat32Array( 1, 0.5 ),
+"times": PackedFloat32Array(0, 3.9),
+"transitions": PackedFloat32Array(1, 0.5),
 "update": 0,
-"values": [ 0.35, 0.218 ]
+"values": [0.35, 0.218]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Fissure6:material:shader_param/mincutoff")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
+tracks/2/path = NodePath("Fissure6:material:shader_parameter/mincutoff")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array( 0, 3.9 ),
-"transitions": PackedFloat32Array( 1, 0.5 ),
+"times": PackedFloat32Array(0, 3.9),
+"transitions": PackedFloat32Array(1, 0.5),
 "update": 0,
-"values": [ 0.0, 0.3869 ]
+"values": [0.0, 0.3869]
 }
 tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
 tracks/3/path = NodePath("../GPUParticles2D:emitting")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
 tracks/3/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ false ]
+"values": [false]
 }
 tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
 tracks/4/path = NodePath("..")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
 tracks/4/keys = {
-"times": PackedFloat32Array( 0 ),
-"transitions": PackedFloat32Array( 1 ),
-"values": [ {
-"args": [  ],
-"method": "nest_open_sound"
-} ]
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"nest_open_sound"
+}]
 }
 
-[sub_resource type="Shader" id=8]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vob3r"]
+_data = {
+&"RESET": SubResource("21"),
+&"idle": SubResource("22"),
+&"start": SubResource("7"),
+&"stop": SubResource("20")
+}
+
+[sub_resource type="Shader" id="8"]
 code = "shader_type canvas_item;
 render_mode blend_mix;
 uniform float mincutoff=0.5;
@@ -333,126 +339,125 @@ void fragment()
 }
 "
 
-[sub_resource type="ShaderMaterial" id=9]
-shader = SubResource( 8 )
-shader_param/mincutoff = 0.3869
-shader_param/cutoff = 1.994
-shader_param/circle_add = 0.218
-shader_param/lod = 0.0
+[sub_resource type="ShaderMaterial" id="9"]
+shader = SubResource("8")
+shader_parameter/mincutoff = 0.3869
+shader_parameter/cutoff = 1.994
+shader_parameter/circle_add = 0.218
+shader_parameter/lod = 0.0
 
 [node name="WaveSpawner" type="Marker2D" groups=["wave_spawners"]]
-scale = Vector2( 0.25, 0.25 )
 z_index = -990
 z_as_relative = false
-script = ExtResource( 8 )
+scale = Vector2(0.25, 0.25)
+script = ExtResource("8")
 radius = 172.125
 
-[node name="WaveMarker" parent="." instance=ExtResource( 2 )]
-modulate = Color( 1.07, 1.47, 1.53, 1 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 3 )
-arrow = ExtResource( 3 )
+[node name="WaveMarker" parent="." instance=ExtResource("2")]
+modulate = Color(1.07, 1.47, 1.53, 1)
+scale = Vector2(3, 3)
+texture = ExtResource("3")
+arrow = ExtResource("3")
 max_radius = 99999.0
 rotate_arrow = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="WaveMarker"]
+libraries = {
+&"": SubResource("AnimationLibrary_x1ji5")
+}
 autoplay = "New Anim"
-"anims/New Anim" = SubResource( 25 )
-anims/RESET = SubResource( 26 )
 
 [node name="Glut2" type="Sprite2D" parent="."]
-material = SubResource( 24 )
-scale = Vector2( 0.25, 0.25 )
 z_index = -1
-texture = ExtResource( 1 )
+material = SubResource("ShaderMaterial_vob3r")
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-position = Vector2( -0.012146, -3.29202 )
 z_index = 900
 z_as_relative = false
+position = Vector2(-0.012146, -3.29202)
 emitting = false
 amount = 50
+texture = ExtResource("4")
 lifetime = 3.0
-draw_order = 1
-process_material = SubResource( 6 )
-texture = ExtResource( 4 )
+process_material = SubResource("6")
 
-[node name="ZIndexer" parent="GPUParticles2D" instance=ExtResource( 5 )]
+[node name="ZIndexer" parent="GPUParticles2D" instance=ExtResource("5")]
 z_index = 900
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Node2D")
+libraries = {
+&"": SubResource("AnimationLibrary_vob3r")
+}
 autoplay = "idle"
-anims/RESET = SubResource( 21 )
-anims/idle = SubResource( 22 )
-anims/start = SubResource( 7 )
-anims/stop = SubResource( 20 )
-next/stop = "idle"
+next/stop = &"idle"
 
 [node name="Node2D" type="Node2D" parent="."]
-scale = Vector2( 2, 2 )
+scale = Vector2(2, 2)
 
 [node name="Fissure6" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( 2.55537, 1.66779 )
-scale = Vector2( 0.08, 0.08 )
-texture = ExtResource( 6 )
+material = SubResource("9")
+position = Vector2(2.55537, 1.66779)
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("6")
 
 [node name="Fissure7" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( 2.55583, 1.66847 )
+material = SubResource("9")
+position = Vector2(2.55583, 1.66847)
 rotation = -1.43256
-scale = Vector2( 0.16, 0.16 )
-texture = ExtResource( 6 )
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("6")
 
 [node name="Fissure9" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( 2.55578, 1.66843 )
+material = SubResource("9")
+position = Vector2(2.55578, 1.66843)
 rotation = -0.831265
-scale = Vector2( 0.16, 0.16 )
-texture = ExtResource( 6 )
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("6")
 
 [node name="Fissure8" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( -0.509155, 1.43234 )
+material = SubResource("9")
+position = Vector2(-0.509155, 1.43234)
 rotation = 1.1572
-scale = Vector2( 0.16, 0.16 )
-texture = ExtResource( 6 )
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("6")
 
 [node name="Fissure10" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( 2.55537, 1.66779 )
-scale = Vector2( 0.08, 0.08 )
-texture = ExtResource( 6 )
+material = SubResource("9")
+position = Vector2(2.55537, 1.66779)
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("6")
 
 [node name="Fissure11" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( 2.55583, 1.66847 )
+material = SubResource("9")
+position = Vector2(2.55583, 1.66847)
 rotation = -1.43256
-scale = Vector2( 0.16, 0.16 )
-texture = ExtResource( 6 )
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("6")
 
 [node name="Fissure12" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( 2.55578, 1.66843 )
+material = SubResource("9")
+position = Vector2(2.55578, 1.66843)
 rotation = -0.831265
-scale = Vector2( 0.16, 0.16 )
-texture = ExtResource( 6 )
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("6")
 
 [node name="Fissure13" type="Sprite2D" parent="Node2D"]
-material = SubResource( 9 )
-position = Vector2( -0.509155, 1.43234 )
+material = SubResource("9")
+position = Vector2(-0.509155, 1.43234)
 rotation = 1.1572
-scale = Vector2( 0.16, 0.16 )
-texture = ExtResource( 6 )
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("6")
 
-[node name="ZIndexer" parent="." instance=ExtResource( 5 )]
+[node name="ZIndexer" parent="." instance=ExtResource("5")]
 z_index = -1000
 offset = 10
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource( 7 )
+stream = ExtResource("7")
 autoplay = true
 max_distance = 200.0
 attenuation = 2.0
-bus = "Ambient"
+bus = &"Ambient"
