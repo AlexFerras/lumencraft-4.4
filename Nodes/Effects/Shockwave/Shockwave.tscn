@@ -116,7 +116,7 @@ func _process(delta):
 [sub_resource type="Animation" id=4]
 resource_name = "Shockwave"
 tracks/0/type = "value"
-tracks/0/path = NodePath(".:material:shader_param/time_offset")
+tracks/0/path = NodePath(".:material:shader_parameter/time_offset")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false

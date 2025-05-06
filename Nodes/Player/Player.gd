@@ -841,7 +841,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	var move := Vector2.ZERO
 #	var move := Input.get_vector(get_p_action("left"), get_p_action("right"), get_p_action("up"), get_p_action("down"))
 	is_directional_key_pressed = Input.is_action_pressed(get_p_action("left")) or Input.is_action_pressed(get_p_action("right")) or Input.is_action_pressed(get_p_action("up")) or Input.is_action_pressed(get_p_action("down"))
-	
+	#print(is_directional_key_pressed)
 	if is_directional_key_pressed:
 		if is_action_pressed("run"):
 			move = Vector2(Input.get_axis(get_p_action("left"), get_p_action("right")), Input.get_axis(get_p_action("up"), get_p_action("down"))).normalized()
@@ -863,6 +863,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	if dash_move:
 		move = dash_move
 	
+	#print(move)
 #	var speed := 600.0 + get_buff(Const.Buffs.SPEED_BUFF) * 200 + speed_bonus
 	var move_relative_to_shoot_rotation = move.dot(Vector2.RIGHT.rotated(torso.rotation))
 	var move_cross_to_shoot_rotation = move.cross(Vector2.RIGHT.rotated(torso.rotation))
@@ -872,6 +873,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 		speed = get_velocity() * min(move_relative_to_shoot_rotation * (0.2 + 0.4 * influence_on_speed) + 1.0, 1.0 + 0.2 * influence_on_speed)
 	else:
 		speed = get_velocity() * min(move_relative_to_shoot_rotation * 0.8 + 1.5, 1)
+	#print(speed)
 	var can_dash := not tired and not thrown_item and animation_state != DASH and animation_state != DASH_TAIL and is_dash_enabled
 	
 	var do_dash: bool
@@ -963,7 +965,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	else:
 		dash_move = Vector2()
 		# TODO
-		#applied_force = move * speed
+		apply_force(move * speed)
 		
 	if is_stuck:
 		is_dashing = false

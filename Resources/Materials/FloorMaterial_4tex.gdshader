@@ -1,8 +1,8 @@
 shader_type canvas_item;    
-uniform sampler2D texture1;
-uniform sampler2D texture2;
-uniform sampler2D texture3;
-uniform sampler2D texture4;
+uniform sampler2D texture1:repeat_enable;
+uniform sampler2D texture2:repeat_enable;
+uniform sampler2D texture3:repeat_enable;
+uniform sampler2D texture4:repeat_enable;
 uniform float resolution1 = 16;
 uniform float resolution2 = 16;
 uniform float resolution3 = 16;

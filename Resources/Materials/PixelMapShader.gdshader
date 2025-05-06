@@ -13,38 +13,38 @@ uniform float random_noise_mul =2.0;
 
 uniform float dirt_tile_mul =8.0;
 
-uniform sampler2D crack_tiled;
+uniform sampler2D crack_tiled:repeat_enable;
 uniform float crack_tile_mul =5.0;
 
-uniform sampler2D noise_tiled;
+uniform sampler2D noise_tiled:repeat_enable;
 uniform float noise_tile_mul =30.0;
 
-uniform sampler2D random_noise;
+uniform sampler2D random_noise:repeat_enable;
 
 
-uniform sampler2DArray terrain_texture_mix;
-uniform sampler2D wall_texture;
-uniform sampler2D lumen_texture;
+uniform sampler2DArray terrain_texture_mix:repeat_enable;
+uniform sampler2D wall_texture:repeat_enable;
+uniform sampler2D lumen_texture:repeat_enable;
 uniform float wall_mul =4.0;
 uniform float show_hidden=0.0;
 
 
 
-uniform sampler2D magma;
+uniform sampler2D magma:repeat_enable;
 uniform vec4 magma_color  :	source_color= vec4( 2.89, 1.16, 0.0, 1.0);
 
-uniform sampler2D water_noise;
+uniform sampler2D water_noise:repeat_enable;
 uniform vec4 water_color  :	source_color= vec4(0.8,1.2,2.4,1.0);
-uniform sampler2D caustics;
+uniform sampler2D caustics:repeat_enable;
 uniform float caustics_mul =15.0;
 
 uniform vec4 lumen_color;
 uniform vec4 lumen_glitter_color;
 uniform float lumen_mul;
 uniform float lumen_glitter_power;
-uniform sampler2D lava_data: hint_default_black;
+uniform sampler2D lava_data: hint_default_black, repeat_enable;
 uniform int lava_data_count;
-uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap, repeat_enable;
 
 const float black_fade_array[33] = {4.0, 2.0, 6.0, 1.0, 1.0, 9.0, 7.0, 1.0, 1.0, 1.0, 
 									1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 8.0,
@@ -451,7 +451,7 @@ void fragment()
 	NORMAL_MAP.r=1.0-NORMAL_MAP.r;
 	NORMAL_MAP_DEPTH=0.3;*/
 	 
-	
+	//COLOR = vec4(1, 1, 1, 0.0);
 	COLOR=getMapColor(TEXTURE,UV,SCREEN_TEXTURE,SCREEN_UV,TIME);
 
 	

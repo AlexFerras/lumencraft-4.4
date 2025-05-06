@@ -26,6 +26,3 @@ void fragment()
 
    COLOR=vec4(1.0,1.0,1.0,clamp(1.0-alpha,0.0,1.0));
 }
-
-
-

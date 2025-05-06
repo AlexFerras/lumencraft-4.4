@@ -1,4 +1,4 @@
-shader_type canvas_item;    
+shader_type canvas_item;
 
 uniform float hue = 0.0;
 uniform float saturation = 0.0;
@@ -15,7 +15,7 @@ varying vec2 global_pos;
 
 void vertex()
 {
-	
+
 
 	//VERTEX = (EXTRA_MATRIX * (WORLD_MATRIX * vec4(VERTEX, 1.0, 1.0))).xy;
 // VERTEX=(WORLD_MATRIX*vec4(VERTEX,1.0,1.0)).xy;
@@ -42,7 +42,7 @@ vec4 taylorInvSqrt(vec4 r)
 }
 
 float snoise(vec3 v)
-  { 
+  {
   const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
   const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
 
@@ -65,10 +65,10 @@ float snoise(vec3 v)
   vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
 
 // Permutations
-  i = mod2893(i); 
-  vec4 p = permute( permute( permute( 
+  i = mod2893(i);
+  vec4 p = permute( permute( permute(
              i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-           + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) 
+           + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
            + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
 
 // Gradients: 7x7 points over a square, mapped onto an octahedron.
@@ -112,7 +112,7 @@ float snoise(vec3 v)
 // Mix final noise value
   vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
   m = m * m;
-  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), 
+  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
                                 dot(p2,x2), dot(p3,x3) ) );
   }
 vec3 rgb2hsv(vec3 c) {
